@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <header className="sticky top-0 z-30 flex items-center justify-end h-14 px-6 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <ThemeToggle />
               </header>
-              <main className="flex-1 px-6 py-8 lg:px-10">{children}</main>
+              <main className="flex-1 px-6 py-8 lg:px-10 mx-auto w-full max-w-5xl">{children}</main>
             </div>
           </div>
         </ThemeProvider>

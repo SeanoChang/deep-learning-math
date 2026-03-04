@@ -181,11 +181,16 @@
 
 /* KaTeX display math centering */
 .prose .katex-display {
-  @apply my-6 overflow-x-auto;
+  @apply my-6 overflow-x-auto overflow-y-hidden;
 }
 
 .prose .katex-display > .katex {
   @apply text-lg;
+}
+
+/* Prevent scrollbars on inline KaTeX */
+.prose .katex {
+  overflow: visible;
 }
 
 /* Mafs styling overrides */

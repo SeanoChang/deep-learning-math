@@ -122,7 +122,7 @@ $$
 | $\ln x$ | $1/x$ | Log-likelihood, cross-entropy |
 | $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | Sigmoid activation |
 | $\tanh(x)$ | $1 - \tanh^2(x)$ | Tanh activation |
-| $\text{ReLU}(x) = \max(0,x)$ | $\begin{cases} 1 & x > 0 \\ 0 & x < 0 \end{cases}$ | Most common activation |
+| $\text{ReLU}(x) = \max(0,x)$ | $1 \text{ if } x > 0,\; 0 \text{ if } x < 0$ | Most common activation |
 
 <Callout type="info" title="Sigmoid Derivative Trick">
 The sigmoid's derivative has a beautiful form: $\sigma'(x) = \sigma(x)(1 - \sigma(x))$. This makes computation efficient during backpropagation — you only need the forward pass output to compute the gradient.

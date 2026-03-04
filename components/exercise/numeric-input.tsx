@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback, useId, type FormEvent } from "react";
+import { useState, useCallback, useId, useMemo, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { renderInlineKatex } from "@/lib/katex-render";
 
 interface NumericInputProps {
   question: string;
@@ -26,6 +27,9 @@ export function NumericInput({
   const [value, setValue] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const inputId = useId();
+
+  const questionHtml = useMemo(() => renderInlineKatex(question), [question]);
+  const hintHtml = useMemo(() => (hint ? renderInlineKatex(hint) : undefined), [hint]);
 
   const handleCheck = useCallback(
     (e?: FormEvent) => {
@@ -66,9 +70,8 @@ export function NumericInput({
         <label
           htmlFor={inputId}
           className="block text-sm leading-relaxed text-foreground/90"
-        >
-          {question}
-        </label>
+          dangerouslySetInnerHTML={{ __html: questionHtml }}
+        />
       </div>
 
       {/* Input area */}
@@ -208,9 +211,7 @@ export function NumericInput({
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Hint
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {hint}
-                </p>
+                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: hintHtml! }} />
               </div>
             </motion.div>
           )}

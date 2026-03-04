@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { getLessonContent, getAdjacentLessons, getTopicLessons } from "@/lib/content";
@@ -45,7 +46,7 @@ export default async function LinearAlgebraLessonPage({ params }: PageProps) {
     components: mdxComponents,
     options: {
       mdxOptions: {
-        remarkPlugins: [remarkMath],
+        remarkPlugins: [remarkGfm, remarkMath],
         rehypePlugins: [rehypeKatex as never],
       },
     },

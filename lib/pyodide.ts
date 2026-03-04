@@ -12,9 +12,8 @@ const PYODIDE_CDN_URL =
 const PYODIDE_INDEX_URL =
   "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-let pyodideInstance: any = null;
-let loadingPromise: Promise<any> | null = null;
+let pyodideInstance: unknown = null;
+let loadingPromise: Promise<unknown> | null = null;
 
 /**
  * Injects the Pyodide script tag into the document head if it
@@ -24,7 +23,7 @@ let loadingPromise: Promise<any> | null = null;
 function ensureScript(): Promise<void> {
   return new Promise((resolve, reject) => {
     // Already loaded — skip injection
-    if (typeof (globalThis as any).loadPyodide === "function") {
+    if (typeof (globalThis as Record<string, unknown>).loadPyodide === "function") {
       resolve();
       return;
     }
@@ -60,7 +59,7 @@ function ensureScript(): Promise<void> {
  * After the runtime boots, numpy is pre-loaded so learners can
  * `import numpy as np` immediately.
  */
-export async function loadPyodideInstance(): Promise<any> {
+export async function loadPyodideInstance(): Promise<unknown> {
   // Return cached instance if available
   if (pyodideInstance) return pyodideInstance;
 
@@ -71,7 +70,7 @@ export async function loadPyodideInstance(): Promise<any> {
     try {
       await ensureScript();
 
-      const loader = (globalThis as any).loadPyodide;
+      const loader = (globalThis as Record<string, unknown>).loadPyodide;
       if (typeof loader !== "function") {
         throw new Error(
           "Pyodide loader not found on globalThis after script injection."

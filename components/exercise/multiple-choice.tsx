@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { renderInlineKatex } from "@/lib/katex-render";
 
 interface MultipleChoiceProps {
   question: string;
@@ -25,6 +26,13 @@ export function MultipleChoice({
   const [status, setStatus] = useState<Status>("idle");
 
   const isCorrect = status === "checked" && selectedIndex === correctIndex;
+
+  const questionHtml = useMemo(() => renderInlineKatex(question), [question]);
+  const optionHtmls = useMemo(() => options.map(renderInlineKatex), [options]);
+  const explanationHtml = useMemo(
+    () => (explanation ? renderInlineKatex(explanation) : undefined),
+    [explanation]
+  );
 
   const handleCheck = useCallback(() => {
     if (selectedIndex === null) return;
@@ -97,7 +105,7 @@ export function MultipleChoice({
 
       {/* Question */}
       <div className="px-5 pt-4 pb-2">
-        <p className="text-sm leading-relaxed text-foreground/90">{question}</p>
+        <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: questionHtml }} />
       </div>
 
       {/* Options */}
@@ -138,7 +146,7 @@ export function MultipleChoice({
               </span>
 
               {/* Option text */}
-              <span className="flex-1">{option}</span>
+              <span className="flex-1" dangerouslySetInnerHTML={{ __html: optionHtmls[index] }} />
 
               {/* Feedback icon */}
               {getOptionIcon(index)}
@@ -211,9 +219,7 @@ export function MultipleChoice({
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Explanation
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {explanation}
-                </p>
+                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: explanationHtml! }} />
               </div>
             </motion.div>
           )}
