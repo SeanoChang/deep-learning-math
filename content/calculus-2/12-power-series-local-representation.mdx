@@ -1,0 +1,258 @@
+---
+title: "Power Series and Local Representation of Functions"
+description: "Radius of convergence, the Cauchy-Hadamard formula, and uniform convergence of power series"
+order: 12
+prerequisites: ["11-ratio-root-alternating"]
+---
+
+# Power Series and Local Representation
+
+Power series are the bridge between algebra and analysis. A power series $\sum c_n(x - a)^n$ is simultaneously an infinite polynomial and a function, and understanding where and how it converges is one of the central problems of analysis.
+
+## Power Series: Basic Setup
+
+<Callout type="definition">
+**Definition 12.1 (Power Series).** A **power series centered at $a$** is a series of the form
+
+$$\sum_{n=0}^{\infty} c_n (x - a)^n = c_0 + c_1(x - a) + c_2(x - a)^2 + \cdots$$
+
+where $(c_n)$ is a sequence of real coefficients and $x$ is a real variable.
+</Callout>
+
+The fundamental question: for which values of $x$ does this series converge?
+
+## The Radius of Convergence
+
+<Callout type="theorem">
+**Theorem 12.2 (Existence of Radius of Convergence).** For any power series $\sum c_n (x - a)^n$, there exists $R \in [0, \infty]$ such that:
+
+1. The series converges absolutely for all $x$ with $|x - a| < R$.
+2. The series diverges for all $x$ with $|x - a| > R$.
+3. At $|x - a| = R$, either behavior is possible.
+
+The number $R$ is called the **radius of convergence**.
+</Callout>
+
+*Proof.* Let $S = \{r \geq 0 : \sum |c_n| r^n \text{ converges}\}$. Note $0 \in S$ (trivially). Let $R = \sup S$ (possibly $+\infty$).
+
+**Claim 1:** If $|x - a| < R$, the series converges absolutely. Choose $r$ with $|x - a| < r < R$. Since $r < R = \sup S$, there exists $s \in S$ with $r < s$. So $\sum |c_n| s^n$ converges, which means $|c_n| s^n$ is bounded: $|c_n| s^n \leq M$ for some $M$. Then
+
+$$|c_n (x-a)^n| = |c_n| |x-a|^n \leq M \left(\frac{|x-a|}{s}\right)^n.$$
+
+Since $|x - a|/s < r/s < 1$, this is a convergent geometric series, so $\sum |c_n(x-a)^n|$ converges by comparison.
+
+**Claim 2:** If $|x - a| > R$, the series diverges. If it converged, the same argument would show convergence for some $r > |x-a| > R$, contradicting $R = \sup S$. More precisely, convergence at $x$ implies $|c_n(x-a)^n| \to 0$, so $|c_n||x-a|^n$ is bounded, and the geometric argument above would give convergence for all $|y - a| < |x - a|$, making $|x - a| \in S$, contradicting $|x - a| > R$. $\square$
+
+## The Cauchy-Hadamard Formula
+
+<Callout type="theorem">
+**Theorem 12.3 (Cauchy-Hadamard).** The radius of convergence of $\sum c_n(x - a)^n$ is given by
+
+$$R = \frac{1}{\limsup_{n \to \infty} |c_n|^{1/n}}$$
+
+with the conventions $1/0 = \infty$ and $1/\infty = 0$.
+</Callout>
+
+*Proof.* Let $\alpha = \limsup |c_n|^{1/n}$. The root test applied to $\sum c_n(x-a)^n$ gives
+
+$$\limsup |c_n(x-a)^n|^{1/n} = \limsup |c_n|^{1/n} \cdot |x - a| = \alpha |x - a|.$$
+
+By the root test: if $\alpha|x-a| < 1$ (i.e., $|x-a| < 1/\alpha$), the series converges absolutely; if $\alpha|x-a| > 1$ (i.e., $|x-a| > 1/\alpha$), the series diverges. So $R = 1/\alpha$. $\square$
+
+<Callout type="tip">
+**Computing $R$ in practice.** While the Cauchy-Hadamard formula is the definitive result, in practice we often use the ratio test: if $\lim |c_{n+1}/c_n|$ exists, then $R = \lim |c_n/c_{n+1}|$. This is typically easier to compute for explicit series.
+</Callout>
+
+## The Interval of Convergence
+
+<Callout type="info">
+**Remark.** The radius $R$ tells us about the open interval $(a - R, a + R)$, but the endpoints $x = a \pm R$ require separate analysis. Classic examples:
+
+- $\sum x^n$: $R = 1$. Diverges at both $x = \pm 1$.
+- $\sum x^n / n$: $R = 1$. Converges at $x = -1$ (alternating harmonic), diverges at $x = 1$ (harmonic).
+- $\sum x^n / n^2$: $R = 1$. Converges at both $x = \pm 1$ (by comparison with $\sum 1/n^2$).
+</Callout>
+
+## Uniform Convergence on Compact Subintervals
+
+This is the key structural result about power series: they converge not just pointwise but uniformly on any closed subinterval strictly inside the radius.
+
+<Callout type="theorem">
+**Theorem 12.4 (Uniform Convergence of Power Series).** If $\sum c_n(x - a)^n$ has radius of convergence $R > 0$, then the series converges uniformly on $[a - r, a + r]$ for every $0 < r < R$.
+</Callout>
+
+*Proof.* Fix $0 < r < R$. For $|x - a| \leq r$, we have
+
+$$|c_n(x - a)^n| \leq |c_n| r^n =: M_n.$$
+
+Since $r < R$, the series $\sum M_n = \sum |c_n| r^n$ converges (by the definition of radius of convergence). By the Weierstrass $M$-test, $\sum c_n(x - a)^n$ converges uniformly on $\{x : |x - a| \leq r\} = [a - r, a + r]$. $\square$
+
+<Callout type="warning">
+**Not uniform on the full open interval!** The convergence is generally NOT uniform on the entire open interval $(a - R, a + R)$. For example, $\sum x^n = 1/(1-x)$ on $(-1, 1)$: the partial sums converge pointwise, but the supremum of the error over all $x \in (-1,1)$ never goes to zero (the function blows up as $x \to 1^-$).
+</Callout>
+
+## Visualizing Partial Sums
+
+The following plot shows partial sums of the geometric series $\sum x^n$ converging within its radius of convergence $R = 1$.
+
+<FunctionPlot
+  fn={"(1 - Math.pow(x, 10)) / (1 - x)"}
+  title={"10th partial sum of sum(x^n) vs 1/(1-x), radius R = 1"}
+  domain={[-1.5, 1.5]}
+  range={[-5, 10]}
+/>
+
+## Exercises
+
+<Problem>
+**Exercise 12.1.** Prove that the power series $\sum_{n=0}^{\infty} c_n(x - a)^n$ converges uniformly on $[a - r, a + r]$ for any $0 < r < R$, by explicitly constructing the $M_n$ for the Weierstrass $M$-test and verifying all hypotheses.
+</Problem>
+
+<Solution>
+*Proof.* Let $0 < r < R$. For each $n \geq 0$, define $M_n = |c_n| r^n$. We verify the hypotheses of the Weierstrass $M$-test:
+
+**Step 1 (Domination).** For any $x$ with $|x - a| \leq r$:
+
+$$|c_n(x - a)^n| = |c_n| \cdot |x - a|^n \leq |c_n| \cdot r^n = M_n.$$
+
+**Step 2 ($\sum M_n$ converges).** Since $r < R$, the point $x = a + r$ satisfies $|x - a| = r < R$. By Theorem 12.2, the series converges absolutely at $x = a + r$:
+
+$$\sum_{n=0}^{\infty} |c_n (a + r - a)^n| = \sum_{n=0}^{\infty} |c_n| r^n = \sum_{n=0}^{\infty} M_n < \infty.$$
+
+**Conclusion.** By the Weierstrass $M$-test, $\sum c_n(x-a)^n$ converges uniformly on $\{x : |x - a| \leq r\} = [a - r, a + r]$. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"What is the radius of convergence of the power series sum(n * x^n)?"}
+  options={[
+    "R = 0",
+    "R = 1",
+    "R = e",
+    "R = infinity"
+  ]}
+  correctIndex={1}
+  explanation={"Using the ratio test: |a_{n+1}/a_n| = |(n+1)x^{n+1}/(nx^n)| = (n+1)/n * |x| -> |x|. This is less than 1 when |x| < 1, so R = 1. Alternatively, by Cauchy-Hadamard: limsup |n|^{1/n} = 1, so R = 1/1 = 1."}
+/>
+
+<NumericInput
+  question={"Find the radius of convergence of sum(x^n / n!). Express R as a number (use 999 for infinity)."}
+  answer={999}
+  tolerance={1}
+  hint={"Use the ratio test: |a_{n+1}/a_n| = |x|/(n+1) -> 0 for any fixed x. Since L = 0 < 1 for all x, the series converges for all x, giving R = infinity."}
+/>
+
+<Problem>
+**Exercise 12.2.** Find the radius of convergence and determine convergence at the endpoints for the series $\sum_{n=1}^{\infty} \frac{(-1)^n x^n}{n \cdot 3^n}$.
+</Problem>
+
+<Solution>
+**Solution.** Here $c_n = (-1)^n / (n \cdot 3^n)$ and the series is centered at $a = 0$.
+
+**Radius.** By the ratio test: $|c_{n+1}/c_n| = \frac{n}{n+1} \cdot \frac{1}{3} \to \frac{1}{3}$, so $R = 3$.
+
+**Endpoint $x = 3$:** The series becomes $\sum \frac{(-1)^n 3^n}{n \cdot 3^n} = \sum \frac{(-1)^n}{n}$, which converges by the AST.
+
+**Endpoint $x = -3$:** The series becomes $\sum \frac{(-1)^n (-3)^n}{n \cdot 3^n} = \sum \frac{(-1)^n (-1)^n}{n} = \sum \frac{1}{n}$, which diverges (harmonic series).
+
+**Interval of convergence:** $(-3, 3]$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 12.3 (Counterexample).** Exhibit a power series with radius of convergence $R = 1$ that converges at $x = -1$ but diverges at $x = 1$. Prove both claims.
+
+*Hint:* Consider $\sum_{n=1}^{\infty} \frac{x^n}{n}$.
+</Problem>
+
+<Solution>
+*Solution.* Consider the power series $\sum_{n=1}^{\infty} \frac{x^n}{n}$, centered at $a = 0$ with $c_n = 1/n$.
+
+**Radius of convergence:** By the ratio test, $|c_{n+1}/c_n| = n/(n+1) \to 1$, so $R = 1$.
+
+**At $x = 1$:** The series becomes $\sum_{n=1}^{\infty} \frac{1}{n}$, the harmonic series, which diverges ($p$-series with $p = 1$).
+
+**At $x = -1$:** The series becomes $\sum_{n=1}^{\infty} \frac{(-1)^n}{n} = -\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$, the negative of the alternating harmonic series. By the Leibniz AST, this converges (since $1/n$ is decreasing and $1/n \to 0$). Its sum is $-\ln 2$.
+
+**Conclusion:** The interval of convergence is $[-1, 1)$. This demonstrates that endpoint behavior must be analyzed separately -- the radius of convergence tells us nothing about what happens at $|x - a| = R$. The series $\sum x^n/n$ converges at the left endpoint ($x = -1$, by alternation and cancellation) but diverges at the right endpoint ($x = 1$, harmonic series). In contrast, $\sum x^n/n^2$ converges at both endpoints, and $\sum x^n$ diverges at both. $\square$
+</Solution>
+
+## Computing Radius and Visualizing Convergence
+
+<PythonPlayground
+  title={"Power Series: Radius of Convergence and Partial Sums"}
+  defaultCode={`import math
+
+# Example: sum(x^n / n!) -- the exponential function
+# Compute partial sums and compare with the limit function
+
+def partial_sum(x, N):
+    """Compute sum_{n=0}^{N} x^n / n!"""
+    total = 0.0
+    term = 1.0  # x^0 / 0! = 1
+    for n in range(N + 1):
+        total += term
+        term *= x / (n + 1)
+    return total
+
+# Radius of convergence via ratio test
+print("Series: sum(x^n / n!)")
+print()
+print("Ratio test: |c_{n+1}/c_n| = 1/(n+1) -> 0")
+print("Since L = 0 < 1 for all x, R = infinity")
+print()
+
+# Compare partial sums with exp(x)
+print(f"{'x':>6} {'S_5':>12} {'S_10':>12} {'S_20':>12} {'exp(x)':>12}")
+print("-" * 58)
+for x in [-5, -2, -1, 0, 1, 2, 5, 10]:
+    s5 = partial_sum(x, 5)
+    s10 = partial_sum(x, 10)
+    s20 = partial_sum(x, 20)
+    exact = math.exp(x)
+    print(f"{x:>6} {s5:>12.4f} {s10:>12.4f} {s20:>12.4f} {exact:>12.4f}")
+
+print()
+print("Observe: more terms are needed for larger |x|,")
+print("but the series eventually converges for every x.")
+print()
+
+# Now: sum(x^n / n) centered at 0, R = 1
+print("=" * 58)
+print("Series: sum(x^n / n), n >= 1  (R = 1)")
+print()
+print("Cauchy-Hadamard: limsup |1/n|^{1/n} = 1, so R = 1")
+print()
+
+def partial_sum_2(x, N):
+    return sum(x**n / n for n in range(1, N+1))
+
+# Show convergence inside, divergence outside
+for x in [0.5, 0.9, 0.99, 1.0, 1.01, 1.5]:
+    try:
+        s = partial_sum_2(x, 500)
+        if x < 1:
+            exact = -math.log(1 - x)
+            print(f"x = {x:>5.2f}: S_500 = {s:>12.6f}, -ln(1-x) = {exact:>12.6f}")
+        else:
+            print(f"x = {x:>5.2f}: S_500 = {s:>12.2f}  (diverging!)")
+    except:
+        print(f"x = {x:>5.2f}: overflow (diverges)")
+`}
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove that the differentiated power series and original power series have the same radius of convergence.
+Your proof must use limsup/root-test logic explicitly.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+For
+$\sum_{n=1}^{\infty}\frac{n(x-2)^n}{3^n}$,
+find the radius and interval of convergence, including endpoint behavior with full justification.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Give a power series that converges pointwise on $(-R,R)$ but not uniformly on the whole interval.
+Show this by computing a non-vanishing sup-norm tail estimate.
+</Problem>

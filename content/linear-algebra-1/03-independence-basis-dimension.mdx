@@ -1,0 +1,236 @@
+---
+title: "Linear Independence, Basis, and Dimension"
+description: "Linear independence and dependence, basis as minimal spanning set, dimension, coordinates, and fundamental uniqueness theorems"
+order: 3
+prerequisites: ["02-vectors-span-subspaces"]
+---
+
+## Linear Independence
+
+<Callout type="definition" title="Linear Independence">
+  Vectors $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_p \in \mathbb{R}^n$ are **linearly independent** if the only solution to
+  $$c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \cdots + c_p \mathbf{v}_p = \mathbf{0}$$
+  is the trivial solution $c_1 = c_2 = \cdots = c_p = 0$.
+  The vectors are **linearly dependent** if there exist scalars $c_1, \ldots, c_p$, not all zero, such that
+  $$c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \cdots + c_p \mathbf{v}_p = \mathbf{0}.$$
+  Such a nontrivial relation is called a **linear dependence relation**.
+</Callout>
+
+In terms of matrices: the columns of $A = [\mathbf{v}_1 \; \cdots \; \mathbf{v}_p]$ are linearly independent if and only if $A\mathbf{x} = \mathbf{0}$ has only the trivial solution, which happens if and only if $A$ has a pivot in every column.
+
+<Callout type="tip" title="Practical Independence Test">
+  To check whether $\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ is linearly independent, form the matrix $A = [\mathbf{v}_1 \; \cdots \; \mathbf{v}_p]$ and row reduce. The set is independent if and only if every column is a pivot column (equivalently, no free variables).
+</Callout>
+
+### Key Facts About Dependence
+
+<Callout type="theorem" title="Characterization of Linear Dependence">
+  A set $\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ with $p \geq 2$ is linearly dependent if and only if some $\mathbf{v}_j$ is a linear combination of the preceding vectors $\mathbf{v}_1, \ldots, \mathbf{v}_{j-1}$.
+</Callout>
+
+**Proof.** ($\Leftarrow$) If $\mathbf{v}_j = c_1\mathbf{v}_1 + \cdots + c_{j-1}\mathbf{v}_{j-1}$, then
+
+$$c_1\mathbf{v}_1 + \cdots + c_{j-1}\mathbf{v}_{j-1} + (-1)\mathbf{v}_j + 0\mathbf{v}_{j+1} + \cdots + 0\mathbf{v}_p = \mathbf{0}$$
+
+is a nontrivial dependence relation (the coefficient of $\mathbf{v}_j$ is $-1 \neq 0$).
+
+($\Rightarrow$) Suppose $c_1\mathbf{v}_1 + \cdots + c_p\mathbf{v}_p = \mathbf{0}$ with not all $c_i = 0$. Let $j$ be the largest index with $c_j \neq 0$. If $j = 1$, then $c_1\mathbf{v}_1 = \mathbf{0}$ with $c_1 \neq 0$, so $\mathbf{v}_1 = \mathbf{0} = 0\mathbf{v}_1$ (vacuously a combination of no preceding vectors, or equivalently $\mathbf{v}_1 = \mathbf{0}$, which is always a degenerate dependence). If $j \geq 2$, then
+
+$$\mathbf{v}_j = -\frac{c_1}{c_j}\mathbf{v}_1 - \cdots - \frac{c_{j-1}}{c_j}\mathbf{v}_{j-1}.$$
+
+So $\mathbf{v}_j$ is a linear combination of the preceding vectors. $\blacksquare$
+
+<Callout type="theorem" title="More Vectors Than Dimensions Implies Dependence">
+  If $\mathbf{v}_1, \ldots, \mathbf{v}_p \in \mathbb{R}^n$ and $p > n$, then $\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ is linearly dependent.
+</Callout>
+
+**Proof.** The matrix $A = [\mathbf{v}_1 \; \cdots \; \mathbf{v}_p]$ has $n$ rows and $p$ columns with $p > n$. The number of pivots is at most $n < p$, so there is at least one free variable. Hence $A\mathbf{x} = \mathbf{0}$ has a nontrivial solution, which means the vectors are dependent. $\blacksquare$
+
+<MultipleChoice
+  question="Which of the following sets is linearly independent in $\\mathbb\{R\}^2$?"
+  options={[
+    "$\\{(1,2)^T, (2,4)^T\\}$",
+    "$\\{(1,0)^T, (0,1)^T, (1,1)^T\\}$",
+    "$\\{(3,-1)^T, (1,2)^T\\}$",
+    "$\\{(0,0)^T, (1,1)^T\\}$"
+  ]}
+  correctIndex={2}
+  explanation="$(2,4)^T = 2(1,2)^T$, so the first set is dependent. The second set has 3 vectors in $\\mathbb\{R\}^2$, so it is dependent. The fourth set contains the zero vector, so it is dependent. For the third set: $a(3,-1)^T + b(1,2)^T = (0,0)^T$ gives $3a + b = 0$ and $-a + 2b = 0$, so $a = b = 0$. Independent."
+/>
+
+## Basis
+
+<Callout type="definition" title="Basis">
+  A **basis** for a subspace $H$ of $\mathbb{R}^n$ is a set $\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_p\}$ such that:
+  1. $\mathcal{B}$ is linearly independent, and
+  2. $H = \text{Span}\{\mathbf{b}_1, \ldots, \mathbf{b}_p\}$.
+  In other words, a basis is a linearly independent spanning set.
+</Callout>
+
+The standard basis for $\mathbb{R}^n$ is $\{\mathbf{e}_1, \ldots, \mathbf{e}_n\}$, where $\mathbf{e}_i$ has a $1$ in position $i$ and $0$s elsewhere.
+
+<Callout type="theorem" title="Basis = Minimal Spanning Set = Maximal Independent Set">
+  Let $H$ be a subspace of $\mathbb{R}^n$ and let $\mathcal{B} \subseteq H$. The following are equivalent:
+  1. $\mathcal{B}$ is a basis for $H$.
+  2. $\mathcal{B}$ is a minimal spanning set for $H$ (removing any vector from $\mathcal{B}$ causes it to no longer span $H$).
+  3. $\mathcal{B}$ is a maximal independent set in $H$ (adding any vector from $H$ to $\mathcal{B}$ causes it to become dependent).
+</Callout>
+
+**Proof of $(1) \Rightarrow (2)$:** Suppose $\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_p\}$ is a basis and remove $\mathbf{b}_j$. We claim $\mathbf{b}_j \notin \text{Span}(\mathcal{B} \setminus \{\mathbf{b}_j\})$. If it were, then $\mathbf{b}_j = \sum_{i \neq j} c_i \mathbf{b}_i$, giving a nontrivial dependence relation $\sum_{i \neq j} c_i \mathbf{b}_i - \mathbf{b}_j = \mathbf{0}$, contradicting independence. So $\mathcal{B}$ is a minimal spanning set.
+
+**Proof of $(1) \Rightarrow (3)$:** Let $\mathbf{v} \in H$. Since $\mathcal{B}$ spans $H$, we have $\mathbf{v} = c_1\mathbf{b}_1 + \cdots + c_p\mathbf{b}_p$, giving the dependence relation $c_1\mathbf{b}_1 + \cdots + c_p\mathbf{b}_p - \mathbf{v} = \mathbf{0}$ (with coefficient $-1$ on $\mathbf{v}$). So $\mathcal{B} \cup \{\mathbf{v}\}$ is dependent for any $\mathbf{v} \in H$.
+
+**Proof of $(2) \Rightarrow (1)$:** $\mathcal{B}$ spans $H$ by assumption. Suppose $\mathcal{B}$ is dependent. Then some $\mathbf{b}_j$ is a combination of the others (by the characterization theorem), so $\text{Span}(\mathcal{B} \setminus \{\mathbf{b}_j\}) = \text{Span}(\mathcal{B}) = H$, contradicting minimality. So $\mathcal{B}$ is independent. $\blacksquare$
+
+## Every Spanning Set Contains a Basis
+
+<Callout type="theorem" title="Spanning Set Reduction">
+  If $S = \{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ spans a subspace $H$, then some subset of $S$ is a basis for $H$.
+</Callout>
+
+**Proof.** Form $A = [\mathbf{v}_1 \; \cdots \; \mathbf{v}_p]$ and row reduce to RREF. The pivot columns of $A$ (the original columns corresponding to pivot positions in the RREF) form a linearly independent set whose span equals $\text{Col}(A) = H$. Hence these pivot columns form a basis for $H$.
+
+More precisely: row operations do not change the column dependency relations. If $c_1\mathbf{v}_1 + \cdots + c_p\mathbf{v}_p = \mathbf{0}$ in $A$, then the same relation $c_1\hat{\mathbf{v}}_1 + \cdots + c_p\hat{\mathbf{v}}_p = \mathbf{0}$ holds in the RREF $\hat{A}$. In $\hat{A}$, the pivot columns are the standard basis vectors $\mathbf{e}_1, \ldots, \mathbf{e}_r$ (up to ordering), which are manifestly independent. Therefore the corresponding original columns of $A$ are independent and span $\text{Col}(A) = H$. $\blacksquare$
+
+## Independent Sets Extend to a Basis
+
+<Callout type="theorem" title="Basis Extension">
+  If $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$ is a linearly independent set in a subspace $H$ and $H$ has a finite spanning set, then we can extend $\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$ to a basis for $H$ by adding vectors from any spanning set.
+</Callout>
+
+**Proof.** Let $\{\mathbf{w}_1, \ldots, \mathbf{w}_p\}$ span $H$. Consider the combined list $\mathbf{v}_1, \ldots, \mathbf{v}_k, \mathbf{w}_1, \ldots, \mathbf{w}_p$. This list spans $H$ (since the $\mathbf{w}_i$ already do). Apply the Spanning Set Reduction theorem: form the matrix $[\mathbf{v}_1 \; \cdots \; \mathbf{v}_k \; \mathbf{w}_1 \; \cdots \; \mathbf{w}_p]$ and identify pivot columns. Since $\mathbf{v}_1, \ldots, \mathbf{v}_k$ are independent, the first $k$ columns are all pivot columns. The pivot columns from among $\mathbf{w}_1, \ldots, \mathbf{w}_p$ then provide the extension. $\blacksquare$
+
+## Dimension
+
+<Callout type="theorem" title="All Bases Have the Same Size">
+  If a subspace $H$ has a basis of $p$ vectors and another basis of $q$ vectors, then $p = q$.
+</Callout>
+
+**Proof.** Let $\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_p\}$ and $\mathcal{C} = \{\mathbf{c}_1, \ldots, \mathbf{c}_q\}$ be two bases for $H$.
+
+Since $\mathcal{B}$ spans $H$ and $\mathcal{C}$ is independent in $H$, the independent set $\mathcal{C}$ can have at most as many vectors as any spanning set (otherwise the vectors in $\mathcal{C}$ would be dependent by the "more vectors than dimensions" principle applied within $H$). Hence $q \leq p$.
+
+Swapping roles: $\mathcal{C}$ spans $H$ and $\mathcal{B}$ is independent, so $p \leq q$.
+
+Therefore $p = q$. $\blacksquare$
+
+<Callout type="definition" title="Dimension">
+  The **dimension** of a nonzero subspace $H$, denoted $\dim(H)$, is the number of vectors in any basis for $H$. We define $\dim\{\mathbf{0}\} = 0$.
+</Callout>
+
+Key examples:
+- $\dim(\mathbb{R}^n) = n$ (the standard basis has $n$ vectors).
+- $\dim(\text{Nul}(A))$ = number of free variables in $A\mathbf{x} = \mathbf{0}$.
+- $\dim(\text{Col}(A))$ = number of pivot columns of $A$.
+
+<NumericInput
+  question="What is the dimension of the subspace $H = \\text\{Span\}\\{(1,0,1,0)^T,\\; (0,1,0,1)^T,\\; (1,1,1,1)^T\\}$ of $\\mathbb\{R\}^4$?"
+  answer={2}
+  tolerance={0}
+  explanation="Note $(1,1,1,1)^T = (1,0,1,0)^T + (0,1,0,1)^T$, so the third vector is a linear combination of the first two. The first two are independent (neither is a scalar multiple of the other), so $\\dim(H) = 2$."
+/>
+
+## Coordinates
+
+<Callout type="definition" title="Coordinate Vector">
+  Let $\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_p\}$ be a basis for a subspace $H$. For each $\mathbf{x} \in H$, the **coordinate vector of $\mathbf{x}$ relative to $\mathcal{B}$** is the unique vector
+  $$[\mathbf{x}]_{\mathcal{B}} = \begin{pmatrix} c_1 \\ \vdots \\ c_p \end{pmatrix} \in \mathbb{R}^p$$
+  such that $\mathbf{x} = c_1\mathbf{b}_1 + \cdots + c_p\mathbf{b}_p$.
+</Callout>
+
+The coordinate vector is well-defined (unique) because the basis is independent. If $\mathbf{x} = c_1\mathbf{b}_1 + \cdots + c_p\mathbf{b}_p = d_1\mathbf{b}_1 + \cdots + d_p\mathbf{b}_p$, then $(c_1 - d_1)\mathbf{b}_1 + \cdots + (c_p - d_p)\mathbf{b}_p = \mathbf{0}$, and independence forces $c_i = d_i$ for all $i$.
+
+<Problem title="Theorem Application: Computing Coordinates">
+  Let $\mathcal{B} = \left\{\begin{pmatrix} 1 \\ 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \\ 1 \end{pmatrix}\right\}$ and $\mathbf{x} = \begin{pmatrix} 3 \\ 5 \\ 2 \end{pmatrix}$. Find $[\mathbf{x}]_{\mathcal{B}}$.
+<Solution>
+  We solve $c_1\mathbf{b}_1 + c_2\mathbf{b}_2 = \mathbf{x}$:
+  $$\begin{pmatrix} 1 & 0 & 3 \\ 1 & 1 & 5 \\ 0 & 1 & 2 \end{pmatrix} \xrightarrow{R_2 - R_1} \begin{pmatrix} 1 & 0 & 3 \\ 0 & 1 & 2 \\ 0 & 1 & 2 \end{pmatrix} \xrightarrow{R_3 - R_2} \begin{pmatrix} 1 & 0 & 3 \\ 0 & 1 & 2 \\ 0 & 0 & 0 \end{pmatrix}$$
+  So $c_1 = 3$ and $c_2 = 2$, giving $[\mathbf{x}]_{\mathcal{B}} = \begin{pmatrix} 3 \\ 2 \end{pmatrix}$.
+  Verification: $3\begin{pmatrix} 1 \\ 1 \\ 0 \end{pmatrix} + 2\begin{pmatrix} 0 \\ 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 3 \\ 5 \\ 2 \end{pmatrix}$. $\checkmark$
+</Solution>
+</Problem>
+
+## Computing Bases with NumPy
+
+<PythonPlayground
+  title="Independence, Bases, and Dimension"
+  defaultCode={`import numpy as np
+
+# Check if vectors are linearly independent
+v1 = np.array([1, 2, 3])
+v2 = np.array([4, 5, 6])
+v3 = np.array([7, 8, 9])
+
+A = np.column_stack([v1, v2, v3])
+print("Matrix A (columns = vectors):")
+print(A)
+print(f"Rank of A: {np.linalg.matrix_rank(A)}")
+print(f"Are the 3 vectors independent? {np.linalg.matrix_rank(A) == 3}")
+print()
+
+# Find dependence relation
+# v3 = c1*v1 + c2*v2?
+# Solve [v1 v2] @ c = v3
+c = np.linalg.lstsq(np.column_stack([v1, v2]), v3, rcond=None)[0]
+print(f"Dependence: v3 = {c[0]:.1f}*v1 + {c[1]:.1f}*v2")
+print(f"Check: {c[0]}*v1 + {c[1]}*v2 = {c[0]*v1 + c[1]*v2}")
+print()
+
+# Example: find a basis for Col(B)
+B = np.array([
+    [1, 3, 3, 2],
+    [2, 6, 9, 5],
+    [-1, -3, 3, 0]
+], dtype=float)
+
+print("Matrix B:")
+print(B)
+rank = np.linalg.matrix_rank(B)
+print(f"Rank = dim(Col(B)) = {rank}")
+print()
+
+# Identify pivot columns via row reduction
+R = B.copy()
+R[1] -= 2*R[0]
+R[2] += R[0]
+print("After elimination:")
+print(R)
+R[2] -= R[1]
+print("\\nREF:")
+print(R)
+print("Pivot columns: 0 and 2 (0-indexed)")
+print(f"Basis for Col(B): columns 0 and 2 of B:")
+print(f"  {B[:, 0]} and {B[:, 2]}")
+print()
+
+# Null space dimension
+n_cols = B.shape[1]
+print(f"dim(Nul(B)) = {n_cols} - {rank} = {n_cols - rank}")`}
+/>
+
+<MultipleChoice
+  question="Let $A$ be a $5 \\times 5$ matrix with $\\text\{rank\}(A) = 3$. What is $\\dim(\\text\{Nul\}(A))$?"
+  options={[
+    "0",
+    "2",
+    "3",
+    "5"
+  ]}
+  correctIndex={1}
+  explanation="The number of free variables is $5 - 3 = 2$, so $\\dim(\\text\{Nul\}(A)) = 2$. This is a preview of the Rank-Nullity Theorem."
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+  Let $\mathbf{v}_1, \ldots, \mathbf{v}_k$ be linearly independent vectors in $\mathbb{R}^n$. Prove that if $\mathbf{v}_{k+1} \notin \text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_k\}$, then $\{\mathbf{v}_1, \ldots, \mathbf{v}_k, \mathbf{v}_{k+1}\}$ is linearly independent.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+  Let $H$ be a subspace of $\mathbb{R}^n$ with $\dim(H) = k$. Prove that any set of $k$ linearly independent vectors in $H$ is automatically a basis for $H$.
+  *Hint:* Use the Basis Extension Theorem and the fact that all bases have the same size.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+  Give an example of two subspaces $U$ and $W$ of $\mathbb{R}^3$ such that $\dim(U) = \dim(W) = 2$ but $U \neq W$. Show they are distinct by finding a vector in $U \setminus W$.
+</Problem>

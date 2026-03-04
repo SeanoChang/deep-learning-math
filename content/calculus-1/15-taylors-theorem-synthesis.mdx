@@ -1,0 +1,343 @@
+---
+title: "Taylor's Theorem and Semester Synthesis"
+description: "Higher derivatives, Taylor polynomials with Lagrange remainder, and the culmination of differentiation"
+order: 15
+prerequisites: ["14-consequences-mvt"]
+---
+
+# Taylor's Theorem and Semester Synthesis
+
+Taylor's theorem is the crowning achievement of the differential calculus developed over this semester.
+It extends the idea of local linear approximation (Lesson 11) to polynomial approximations of arbitrary
+degree, with precise quantitative error control. We prove the theorem with the Lagrange form of the
+remainder, explore its applications, and then step back to survey the logical arc of the entire course.
+
+## Higher-Order Derivatives
+
+<Callout type="definition">
+**Definition (Higher derivatives).** If $f'$ is itself differentiable at $a$, we define the **second derivative**:
+
+$$f''(a) = (f')'(a) = \lim_{h \to 0} \frac{f'(a+h) - f'(a)}{h}.$$
+
+Inductively, the **$n$-th derivative** $f^{(n)}(a)$ is defined as $(f^{(n-1)})'(a)$, provided all
+intermediate derivatives exist in a neighborhood of $a$. We write $f^{(0)} = f$ by convention.
+
+We say $f$ is **$n$ times differentiable** at $a$ if $f^{(n)}(a)$ exists. If $f^{(n)}$ exists and is
+continuous on an interval $I$, we write $f \in C^n(I)$.
+</Callout>
+
+## Taylor Polynomials
+
+<Callout type="definition">
+**Definition (Taylor polynomial).** If $f$ is $n$ times differentiable at $a$, the **Taylor polynomial of
+degree $n$** centered at $a$ is
+
+$$P_n(x) = \sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x-a)^k = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^2 + \cdots + \frac{f^{(n)}(a)}{n!}(x-a)^n.$$
+
+When $a = 0$, this is also called the **Maclaurin polynomial**.
+</Callout>
+
+<Callout type="info">
+**Key property.** The Taylor polynomial $P_n$ is the unique polynomial of degree $\leq n$ that matches $f$
+and its first $n$ derivatives at $a$:
+
+$$P_n^{(k)}(a) = f^{(k)}(a) \quad \text{for } k = 0, 1, \ldots, n.$$
+
+This follows directly from the construction.
+</Callout>
+
+## Taylor's Theorem with Lagrange Remainder
+
+<Callout type="theorem">
+**Theorem (Taylor's theorem, Lagrange form).** Let $f$ be $(n+1)$ times differentiable on an open interval
+$I$ containing $a$. For every $x \in I$, there exists a point $c$ strictly between $a$ and $x$ such that
+
+$$f(x) = P_n(x) + R_n(x)$$
+
+where the **Lagrange remainder** is
+
+$$R_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}.$$
+
+*Proof.* Fix $x \neq a$ and define the constant $M$ by requiring
+
+$$f(x) = P_n(x) + M(x-a)^{n+1}.$$
+
+That is, $M = \frac{f(x) - P_n(x)}{(x-a)^{n+1}}$. We must show $M = \frac{f^{(n+1)}(c)}{(n+1)!}$ for some $c$
+between $a$ and $x$.
+
+Define $g \colon I \to \mathbb{R}$ by
+
+$$g(t) = f(t) - P_n(t) - M(t-a)^{n+1}.$$
+
+Then $g$ has the following properties:
+
+- $g(a) = f(a) - P_n(a) - 0 = 0$ (since $P_n(a) = f(a)$).
+- $g(x) = f(x) - P_n(x) - M(x-a)^{n+1} = 0$ (by definition of $M$).
+- $g^{(k)}(a) = f^{(k)}(a) - P_n^{(k)}(a) = 0$ for $k = 0, 1, \ldots, n$ (since $P_n$ matches $f$ through order $n$ at $a$).
+
+Apply Rolle's theorem repeatedly:
+
+1. $g(a) = g(x) = 0 \implies$ there exists $c_1$ between $a$ and $x$ with $g'(c_1) = 0$.
+2. $g'(a) = 0$ and $g'(c_1) = 0 \implies$ there exists $c_2$ between $a$ and $c_1$ with $g''(c_2) = 0$.
+3. Continuing, $g^{(k)}(a) = 0$ and $g^{(k)}(c_k) = 0 \implies$ there exists $c_{k+1}$ between $a$ and $c_k$ with $g^{(k+1)}(c_{k+1}) = 0$.
+
+After $n+1$ applications, we obtain $c = c_{n+1}$ between $a$ and $x$ with $g^{(n+1)}(c) = 0$.
+
+Now compute $g^{(n+1)}$. Since $P_n$ has degree $\leq n$, $P_n^{(n+1)} = 0$. The $(n+1)$-th derivative
+of $M(t-a)^{n+1}$ is $M \cdot (n+1)!$. Therefore:
+
+$$0 = g^{(n+1)}(c) = f^{(n+1)}(c) - 0 - M(n+1)!$$
+
+$$M = \frac{f^{(n+1)}(c)}{(n+1)!}. \quad \blacksquare$$
+</Callout>
+
+<Callout type="tip">
+The proof is elegant: define $M$ so that $g$ vanishes at both $a$ and $x$, use the matching derivatives at
+$a$ to get additional zeros of successive derivatives, and then apply Rolle's theorem $n+1$ times to drive
+down to the $(n+1)$-th derivative.
+</Callout>
+
+## Error Bounds
+
+<Callout type="theorem">
+**Corollary (Taylor remainder bound).** Under the hypotheses of Taylor's theorem, if $|f^{(n+1)}(t)| \leq M_{n+1}$
+for all $t$ between $a$ and $x$, then
+
+$$|R_n(x)| = |f(x) - P_n(x)| \leq \frac{M_{n+1}}{(n+1)!}|x-a|^{n+1}.$$
+</Callout>
+
+<Callout type="info">
+**Example.** For $f(x) = e^x$ centered at $a = 0$, we have $f^{(k)}(x) = e^x$ for all $k$. On $[0,1]$:
+
+$$|R_n(x)| \leq \frac{e}{(n+1)!} \quad \text{for } x \in [0,1].$$
+
+Since $(n+1)! \to \infty$, the Taylor polynomials converge to $e^x$ on $[0,1]$ as $n \to \infty$.
+</Callout>
+
+## Visualizing Taylor Approximations
+
+<FunctionPlot
+  fn="Math.sin(x)"
+  title="sin(x) and its Taylor approximations (plotted below in Python)"
+  domain={[-6.5, 6.5]}
+  range={[-2, 2]}
+/>
+
+The interactive visualization below lets you see how higher-degree Taylor polynomials progressively capture
+more of the behavior of the target function.
+
+<PythonPlayground
+  title="Taylor polynomial approximations of sin(x) and e^x"
+  defaultCode={`import numpy as np
+
+# Taylor polynomial for sin(x) centered at a=0
+# sin(x) = x - x^3/3! + x^5/5! - x^7/7! + ...
+def sin_taylor(x, n_terms):
+    """Sum the first n_terms of the Taylor series for sin(x)."""
+    result = 0.0
+    for k in range(n_terms):
+        coeff = (-1)**k / np.math.factorial(2*k + 1)
+        result += coeff * x**(2*k + 1)
+    return result
+
+# Taylor polynomial for e^x centered at a=0
+def exp_taylor(x, n_terms):
+    """Sum the first n_terms of the Taylor series for e^x."""
+    result = 0.0
+    for k in range(n_terms):
+        result += x**k / np.math.factorial(k)
+    return result
+
+# Evaluate and compare
+x_test = 1.0  # try values like 0.5, 1.0, 2.0, 5.0
+print(f"=== Taylor approximations at x = {x_test} ===")
+print()
+print("sin(x) Taylor polynomials:")
+print(f"  Exact sin({x_test}) = {np.sin(x_test):.10f}")
+for n in [1, 2, 3, 4, 5, 7, 10]:
+    approx = sin_taylor(x_test, n)
+    error = abs(approx - np.sin(x_test))
+    print(f"  {n} terms: {approx:>14.10f}  |error| = {error:.2e}")
+
+print()
+print("e^x Taylor polynomials:")
+print(f"  Exact e^{x_test} = {np.exp(x_test):.10f}")
+for n in [1, 2, 3, 5, 7, 10, 15]:
+    approx = exp_taylor(x_test, n)
+    error = abs(approx - np.exp(x_test))
+    print(f"  {n} terms: {approx:>14.10f}  |error| = {error:.2e}")
+
+print()
+
+# Demonstrate the error bound
+print("=== Error bound verification for e^x on [0,1] ===")
+print("Bound: |R_n(x)| <= e/(n+1)! for x in [0,1]")
+for n in range(1, 12):
+    bound = np.e / np.math.factorial(n + 1)
+    actual_max_err = max(abs(exp_taylor(x, n+1) - np.exp(x))
+                        for x in np.linspace(0, 1, 100))
+    print(f"  n={n:2d}: bound = {bound:.2e}, actual max error = {actual_max_err:.2e}")
+`}
+/>
+
+## Common Taylor Series
+
+For reference, here are the Taylor series (centered at $a = 0$) for the fundamental functions, all provable
+from the machinery developed in this course:
+
+| Function | Taylor Series | Radius of Convergence |
+|----------|--------------|----------------------|
+| $e^x$ | $\sum_{k=0}^{\infty}\frac{x^k}{k!}$ | $\infty$ |
+| $\sin x$ | $\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k+1}}{(2k+1)!}$ | $\infty$ |
+| $\cos x$ | $\sum_{k=0}^{\infty}\frac{(-1)^k x^{2k}}{(2k)!}$ | $\infty$ |
+| $\frac{1}{1-x}$ | $\sum_{k=0}^{\infty}x^k$ | $1$ |
+| $\ln(1+x)$ | $\sum_{k=1}^{\infty}\frac{(-1)^{k+1}x^k}{k}$ | $1$ |
+
+## Exercises
+
+<Problem>
+**Exercise 1.** Prove Taylor's theorem with Lagrange remainder for the case $n = 1$, starting from the
+Mean Value Theorem. (This special case is sometimes called the **extended MVT**.)
+</Problem>
+
+<Solution>
+For $n = 1$, Taylor's theorem states: if $f$ is twice differentiable on an interval containing $a$ and $x$,
+then there exists $c$ between $a$ and $x$ with
+
+$$f(x) = f(a) + f'(a)(x-a) + \frac{f''(c)}{2}(x-a)^2.$$
+
+**Proof.** Define $g(t) = f(t) - f(a) - f'(a)(t-a) - M(t-a)^2$ where $M$ is chosen so that $g(x) = 0$,
+i.e., $M = \frac{f(x) - f(a) - f'(a)(x-a)}{(x-a)^2}$.
+
+Note $g(a) = 0$ and $g(x) = 0$, so by Rolle's theorem there exists $c_1$ between $a$ and $x$ with $g'(c_1) = 0$.
+
+Also $g'(t) = f'(t) - f'(a) - 2M(t-a)$, so $g'(a) = 0$.
+
+Since $g'(a) = 0$ and $g'(c_1) = 0$, by Rolle's theorem there exists $c$ between $a$ and $c_1$ with $g''(c) = 0$.
+
+$g''(t) = f''(t) - 2M$, so $g''(c) = 0$ gives $f''(c) = 2M$, hence $M = f''(c)/2$. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="The Lagrange remainder term $R_n(x) = \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}$ involves a point $c$. What can we say about $c$?"
+  options={[
+    "c = a always",
+    "c = x always",
+    "c is some specific unknown point strictly between a and x",
+    "c = (a+x)/2 (the midpoint)"
+  ]}
+  correctIndex={2}
+  explanation="The Lagrange remainder guarantees the existence of some c between a and x, but we generally do not know its exact location. This is an existential statement from Rolle's theorem -- we know c exists but cannot compute it in general."
+/>
+
+<NumericInput
+  question="Use the Taylor remainder bound to find an upper bound for $|e^{0.1} - P_3(0.1)|$ where $P_3$ is the degree-3 Taylor polynomial of $e^x$ at $a = 0$. Since $e^t < 3$ for $t \in [0, 0.1]$, use $M_4 = 3$. Enter your bound (round to 7 decimal places)."
+  answer={0.0000125}
+  tolerance={0.000001}
+  hint="The bound is M_4 * |x-a|^4 / 4! = 3 * (0.1)^4 / 24 = 3 * 0.0001 / 24."
+/>
+
+<Problem>
+**Exercise 2.** Use Taylor's theorem to show that for all $x > 0$:
+
+$$x - \frac{x^2}{2} < \ln(1+x) < x.$$
+</Problem>
+
+<Solution>
+Let $f(t) = \ln(1+t)$. Then $f(0) = 0$, $f'(t) = \frac{1}{1+t}$, $f''(t) = -\frac{1}{(1+t)^2}$.
+
+**Upper bound ($\ln(1+x) < x$):** Apply Taylor's theorem with $n = 0$ (i.e., the MVT) to $f$ on $[0, x]$:
+
+$$\ln(1+x) = f(0) + f'(c) \cdot x = \frac{x}{1+c}$$
+
+for some $c \in (0, x)$. Since $c > 0$, $1 + c > 1$, so $\frac{x}{1+c} < x$.
+
+**Lower bound ($x - x^2/2 < \ln(1+x)$):** Apply Taylor's theorem with $n = 1$:
+
+$$\ln(1+x) = x + \frac{f''(c)}{2}x^2 = x - \frac{x^2}{2(1+c)^2}$$
+
+for some $c \in (0,x)$. Since $c > 0$, $(1+c)^2 > 1$, so $\frac{x^2}{2(1+c)^2} < \frac{x^2}{2}$.
+Therefore $\ln(1+x) = x - \frac{x^2}{2(1+c)^2} > x - \frac{x^2}{2}$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 3 (Definition Drill).** Compute the Taylor polynomial $P_3(x)$ of $f(x) = \cos(x)$ centered at $a = 0$ directly from the definition. Then use the Lagrange remainder to bound $|\cos(0.5) - P_3(0.5)|$.
+
+*Hint:* Compute $f(0), f'(0), f''(0), f'''(0)$ and form the polynomial. For the error bound, use $|f^{(4)}(c)| \leq 1$.
+</Problem>
+
+<Solution>
+*Proof.* We have $f(x) = \cos x$, so:
+
+$$f(0) = 1, \quad f'(0) = -\sin(0) = 0, \quad f''(0) = -\cos(0) = -1, \quad f'''(0) = \sin(0) = 0.$$
+
+The Taylor polynomial of degree 3 centered at $0$ is:
+
+$$P_3(x) = 1 + 0 \cdot x + \frac{-1}{2!}x^2 + \frac{0}{3!}x^3 = 1 - \frac{x^2}{2}.$$
+
+(Note: the degree-3 and degree-2 polynomials coincide since $f'''(0) = 0$.)
+
+**Error bound:** The fourth derivative is $f^{(4)}(x) = \cos(x)$, and $|\cos(c)| \leq 1$ for all $c$. By the Lagrange remainder bound:
+
+$$|\cos(0.5) - P_3(0.5)| = |R_3(0.5)| \leq \frac{1}{4!}|0.5|^4 = \frac{(0.5)^4}{24} = \frac{0.0625}{24} \approx 0.0026.$$
+
+For comparison: $P_3(0.5) = 1 - 0.125 = 0.875$ and $\cos(0.5) \approx 0.8776$, so the actual error is about $0.0026$, within the bound. $\square$
+</Solution>
+
+<Problem>
+**Exercise 4 (Counterexample).** Give an example of a function $f$ that is infinitely differentiable ($C^\infty$) at $a = 0$, whose Taylor series converges for all $x$, but does NOT converge to $f(x)$ for $x \neq 0$.
+
+*Hint:* Consider $f(x) = e^{-1/x^2}$ for $x \neq 0$ and $f(0) = 0$.
+</Problem>
+
+<Solution>
+*Answer.* Define
+
+$$f(x) = \begin{cases} e^{-1/x^2} & \text{if } x \neq 0 \\ 0 & \text{if } x = 0. \end{cases}$$
+
+**$f$ is $C^\infty$ and $f^{(n)}(0) = 0$ for all $n$:** One can show by induction that $f^{(n)}(x)$ for $x \neq 0$ is of the form $p(1/x) e^{-1/x^2}$ for some polynomial $p$. Using the fact that $e^{-1/x^2}$ decays faster than any power of $x$ as $x \to 0$, one proves $\lim_{x \to 0} f^{(n)}(x)/x^k = 0$ for all $k$, which gives $f^{(n)}(0) = 0$ for all $n \geq 0$ (via L'Hopital or direct estimation).
+
+**The Taylor series is identically zero:** Since $f^{(n)}(0) = 0$ for all $n$, the Taylor series of $f$ at $0$ is
+
+$$\sum_{n=0}^{\infty} \frac{f^{(n)}(0)}{n!}x^n = \sum_{n=0}^{\infty} 0 = 0.$$
+
+This converges to $0$ for all $x$.
+
+**But $f(x) \neq 0$ for $x \neq 0$:** For $x \neq 0$, $f(x) = e^{-1/x^2} > 0 \neq 0$.
+
+Therefore the Taylor series converges everywhere but represents $f$ only at $x = 0$. This shows that the Lagrange remainder $R_n(x) \to 0$ is a *necessary condition* for the Taylor series to converge to $f$, and it does not hold automatically even for $C^\infty$ functions. The functions for which it does hold (like $e^x$, $\sin x$, $\cos x$) are called **real analytic**. $\square$
+</Solution>
+
+## Semester Synthesis
+
+As we close the semester, let us trace the logical arc of the course:
+
+<Callout type="info">
+**The logical structure of rigorous calculus.**
+
+1. **Foundations:** The real numbers $\mathbb{R}$, completeness (least upper bound property), and the
+   Archimedean property. These axioms distinguish $\mathbb{R}$ from $\mathbb{Q}$ and make analysis possible.
+
+2. **Sequences and limits:** $\epsilon$-$N$ definitions, convergence theorems (Monotone Convergence, Bolzano-Weierstrass),
+   Cauchy sequences. The language of rigorous approximation.
+
+3. **Continuity:** $\epsilon$-$\delta$ definition, sequential characterization, preservation of compactness
+   (Extreme Value Theorem), preservation of connectedness (Intermediate Value Theorem). Continuous functions
+   respect the topological structure of $\mathbb{R}$.
+
+4. **Differentiation:** The derivative as a limit of difference quotients, differentiability implies continuity
+   (but not conversely), algebraic rules (product, quotient, chain), and the Mean Value Theorem -- the bridge
+   between local (derivative) and global (function values) information.
+
+5. **Taylor's theorem:** The culmination. Local information ($f(a), f'(a), f''(a), \ldots$) determines
+   the function's behavior near $a$ with quantitative error control. The factorial growth in the denominator
+   of $R_n$ ensures that for "nice" functions, the approximation improves as $n$ increases.
+</Callout>
+
+Each layer depends on the previous ones: Taylor's theorem requires repeated application of Rolle's theorem,
+which requires the Extreme Value Theorem, which requires completeness of $\mathbb{R}$.
+
+This hierarchy is not just logical -- it reflects a deepening understanding of how local and global, discrete
+and continuous, approximate and exact relate to one another. These ideas form the foundation for everything
+that follows: integration, series, multivariable calculus, and ultimately the mathematical framework of
+deep learning.

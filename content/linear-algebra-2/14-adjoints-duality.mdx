@@ -1,0 +1,251 @@
+---
+title: "Adjoints, Duality, and Operator Symmetry"
+description: "Adjoint operators via the Riesz representation, the algebra of adjoints, dual spaces, and the four fundamental subspaces"
+order: 14
+prerequisites: ["13-least-squares-pseudoinverse"]
+---
+
+# Adjoints, Duality, and Operator Symmetry
+
+We have used the adjoint $T^*$ throughout the preceding lessons as a tool. Now we develop the theory properly: where the adjoint comes from, what it means algebraically and geometrically, and how it connects to duality. This lesson unifies the self-adjoint, unitary, and normal operator theory with the four fundamental subspaces of a matrix.
+
+## The Riesz Representation Theorem
+
+The adjoint's existence rests on a fundamental theorem about inner product spaces.
+
+<Callout type="theorem" title="Riesz Representation Theorem (Finite-Dimensional)">
+  Let $V$ be a finite-dimensional inner product space over $\mathbb{F}$ and let $\varphi : V \to \mathbb{F}$ be a linear functional. Then there exists a unique $u \in V$ such that
+  $$\varphi(v) = \langle v, u \rangle \quad \text{for all } v \in V.$$
+  Moreover, $\|u\| = \|\varphi\|$ (the operator norm of $\varphi$).
+</Callout>
+
+**Proof.** Let $\{e_1, \ldots, e_n\}$ be an orthonormal basis for $V$. Define:
+
+$$u = \sum_{k=1}^n \overline{\varphi(e_k)}\, e_k.$$
+
+For any $v = \sum_j \alpha_j e_j$:
+
+$$\langle v, u \rangle = \left\langle \sum_j \alpha_j e_j,\; \sum_k \overline{\varphi(e_k)}\, e_k \right\rangle = \sum_j \alpha_j \varphi(e_j) = \varphi\left(\sum_j \alpha_j e_j\right) = \varphi(v).$$
+
+**Uniqueness:** If $\langle v, u_1 \rangle = \langle v, u_2 \rangle$ for all $v$, then $\langle v, u_1 - u_2 \rangle = 0$ for all $v$. Taking $v = u_1 - u_2$ gives $\|u_1 - u_2\|^2 = 0$, so $u_1 = u_2$. $\blacksquare$
+
+<Callout type="tip" title="Why Riesz Matters">
+  The Riesz theorem says that in a (finite-dimensional) inner product space, every linear functional is "represented" by an inner product with a fixed vector. This is the bridge between dual spaces and inner products -- and it is exactly what allows us to define the adjoint.
+</Callout>
+
+## Existence and Uniqueness of the Adjoint
+
+<Callout type="theorem" title="Existence of the Adjoint">
+  Let $V$ and $W$ be finite-dimensional inner product spaces and $T : V \to W$ a linear map. There exists a unique linear map $T^* : W \to V$ such that
+  $$\langle Tv, w \rangle_W = \langle v, T^*w \rangle_V \quad \text{for all } v \in V,\; w \in W.$$
+</Callout>
+
+**Proof.** Fix $w \in W$ and define $\varphi_w : V \to \mathbb{F}$ by $\varphi_w(v) = \langle Tv, w \rangle$. This is a linear functional on $V$ (linear in $v$). By the Riesz theorem, there exists a unique $u_w \in V$ with $\varphi_w(v) = \langle v, u_w \rangle$ for all $v$.
+
+Define $T^*(w) = u_w$. We must verify $T^*$ is linear:
+
+$$\langle v, T^*(\alpha w_1 + \beta w_2) \rangle = \langle Tv, \alpha w_1 + \beta w_2 \rangle = \bar{\alpha}\langle Tv, w_1 \rangle + \bar{\beta}\langle Tv, w_2 \rangle = \langle v, \alpha T^*w_1 + \beta T^*w_2 \rangle$$
+
+for all $v$, so $T^*(\alpha w_1 + \beta w_2) = \alpha T^*w_1 + \beta T^*w_2$. $\blacksquare$
+
+## Matrix of the Adjoint
+
+<Callout type="theorem" title="Matrix Representation of the Adjoint">
+  Let $\{e_1, \ldots, e_n\}$ and $\{f_1, \ldots, f_m\}$ be orthonormal bases for $V$ and $W$, respectively. If $T$ has matrix $A$ with respect to these bases, then $T^*$ has matrix $A^* = \bar{A}^T$ (the conjugate transpose).
+  Over $\mathbb{R}$, the adjoint matrix is simply $A^T$.
+</Callout>
+
+**Proof.** The $(i,j)$ entry of the matrix of $T^*$ is:
+
+$$\langle T^* f_j, e_i \rangle = \overline{\langle e_i, T^* f_j \rangle} = \overline{\langle T e_i, f_j \rangle} = \overline{A_{ji}} = (\bar{A}^T)_{ij}. \quad \blacksquare$$
+
+<Callout type="tip" title="Basis Dependence">
+  The identification $T^* \leftrightarrow A^*$ depends on using **orthonormal** bases. In a non-orthonormal basis, the matrix of the adjoint involves the Gram matrix $G$ and the formula becomes $G^{-1}\bar{A}^T G$. This is one reason why orthonormal bases are preferred throughout spectral theory.
+</Callout>
+
+## Algebraic Properties of the Adjoint
+
+<Callout type="theorem" title="Algebra of Adjoints">
+  Let $S, T : V \to V$ be linear operators and $\alpha \in \mathbb{F}$. Then:
+  1. $(S + T)^* = S^* + T^*$
+  2. $(\alpha T)^* = \bar{\alpha} T^*$
+  3. $(ST)^* = T^* S^*$ (order reverses)
+  4. $(T^*)^* = T$
+  5. $(T^{-1})^* = (T^*)^{-1}$ when $T$ is invertible
+</Callout>
+
+**Proof of (3): $(ST)^* = T^*S^*$.**
+
+For all $v, w \in V$:
+
+$$\langle (ST)v, w \rangle = \langle S(Tv), w \rangle = \langle Tv, S^*w \rangle = \langle v, T^*(S^*w) \rangle = \langle v, (T^*S^*)w \rangle.$$
+
+By uniqueness of the adjoint, $(ST)^* = T^*S^*$. $\blacksquare$
+
+**Proof of (4): $(T^*)^* = T$.**
+
+For all $v, w$: $\langle (T^*)^*v, w \rangle = \langle v, T^*w \rangle = \overline{\langle T^*w, v \rangle} = \overline{\langle w, Tv \rangle} = \langle Tv, w \rangle$. So $(T^*)^* = T$. $\blacksquare$
+
+## The Operator Zoo: Classification by Adjoint
+
+<Callout type="definition" title="Classification of Operators by Their Adjoint">
+  Let $T \in \mathcal{L}(V)$:
+  | Condition | Name | Eigenvalue constraint | Normal? |
+  |-----------|------|-----------------------|---------|
+  | $T^* = T$ | Self-adjoint (Hermitian) | $\lambda \in \mathbb{R}$ | Yes |
+  | $T^* = -T$ | Skew-adjoint (anti-Hermitian) | $\lambda \in i\mathbb{R}$ | Yes |
+  | $T^*T = I$ | Unitary (or orthogonal over $\mathbb{R}$) | $|\lambda| = 1$ | Yes |
+  | $T^*T = TT^*$ | Normal | $\lambda \in \mathbb{C}$ (arbitrary) | Yes (by def.) |
+  Every operator in the table is normal, so (over $\mathbb{C}$) each is unitarily diagonalizable by the Complex Spectral Theorem.
+</Callout>
+
+## Unitary Operators and Isometries
+
+<Callout type="theorem" title="Unitary iff Isometry">
+  Let $T \in \mathcal{L}(V)$ where $V$ is a finite-dimensional inner product space. Then $T$ is unitary ($T^*T = I$) if and only if $T$ is an isometry ($\|Tv\| = \|v\|$ for all $v$).
+</Callout>
+
+**Proof.** ($\Rightarrow$) If $T^*T = I$, then $\|Tv\|^2 = \langle Tv, Tv \rangle = \langle T^*Tv, v \rangle = \langle v, v \rangle = \|v\|^2$.
+
+($\Leftarrow$) If $\|Tv\| = \|v\|$ for all $v$, then $\langle T^*Tv, v \rangle = \langle Tv, Tv \rangle = \langle v, v \rangle$ for all $v$. By the polarization identity, $\langle T^*Tv, w \rangle = \langle v, w \rangle$ for all $v, w$, so $T^*T = I$. $\blacksquare$
+
+## The Four Fundamental Subspaces
+
+<Callout type="theorem" title="Fundamental Subspace Relations">
+  For $A \in \mathbb{R}^{m \times n}$, the four fundamental subspaces satisfy:
+  1. $\ker(A^T) = (\operatorname{col} A)^{\perp}$ and $\operatorname{col}(A) = (\ker A^T)^{\perp}$
+  2. $\ker(A) = (\operatorname{row} A)^{\perp}$ and $\operatorname{row}(A) = (\ker A)^{\perp}$
+  In abstract terms: $\ker(T^*) = (\operatorname{im} T)^{\perp}$.
+</Callout>
+
+**Proof of $\ker(T^*) = (\operatorname{im} T)^{\perp}$.**
+
+$w \in \ker(T^*)$ iff $T^*w = 0$ iff $\langle v, T^*w \rangle = 0$ for all $v$ iff $\langle Tv, w \rangle = 0$ for all $v$ iff $w \perp \operatorname{im}(T)$. $\blacksquare$
+
+This gives the orthogonal decompositions:
+
+$$\mathbb{R}^n = \operatorname{row}(A) \oplus \ker(A), \qquad \mathbb{R}^m = \operatorname{col}(A) \oplus \ker(A^T).$$
+
+<Callout type="tip" title="The Big Picture">
+  The four fundamental subspaces partition both the domain and codomain into orthogonal pairs. A matrix $A$ maps $\operatorname{row}(A) \to \operatorname{col}(A)$ (an isomorphism when restricted) and sends $\ker(A)$ to $\{0\}$. This is the geometric content of the rank-nullity theorem, enhanced by orthogonality.
+</Callout>
+
+## Dual Spaces
+
+<Callout type="definition" title="Dual Space">
+  The **dual space** of $V$, denoted $V^*$, is the space of all linear functionals $\varphi : V \to \mathbb{F}$:
+  $$V^* = \mathcal{L}(V, \mathbb{F}).$$
+  If $\dim V = n$, then $\dim V^* = n$.
+</Callout>
+
+<Callout type="definition" title="Dual Basis">
+  Let $\{e_1, \ldots, e_n\}$ be a basis for $V$. The **dual basis** $\{e_1^*, \ldots, e_n^*\}$ for $V^*$ is defined by:
+  $$e_i^*(e_j) = \delta_{ij} = \begin{cases} 1 & i = j, \\ 0 & i \neq j. \end{cases}$$
+</Callout>
+
+The Riesz theorem tells us that when $V$ has an inner product, the map $v \mapsto \langle \cdot, v \rangle$ is a conjugate-linear isomorphism $V \to V^*$. This means every linear functional "is" an inner product with some fixed vector -- the distinction between $V$ and $V^*$ disappears (up to conjugation).
+
+---
+
+## Exercises
+
+<Problem title="Prove: ker(T*) = (im T)^perp">
+  Let $T : V \to W$ be a linear map between finite-dimensional inner product spaces. Prove that $\ker(T^*) = (\operatorname{im} T)^{\perp}$.
+<Solution>
+  **Proof.** We show both inclusions.
+  ($\subseteq$) Let $w \in \ker(T^*)$, so $T^*w = 0$. For any $v \in V$:
+  $$\langle Tv, w \rangle = \langle v, T^*w \rangle = \langle v, 0 \rangle = 0.$$
+  Since every element of $\operatorname{im}(T)$ has the form $Tv$, we have $w \perp \operatorname{im}(T)$.
+  ($\supseteq$) Let $w \in (\operatorname{im} T)^{\perp}$, so $\langle Tv, w \rangle = 0$ for all $v$. Then:
+  $$\langle v, T^*w \rangle = \langle Tv, w \rangle = 0 \quad \text{for all } v \in V.$$
+  Taking $v = T^*w$ gives $\|T^*w\|^2 = 0$, so $T^*w = 0$, i.e., $w \in \ker(T^*)$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Prove: (ST)* = T*S*">
+  Let $S : V \to W$ and $T : U \to V$ be linear maps between finite-dimensional inner product spaces. Prove that $(ST)^* = T^*S^*$.
+<Solution>
+  **Proof.** For all $u \in U$ and $w \in W$:
+  $$\langle (ST)u, w \rangle_W = \langle S(Tu), w \rangle_W = \langle Tu, S^*w \rangle_V = \langle u, T^*(S^*w) \rangle_U = \langle u, (T^*S^*)w \rangle_U.$$
+  The first equality is the definition of composition. The second uses the definition of $S^*$. The third uses the definition of $T^*$.
+  By the uniqueness of the adjoint (from Riesz), since $\langle (ST)u, w \rangle = \langle u, (T^*S^*)w \rangle$ for all $u, w$, we conclude $(ST)^* = T^*S^*$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Counterexample: Not Every Operator is Normal">
+  Give a $2 \times 2$ real matrix that is not normal, and verify $AA^T \neq A^TA$ by explicit computation.
+<Solution>
+  **Solution.** Let $A = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ (nilpotent, not normal).
+  $$A^T A = \begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix}, \qquad AA^T = \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}.$$
+  Since $A^TA \neq AA^T$, the matrix $A$ is not normal. Note that $A$ is not diagonalizable (its only eigenvalue is 0 with algebraic multiplicity 2 but geometric multiplicity 1), consistent with the Complex Spectral Theorem which guarantees diagonalizability only for normal operators. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $T$ be a linear operator on a complex inner product space. Which of the following is equivalent to $T$ being unitary?"
+  options={[
+    "$T$ maps every orthonormal basis to an orthonormal basis",
+    "$T$ has all eigenvalues equal to 1",
+    "$T$ is self-adjoint and invertible",
+    "$T$ commutes with every other operator"
+  ]}
+  correctIndex={0}
+  explanation="A unitary operator is an isometry, so it preserves inner products and maps orthonormal sets to orthonormal sets. Eigenvalues of a unitary operator lie on the unit circle but need not equal 1. Self-adjoint and invertible does not imply unitary."
+/>
+
+<NumericInput
+  question="Let $A = \begin{pmatrix} 0 & -1 \\\\ 1 & 0 \end{pmatrix}$. This is skew-symmetric ($A^T = -A$). What is $\det(A^TA)$?"
+  answer={1}
+  tolerance={0.01}
+  explanation="$A^TA = \begin{pmatrix} 1 & 0 \\\\ 0 & 1 \end{pmatrix} = I_2$, so $\det(A^TA) = 1$. This shows $A$ is actually orthogonal as well (a rotation by $90^{\circ}$)."
+/>
+
+<PythonPlayground
+  title="Four Fundamental Subspaces and the Adjoint"
+  initialCode={`import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+# A non-square matrix
+A = np.array([
+    [1, 2, 3],
+    [4, 5, 6]
+], dtype=float)
+
+print("Matrix A (2x3):")
+print(A)
+print(f"rank(A) = {np.linalg.matrix_rank(A)}")
+print()
+
+# Four fundamental subspaces
+U, s, Vt = np.linalg.svd(A, full_matrices=True)
+r = np.sum(s > 1e-10)
+
+col_A = U[:, :r]         # Column space basis (in R^m)
+null_AT = U[:, r:]        # Left null space (ker A^T)
+row_A = Vt[:r, :]         # Row space basis (in R^n)
+null_A = Vt[r:, :]        # Null space (ker A)
+
+print(f"Column space basis (dim={r}):")
+print(col_A)
+print(f"\\nLeft null space basis (dim={A.shape[0]-r}):")
+print(null_AT)
+print(f"\\nRow space basis (dim={r}):")
+print(row_A.T)
+print(f"\\nNull space basis (dim={A.shape[1]-r}):")
+print(null_A.T)
+
+# Verify orthogonality: ker(A^T) perp col(A)
+if null_AT.size > 0 and col_A.size > 0:
+    print("\\nker(A^T) . col(A):", null_AT.T @ col_A)
+
+# Verify ker(A) perp row(A)
+if null_A.size > 0 and row_A.size > 0:
+    print("ker(A) . row(A)^T:", null_A @ row_A.T)
+
+# Check: is a random matrix normal?
+print("\\n--- Normality check ---")
+B = np.random.randn(3, 3)
+sym = (B + B.T) / 2   # symmetric (always normal)
+print("B^TB = BB^T for symmetric?", np.allclose(sym.T @ sym, sym @ sym.T))
+print("B^TB = BB^T for random B?  ", np.allclose(B.T @ B, B @ B.T))`}
+/>

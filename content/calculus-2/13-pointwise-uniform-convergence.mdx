@@ -1,0 +1,303 @@
+---
+title: "Sequences of Functions: Pointwise vs Uniform Convergence"
+description: "The critical distinction in functional convergence, with canonical examples and the continuity preservation theorem"
+order: 13
+prerequisites: ["12-power-series-local-representation"]
+---
+
+# Pointwise vs Uniform Convergence
+
+We now confront one of the most important ideas in analysis: the distinction between pointwise and uniform convergence of function sequences. The difference comes down to the order of quantifiers, and getting it wrong leads to false theorems.
+
+## Pointwise Convergence
+
+<Callout type="definition">
+**Definition 13.1 (Pointwise Convergence).** Let $f_n : A \to \mathbb{R}$ be a sequence of functions. We say $(f_n)$ **converges pointwise** to $f : A \to \mathbb{R}$ if for every $x \in A$:
+
+$$\lim_{n \to \infty} f_n(x) = f(x).$$
+
+Written with quantifiers:
+
+$$\forall x \in A,\; \forall \varepsilon > 0,\; \exists N \in \mathbb{N},\; \forall n \geq N,\; |f_n(x) - f(x)| < \varepsilon.$$
+</Callout>
+
+The crucial feature: $N$ may depend on both $\varepsilon$ **and** $x$.
+
+## Uniform Convergence
+
+<Callout type="definition">
+**Definition 13.2 (Uniform Convergence).** The sequence $(f_n)$ **converges uniformly** to $f$ on $A$ if:
+
+$$\forall \varepsilon > 0,\; \exists N \in \mathbb{N},\; \forall n \geq N,\; \forall x \in A,\; |f_n(x) - f(x)| < \varepsilon.$$
+
+Equivalently, $\sup_{x \in A} |f_n(x) - f(x)| \to 0$ as $n \to \infty$.
+</Callout>
+
+<Callout type="tip">
+**The quantifier swap.** Compare the two definitions:
+
+- **Pointwise:** $\forall x\; \forall \varepsilon\; \exists N\; \forall n \geq N$: $|f_n(x) - f(x)| < \varepsilon$
+- **Uniform:** $\forall \varepsilon\; \exists N\; \forall n \geq N\; \forall x$: $|f_n(x) - f(x)| < \varepsilon$
+
+In uniform convergence, $N$ depends only on $\varepsilon$, not on $x$. A single $N$ works for ALL points simultaneously. This is strictly stronger.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 13.3.** Uniform convergence implies pointwise convergence. The converse is false.
+</Callout>
+
+*Proof.* If $(f_n) \to f$ uniformly, then the $N$ from the uniform definition works for each individual $x$, so we also have pointwise convergence. The converse fails by the following canonical example. $\square$
+
+## Canonical Example: $f_n(x) = x^n$ on $[0, 1]$
+
+<Callout type="definition">
+**Example 13.4.** Define $f_n : [0, 1] \to \mathbb{R}$ by $f_n(x) = x^n$.
+</Callout>
+
+**Pointwise limit.** For each fixed $x \in [0, 1)$, $x^n \to 0$. At $x = 1$, $1^n = 1 \to 1$. So the pointwise limit is:
+
+$$f(x) = \begin{cases} 0 & \text{if } 0 \leq x < 1, \\ 1 & \text{if } x = 1. \end{cases}$$
+
+**Not uniformly convergent.** Each $f_n$ is continuous on $[0, 1]$, but the pointwise limit $f$ is discontinuous at $x = 1$. As we will prove below, uniform convergence preserves continuity. Since the limit is discontinuous, the convergence cannot be uniform.
+
+We can verify directly: $\sup_{x \in [0,1]} |f_n(x) - f(x)| = \sup_{x \in [0,1)} x^n = 1$ (the supremum approaches 1 from below but is never attained). In fact, for any $x_n = (1 - 1/n)$, we have $f_n(x_n) = (1 - 1/n)^n \to 1/e \neq 0$. So the sup does not go to zero.
+
+<FunctionPlot
+  fn={"Math.pow(x, 10)"}
+  title={"f_n(x) = x^n for n = 10 on [0, 1]: converges pointwise to 0 (except at x=1)"}
+  domain={[0, 1.1]}
+  range={[-0.1, 1.1]}
+/>
+
+## Second Example: $f_n(x) = x / (1 + nx^2)$
+
+<Callout type="info">
+**Example 13.5.** Let $f_n(x) = \frac{x}{1 + nx^2}$ on $\mathbb{R}$.
+
+For $x = 0$: $f_n(0) = 0$ for all $n$. For $x \neq 0$: $f_n(x) = \frac{x}{1 + nx^2} \to 0$ since the denominator grows without bound.
+
+So $f_n \to 0$ pointwise. Is this uniform?
+
+The maximum of $|f_n|$ occurs at $x = 1/\sqrt{n}$ (by calculus), giving $f_n(1/\sqrt{n}) = \frac{1/\sqrt{n}}{1 + 1} = \frac{1}{2\sqrt{n}}$. So $\sup |f_n(x)| = \frac{1}{2\sqrt{n}} \to 0$.
+
+The convergence IS uniform on $\mathbb{R}$, despite the "moving bump." The bump height shrinks to zero.
+</Callout>
+
+## The Cauchy Criterion for Uniform Convergence
+
+<Callout type="theorem">
+**Theorem 13.6 (Cauchy Criterion).** A sequence $(f_n)$ converges uniformly on $A$ if and only if for every $\varepsilon > 0$, there exists $N$ such that
+
+$$\sup_{x \in A} |f_n(x) - f_m(x)| < \varepsilon \quad \text{for all } n, m \geq N.$$
+</Callout>
+
+*Proof.* ($\Rightarrow$) If $f_n \to f$ uniformly, then for $\varepsilon > 0$, choose $N$ with $\sup |f_n(x) - f(x)| < \varepsilon/2$ for $n \geq N$. For $n, m \geq N$:
+
+$$|f_n(x) - f_m(x)| \leq |f_n(x) - f(x)| + |f(x) - f_m(x)| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon$$
+
+uniformly in $x$.
+
+($\Leftarrow$) For each $x$, $(f_n(x))$ is Cauchy in $\mathbb{R}$, hence converges to some $f(x)$. Fix $n \geq N$ and let $m \to \infty$ in $|f_n(x) - f_m(x)| < \varepsilon$ to get $|f_n(x) - f(x)| \leq \varepsilon$ for all $x$. Since $\varepsilon$ is arbitrary, $f_n \to f$ uniformly. $\square$
+
+## Uniform Convergence Preserves Continuity
+
+This is the theorem that makes uniform convergence indispensable.
+
+<Callout type="theorem">
+**Theorem 13.7 (Uniform Limit of Continuous Functions is Continuous).** Let $f_n : A \to \mathbb{R}$ be continuous for each $n$, and suppose $f_n \to f$ uniformly on $A$. Then $f$ is continuous on $A$.
+</Callout>
+
+*Proof.* Let $c \in A$ and $\varepsilon > 0$. We use the $\varepsilon/3$ trick.
+
+**Step 1.** Since $f_n \to f$ uniformly, there exists $N$ such that $|f_n(x) - f(x)| < \varepsilon/3$ for all $x \in A$ and all $n \geq N$. Fix such an $n$.
+
+**Step 2.** Since $f_n$ is continuous at $c$, there exists $\delta > 0$ such that $|x - c| < \delta$ implies $|f_n(x) - f_n(c)| < \varepsilon/3$.
+
+**Step 3.** For $|x - c| < \delta$:
+
+$$|f(x) - f(c)| \leq \underbrace{|f(x) - f_n(x)|}_{< \varepsilon/3} + \underbrace{|f_n(x) - f_n(c)|}_{< \varepsilon/3} + \underbrace{|f_n(c) - f(c)|}_{< \varepsilon/3} < \varepsilon.$$
+
+Since $\varepsilon > 0$ was arbitrary, $f$ is continuous at $c$. Since $c$ was arbitrary, $f$ is continuous on $A$. $\square$
+
+<Callout type="warning">
+**Contrapositive in action.** This theorem gives us a powerful tool for showing convergence is NOT uniform: if each $f_n$ is continuous but the pointwise limit $f$ is discontinuous, then $f_n \not\to f$ uniformly. This is exactly how we proved $f_n(x) = x^n$ does not converge uniformly on $[0,1]$.
+</Callout>
+
+## Exercises
+
+<Problem>
+**Exercise 13.1.** Prove Theorem 13.7 (uniform limit of continuous functions is continuous) from scratch, clearly identifying where each hypothesis (uniform convergence, continuity of $f_n$) is used.
+</Problem>
+
+<Solution>
+*Proof.* Let $c \in A$ and let $\varepsilon > 0$ be given. We must find $\delta > 0$ such that $|x - c| < \delta$ and $x \in A$ implies $|f(x) - f(c)| < \varepsilon$.
+
+**Using uniform convergence:** Since $f_n \to f$ uniformly on $A$, applied with $\varepsilon/3 > 0$, there exists $N \in \mathbb{N}$ such that for all $n \geq N$ and all $x \in A$:
+
+$$|f_n(x) - f(x)| < \frac{\varepsilon}{3}. \tag{1}$$
+
+Fix $n = N$ (any $n \geq N$ would work).
+
+**Using continuity of $f_N$:** Since $f_N$ is continuous at $c$, applied with $\varepsilon/3 > 0$, there exists $\delta > 0$ such that for all $x \in A$ with $|x - c| < \delta$:
+
+$$|f_N(x) - f_N(c)| < \frac{\varepsilon}{3}. \tag{2}$$
+
+**Combining via triangle inequality:** For $x \in A$ with $|x - c| < \delta$:
+
+$$|f(x) - f(c)| \leq |f(x) - f_N(x)| + |f_N(x) - f_N(c)| + |f_N(c) - f(c)|.$$
+
+By (1) with $x = x$: the first term is $< \varepsilon/3$.
+By (2): the second term is $< \varepsilon/3$.
+By (1) with $x = c$: the third term is $< \varepsilon/3$.
+
+Therefore $|f(x) - f(c)| < \varepsilon$. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"What is the key difference between pointwise and uniform convergence?"}
+  options={[
+    "Pointwise convergence is faster than uniform convergence",
+    "In uniform convergence, N depends only on epsilon, not on x; in pointwise, N may depend on both",
+    "Uniform convergence requires the functions to be differentiable",
+    "Pointwise convergence always preserves continuity, uniform does not"
+  ]}
+  correctIndex={1}
+  explanation={"The fundamental difference is the quantifier order. In pointwise convergence, for each x and each epsilon we find N (so N can depend on x). In uniform convergence, for each epsilon we find a single N that works for ALL x simultaneously. This is what makes uniform convergence strong enough to preserve properties like continuity."}
+/>
+
+<NumericInput
+  question={"Let f_n(x) = x/(1 + nx^2). The maximum of |f_n(x)| occurs at x = 1/sqrt(n). What is the sup-norm ||f_n||_inf = sup|f_n(x)| when n = 100? Give your answer to 4 decimal places."}
+  answer={0.05}
+  tolerance={0.001}
+  hint={"Substitute x = 1/sqrt(100) = 0.1 into f_100(x) = x/(1+100x^2) = 0.1/(1+1) = 0.05. The general formula is 1/(2*sqrt(n))."}
+/>
+
+<Problem>
+**Exercise 13.2.** Show that $f_n(x) = x^n$ converges pointwise but not uniformly on $[0, 1]$. Use the contrapositive of Theorem 13.7.
+</Problem>
+
+<Solution>
+*Proof.*
+
+**Pointwise convergence.** For $x \in [0, 1)$: $|x| < 1$, so $x^n \to 0$. For $x = 1$: $1^n = 1 \to 1$. Thus $f_n \to f$ pointwise, where $f(x) = 0$ for $x \in [0,1)$ and $f(1) = 1$.
+
+**Not uniform (via Theorem 13.7).** Each $f_n(x) = x^n$ is continuous on $[0,1]$ (it is a polynomial). However, the pointwise limit $f$ is discontinuous at $x = 1$:
+
+$$\lim_{x \to 1^-} f(x) = 0 \neq 1 = f(1).$$
+
+By the contrapositive of Theorem 13.7 (if the uniform limit of continuous functions is continuous, then if the limit is discontinuous, the convergence is not uniform), the convergence $f_n \to f$ is not uniform on $[0,1]$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 13.3 (Counterexample).** Construct a sequence of continuous functions $f_n \colon [0, 1] \to \mathbb{R}$ that converges pointwise to a **discontinuous** limit, thereby showing that pointwise convergence does not preserve continuity.
+
+Use the sequence $f_n(x) = x^n$ and:
+1. Prove the pointwise limit $f(x) = 0$ for $x \in [0,1)$ and $f(1) = 1$ is discontinuous at $x = 1$.
+2. Prove the convergence is not uniform by computing $\sup_{x \in [0,1]} |f_n(x) - f(x)|$ and showing it does not converge to $0$.
+3. Explain why this does not contradict Theorem 13.7 (which requires uniform convergence).
+
+*Hint:* Evaluate $f_n$ at $x_n = (1 - 1/n)$ to bound the sup-norm from below.
+</Problem>
+
+<Solution>
+*Proof.*
+
+**(1) Pointwise limit is discontinuous.** For $x \in [0, 1)$: $f_n(x) = x^n \to 0$ since $|x| < 1$. For $x = 1$: $f_n(1) = 1^n = 1 \to 1$. So
+
+$$f(x) = \lim_{n \to \infty} x^n = \begin{cases} 0 & 0 \leq x < 1, \\ 1 & x = 1. \end{cases}$$
+
+This is discontinuous at $x = 1$: $\lim_{x \to 1^-} f(x) = 0 \neq 1 = f(1)$.
+
+**(2) Convergence is not uniform.** The sup-norm is:
+
+$$\|f_n - f\|_{\infty} = \sup_{x \in [0,1]} |f_n(x) - f(x)| = \sup_{x \in [0,1)} x^n$$
+
+(since at $x = 1$, $|f_n(1) - f(1)| = |1 - 1| = 0$).
+
+For any $n$, evaluate at $x_n = (1 - 1/n) \in [0, 1)$:
+
+$$|f_n(x_n) - f(x_n)| = \left(1 - \frac{1}{n}\right)^n \to \frac{1}{e} \approx 0.3679.$$
+
+Since $\|f_n - f\|_{\infty} \geq (1 - 1/n)^n \to 1/e > 0$, the sup-norm does not converge to $0$, so the convergence is not uniform.
+
+**(3) No contradiction with Theorem 13.7.** Theorem 13.7 states: if $f_n \to f$ *uniformly* and each $f_n$ is continuous, then $f$ is continuous. The hypothesis is uniform convergence. Since we just proved the convergence is only pointwise (not uniform), the theorem's hypothesis is not met, and no conclusion about continuity of $f$ can be drawn. The discontinuous limit is consistent with the theorem -- it is a consequence of the convergence being merely pointwise. $\square$
+</Solution>
+
+## Visualizing Pointwise vs Uniform Convergence
+
+<PythonPlayground
+  title={"Pointwise vs Uniform Convergence: x^n on [0,1]"}
+  defaultCode={`import math
+
+# Example 1: f_n(x) = x^n on [0,1]
+# Converges pointwise to 0 on [0,1), to 1 at x=1
+# NOT uniformly convergent (limit is discontinuous)
+
+print("Example 1: f_n(x) = x^n on [0, 1]")
+print("=" * 55)
+print()
+
+# Show the sup-norm does not go to 0
+print("Sup-norm ||f_n - f||_inf on [0, 1]:")
+print(f"{'n':>6} {'sup|f_n(x) - f(x)|':>25} {'Uniform?':>10}")
+print("-" * 45)
+for n in [1, 2, 5, 10, 50, 100, 1000]:
+    # The sup is achieved near x=1 but x<1
+    # f_n(x) - f(x) = x^n - 0 = x^n for x in [0,1)
+    # sup over [0,1) of x^n = 1 (limit as x->1)
+    # But we can evaluate at x = 1 - 1/n:
+    x_test = 1 - 1/n if n > 1 else 0.5
+    val = x_test**n
+    # The actual sup is 1 (approached but not attained on [0,1))
+    # But at x=1, f_n(1)-f(1) = 1-1 = 0
+    # So sup over [0,1] is approached near x=1 from left
+    print(f"{n:>6} {val:>25.6f} {'No':>10}")
+
+print()
+print("The sup-norm stays near 1 (specifically -> 1/e),")
+print("so convergence is NOT uniform.")
+
+print()
+print()
+
+# Example 2: f_n(x) = x/(1 + nx^2) on R
+# Converges pointwise to 0
+# UNIFORMLY convergent: sup|f_n| = 1/(2*sqrt(n)) -> 0
+
+print("Example 2: f_n(x) = x/(1 + nx^2) on R")
+print("=" * 55)
+print()
+print("Sup-norm ||f_n||_inf = 1/(2*sqrt(n)):")
+print(f"{'n':>6} {'sup|f_n(x)|':>15} {'Uniform?':>10}")
+print("-" * 35)
+for n in [1, 4, 16, 64, 100, 400, 10000]:
+    sup_norm = 1 / (2 * math.sqrt(n))
+    print(f"{n:>6} {sup_norm:>15.6f} {'Yes':>10}")
+
+print()
+print("The sup-norm -> 0, so convergence IS uniform.")
+print()
+print("Key lesson: uniform convergence means the entire")
+print("graph of f_n approaches f simultaneously, not just")
+print("one point at a time.")
+`}
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Write the negation of uniform convergence with quantifiers in the correct order,
+and use it to prove directly that $f_n(x)=x^n$ is not uniformly convergent on $[0,1]$.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Prove that
+$f_n(x)=\frac{x}{1+nx^2}$
+converges uniformly on $\mathbb{R}$, and compute an explicit sharp bound for
+$\sup_x |f_n(x)|$.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Construct a sequence of continuous functions converging pointwise to a discontinuous limit on a compact interval,
+and explain exactly why Theorem 13.7 does not apply.
+</Problem>

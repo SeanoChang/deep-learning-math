@@ -1,0 +1,289 @@
+---
+title: "Algebra and Order Properties of the Integral"
+description: "Linearity, monotonicity, additivity, and the comparison principle for integrals"
+order: 4
+prerequisites: ["03-continuous-monotone-integrable"]
+---
+
+# Algebra and Order Properties of the Integral
+
+With the definition and basic integrability theorems in hand, we now develop the *algebraic* and *order* properties of the Riemann integral. These properties transform integration from an abstract definition into a powerful computational tool. The key results are linearity (the integral respects addition and scalar multiplication), monotonicity (the integral respects the order on functions), and additivity over intervals.
+
+## Linearity of the Integral
+
+<Callout type="theorem" title="Linearity">
+Let $f, g \colon [a, b] \to \mathbb{R}$ be integrable and let $\alpha, \beta \in \mathbb{R}$. Then $\alpha f + \beta g$ is integrable on $[a, b]$ and
+
+$$\int_a^b (\alpha f + \beta g) = \alpha \int_a^b f + \beta \int_a^b g.$$
+</Callout>
+
+We prove this in two parts: scalar multiplication and additivity of functions.
+
+### Scalar Multiplication
+
+<Callout type="theorem" title="Scalar Multiple">
+If $f$ is integrable on $[a, b]$ and $c \in \mathbb{R}$, then $cf$ is integrable and $\int_a^b cf = c \int_a^b f$.
+</Callout>
+
+**Proof.** **Case $c \geq 0$:** For any partition $P$, on each subinterval $[x_{i-1}, x_i]$:
+
+$$\sup(cf) = c \cdot \sup f = c \, M_i, \qquad \inf(cf) = c \cdot \inf f = c \, m_i.$$
+
+Therefore $U(cf, P) = c \, U(f, P)$ and $L(cf, P) = c \, L(f, P)$, so $U(cf, P) - L(cf, P) = c(U(f, P) - L(f, P))$. Given $\epsilon > 0$, choose $P$ with $U(f, P) - L(f, P) < \epsilon / (c + 1)$, and the $\epsilon$-criterion is satisfied. The integral value follows from the sup/inf characterization.
+
+**Case $c < 0$:** Then $\sup(cf) = c \cdot \inf f$ and $\inf(cf) = c \cdot \sup f$ (multiplying by a negative reverses the inequality). So $U(cf, P) = c \, L(f, P)$ and $L(cf, P) = c \, U(f, P)$. The $\epsilon$-criterion still goes through, and
+
+$$\int_a^b cf = \sup_P L(cf, P) = \sup_P c \, U(f, P) = c \inf_P U(f, P) = c \int_a^b f. \quad \blacksquare$$
+
+### Additivity of Functions
+
+<Callout type="theorem" title="Sum of Integrable Functions">
+If $f$ and $g$ are integrable on $[a, b]$, then $f + g$ is integrable on $[a, b]$ and $\int_a^b (f + g) = \int_a^b f + \int_a^b g$.
+</Callout>
+
+**Proof (integrability).** The key inequality is that on any interval $I$:
+
+$$\sup_I(f + g) \leq \sup_I f + \sup_I g, \qquad \inf_I(f + g) \geq \inf_I f + \inf_I g.$$
+
+Therefore the oscillation satisfies $\omega_i(f + g) \leq \omega_i(f) + \omega_i(g)$.
+
+Let $\epsilon > 0$. Since $f$ and $g$ are integrable, choose partitions $P_1$ and $P_2$ with $U(f, P_1) - L(f, P_1) < \epsilon/2$ and $U(g, P_2) - L(g, P_2) < \epsilon/2$. Let $P = P_1 \cup P_2$. Then
+
+$$U(f+g, P) - L(f+g, P) = \sum_i \omega_i(f+g) \, \Delta x_i \leq \sum_i (\omega_i(f) + \omega_i(g)) \Delta x_i$$
+$$= (U(f, P) - L(f, P)) + (U(g, P) - L(g, P)) \leq \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon.$$
+
+**Proof (integral value).** From the sup inequality: $U(f + g, P) \leq U(f, P) + U(g, P)$ and $L(f + g, P) \geq L(f, P) + L(g, P)$. Taking the infimum and supremum respectively yields
+
+$$\int_a^b f + \int_a^b g \leq \overline{\int_a^b}(f+g) = \int_a^b(f+g) = \underline{\int_a^b}(f+g) \leq \int_a^b f + \int_a^b g.$$
+
+Both inequalities force equality. $\blacksquare$
+
+## Monotonicity of the Integral
+
+<Callout type="theorem" title="Monotonicity (Comparison)">
+If $f, g \colon [a, b] \to \mathbb{R}$ are integrable and $f(x) \leq g(x)$ for all $x \in [a, b]$, then
+
+$$\int_a^b f \leq \int_a^b g.$$
+</Callout>
+
+**Proof.** Let $h = g - f$. By hypothesis, $h(x) \geq 0$ for all $x \in [a, b]$. By linearity, $h$ is integrable and $\int_a^b h = \int_a^b g - \int_a^b f$. For any partition $P$, $m_i(h) = \inf_{[x_{i-1}, x_i]} h \geq 0$, so
+
+$$\int_a^b h \geq L(h, P) = \sum_i m_i(h) \, \Delta x_i \geq 0.$$
+
+Therefore $\int_a^b g - \int_a^b f = \int_a^b h \geq 0$. $\blacksquare$
+
+## Additivity Over Intervals
+
+<Callout type="theorem" title="Additivity Over Intervals">
+If $f$ is integrable on $[a, b]$ and $c \in (a, b)$, then $f$ is integrable on both $[a, c]$ and $[c, b]$, and
+
+$$\int_a^b f = \int_a^c f + \int_c^b f.$$
+</Callout>
+
+**Proof (integrability on subintervals).** Let $\epsilon > 0$. Since $f$ is integrable on $[a, b]$, choose a partition $P$ of $[a, b]$ with $U(f, P) - L(f, P) < \epsilon$. Let $P' = P \cup \{c\}$ (refinement). Then $U(f, P') - L(f, P') \leq U(f, P) - L(f, P) < \epsilon$.
+
+The points of $P'$ in $[a, c]$ form a partition $P_1$ of $[a, c]$, and the points in $[c, b]$ form a partition $P_2$ of $[c, b]$. Since
+
+$$U(f, P') - L(f, P') = (U(f, P_1) - L(f, P_1)) + (U(f, P_2) - L(f, P_2)),$$
+
+and both terms on the right are nonneg, each is less than $\epsilon$. Hence $f$ is integrable on $[a, c]$ and $[c, b]$.
+
+**Proof (additivity).** For any partition $P'$ of $[a, b]$ containing $c$, with induced partitions $P_1$ of $[a, c]$ and $P_2$ of $[c, b]$:
+
+$$L(f, P_1) + L(f, P_2) = L(f, P') \leq \int_a^b f \leq U(f, P') = U(f, P_1) + U(f, P_2).$$
+
+Taking the supremum over $P_1$ and $P_2$ independently on the left, and infimum on the right:
+
+$$\int_a^c f + \int_c^b f \leq \int_a^b f \leq \int_a^c f + \int_c^b f.$$
+
+Equality follows. $\blacksquare$
+
+## Integral Bounds and the Triangle Inequality
+
+<Callout type="theorem" title="Integral Bound">
+If $f$ is integrable on $[a, b]$ and $m \leq f(x) \leq M$ for all $x \in [a, b]$, then
+
+$$m(b - a) \leq \int_a^b f \leq M(b - a).$$
+</Callout>
+
+**Proof.** Apply monotonicity to $m \leq f \leq M$, noting $\int_a^b m = m(b-a)$ and $\int_a^b M = M(b-a)$. $\blacksquare$
+
+<Callout type="theorem" title="Triangle Inequality for Integrals">
+If $f$ is integrable on $[a, b]$, then $|f|$ is integrable on $[a, b]$ and
+
+$$\left|\int_a^b f\right| \leq \int_a^b |f|.$$
+</Callout>
+
+**Proof (integrability of $|f|$).** Observe that $\omega_i(|f|) \leq \omega_i(f)$ on each subinterval (this follows from the reverse triangle inequality: $||f(x)| - |f(y)|| \leq |f(x) - f(y)|$). Since $\sum \omega_i(f) \Delta x_i$ can be made small, so can $\sum \omega_i(|f|) \Delta x_i$.
+
+**Proof (inequality).** Since $-|f| \leq f \leq |f|$, monotonicity gives
+
+$$-\int_a^b |f| \leq \int_a^b f \leq \int_a^b |f|,$$
+
+which is $\left|\int_a^b f\right| \leq \int_a^b |f|$. $\blacksquare$
+
+## Exercises
+
+<Problem title="Prove Additivity Over Intervals">
+Let $f$ be integrable on $[a, b]$ and $c \in (a, b)$. Prove that $\int_a^b f = \int_a^c f + \int_c^b f$. You may assume $f$ is integrable on the subintervals (proven above).
+
+<Solution>
+**Proof.** For any partition $P$ of $[a, b]$, let $P' = P \cup \{c\}$. Then $P'$ naturally decomposes into a partition $P_1$ of $[a, c]$ and a partition $P_2$ of $[c, b]$, with
+
+$$L(f, P') = L(f, P_1) + L(f, P_2), \qquad U(f, P') = U(f, P_1) + U(f, P_2).$$
+
+Since $P'$ refines $P$: $L(f, P) \leq L(f, P')$ and $U(f, P') \leq U(f, P)$.
+
+**Lower bound:** $L(f, P_1) + L(f, P_2) = L(f, P') \leq \int_a^b f$. Taking the supremum over all such $P_1$ and $P_2$: $\int_a^c f + \int_c^b f \leq \int_a^b f$.
+
+**Upper bound:** $\int_a^b f \leq U(f, P') = U(f, P_1) + U(f, P_2)$. Taking the infimum: $\int_a^b f \leq \int_a^c f + \int_c^b f$.
+
+Combining: $\int_a^b f = \int_a^c f + \int_c^b f$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="If $f$ is integrable on $[0, 2]$ with $3 \\leq f(x) \\leq 7$ for all $x$, which bound on $\\int_0^2 f$ is guaranteed?"
+  options={[
+    "$0 \\leq \\int_0^2 f \\leq 14$",
+    "$3 \\leq \\int_0^2 f \\leq 7$",
+    "$6 \\leq \\int_0^2 f \\leq 14$",
+    "$6 \\leq \\int_0^2 f \\leq 7$"
+  ]}
+  correctIndex={2}
+  explanation="By the integral bound theorem, $m(b-a) \\leq \\int_a^b f \\leq M(b-a)$, giving $3 \\cdot 2 \\leq \\int_0^2 f \\leq 7 \\cdot 2$, i.e., $6 \\leq \\int_0^2 f \\leq 14$."
+/>
+
+<NumericInput
+  question="Let $f(x) = 2x + 1$ and $g(x) = x^2$ on $[0, 1]$. Compute $\int_0^1 (3f - 2g)$ using linearity and the known integrals $\int_0^1 f = 2$ and $\int_0^1 g = 1/3$."
+  answer={5.333333}
+  tolerance={0.01}
+  hint="By linearity: $\\int_0^1(3f - 2g) = 3\\int_0^1 f - 2\\int_0^1 g = 3(2) - 2(1/3) = 6 - 2/3 = 16/3 \\approx 5.333$."
+/>
+
+<FunctionPlot
+  fn="2*x + 1"
+  title="f(x) = 2x + 1 on [0, 1] -- area under the line = 2"
+  domain={[-0.5, 2]}
+  range={[-0.5, 4]}
+/>
+
+<NumericInput
+  question="Compute $\int_0^3 |x - 1| \, dx$ using additivity: split at $x = 1$ and evaluate each piece."
+  answer={2.5}
+  tolerance={0.01}
+  hint="$|x-1| = 1-x$ on $[0,1]$ and $x-1$ on $[1,3]$. So $\\int_0^1(1-x)\\,dx + \\int_1^3(x-1)\\,dx = 1/2 + 2 = 5/2$."
+/>
+
+<Problem>
+**Exercise 4.3 (Counterexample).** Show that the linearity of the integral can fail if we drop the hypothesis of integrability. Specifically, construct bounded functions $f, g \colon [0,1] \to \mathbb{R}$ such that $f + g$ is Riemann integrable but neither $f$ nor $g$ is individually integrable.
+
+*Hint:* Let $f = D$ (the Dirichlet function) and $g = 1 - D$.
+</Problem>
+
+<Solution>
+*Construction.* Let $D$ be the Dirichlet function on $[0,1]$: $D(x) = 1$ for $x \in \mathbb{Q}$ and $D(x) = 0$ for $x \notin \mathbb{Q}$. Define:
+
+$$f = D, \qquad g = 1 - D.$$
+
+Then $g(x) = 0$ for $x \in \mathbb{Q}$ and $g(x) = 1$ for $x \notin \mathbb{Q}$.
+
+**$f$ is not integrable:** As shown in Lesson 2, $U(D, P) - L(D, P) = 1$ for every partition.
+
+**$g$ is not integrable:** By the same argument (rationals and irrationals are dense in every subinterval), $\sup g = 1$ and $\inf g = 0$ on every subinterval, so $U(g, P) - L(g, P) = 1$ for every partition.
+
+**But $f + g$ is integrable:** $(f + g)(x) = D(x) + (1 - D(x)) = 1$ for all $x \in [0, 1]$. The constant function $1$ is trivially Riemann integrable with $\int_0^1 1 = 1$.
+
+This shows that the statement "if $f + g$ is integrable and $f$ is integrable, then $g$ is integrable" is true (it follows from linearity: $g = (f+g) - f$). But the converse direction -- integrability of a sum does NOT imply integrability of the summands. The linearity theorem $\int(f+g) = \int f + \int g$ requires BOTH $f$ and $g$ to be integrable as a hypothesis, not a conclusion. $\square$
+</Solution>
+
+## Verifying Properties Numerically
+
+<PythonPlayground
+  title="Verifying Linearity, Monotonicity, and Additivity"
+  defaultCode={`import numpy as np
+
+def numerical_integral(f, a, b, n=10000):
+    """Midpoint rule approximation."""
+    x = np.linspace(a, b, n + 1)
+    midpoints = (x[:-1] + x[1:]) / 2
+    dx = (b - a) / n
+    return np.sum(f(midpoints)) * dx
+
+f = lambda x: 2*x + 1
+g = lambda x: x**2
+
+a, b = 0, 1
+
+int_f = numerical_integral(f, a, b)
+int_g = numerical_integral(g, a, b)
+
+# Test linearity: int(3f - 2g) = 3*int(f) - 2*int(g)
+lhs = numerical_integral(lambda x: 3*f(x) - 2*g(x), a, b)
+rhs = 3 * int_f - 2 * int_g
+print("=== Linearity ===")
+print(f"int(3f - 2g) = {lhs:.6f}")
+print(f"3*int(f) - 2*int(g) = {rhs:.6f}")
+print(f"Difference: {abs(lhs - rhs):.2e}")
+print()
+
+# Test monotonicity: f(x) >= g(x) on [0,1] => int(f) >= int(g)
+print("=== Monotonicity ===")
+print(f"int(f) = {int_f:.6f}")
+print(f"int(g) = {int_g:.6f}")
+print(f"f >= g on [0,1]? Check: min of f-g = {min(f(x)-g(x) for x in np.linspace(0,1,1000)):.4f}")
+print(f"int(f) >= int(g)? {int_f >= int_g}")
+print()
+
+# Test additivity: int_0^2 f = int_0^1 f + int_1^2 f
+a2, c2, b2 = 0, 1, 2
+full = numerical_integral(f, a2, b2)
+left = numerical_integral(f, a2, c2)
+right = numerical_integral(f, c2, b2)
+print("=== Additivity over intervals ===")
+print(f"int_0^2 f = {full:.6f}")
+print(f"int_0^1 f + int_1^2 f = {left:.6f} + {right:.6f} = {left+right:.6f}")
+print(f"Difference: {abs(full - left - right):.2e}")
+print()
+
+# Test triangle inequality: |int(f)| <= int(|f|)
+h = lambda x: np.sin(2 * np.pi * x)  # oscillating, integral near 0
+int_h = numerical_integral(h, 0, 1)
+int_abs_h = numerical_integral(lambda x: np.abs(h(x)), 0, 1)
+print("=== Triangle inequality for integrals ===")
+print(f"|int(sin(2pi x))| = {abs(int_h):.6f}")
+print(f"int(|sin(2pi x)|) = {int_abs_h:.6f}")
+print(f"|int(f)| <= int(|f|)? {abs(int_h) <= int_abs_h + 1e-10}")`}
+/>
+
+<MultipleChoice
+  question="Which property is used to deduce $\\int_a^b f \\geq 0$ when $f(x) \\geq 0$ for all $x \\in [a,b]$?"
+  options={[
+    "Linearity",
+    "Additivity over intervals",
+    "Monotonicity applied to $0 \\leq f$",
+    "The triangle inequality for integrals"
+  ]}
+  correctIndex={2}
+  explanation="Apply the monotonicity theorem with $g = f$ and the constant function $0$ in place of $f$: since $0 \\leq f(x)$, we get $\\int_a^b 0 \\leq \\int_a^b f$, i.e., $0 \\leq \\int_a^b f$."
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove the triangle inequality
+$\left|\int_a^b f\right|\le \int_a^b |f|$
+from Darboux definitions and order properties, without citing it as already established.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Assume $f,g$ are integrable on $[a,b]$. Prove
+$\left|\int_a^b f-\int_a^b g\right|\le\int_a^b |f-g|$
+and interpret this as stability of the integral under $L^1$-type perturbations.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Find integrable functions $f,g$ such that
+$\left|\int_a^b (f+g)\right| < \left|\int_a^b f\right|+\left|\int_a^b g\right|$.
+Use the example to explain why triangle-inequality equality is exceptional.
+</Problem>

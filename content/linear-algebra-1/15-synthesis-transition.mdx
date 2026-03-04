@@ -1,0 +1,360 @@
+---
+title: "Synthesis and Transition to Linear Algebra II"
+description: "Consolidation of finite-dimensional linear algebra, capstone proof reconstructions, and preview of semester 2"
+order: 15
+prerequisites: ["14-orthonormal-bases-gram-schmidt"]
+---
+
+# Synthesis and Transition to Linear Algebra II
+
+This lesson consolidates the entire first semester of linear algebra. We trace the logical skeleton
+from vector spaces through eigenvalues and inner products, reconstruct the central proofs as exercises,
+and preview the deeper theory of semester two. The goal is not new material but *structural understanding*:
+seeing how the theorems connect and why each result was necessary for what followed.
+
+## The Logical Arc of Linear Algebra I
+
+<Callout type="info">
+  **The architecture of the course.**
+  1. **Vector spaces and subspaces.** The abstract framework: vector addition, scalar multiplication,
+   subspaces, span, linear independence, bases, and dimension. The key insight: *dimension is well-defined*
+   (all bases have the same cardinality).
+  2. **Linear maps.** Structure-preserving functions between vector spaces. The fundamental theorem of
+   linear maps (Rank-Nullity): $\dim V = \dim \ker T + \dim \operatorname{im} T$. This single equation
+   constrains all of linear algebra.
+  3. **Matrices.** Coordinates turn abstract linear maps into arrays of numbers. Change of basis reveals
+   that different matrices can represent the same linear map -- the central idea leading to canonical forms.
+  4. **Determinants.** A multilinear, alternating function detecting invertibility. The determinant connects
+   volume, orientation, eigenvalues (via the characteristic polynomial), and solvability of linear systems.
+  5. **Eigenvalues and eigenvectors.** Directions preserved by a linear map. Diagonalization is the
+   "best case" where the operator decomposes into independent scalings. The interplay of algebraic
+   and geometric multiplicity governs when this is possible.
+  6. **Inner products and orthogonality.** Geometry enters linear algebra. The Cauchy-Schwarz inequality,
+   orthogonal projections, Gram-Schmidt, and least squares. These tools bridge pure algebra and applied computation.
+</Callout>
+
+Each layer builds on the previous. Eigenvalues require determinants. Projections require inner products.
+Diagonalization requires eigenvalues and bases. The Rank-Nullity theorem underlies everything.
+
+## Capstone Theorem: Rank-Nullity
+
+<Callout type="theorem">
+  **Theorem (Rank-Nullity / Fundamental theorem of linear maps).** Let $T \colon V \to W$ be a linear map
+  between finite-dimensional vector spaces. Then
+  $$\dim V = \dim \ker T + \dim \operatorname{im} T.$$
+  Equivalently, $\dim V = \operatorname{nullity}(T) + \operatorname{rank}(T)$.
+  *Proof.* Let $\dim \ker T = k$ and choose a basis $\{u_1, \ldots, u_k\}$ of $\ker T$. Extend to a basis
+  $\{u_1, \ldots, u_k, v_1, \ldots, v_r\}$ of $V$ (so $n = \dim V = k + r$).
+  **Claim:** $\{Tv_1, \ldots, Tv_r\}$ is a basis for $\operatorname{im} T$.
+  *Spanning:* Let $w \in \operatorname{im} T$, so $w = Tv$ for some $v = \sum a_i u_i + \sum b_j v_j$.
+  Then $w = Tv = \sum a_i Tu_i + \sum b_j Tv_j = \sum b_j Tv_j$ (since $Tu_i = 0$).
+  *Independence:* Suppose $\sum c_j Tv_j = 0$, i.e., $T(\sum c_j v_j) = 0$. Then $\sum c_j v_j \in \ker T$,
+  so $\sum c_j v_j = \sum d_i u_i$ for some scalars $d_i$. But $\{u_1, \ldots, u_k, v_1, \ldots, v_r\}$
+  is a basis (hence linearly independent), so all $c_j = 0$ and all $d_i = 0$.
+  Therefore $\dim \operatorname{im} T = r$, and $\dim V = k + r = \dim \ker T + \dim \operatorname{im} T$. $\blacksquare$
+</Callout>
+
+## Capstone Theorem: Basis Size Is Unique
+
+<Callout type="theorem">
+  **Theorem (All bases have the same size).** If $V$ is a finite-dimensional vector space and
+  $\{v_1, \ldots, v_m\}$ and $\{w_1, \ldots, w_n\}$ are both bases for $V$, then $m = n$.
+  *Proof.* Since $\{w_1, \ldots, w_n\}$ spans $V$ and $\{v_1, \ldots, v_m\}$ is linearly independent,
+  the **Steinitz exchange lemma** gives $m \leq n$. Symmetrically (swapping the roles), $n \leq m$.
+  Hence $m = n$.
+  *Alternative proof via Rank-Nullity:* Consider the identity map $I \colon V \to V$. Its kernel is $\{0\}$
+  (dimension 0) and its image is $V$. So $\dim V = 0 + \dim V$. But if we use a basis of size $m$ for the
+  domain and a basis of size $n$ for the codomain, the matrix of $I$ is $n \times m$ and has rank $\min(m,n)$.
+  Since $I$ is bijective, $\ker I = \{0\}$ and $\operatorname{im} I = V$, forcing $m = n$. $\blacksquare$
+</Callout>
+
+## Capstone Theorem: Eigenvectors for Distinct Eigenvalues
+
+<Callout type="theorem">
+  **Theorem.** Let $T \colon V \to V$ be a linear operator, and let $v_1, \ldots, v_k$ be eigenvectors
+  for distinct eigenvalues $\lambda_1, \ldots, \lambda_k$. Then $\{v_1, \ldots, v_k\}$ is linearly independent.
+  *Proof (recap).* By induction on $k$. Base case trivial. For the inductive step, suppose
+  $\sum_{i=1}^k c_i v_i = 0$. Apply $T$: $\sum c_i \lambda_i v_i = 0$. Subtract $\lambda_k$ times the
+  original: $\sum_{i=1}^{k-1} c_i(\lambda_i - \lambda_k)v_i = 0$. By induction, $c_i(\lambda_i - \lambda_k) = 0$
+  for $i < k$. Since $\lambda_i \neq \lambda_k$, all $c_i = 0$. Then $c_k v_k = 0$ gives $c_k = 0$. $\blacksquare$
+</Callout>
+
+## Capstone Theorem: Gram-Schmidt
+
+<Callout type="theorem">
+  **Theorem (Gram-Schmidt).** Every linearly independent set $\{v_1, \ldots, v_k\}$ in an inner product
+  space can be orthogonalized to an orthonormal set $\{e_1, \ldots, e_k\}$ with
+  $\operatorname{span}\{e_1, \ldots, e_j\} = \operatorname{span}\{v_1, \ldots, v_j\}$ for each $j$.
+  *Proof (recap).* Induction. At step $j$: set $\tilde{e}_j = v_j - \sum_{i < j}\langle v_j, e_i \rangle e_i$.
+  This is nonzero (since $v_j \notin \operatorname{span}\{v_1, \ldots, v_{j-1}\} = \operatorname{span}\{e_1, \ldots, e_{j-1}\}$),
+  and $\tilde{e}_j \perp e_i$ for $i < j$ by construction. Normalize: $e_j = \tilde{e}_j / \|\tilde{e}_j\|$.
+  The span condition follows from the construction. $\blacksquare$
+</Callout>
+
+## Connections and Dependencies
+
+The following diagram traces how the major results depend on each other:
+
+**Axioms of a vector space** $\to$ **Linear independence, spanning, bases** $\to$ **Dimension is well-defined**
+
+$\downarrow$
+
+**Linear maps** $\to$ **Rank-Nullity theorem** $\to$ **Dimension formulas for subspaces**
+
+$\downarrow$
+
+**Matrices, determinants** $\to$ **Characteristic polynomial** $\to$ **Eigenvalues exist (over algebraically closed fields)**
+
+$\downarrow$
+
+**Eigenvectors independent (distinct eigenvalues)** $\to$ **Diagonalization criterion** $\to$ **$A = PDP^{-1}$**
+
+$\downarrow$
+
+**Inner products** $\to$ **Cauchy-Schwarz** $\to$ **Orthogonal complements** $\to$ **Gram-Schmidt** $\to$ **Projections** $\to$ **Least squares**
+
+<Callout type="tip">
+  **The unifying theme.** Linear algebra is the study of how *structure* constrains *possibility*.
+  The dimension of a vector space constrains the rank and nullity of maps. The multiplicities of eigenvalues
+  constrain diagonalizability. The geometry of inner products constrains approximation. In each case,
+  a simple structural principle (dimension, multiplicity, orthogonality) yields powerful conclusions.
+</Callout>
+
+## Preview: Linear Algebra II
+
+The second semester extends and deepens every thread:
+
+<Callout type="info">
+  **What comes next.**
+  1. **Jordan normal form.** When diagonalization fails, every matrix is *similar* to a Jordan matrix --
+   block diagonal with Jordan blocks. This is the complete structure theorem for linear operators
+   over algebraically closed fields.
+  2. **Spectral theorem.** For *self-adjoint* (symmetric/Hermitian) operators on inner product spaces,
+   diagonalization always succeeds, and the eigenbasis can be chosen *orthonormal*. This is the foundation
+   of quantum mechanics and principal component analysis (PCA).
+  3. **Singular value decomposition (SVD).** Every matrix (not just square ones) has a canonical
+   decomposition $A = U\Sigma V^T$ where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with
+   nonneg entries. The SVD is the most important matrix factorization in applied mathematics.
+  4. **Bilinear and quadratic forms.** Generalizing inner products to arbitrary bilinear maps. Sylvester's
+   law of inertia classifies quadratic forms by signature.
+  5. **Operators on complex inner product spaces.** Normal operators, unitary operators, the complex
+   spectral theorem. Schur's theorem: every complex matrix is unitarily similar to an upper triangular matrix.
+  6. **Multilinear algebra.** Tensor products, exterior algebras, and the algebraic foundations of
+   differential forms and modern physics.
+</Callout>
+
+The key progression: semester 1 gives the *existence* theory (bases exist, eigenvalues may exist,
+orthonormal bases exist). Semester 2 gives the *classification* theory (Jordan form classifies all
+operators, SVD classifies all matrices, the spectral theorem classifies self-adjoint operators).
+
+<PythonPlayground
+  title="Comprehensive review: eigenvalues, diagonalization, projection, and least squares"
+  defaultCode={`import numpy as np
+
+print("=" * 60)
+print("COMPREHENSIVE REVIEW: Key computations of Linear Algebra I")
+print("=" * 60)
+
+# 1. Rank-Nullity verification
+print("\\n--- 1. Rank-Nullity Theorem ---")
+A = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=float)
+rank = np.linalg.matrix_rank(A)
+nullity = A.shape[1] - rank
+print(f"A =\\n{A}")
+print(f"rank(A) = {rank}, nullity(A) = {nullity}")
+print(f"rank + nullity = {rank + nullity} = n = {A.shape[1]}  (Rank-Nullity verified)")
+
+# 2. Eigenvalue decomposition
+print("\\n--- 2. Eigenvalues and Diagonalization ---")
+B = np.array([[4, -2], [1, 1]], dtype=float)
+eigenvalues, eigenvectors = np.linalg.eig(B)
+print(f"B =\\n{B}")
+print(f"Eigenvalues: {eigenvalues}")
+print(f"Eigenvectors (columns):\\n{np.round(eigenvectors, 6)}")
+
+# Verify diagonalization
+P = eigenvectors
+D = np.diag(eigenvalues)
+print(f"\\nP^(-1) B P =\\n{np.round(np.linalg.inv(P) @ B @ P, 10)}")
+print(f"D =\\n{D}")
+print("Diagonalization successful!" if np.allclose(np.linalg.inv(P) @ B @ P, D) else "Failed!")
+
+# 3. Powers via diagonalization
+print("\\n--- 3. Matrix Powers via Diagonalization ---")
+k = 10
+B_power_direct = np.linalg.matrix_power(B, k)
+B_power_diag = P @ np.diag(eigenvalues**k) @ np.linalg.inv(P)
+print(f"B^{k} (direct) =\\n{np.round(B_power_direct, 6)}")
+print(f"B^{k} (via PD^kP^-1) =\\n{np.round(B_power_diag, 6)}")
+print(f"Match: {np.allclose(B_power_direct, B_power_diag)}")
+
+# 4. Gram-Schmidt and QR
+print("\\n--- 4. Gram-Schmidt / QR Factorization ---")
+C = np.array([[1, 1, 0], [1, 0, 1], [0, 1, 1]], dtype=float)
+Q, R = np.linalg.qr(C)
+print(f"C =\\n{C}")
+print(f"Q (orthonormal) =\\n{np.round(Q, 6)}")
+print(f"R (upper triangular) =\\n{np.round(R, 6)}")
+print(f"Q^T Q = I? {np.allclose(Q.T @ Q, np.eye(3))}")
+print(f"Q R = C? {np.allclose(Q @ R, C)}")
+
+# 5. Orthogonal projection
+print("\\n--- 5. Orthogonal Projection ---")
+# Project v onto U = span{u1, u2}
+u1 = np.array([1, 0, 0], dtype=float)
+u2 = np.array([0, 1, 0], dtype=float)
+v = np.array([3, 4, 5], dtype=float)
+U_basis = np.column_stack([u1, u2])
+proj = U_basis @ np.linalg.inv(U_basis.T @ U_basis) @ U_basis.T @ v
+residual = v - proj
+print(f"v = {v}")
+print(f"proj_U(v) = {proj}")
+print(f"Residual = {residual}")
+print(f"Residual orthogonal to U? <res, u1> = {np.dot(residual, u1):.1f}, "
+      f"<res, u2> = {np.dot(residual, u2):.1f}")
+print(f"||v||^2 = ||proj||^2 + ||residual||^2? "
+      f"{np.linalg.norm(v)**2:.1f} = "
+      f"{np.linalg.norm(proj)**2:.1f} + {np.linalg.norm(residual)**2:.1f} = "
+      f"{np.linalg.norm(proj)**2 + np.linalg.norm(residual)**2:.1f} (Pythagorean)")
+
+# 6. Least squares
+print("\\n--- 6. Least Squares ---")
+x = np.array([0, 1, 2, 3, 4, 5], dtype=float)
+y = np.array([2.1, 4.0, 5.8, 8.1, 9.9, 12.2], dtype=float)
+A_ls = np.column_stack([np.ones_like(x), x])
+coeffs = np.linalg.lstsq(A_ls, y, rcond=None)[0]
+print(f"Data: x = {x}")
+print(f"       y = {y}")
+print(f"Best fit: y = {coeffs[0]:.4f} + {coeffs[1]:.4f} x")
+print(f"Residual norm = {np.linalg.norm(A_ls @ coeffs - y):.4f}")
+`}
+/>
+
+## Capstone Exercises
+
+<Problem>
+  **Exercise 1 (Rank-Nullity proof reconstruction).** State and prove the Rank-Nullity theorem.
+  Your proof should:
+  (a) Start with a basis for $\ker T$.
+  (b) Extend it to a basis for $V$.
+  (c) Show that the images of the extension vectors form a basis for $\operatorname{im} T$.
+</Problem>
+
+<Solution>
+  **Theorem (Rank-Nullity).** Let $T \colon V \to W$ be a linear map with $V$ finite-dimensional. Then
+  $\dim V = \dim \ker T + \dim \operatorname{im} T$.
+  *Proof.*
+  **(a)** Let $k = \dim \ker T$ and choose a basis $\{u_1, \ldots, u_k\}$ for $\ker T$.
+  **(b)** Extend to a basis $\{u_1, \ldots, u_k, v_1, \ldots, v_r\}$ for $V$, where $k + r = \dim V$.
+  **(c)** We claim $\{Tv_1, \ldots, Tv_r\}$ is a basis for $\operatorname{im} T$.
+  **Spanning:** Any $w \in \operatorname{im} T$ has the form $w = T(\sum a_i u_i + \sum b_j v_j) = \sum b_j Tv_j$
+  since $Tu_i = 0$.
+  **Independence:** Suppose $\sum c_j Tv_j = 0$. Then $T(\sum c_j v_j) = 0$, so $\sum c_j v_j \in \ker T$.
+  Write $\sum c_j v_j = \sum d_i u_i$. Rearranging: $\sum d_i u_i - \sum c_j v_j = 0$. Since
+  $\{u_1, \ldots, u_k, v_1, \ldots, v_r\}$ is a basis, all coefficients are zero. In particular, $c_j = 0$
+  for all $j$.
+  Therefore $\dim \operatorname{im} T = r$ and $\dim V = k + r = \dim \ker T + \dim \operatorname{im} T$. $\blacksquare$
+</Solution>
+
+<Problem>
+  **Exercise 2 (Connecting eigenvalues and rank).** Let $A$ be an $n \times n$ matrix.
+  (a) Prove that $\lambda = 0$ is an eigenvalue of $A$ if and only if $A$ is singular.
+  (b) Prove that the number of nonzero eigenvalues (counted with algebraic multiplicity) equals $\operatorname{rank}(A)$
+  when $A$ is diagonalizable.
+  (c) Give a counterexample showing (b) can fail for non-diagonalizable matrices if we count *distinct*
+  nonzero eigenvalues instead of algebraic multiplicity.
+</Problem>
+
+<Solution>
+  **(a)** $\lambda = 0$ is an eigenvalue $\iff \exists v \neq 0$ with $Av = 0v = 0$ $\iff \ker A \neq \{0\}$
+  $\iff A$ is not injective $\iff A$ is singular (for square matrices). $\square$
+  **(b)** If $A$ is diagonalizable, $A = PDP^{-1}$ where $D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n)$.
+  Since similar matrices have the same rank, $\operatorname{rank}(A) = \operatorname{rank}(D)$. The rank of a
+  diagonal matrix is the number of nonzero diagonal entries, which is the number of nonzero eigenvalues
+  (counted with algebraic multiplicity, since each eigenvalue appears on the diagonal according to its
+  multiplicity). $\square$
+  **(c)** The nilpotent matrix $N = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ has $\operatorname{rank}(N) = 1$,
+  but its only eigenvalue is $\lambda = 0$ (with algebraic multiplicity 2). There are zero distinct nonzero
+  eigenvalues, yet the rank is 1. The issue is that $N$ is not diagonalizable, so the number of nonzero
+  eigenvalues (counted with algebraic multiplicity) is 0, which also does not equal the rank. This shows
+  that part (b) genuinely requires diagonalizability. (For general matrices, the correct statement involves
+  singular values, not eigenvalues.) $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following is the correct logical dependency?"
+  options={[
+    "Cauchy-Schwarz requires the Rank-Nullity theorem",
+    "Diagonalization requires inner products",
+    "The orthogonal projection theorem requires Cauchy-Schwarz (via the triangle inequality)",
+    "Gram-Schmidt requires the existence of bases (from the dimension theory of vector spaces)"
+  ]}
+  correctIndex={3}
+  explanation="Gram-Schmidt starts with a linearly independent set, which we know exists because every finite-dimensional vector space has a basis (a consequence of the dimension theory). Cauchy-Schwarz only requires the inner product axioms, not Rank-Nullity. Diagonalization is purely algebraic and does not require inner products. The orthogonal projection theorem uses the Pythagorean theorem (which is a direct consequence of inner products), not necessarily Cauchy-Schwarz."
+/>
+
+<NumericInput
+  question="Let $T \colon \mathbb{R}^5 \to \mathbb{R}^3$ be a linear map with $\operatorname{rank}(T) = 2$. What is $\dim \ker T$?"
+  answer={3}
+  tolerance={0}
+  explanation="By Rank-Nullity: dim ker T = dim R^5 - rank(T) = 5 - 2 = 3."
+/>
+
+<Problem>
+  **Exercise 3 (Capstone synthesis).** Let $V = \mathbb{R}^3$ with the standard inner product, and let
+  $T \colon V \to V$ be defined by $T(x, y, z) = (x + y, y + z, 0)$.
+  (a) Find the matrix $A$ of $T$ and compute $\operatorname{rank}(A)$ and $\operatorname{nullity}(A)$.
+  (b) Find the eigenvalues and determine whether $A$ is diagonalizable.
+  (c) Find an orthonormal basis for $\operatorname{im}(T)$ using Gram-Schmidt.
+  (d) Compute the orthogonal projection of $v = (1, 1, 1)^T$ onto $\operatorname{im}(T)$.
+</Problem>
+
+<Solution>
+  **(a)** $T(e_1) = (1,0,0)^T$, $T(e_2) = (1,1,0)^T$, $T(e_3) = (0,1,0)^T$.
+  $$A = \begin{pmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{pmatrix}.$$
+  Row reduction shows $\operatorname{rank}(A) = 2$. By Rank-Nullity, $\operatorname{nullity}(A) = 3 - 2 = 1$.
+  **(b)** The characteristic polynomial: $\det(A - \lambda I) = (1-\lambda)(1-\lambda)(0-\lambda) - 0 = -\lambda(1-\lambda)^2$.
+  Eigenvalues: $\lambda_1 = 0$ (am = 1), $\lambda_2 = 1$ (am = 2).
+  For $\lambda = 0$: $\ker(A) = \ker\begin{pmatrix}1&1&0\\0&1&1\\0&0&0\end{pmatrix} = \operatorname{span}\{(-1,1,-1)^T\}$ (from back-substitution: $x_2 = -x_3$, $x_1 = -x_2 = x_3$). So $\operatorname{gm}(0) = 1 = \operatorname{am}(0)$.
+  For $\lambda = 1$: $\ker(A - I) = \ker\begin{pmatrix}0&1&0\\0&0&1\\0&0&-1\end{pmatrix} = \operatorname{span}\{(1,0,0)^T\}$. So $\operatorname{gm}(1) = 1 < 2 = \operatorname{am}(1)$.
+  Since $\operatorname{gm}(1) < \operatorname{am}(1)$, $A$ is **not diagonalizable**.
+  **(c)** $\operatorname{im}(T) = \operatorname{Col}(A) = \operatorname{span}\{(1,0,0)^T, (1,1,0)^T\}$
+  (columns 1 and 2, which are linearly independent).
+  Apply Gram-Schmidt: $e_1 = (1,0,0)^T$ (already unit).
+  $\tilde{e}_2 = (1,1,0)^T - \langle(1,1,0),(1,0,0)\rangle(1,0,0)^T = (1,1,0)^T - (0,0,0)^T - 1\cdot(1,0,0)^T = (0,1,0)^T$.
+  Wait: $\langle(1,1,0),(1,0,0)\rangle = 1$, so $\tilde{e}_2 = (1,1,0)^T - 1 \cdot (1,0,0)^T = (0,1,0)^T$. Already unit norm.
+  Orthonormal basis for $\operatorname{im}(T)$: $\{(1,0,0)^T, (0,1,0)^T\}$.
+  **(d)** $\operatorname{proj}_{\operatorname{im}(T)}(v) = \langle v, e_1\rangle e_1 + \langle v, e_2 \rangle e_2
+  = 1 \cdot (1,0,0)^T + 1 \cdot (0,1,0)^T = (1,1,0)^T$.
+  The residual is $(1,1,1)^T - (1,1,0)^T = (0,0,1)^T$, which is indeed orthogonal to both basis vectors
+  of $\operatorname{im}(T)$. $\square$
+</Solution>
+
+<Problem>
+  **Exercise 4 (Proof without looking).** Without consulting notes, prove the Cauchy-Schwarz inequality:
+  for all $u, v$ in an inner product space, $|\langle u, v \rangle| \leq \|u\|\|v\|$.
+  *This is a "close the book" exercise. The ability to reproduce this proof from scratch -- choosing the
+  right $t$, expanding the norm, and identifying the equality case -- is a hallmark of mastery.*
+</Problem>
+
+<Solution>
+  *Proof.* If $v = 0$, both sides equal zero. Assume $v \neq 0$.
+  For any scalar $t$, positive definiteness gives $0 \leq \|u - tv\|^2$. Expand:
+  $$0 \leq \|u\|^2 - t\langle v, u \rangle - \bar{t}\langle u, v \rangle + |t|^2\|v\|^2.$$
+  Choose $t = \langle u, v \rangle / \|v\|^2$. Then:
+  $$0 \leq \|u\|^2 - \frac{|\langle u,v\rangle|^2}{\|v\|^2} - \frac{|\langle u,v\rangle|^2}{\|v\|^2} + \frac{|\langle u,v\rangle|^2}{\|v\|^2} = \|u\|^2 - \frac{|\langle u,v\rangle|^2}{\|v\|^2}.$$
+  Rearranging: $|\langle u,v\rangle|^2 \leq \|u\|^2\|v\|^2$. Taking square roots: $|\langle u,v\rangle| \leq \|u\|\|v\|$.
+  Equality holds iff $\|u - tv\| = 0$ iff $u = tv$, i.e., $u$ and $v$ are linearly dependent. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following statements is FALSE?"
+  options={[
+    "Every finite-dimensional vector space has a basis",
+    "Every linear operator on a finite-dimensional complex vector space has at least one eigenvalue",
+    "Every linear operator on a finite-dimensional real vector space is diagonalizable",
+    "Every finite-dimensional inner product space has an orthonormal basis"
+  ]}
+  correctIndex={2}
+  explanation="Statement C is false. A real matrix may fail to be diagonalizable either because its characteristic polynomial has no real roots (e.g., a rotation matrix) or because geometric multiplicity is less than algebraic multiplicity (e.g., a Jordan block). The other three statements are true: A is the basis existence theorem, B follows from the Fundamental Theorem of Algebra (every polynomial has a complex root), and D follows from Gram-Schmidt."
+/>

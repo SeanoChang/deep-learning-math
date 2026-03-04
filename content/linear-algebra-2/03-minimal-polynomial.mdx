@@ -1,0 +1,289 @@
+---
+title: "The Minimal Polynomial"
+description: "Polynomials of an operator, annihilating polynomials, existence and uniqueness of the minimal polynomial, divisibility properties, and relation to the characteristic polynomial"
+order: 3
+prerequisites: ["02-invariant-subspaces"]
+---
+
+# The Minimal Polynomial
+
+The characteristic polynomial $p_T(\lambda) = \det(T - \lambda I)$ encodes the eigenvalues and their
+algebraic multiplicities. But it does not tell the full story: two operators can share the same
+characteristic polynomial yet have fundamentally different structure (e.g., a diagonal matrix vs. a
+Jordan block). The **minimal polynomial** $m_T$ is a finer invariant that captures exactly which
+polynomial relations the operator satisfies, and it will be the key tool for understanding
+diagonalizability, Cayley-Hamilton, and the primary decomposition.
+
+## Polynomials of an Operator
+
+<Callout type="definition" title="Polynomial of an Operator">
+  Let $T \colon V \to V$ be a linear operator and let $p(x) = a_k x^k + a_{k-1} x^{k-1} + \cdots + a_1 x + a_0 \in \mathbb{F}[x]$
+  be a polynomial. We define
+  $$p(T) = a_k T^k + a_{k-1} T^{k-1} + \cdots + a_1 T + a_0 I,$$
+  where $T^j$ denotes the $j$-fold composition $T \circ T \circ \cdots \circ T$ and $T^0 = I$.
+</Callout>
+
+The map $p \mapsto p(T)$ is a ring homomorphism from $\mathbb{F}[x]$ to $\mathcal{L}(V)$:
+- $(p + q)(T) = p(T) + q(T)$
+- $(pq)(T) = p(T)q(T)$
+- Constant polynomial $c$ maps to $cI$.
+
+A crucial property: **polynomials in $T$ commute.** For any $p, q \in \mathbb{F}[x]$:
+
+$$p(T) q(T) = q(T) p(T).$$
+
+This follows because $T^j T^k = T^{j+k} = T^k T^j$.
+
+## Annihilating Polynomials
+
+<Callout type="definition" title="Annihilating Polynomial">
+  A polynomial $p \in \mathbb{F}[x]$ is an **annihilating polynomial** for $T$ if $p(T) = 0$
+  (the zero operator). The set of all annihilating polynomials of $T$ forms an ideal in $\mathbb{F}[x]$.
+</Callout>
+
+**Do annihilating polynomials exist?** Yes, because $\mathcal{L}(V)$ is finite-dimensional.
+
+<Callout type="theorem" title="Existence of Annihilating Polynomials">
+  Let $V$ be $n$-dimensional. Then $T$ has a nonzero annihilating polynomial of degree at most $n^2$.
+</Callout>
+
+**Proof.** The space $\mathcal{L}(V) \cong M_n(\mathbb{F})$ has dimension $n^2$. The $n^2 + 1$ operators
+$I, T, T^2, \ldots, T^{n^2}$ must be linearly dependent. So there exist scalars $a_0, \ldots, a_{n^2}$
+(not all zero) with $a_0 I + a_1 T + \cdots + a_{n^2} T^{n^2} = 0$. The polynomial
+$p(x) = a_0 + a_1 x + \cdots + a_{n^2} x^{n^2}$ is a nonzero annihilating polynomial of degree at most $n^2$. $\blacksquare$
+
+<Callout type="tip" title="The Cayley-Hamilton Bound">
+  We will soon prove (Cayley-Hamilton) that the characteristic polynomial, which has degree $n$, is
+  always an annihilating polynomial. This dramatically improves the $n^2$ bound above.
+</Callout>
+
+## The Minimal Polynomial: Definition and Uniqueness
+
+<Callout type="definition" title="Minimal Polynomial">
+  The **minimal polynomial** of $T$, denoted $m_T$, is the monic polynomial of smallest degree that
+  annihilates $T$. That is, $m_T$ is the unique monic polynomial such that:
+  1. $m_T(T) = 0$, and
+  2. If $p$ is any polynomial with $p(T) = 0$, then $\deg p \geq \deg m_T$.
+</Callout>
+
+<Callout type="theorem" title="Existence and Uniqueness of the Minimal Polynomial">
+  For any linear operator $T$ on a finite-dimensional space:
+  1. The minimal polynomial $m_T$ exists.
+  2. $m_T$ is unique (there is only one monic annihilating polynomial of minimal degree).
+  3. Every annihilating polynomial of $T$ is divisible by $m_T$.
+</Callout>
+
+**Proof.**
+
+**(1) Existence.** Among all nonzero annihilating polynomials (which exist by the previous theorem),
+choose one of smallest degree and make it monic by dividing by its leading coefficient. This is $m_T$.
+
+**(2) Uniqueness.** Suppose $m_1$ and $m_2$ are both monic annihilating polynomials of the same
+minimal degree $d$. Consider $q = m_1 - m_2$. Then $q(T) = m_1(T) - m_2(T) = 0 - 0 = 0$, so $q$
+is an annihilating polynomial. But $m_1$ and $m_2$ are both monic of degree $d$, so their leading terms
+cancel and $\deg q < d$. If $q \neq 0$, this contradicts the minimality of $d$. So $q = 0$, i.e., $m_1 = m_2$.
+
+**(3) Divisibility.** Let $p$ be any polynomial with $p(T) = 0$. By the division algorithm,
+
+$$p(x) = q(x) m_T(x) + r(x), \quad \deg r < \deg m_T.$$
+
+Evaluating at $T$: $0 = p(T) = q(T) m_T(T) + r(T) = q(T) \cdot 0 + r(T) = r(T)$. So $r$ is an
+annihilating polynomial with $\deg r < \deg m_T$. By minimality, $r = 0$. Hence $m_T \mid p$. $\blacksquare$
+
+## Eigenvalues Are Roots of the Minimal Polynomial
+
+<Callout type="theorem" title="Eigenvalues and Roots of m_T">
+  $\lambda$ is an eigenvalue of $T$ if and only if $\lambda$ is a root of $m_T$.
+</Callout>
+
+**Proof.** ($\Rightarrow$) Let $\lambda$ be an eigenvalue with eigenvector $v \neq 0$. Since $m_T(T) = 0$:
+
+$$0 = m_T(T)v = m_T(\lambda)v.$$
+
+The second equality holds because if $m_T(x) = a_d x^d + \cdots + a_0$, then
+
+$$m_T(T)v = (a_d T^d + \cdots + a_0 I)v = a_d \lambda^d v + \cdots + a_0 v = m_T(\lambda) v.$$
+
+Since $v \neq 0$, we conclude $m_T(\lambda) = 0$, so $\lambda$ is a root of $m_T$.
+
+($\Leftarrow$) Let $m_T(\lambda) = 0$, so $m_T(x) = (x - \lambda) q(x)$ for some polynomial $q$.
+Since $\deg q < \deg m_T$, the polynomial $q$ does NOT annihilate $T$ (by minimality of $m_T$). So there
+exists $w \in V$ with $q(T)w \neq 0$. Let $u = q(T)w$. Then:
+
+$$Tu - \lambda u = (T - \lambda I)u = (T - \lambda I)q(T)w = m_T(T)w = 0.$$
+
+So $Tu = \lambda u$ with $u \neq 0$, meaning $\lambda$ is an eigenvalue of $T$. $\blacksquare$
+
+## Relation to the Characteristic Polynomial
+
+<Callout type="theorem" title="m_T Divides p_T">
+  The minimal polynomial $m_T$ divides the characteristic polynomial $p_T$. In particular:
+  1. Every root of $m_T$ is a root of $p_T$ (both have the same roots, i.e., the same eigenvalues).
+  2. $\deg m_T \leq \deg p_T = n$.
+</Callout>
+
+**Proof.** We will prove the Cayley-Hamilton theorem in the next lesson, which states $p_T(T) = 0$.
+Since $m_T$ divides every annihilating polynomial (by the divisibility property), $m_T \mid p_T$.
+
+For statement (1): since $m_T \mid p_T$, every root of $m_T$ is a root of $p_T$. Conversely, we just
+proved that every eigenvalue (root of $p_T$) is a root of $m_T$. So $m_T$ and $p_T$ have the same roots.
+
+For statement (2): divisibility implies $\deg m_T \leq \deg p_T = n$. $\blacksquare$
+
+<Callout type="tip" title="m_T vs p_T: Same Roots, Different Multiplicities">
+  Both $m_T$ and $p_T$ have the same roots (eigenvalues), but the multiplicities can differ. The
+  characteristic polynomial records algebraic multiplicities, while the minimal polynomial records the
+  size of the largest Jordan block for each eigenvalue. For example:
+  - $A = \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$: $p_A(\lambda) = (\lambda - 2)^2$, $m_A(\lambda) = \lambda - 2$.
+  - $B = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$: $p_B(\lambda) = (\lambda - 2)^2$, $m_B(\lambda) = (\lambda - 2)^2$.
+  Same characteristic polynomial, different minimal polynomials -- different structure.
+</Callout>
+
+## Computing the Minimal Polynomial
+
+To find $m_T$ in practice, we use the fact that $m_T \mid p_T$ and both share the same roots. So if
+$p_T(\lambda) = (\lambda - \lambda_1)^{a_1} \cdots (\lambda - \lambda_k)^{a_k}$, then
+
+$$m_T(\lambda) = (\lambda - \lambda_1)^{b_1} \cdots (\lambda - \lambda_k)^{b_k}$$
+
+where $1 \leq b_i \leq a_i$ for each $i$. We determine each $b_i$ as the smallest positive integer such
+that $\ker(T - \lambda_i I)^{b_i} = \ker(T - \lambda_i I)^{b_i + 1}$ (equivalently, the size of the
+largest Jordan block for $\lambda_i$).
+
+<PythonPlayground
+  title="Computing minimal polynomials"
+  initialCode={`import numpy as np
+from numpy.polynomial import polynomial as P
+
+def minimal_poly_exponents(A, eigenvalues):
+    """For each eigenvalue, find the smallest power k such that
+    ker(A - lam*I)^k = ker(A - lam*I)^(k+1)"""
+    n = A.shape[0]
+    exponents = {}
+    for lam in eigenvalues:
+        B = A - lam * np.eye(n)
+        Bk = np.eye(n)
+        for k in range(1, n + 1):
+            Bk = Bk @ B
+            nullity = n - np.linalg.matrix_rank(Bk, tol=1e-10)
+            Bk1 = Bk @ B
+            nullity_next = n - np.linalg.matrix_rank(Bk1, tol=1e-10)
+            if nullity == nullity_next:
+                exponents[lam] = k
+                break
+    return exponents
+
+# Example 1: Diagonal matrix (m_T has smallest possible degree)
+A1 = np.diag([2.0, 2.0, 3.0])
+print("A1 (diagonal with repeated eigenvalue):")
+print(A1)
+eigs1 = [2.0, 3.0]
+exp1 = minimal_poly_exponents(A1, eigs1)
+print(f"Char poly: (x-2)^2 (x-3)")
+print(f"Min poly exponents: {exp1}")
+print(f"Min poly: (x-2)^{exp1[2.0]} * (x-3)^{exp1[3.0]}")
+print()
+
+# Example 2: Jordan block (m_T = p_T)
+A2 = np.array([[2, 1, 0],
+               [0, 2, 1],
+               [0, 0, 2]], dtype=float)
+print("A2 (3x3 Jordan block):")
+print(A2)
+exp2 = minimal_poly_exponents(A2, [2.0])
+print(f"Char poly: (x-2)^3")
+print(f"Min poly exponents: {exp2}")
+print(f"Min poly: (x-2)^{exp2[2.0]}")
+print()
+
+# Example 3: Two Jordan blocks of different sizes
+A3 = np.array([[1, 1, 0, 0, 0],
+               [0, 1, 0, 0, 0],
+               [0, 0, 1, 1, 0],
+               [0, 0, 0, 1, 1],
+               [0, 0, 0, 0, 1]], dtype=float)
+print("A3 (Jordan blocks of size 2 and 3 for eigenvalue 1):")
+print(A3)
+exp3 = minimal_poly_exponents(A3, [1.0])
+print(f"Char poly: (x-1)^5")
+print(f"Min poly exponents: {exp3}")
+print(f"Min poly: (x-1)^{exp3[1.0]}  (degree = size of LARGEST block)")
+print()
+
+# Verify: m_T(A3) should be zero
+B = A3 - np.eye(5)
+print(f"(A3 - I)^3 = \\n{np.round(np.linalg.matrix_power(B, 3), 10)}")
+print("All zeros => m_T(A3) = 0 confirmed")
+`}
+/>
+
+## Exercises
+
+<Problem title="Finding the minimal polynomial">
+  Let $A = \begin{pmatrix} 3 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 5 \end{pmatrix}$.
+  (a) What is the characteristic polynomial $p_A(\lambda)$?
+  (b) What are the possible minimal polynomials? (List all candidates.)
+  (c) Determine the minimal polynomial $m_A(\lambda)$ and verify $m_A(A) = 0$.
+</Problem>
+
+<Solution>
+  **(a)** Since $A$ is diagonal, $p_A(\lambda) = (3 - \lambda)^2(5 - \lambda) = (\lambda - 3)^2(\lambda - 5)$.
+  **(b)** Since $m_A \mid p_A$ and $m_A$ has the same roots as $p_A$, we need $m_A(\lambda) = (\lambda - 3)^{b_1}(\lambda - 5)^{b_2}$ with $1 \leq b_1 \leq 2$ and $b_2 = 1$. The candidates are:
+  - $(\lambda - 3)(\lambda - 5)$
+  - $(\lambda - 3)^2(\lambda - 5)$
+  **(c)** Test $m(\lambda) = (\lambda - 3)(\lambda - 5)$:
+  $$m(A) = (A - 3I)(A - 5I) = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 2 \end{pmatrix} \begin{pmatrix} -2 & 0 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} = 0.$$
+  So $m_A(\lambda) = (\lambda - 3)(\lambda - 5)$. The degree is $2 < 3 = \deg p_A$ because $A$ is diagonalizable and the eigenvalue $3$ (despite algebraic multiplicity 2) needs only a linear factor in $m_A$: the eigenspace $E_3$ has dimension 2, so $(A - 3I)$ already kills all of $E_3$. $\blacksquare$
+</Solution>
+
+<Problem title="Proving the eigenvalue-root correspondence">
+  Let $T \colon V \to V$ have minimal polynomial $m_T(\lambda) = (\lambda - 1)(\lambda^2 + 1)$ over $\mathbb{R}$.
+  (a) What are the eigenvalues of $T$ over $\mathbb{R}$? Over $\mathbb{C}$?
+  (b) What is $\dim V$ at minimum?
+  (c) Show that $T$ is not diagonalizable over $\mathbb{R}$ but explain what block structure the real canonical form would have.
+</Problem>
+
+<Solution>
+  **(a)** Over $\mathbb{R}$: the only real root of $m_T$ is $\lambda = 1$. So $1$ is the only real eigenvalue.
+  Over $\mathbb{C}$: $\lambda^2 + 1 = (\lambda - i)(\lambda + i)$, so the eigenvalues are $1, i, -i$.
+  **(b)** Since $m_T \mid p_T$ and $\deg m_T = 3$, we need $\deg p_T \geq 3$, so $\dim V \geq 3$. The minimum is $\dim V = 3$, achieved when $p_T = m_T$.
+  **(c)** Over $\mathbb{R}$, we cannot diagonalize because $\lambda^2 + 1$ has no real roots, so we cannot decompose the corresponding 2-dimensional invariant subspace into 1-dimensional eigenspaces. The real canonical form would be block diagonal:
+  $$\begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & -1 \\ 0 & 1 & 0 \end{pmatrix}$$
+  where the $1 \times 1$ block corresponds to eigenvalue $1$ and the $2 \times 2$ block $\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ corresponds to the conjugate pair $\pm i$ (this is a rotation by $\pi/2$). $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Let $A$ be a $5 \times 5$ matrix with $p_A(\lambda) = (\lambda - 2)^3(\lambda + 1)^2$. Which of the following CANNOT be the minimal polynomial of $A$?"
+  options={[
+    "$m_A(\\lambda) = (\\lambda - 2)(\\lambda + 1)$",
+    "$m_A(\\lambda) = (\\lambda - 2)^2(\\lambda + 1)$",
+    "$m_A(\\lambda) = (\\lambda - 2)^3(\\lambda + 1)^2$",
+    "$m_A(\\lambda) = (\\lambda - 2)^2(\\lambda + 1)^3$"
+  ]}
+  correctIndex={3}
+  explanation="Since $m_A \\mid p_A$, the exponent of each factor in $m_A$ cannot exceed that in $p_A$. The factor $(\\lambda + 1)$ has exponent $2$ in $p_A$, so $m_A$ can have $(\\lambda + 1)^b$ with $b \\leq 2$. Option (D) has $b = 3 > 2$, violating $m_A \\mid p_A$."
+/>
+
+<NumericInput
+  question="Let $T$ have minimal polynomial $m_T(\lambda) = (\lambda - 1)^2(\lambda - 4)$ and characteristic polynomial $p_T(\lambda) = (\lambda - 1)^3(\lambda - 4)^2$. What is $\dim V$?"
+  answer={5}
+  tolerance={0}
+  explanation="$\dim V = \deg p_T = 3 + 2 = 5$. The degree of the characteristic polynomial always equals the dimension of the space."
+/>
+
+<Problem title="Minimal polynomial and structure">
+  Consider two $4 \times 4$ matrices:
+  $$A = \begin{pmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 0 & 0 \\ 0 & 0 & 2 & 1 \\ 0 & 0 & 0 & 2 \end{pmatrix}, \quad B = \begin{pmatrix} 2 & 1 & 0 & 0 \\ 0 & 2 & 1 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 2 \end{pmatrix}.$$
+  (a) Both have $p(\lambda) = (\lambda - 2)^4$. Compute the minimal polynomial of each.
+  (b) Are $A$ and $B$ similar? Justify.
+  (c) What does this example illustrate about the relationship between $p_T$ and $m_T$ as invariants?
+</Problem>
+
+<Solution>
+  **(a)** For $A$: $A$ is block diagonal with two $2 \times 2$ Jordan blocks $\begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$. The largest block has size $2$, so $m_A(\lambda) = (\lambda - 2)^2$.
+  Verification: $(A - 2I)^2 = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \end{pmatrix}^2 = 0$. And $(A - 2I) \neq 0$, confirming degree $2$.
+  For $B$: $B$ has a $3 \times 3$ Jordan block and a $1 \times 1$ block. The largest block has size $3$, so $m_B(\lambda) = (\lambda - 2)^3$.
+  Verification: $(B - 2I)^2 = \begin{pmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{pmatrix} \neq 0$, but $(B - 2I)^3 = 0$.
+  **(b)** No. Since $m_A \neq m_B$ (they have different degrees), $A$ and $B$ are not similar. The minimal polynomial is a similarity invariant, and it distinguishes them even though the characteristic polynomial does not.
+  **(c)** The characteristic polynomial $p_T$ is a necessary but not sufficient invariant for determining similarity class. The minimal polynomial $m_T$ is a strictly finer invariant: it distinguishes operators that $p_T$ cannot. In general, the full Jordan structure (partition of algebraic multiplicities into Jordan block sizes) determines the similarity class, and $m_T$ captures the largest block size for each eigenvalue. $\blacksquare$
+</Solution>

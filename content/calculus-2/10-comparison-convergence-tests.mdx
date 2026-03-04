@@ -1,0 +1,306 @@
+---
+title: "Comparison-Based Convergence Tests"
+description: "Comparison test, limit comparison test, integral test, and benchmark series"
+order: 10
+prerequisites: ["09-infinite-sequences-series"]
+---
+
+# Comparison-Based Convergence Tests
+
+The divergence test tells us when a series *cannot* converge, but it cannot confirm convergence. To establish convergence (or divergence) of positive-term series, we need comparison tools. In this lesson we develop three powerful tests -- the Comparison Test, the Limit Comparison Test, and the Integral Test -- and connect them through the unifying idea that **tail behavior determines convergence**.
+
+## The Comparison Test
+
+<Callout type="theorem">
+**Theorem 10.1 (Comparison Test).** Let $\sum a_n$ and $\sum b_n$ be series with $0 \leq a_n \leq b_n$ for all $n \geq N_0$ (for some $N_0$).
+
+1. If $\sum b_n$ converges, then $\sum a_n$ converges.
+2. If $\sum a_n$ diverges, then $\sum b_n$ diverges.
+</Callout>
+
+*Proof of (1).* Since convergence depends only on the tail (Theorem 9.7), we may assume without loss of generality that $0 \leq a_n \leq b_n$ for all $n \geq 1$.
+
+The partial sums $A_N = \sum_{n=1}^N a_n$ form a nondecreasing sequence (since $a_n \geq 0$). Moreover, for every $N$:
+
+$$A_N = \sum_{n=1}^N a_n \leq \sum_{n=1}^N b_n \leq \sum_{n=1}^{\infty} b_n = B < \infty.$$
+
+So $(A_N)$ is nondecreasing and bounded above by $B$. By the Monotone Convergence Theorem, $\lim_{N \to \infty} A_N$ exists and is finite. Hence $\sum a_n$ converges.
+
+*Proof of (2).* This is the contrapositive of (1). $\blacksquare$
+
+<Callout type="tip">
+**Strategy.** To apply the Comparison Test, you need an *explicit pointwise inequality* $a_n \leq b_n$ (or $a_n \geq b_n$ for divergence). This can be hard to establish. The Limit Comparison Test relaxes this requirement.
+</Callout>
+
+### Example: Comparison with Geometric Series
+
+Show that $\sum_{n=1}^{\infty} \frac{1}{2^n + n}$ converges.
+
+For all $n \geq 1$: $2^n + n > 2^n$, so $\frac{1}{2^n + n} < \frac{1}{2^n}$. Since $\sum \frac{1}{2^n}$ converges (geometric with $r = 1/2$), the Comparison Test gives convergence.
+
+## The Limit Comparison Test
+
+<Callout type="theorem">
+**Theorem 10.2 (Limit Comparison Test).** Let $\sum a_n$ and $\sum b_n$ be positive-term series ($a_n, b_n > 0$ for all $n$). If
+
+$$L = \lim_{n \to \infty} \frac{a_n}{b_n} \quad \text{exists with } 0 < L < \infty,$$
+
+then $\sum a_n$ converges if and only if $\sum b_n$ converges.
+</Callout>
+
+*Proof.* Since $a_n/b_n \to L$ with $L > 0$, for $\varepsilon = L/2 > 0$ there exists $N$ such that for all $n \geq N$:
+
+$$\frac{L}{2} < \frac{a_n}{b_n} < \frac{3L}{2}.$$
+
+This gives $\frac{L}{2} b_n < a_n < \frac{3L}{2} b_n$ for all $n \geq N$.
+
+If $\sum b_n$ converges, then $\sum \frac{3L}{2} b_n = \frac{3L}{2}\sum b_n$ converges, and $a_n < \frac{3L}{2}b_n$ for $n \geq N$, so by the Comparison Test $\sum a_n$ converges.
+
+If $\sum a_n$ converges, then since $b_n < \frac{2}{L}a_n$ for $n \geq N$, the Comparison Test gives $\sum b_n$ converges.
+
+The divergence statements follow by contrapositive. $\blacksquare$
+
+<Callout type="info">
+**Edge cases.** If $L = 0$: convergence of $\sum b_n$ implies convergence of $\sum a_n$ (but not conversely). If $L = \infty$: divergence of $\sum b_n$ implies divergence of $\sum a_n$ (but not conversely).
+</Callout>
+
+### Example: Limit Comparison
+
+Test $\sum_{n=1}^{\infty} \frac{n^2 + 3n}{n^4 - 1}$ for convergence.
+
+For large $n$, $\frac{n^2 + 3n}{n^4 - 1} \approx \frac{n^2}{n^4} = \frac{1}{n^2}$. Formally:
+
+$$\lim_{n \to \infty} \frac{(n^2 + 3n)/(n^4 - 1)}{1/n^2} = \lim_{n \to \infty} \frac{n^4 + 3n^3}{n^4 - 1} = 1.$$
+
+Since $L = 1 \in (0, \infty)$ and $\sum 1/n^2$ converges ($p$-series, $p = 2 > 1$), the Limit Comparison Test gives convergence.
+
+## Benchmark Series: $p$-Series
+
+<Callout type="theorem">
+**Theorem 10.3 (p-Series).** The series $\sum_{n=1}^{\infty} \frac{1}{n^p}$ converges if and only if $p > 1$.
+</Callout>
+
+We will prove this using the Integral Test below. Note the parallel with the $p$-integral $\int_1^{\infty} x^{-p}\,dx$ from the previous lesson.
+
+## The Integral Test
+
+The Integral Test provides a bridge between improper integrals and infinite series, exploiting the connection between a monotone function and the partial sums of its values.
+
+<Callout type="theorem">
+**Theorem 10.4 (Integral Test).** Let $f : [1, \infty) \to \mathbb{R}$ be a positive, continuous, decreasing function, and let $a_n = f(n)$. Then
+
+$$\sum_{n=1}^{\infty} a_n \quad \text{converges} \iff \quad \int_1^{\infty} f(x)\,dx \quad \text{converges.}$$
+
+Moreover, if $S = \sum_{n=1}^{\infty} a_n$ converges:
+
+$$\int_1^{\infty} f(x)\,dx \leq S \leq a_1 + \int_1^{\infty} f(x)\,dx.$$
+</Callout>
+
+*Proof.* Since $f$ is decreasing, for each integer $k \geq 1$ and $x \in [k, k+1]$:
+
+$$f(k+1) \leq f(x) \leq f(k).$$
+
+Integrating over $[k, k+1]$:
+
+$$f(k+1) \leq \int_k^{k+1} f(x)\,dx \leq f(k).$$
+
+**Summing the left inequality** from $k = 1$ to $N-1$:
+
+$$\sum_{k=2}^{N} f(k) = \sum_{k=1}^{N-1} f(k+1) \leq \sum_{k=1}^{N-1} \int_k^{k+1} f(x)\,dx = \int_1^N f(x)\,dx.$$
+
+**Summing the right inequality** from $k = 1$ to $N-1$:
+
+$$\int_1^N f(x)\,dx = \sum_{k=1}^{N-1}\int_k^{k+1} f(x)\,dx \leq \sum_{k=1}^{N-1} f(k).$$
+
+So we have the **integral-sum sandwich**:
+
+$$\sum_{k=2}^N f(k) \leq \int_1^N f(x)\,dx \leq \sum_{k=1}^{N-1} f(k).$$
+
+Now:
+- If $\int_1^{\infty} f(x)\,dx$ converges to $I$, then $S_N = a_1 + \sum_{k=2}^N a_k \leq a_1 + I$. Since partial sums are nondecreasing and bounded, $\sum a_n$ converges.
+- If $\sum a_n$ converges to $S$, then $\int_1^N f(x)\,dx \leq \sum_{k=1}^{N-1}a_k \leq S$. Since the integral is nondecreasing and bounded, $\int_1^{\infty}f(x)\,dx$ converges. $\blacksquare$
+
+<Callout type="definition">
+**The integral-sum connection.** The Integral Test is not merely a convergence criterion -- it reveals a deep structural parallel. A decreasing function's integral and the series of its integer values are comparable up to a bounded error. This is the discrete-continuous bridge that underlies much of analytic number theory.
+</Callout>
+
+### Proof of the $p$-Series Criterion
+
+We can now prove Theorem 10.3. Let $f(x) = 1/x^p$ for $x \geq 1$. For $p > 0$, $f$ is positive, continuous, and decreasing. By the Integral Test, $\sum 1/n^p$ converges iff $\int_1^{\infty} 1/x^p\,dx$ converges, which (from Lesson 7) holds iff $p > 1$.
+
+For $p \leq 0$, $a_n = 1/n^p \geq 1 \not\to 0$, so $\sum a_n$ diverges by the Divergence Test. $\blacksquare$
+
+<FunctionPlot
+  fn={"1 / (x * x)"}
+  title={"f(x) = 1/x^2: area under curve approximates the p-series sum"}
+  domain={[0.5, 10]}
+  range={[-0.1, 2]}
+/>
+
+## Structural Summary
+
+| Test | Hypotheses | Conclusion |
+|---|---|---|
+| Comparison | $0 \leq a_n \leq b_n$ | $\sum b_n$ conv. $\Rightarrow$ $\sum a_n$ conv. |
+| Limit Comparison | $a_n, b_n > 0$, $a_n/b_n \to L \in (0,\infty)$ | $\sum a_n$ conv. $\iff$ $\sum b_n$ conv. |
+| Integral | $f$ pos., cont., decreasing, $a_n = f(n)$ | $\sum a_n$ conv. $\iff$ $\int_1^{\infty} f$ conv. |
+
+The common theme: **compare the unknown series to a known benchmark** (geometric or $p$-series).
+
+## Exercises
+
+<Problem>
+**Exercise 10.1.** Prove the Integral Test (Theorem 10.4) in full detail, carefully establishing the integral-sum inequalities from the monotonicity of $f$.
+</Problem>
+
+<Solution>
+*Proof.* Let $f : [1, \infty) \to \mathbb{R}$ be positive, continuous, and decreasing. Set $a_n = f(n)$.
+
+**Step 1: Establish the sandwich.** For $k \geq 1$ and $x \in [k, k+1]$, since $f$ is decreasing:
+
+$$f(k+1) \leq f(x) \leq f(k).$$
+
+Integrating over $[k, k+1]$: $f(k+1) \leq \int_k^{k+1} f(x)\,dx \leq f(k)$.
+
+Sum the left inequality for $k = 1, \ldots, N-1$:
+
+$$\sum_{k=2}^N a_k \leq \int_1^N f(x)\,dx.$$
+
+Sum the right inequality for $k = 1, \ldots, N-1$:
+
+$$\int_1^N f(x)\,dx \leq \sum_{k=1}^{N-1} a_k.$$
+
+**Step 2: Series convergent $\Rightarrow$ integral convergent.** If $\sum a_n = S < \infty$, then $\int_1^N f(x)\,dx \leq \sum_{k=1}^{N-1} a_k \leq S$ for all $N$. Since $f \geq 0$, $N \mapsto \int_1^N f$ is nondecreasing and bounded above by $S$, so $\int_1^{\infty} f(x)\,dx = \lim_{N \to \infty}\int_1^N f(x)\,dx$ exists and is $\leq S$.
+
+**Step 3: Integral convergent $\Rightarrow$ series convergent.** If $I = \int_1^{\infty} f(x)\,dx < \infty$, then $\sum_{k=2}^N a_k \leq \int_1^N f(x)\,dx \leq I$ for all $N$. So $S_N = a_1 + \sum_{k=2}^N a_k \leq a_1 + I$. Since $a_k \geq 0$, $(S_N)$ is nondecreasing and bounded, hence convergent.
+
+**Step 4: Bounds.** From Step 2: $\int_1^{\infty} f \leq S$. From Step 3: $S \leq a_1 + I$. Combining: $I \leq S \leq a_1 + I$. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question={"To show that the series sum(1/(n^2 + 5)) converges, which comparison would be most direct?"}
+  options={[
+    "Compare with 1/n (harmonic series) using a_n <= b_n",
+    "Limit comparison with 1/n^2, since (1/(n^2+5))/(1/n^2) -> 1",
+    "Apply the divergence test to show a_n -> 0",
+    "Compare with 1/n^3 using a_n <= b_n"
+  ]}
+  correctIndex={1}
+  explanation={"Limit comparison with 1/n^2 is the cleanest approach: the ratio n^2/(n^2+5) -> 1, a finite positive limit. Since sum(1/n^2) converges (p = 2 > 1), so does our series. Option (c) only shows the terms go to 0, which is necessary but not sufficient. Option (d) works but 1/(n^2+5) is NOT <= 1/n^3 for small n."}
+/>
+
+<NumericInput
+  question={"For which value of p does the p-series sum(1/n^p) first converge? (i.e., what is the critical exponent?) Give your answer to one decimal place."}
+  answer={1}
+  tolerance={0.1}
+  hint={"The p-series converges for p > 1 and diverges for p <= 1. At p = 1 we get the harmonic series (divergent). The critical threshold is p = 1."}
+/>
+
+<Problem>
+**Exercise 10.2.** Use the Integral Test to determine whether $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$ converges or diverges.
+</Problem>
+
+<Solution>
+Let $f(x) = \frac{1}{x \ln x}$ for $x \geq 2$. Then $f$ is positive, continuous, and decreasing on $[2, \infty)$.
+
+Compute the improper integral via substitution $u = \ln x$, $du = dx/x$:
+
+$$\int_2^R \frac{dx}{x \ln x} = \int_{\ln 2}^{\ln R} \frac{du}{u} = \ln(\ln R) - \ln(\ln 2).$$
+
+As $R \to \infty$, $\ln(\ln R) \to \infty$, so $\int_2^{\infty} \frac{dx}{x \ln x}$ diverges.
+
+By the Integral Test, $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$ diverges. $\blacksquare$
+
+This illustrates that $\sum 1/(n \ln n)$ is "barely divergent" -- it diverges even more slowly than the harmonic series.
+</Solution>
+
+<Problem>
+**Exercise 10.3 (Counterexample).** The Integral Test requires $f$ to be **positive, continuous, and decreasing**. Show that the monotonicity (decreasing) hypothesis is essential by constructing a function $f \colon [1, \infty) \to \mathbb{R}$ that is positive and continuous, with $\int_1^{\infty} f(x)\,dx < \infty$, but $\sum_{n=1}^{\infty} f(n) = \infty$.
+
+*Hint:* Construct $f$ that has narrow, tall spikes at each integer $n$ (of height $n$ and base width $1/n^3$) and is zero elsewhere. The integral of each spike is $\approx 1/n^2$ (summable), but $f(n) = n \to \infty$.
+</Problem>
+
+<Solution>
+*Construction.* For each integer $n \geq 1$, define a triangular spike centered at $n$ with height $n$ and base width $2/n^3$:
+
+$$g_n(x) = \begin{cases} n - n^4 |x - n| & \text{if } |x - n| \leq 1/n^3, \\ 0 & \text{otherwise.} \end{cases}$$
+
+Set $f(x) = \sum_{n=1}^{\infty} g_n(x)$ (the spikes have disjoint supports for $n \geq 2$ since $1/n^3 < 1/2$, so the sum is well-defined).
+
+**$f$ is positive and continuous:** Each $g_n$ is a continuous, nonneg function, and for large $n$ the supports are disjoint, so $f$ is a piecewise-defined continuous function.
+
+**$\int_1^{\infty} f(x)\,dx$ converges:** The integral of each spike is the area of a triangle:
+
+$$\int_{n - 1/n^3}^{n + 1/n^3} g_n(x)\,dx = \frac{1}{2} \cdot \frac{2}{n^3} \cdot n = \frac{1}{n^2}.$$
+
+So $\int_1^{\infty} f(x)\,dx = \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6} < \infty$.
+
+**But $\sum f(n) = \infty$:** At each integer, $f(n) = g_n(n) = n$. So $\sum_{n=1}^{\infty} f(n) = \sum_{n=1}^{\infty} n = \infty$.
+
+**Why the Integral Test fails here:** The function $f$ is not decreasing -- it oscillates wildly, with spikes of increasing height at each integer. The Integral Test's proof uses monotonicity to establish $f(k+1) \leq \int_k^{k+1} f(x)\,dx \leq f(k)$, which is false for our non-monotone $f$. The integer samples $f(n)$ capture only the spike peaks, missing the fact that $f$ is zero almost everywhere. $\square$
+</Solution>
+
+## Numerical Exploration
+
+<PythonPlayground
+  title={"Comparing Series Convergence with Integral Approximations"}
+  defaultCode={`import math
+
+# --- Compare partial sums of p-series with integral bounds ---
+print("=== p-series vs integral bounds ===")
+for p in [1.5, 2.0, 3.0]:
+    N = 10000
+    partial_sum = sum(1.0/n**p for n in range(1, N+1))
+    integral = 1.0 / (p - 1)  # integral from 1 to inf of x^(-p) dx
+    a1 = 1.0  # f(1)
+    print(f"p = {p}:")
+    print(f"  Partial sum S_{N} = {partial_sum:.8f}")
+    print(f"  Integral bound: [{integral:.8f}, {a1 + integral:.8f}]")
+    print(f"  Exact sum (Riemann zeta): in the interval above")
+    print()
+
+# --- Barely divergent: 1/(n ln n) ---
+print("=== Divergence of 1/(n ln n) ===")
+for N in [100, 1000, 10000, 100000]:
+    S = sum(1.0/(n * math.log(n)) for n in range(2, N+1))
+    integral_approx = math.log(math.log(N)) - math.log(math.log(2))
+    print(f"  S_{N:>6} = {S:.6f}  "
+          f"(ln(ln({N})) = {math.log(math.log(N)):.4f})")
+print("  Series grows like ln(ln(n)) -- extremely slowly!")
+
+print()
+
+# --- Comparison test in action ---
+print("=== Comparison: 1/(2^n + n) vs 1/2^n ===")
+S_test = 0.0
+S_geom = 0.0
+for n in range(1, 51):
+    S_test += 1.0 / (2**n + n)
+    S_geom += 1.0 / 2**n
+print(f"  sum 1/(2^n+n), N=50: {S_test:.12f}")
+print(f"  sum 1/2^n,     N=50: {S_geom:.12f}")
+print(f"  Geometric limit 1/2^n:   {1.0:.12f}")
+print(f"  (Test series converges, bounded by geometric)")
+`}
+/>
+
+<Callout type="tip">
+The playground demonstrates the integral-sum sandwich in action: for the $p$-series with $p > 1$, the partial sum always lies between $\int_1^{\infty} x^{-p}\,dx$ and $1 + \int_1^{\infty} x^{-p}\,dx$. This gives a practical way to estimate series sums without computing them exactly.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove the limit comparison test in full detail, including the exact "eventually" inequalities needed for both directions.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Classify
+$\sum_{n=3}^{\infty}\frac{1}{n(\ln n)^p}$
+for all real $p$, with a complete proof.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Give a positive sequence $(a_n)$ and a positive function $f$ with $a_n=f(n)$ where the integral test fails because monotonicity is dropped.
+Pinpoint the exact step of the proof that breaks.
+</Problem>

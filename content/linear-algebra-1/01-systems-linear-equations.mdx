@@ -1,0 +1,292 @@
+---
+title: "Systems of Linear Equations and Why Linearity Matters"
+description: "Linear equations, Gaussian elimination, row echelon form, RREF, pivots, free variables, and the structure of solution sets"
+order: 1
+---
+
+## What Is a Linear Equation?
+
+<Callout type="definition" title="Linear Equation">
+  A **linear equation** in the variables $x_1, x_2, \ldots, x_n$ is an equation of the form
+  $$a_1 x_1 + a_2 x_2 + \cdots + a_n x_n = b,$$
+  where $a_1, \ldots, a_n, b \in \mathbb{R}$ are constants. The numbers $a_i$ are the **coefficients** and $b$ is the **constant term**. An equation is linear if every variable appears to the first power and no products of variables occur.
+</Callout>
+
+Why does linearity matter? The key property is the **superposition principle**: if $\mathbf{x}^{(1)}$ and $\mathbf{x}^{(2)}$ are solutions to the homogeneous system $A\mathbf{x} = \mathbf{0}$, then so is $c_1 \mathbf{x}^{(1)} + c_2 \mathbf{x}^{(2)}$ for any scalars $c_1, c_2$. This is precisely the structure that breaks down for nonlinear equations. The entire subject of linear algebra is, at its core, the study of this superposition principle and its consequences.
+
+## Systems of Linear Equations
+
+<Callout type="definition" title="System of Linear Equations">
+  A **system of linear equations** (or **linear system**) is a collection of one or more linear equations in the same variables:
+  $$\begin{aligned} a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n &= b_1 \\ a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n &= b_2 \\ &\;\;\vdots \\ a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n &= b_m \end{aligned}$$
+  A **solution** is a list $(s_1, s_2, \ldots, s_n)$ that makes every equation true simultaneously. The **solution set** is the collection of all solutions.
+</Callout>
+
+We encode a linear system compactly using matrices. The **coefficient matrix** is
+
+$$A = \begin{pmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ a_{21} & a_{22} & \cdots & a_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} \end{pmatrix},$$
+
+and the **augmented matrix** is $[A \mid \mathbf{b}]$, formed by appending the column $\mathbf{b}$ to $A$.
+
+<MultipleChoice
+  question="Which of the following is NOT a linear equation?"
+  options={[
+    "$3x_1 - 2x_2 + x_3 = 7$",
+    "$x_1 + x_2 = 0$",
+    "$x_1 x_2 + x_3 = 1$",
+    "$0 \\cdot x_1 + 0 \\cdot x_2 = 0$"
+  ]}
+  correctIndex={2}
+  explanation="The equation $x_1 x_2 + x_3 = 1$ contains the product $x_1 x_2$, which is a nonlinear term. A linear equation cannot contain products of variables."
+/>
+
+## Elementary Row Operations
+
+<Callout type="definition" title="Elementary Row Operations">
+  The three **elementary row operations** on an augmented matrix are:
+  1. **(Replacement)** Replace one row by the sum of itself and a scalar multiple of another row: $R_i \leftarrow R_i + cR_j$.
+  2. **(Interchange)** Swap two rows: $R_i \leftrightarrow R_j$.
+  3. **(Scaling)** Multiply a row by a nonzero scalar: $R_i \leftarrow cR_i$, where $c \neq 0$.
+  Two matrices are **row equivalent** if one can be obtained from the other by a sequence of elementary row operations.
+</Callout>
+
+The fundamental fact is that row operations do not change the solution set.
+
+<Callout type="theorem" title="Row Operations Preserve Solution Sets">
+  If the augmented matrices $[A \mid \mathbf{b}]$ and $[A' \mid \mathbf{b}']$ are row equivalent, then the corresponding linear systems have the same solution set.
+</Callout>
+
+**Proof.** It suffices to show each individual row operation preserves the solution set. We verify the replacement operation; the other two are straightforward.
+
+Suppose we replace $R_i$ by $R_i + cR_j$ (where $i \neq j$). A vector $\mathbf{x} = (x_1, \ldots, x_n)$ satisfies all equations of the original system. The new $i$-th equation is
+
+$$\sum_{k=1}^n (a_{ik} + c\,a_{jk})\,x_k = b_i + c\,b_j.$$
+
+Since $\mathbf{x}$ satisfies both $\sum_k a_{ik}x_k = b_i$ and $\sum_k a_{jk}x_k = b_j$, it also satisfies the new equation. Conversely, we can undo the operation by applying $R_i \leftarrow R_i - cR_j$, so every solution of the new system is a solution of the original. Hence the solution sets coincide. $\blacksquare$
+
+## Gaussian Elimination and Row Echelon Form
+
+<Callout type="definition" title="Row Echelon Form (REF)">
+  A matrix is in **row echelon form** if:
+  1. All zero rows are at the bottom.
+  2. The first nonzero entry (**leading entry** or **pivot**) in each nonzero row is strictly to the right of the leading entry in the row above.
+  3. All entries below a pivot are zero.
+</Callout>
+
+<Callout type="definition" title="Reduced Row Echelon Form (RREF)">
+  A matrix is in **reduced row echelon form** if it is in REF and additionally:
+  4. Each pivot is equal to $1$.
+  5. Each pivot is the only nonzero entry in its column.
+</Callout>
+
+**Gaussian elimination** is the algorithm of applying elementary row operations to transform any matrix into REF. Continuing to produce RREF is called **Gauss-Jordan elimination**.
+
+### Example: Gaussian Elimination
+
+Consider the system:
+
+$$\begin{aligned}
+x_1 + 2x_2 + x_3 &= 3 \\
+2x_1 + 5x_2 + 2x_3 &= 7 \\
+x_1 + 3x_2 + 2x_3 &= 5
+\end{aligned}$$
+
+The augmented matrix and its reduction:
+
+$$\begin{pmatrix} 1 & 2 & 1 & 3 \\ 2 & 5 & 2 & 7 \\ 1 & 3 & 2 & 5 \end{pmatrix} \xrightarrow{R_2 - 2R_1} \begin{pmatrix} 1 & 2 & 1 & 3 \\ 0 & 1 & 0 & 1 \\ 1 & 3 & 2 & 5 \end{pmatrix} \xrightarrow{R_3 - R_1} \begin{pmatrix} 1 & 2 & 1 & 3 \\ 0 & 1 & 0 & 1 \\ 0 & 1 & 1 & 2 \end{pmatrix}$$
+
+$$\xrightarrow{R_3 - R_2} \begin{pmatrix} 1 & 2 & 1 & 3 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 1 \end{pmatrix}$$
+
+This is in REF. Back-substituting: $x_3 = 1$, $x_2 = 1$, $x_1 = 3 - 2(1) - 1 = 0$. The unique solution is $(0, 1, 1)$.
+
+## Uniqueness of RREF
+
+<Callout type="theorem" title="Uniqueness of RREF">
+  Every matrix is row equivalent to one and only one matrix in reduced row echelon form.
+</Callout>
+
+**Proof sketch.** Existence follows from the Gauss-Jordan algorithm, which terminates in finitely many steps. Uniqueness is more subtle and proceeds by induction on the number of columns.
+
+Let $A$ be an $m \times n$ matrix and suppose $R$ and $R'$ are both RREF matrices row equivalent to $A$. Since row equivalence preserves solution sets, the systems $R\mathbf{x} = \mathbf{0}$ and $R'\mathbf{x} = \mathbf{0}$ have the same solution set.
+
+**Base case** ($n = 1$): Each RREF form is either $(0)^T, \ldots, (0)^T$ or has a single leading $1$ in the first row. Both are determined by whether the column is entirely zero (i.e., every $\mathbf{x}$ solves the system) or not.
+
+**Inductive step:** Suppose uniqueness holds for matrices with fewer than $n$ columns. If the first column of $R$ is all zeros, then the solution sets of $R$ and $R'$ agree when $x_1$ is free, forcing the first column of $R'$ to be zero as well. The remaining columns reduce to the $(n-1)$-column case. If the first column is a pivot column (the first entry is $1$, rest zeros), then $R'$ must also have a pivot in column $1$ (otherwise the solution sets would differ). Now restrict to the submatrix formed by deleting row 1 and column 1, apply the induction hypothesis, and conclude $R = R'$. $\blacksquare$
+
+## Pivots, Free Variables, and the Structure of Solutions
+
+<Callout type="definition" title="Pivot Positions and Free Variables">
+  A **pivot position** in a matrix $A$ is a location that corresponds to a leading $1$ in the RREF of $A$. A **pivot column** is a column containing a pivot position. The corresponding variables are **basic variables**; all other variables are **free variables**.
+</Callout>
+
+<Callout type="theorem" title="Existence and Uniqueness of Solutions">
+  Consider the linear system with augmented matrix $[A \mid \mathbf{b}]$.
+  1. **Consistency:** The system is consistent if and only if the RREF of $[A \mid \mathbf{b}]$ has no row of the form $(0\; 0\; \cdots\; 0 \mid c)$ with $c \neq 0$. Equivalently, the rightmost column of $[A \mid \mathbf{b}]$ is not a pivot column.
+  2. **Uniqueness:** A consistent system has a unique solution if and only if there are no free variables, i.e., every column of $A$ is a pivot column.
+  3. **Infinitely many solutions:** A consistent system with at least one free variable has infinitely many solutions.
+</Callout>
+
+**Proof.** (1) If the RREF contains a row $(0\; 0\; \cdots\; 0 \mid 1)$, this represents the equation $0 = 1$, which has no solution. Conversely, if no such row exists, back-substitution with free variables set to arbitrary parameters yields at least one solution.
+
+(2) If there are no free variables, each variable is a basic variable determined uniquely by back-substitution. Conversely, if a free variable exists, we can assign it different values to produce distinct solutions.
+
+(3) A free variable can be set to any real number. Since $\mathbb{R}$ is infinite, the solution set is infinite. In fact, the solutions form an affine subspace whose dimension equals the number of free variables. $\blacksquare$
+
+<MultipleChoice
+  question="A $3 \\times 5$ coefficient matrix $A$ has 3 pivot columns. How many free variables does $A\\mathbf\{x\} = \\mathbf\{0\}$ have?"
+  options={[
+    "0",
+    "2",
+    "3",
+    "5"
+  ]}
+  correctIndex={1}
+  explanation="There are 5 variables total and 3 pivot columns, so $5 - 3 = 2$ free variables."
+/>
+
+## Homogeneous vs. Nonhomogeneous Systems
+
+<Callout type="definition" title="Homogeneous and Nonhomogeneous Systems">
+  A linear system $A\mathbf{x} = \mathbf{b}$ is **homogeneous** if $\mathbf{b} = \mathbf{0}$, and **nonhomogeneous** if $\mathbf{b} \neq \mathbf{0}$.
+</Callout>
+
+A homogeneous system $A\mathbf{x} = \mathbf{0}$ is always consistent (since $\mathbf{x} = \mathbf{0}$ is always a solution, called the **trivial solution**). It has a nontrivial solution if and only if there is at least one free variable.
+
+<Callout type="theorem" title="Structure of the General Solution">
+  Let $A\mathbf{x} = \mathbf{b}$ be a consistent linear system with particular solution $\mathbf{x}_p$. Then the general solution is
+  $$\mathbf{x} = \mathbf{x}_p + \mathbf{x}_h,$$
+  where $\mathbf{x}_h$ ranges over all solutions to the associated homogeneous system $A\mathbf{x} = \mathbf{0}$.
+</Callout>
+
+**Proof.** If $A\mathbf{x}_p = \mathbf{b}$ and $A\mathbf{x}_h = \mathbf{0}$, then $A(\mathbf{x}_p + \mathbf{x}_h) = A\mathbf{x}_p + A\mathbf{x}_h = \mathbf{b} + \mathbf{0} = \mathbf{b}$, so $\mathbf{x}_p + \mathbf{x}_h$ is a solution.
+
+Conversely, if $A\mathbf{x} = \mathbf{b}$, then $A(\mathbf{x} - \mathbf{x}_p) = A\mathbf{x} - A\mathbf{x}_p = \mathbf{b} - \mathbf{b} = \mathbf{0}$, so $\mathbf{x} - \mathbf{x}_p$ is a solution to the homogeneous system. $\blacksquare$
+
+This decomposition is analogous to the structure of solutions to nonhomogeneous ODEs: the general solution equals a particular solution plus the general solution of the homogeneous equation.
+
+<Problem title="Definition Drill: Identifying Pivots and Free Variables">
+  Consider the augmented matrix
+  $$\begin{pmatrix} 1 & 0 & -3 & 0 & 5 \\ 0 & 1 & 2 & 0 & -1 \\ 0 & 0 & 0 & 1 & 4 \end{pmatrix}.$$
+  This matrix is already in RREF. Identify the pivot columns, the basic variables, and the free variables. Then write the general solution in parametric vector form.
+<Solution>
+  The pivots are in columns 1, 2, and 4. So the basic variables are $x_1, x_2, x_4$ and the free variables are $x_3$ and $x_5$ (there are 5 variables -- one per column of the coefficient matrix, not counting the augmented column).
+  Wait -- we need to be careful. This is a $3 \times 5$ augmented matrix, so the coefficient matrix is $3 \times 4$ and there are 4 variables. Actually, this is a $3 \times 5$ matrix total, so there are either 4 variables (if the last column is the augmented column) or 5 variables.
+  Interpreting the matrix as $[A \mid \mathbf{b}]$ where $A$ is $3 \times 4$: The pivots are in columns 1, 2, and 4 of $A$. The basic variables are $x_1, x_2, x_4$. The free variable is $x_3$.
+  From the RREF:
+  - Row 3: $x_4 = 4$
+  - Row 2: $x_2 + 2x_3 = -1$, so $x_2 = -1 - 2x_3$
+  - Row 1: $x_1 - 3x_3 = 5$, so $x_1 = 5 + 3x_3$
+  Setting $x_3 = t$ (free parameter):
+  $$\mathbf{x} = \begin{pmatrix} 5 \\ -1 \\ 0 \\ 4 \end{pmatrix} + t\begin{pmatrix} 3 \\ -2 \\ 1 \\ 0 \end{pmatrix}, \quad t \in \mathbb{R}.$$
+  This is the parametric vector form. The first vector is the particular solution $\mathbf{x}_p$ and the second vector (scaled by $t$) spans the solution set of the homogeneous system.
+</Solution>
+</Problem>
+
+<NumericInput
+  question="A homogeneous system $A\\mathbf\{x\} = \\mathbf\{0\}$ has coefficient matrix $A$ of size $4 \\times 7$. The RREF of $A$ has exactly 3 pivot columns. How many free variables are there?"
+  answer={4}
+  tolerance={0}
+  explanation="There are 7 variables and 3 pivot columns, so $7 - 3 = 4$ free variables."
+/>
+
+## Row Reduction with NumPy
+
+<PythonPlayground
+  title="Gaussian Elimination with NumPy"
+  defaultCode={`import numpy as np
+
+# Define the augmented matrix [A | b]
+A_aug = np.array([
+    [1, 2, 1, 3],
+    [2, 5, 2, 7],
+    [1, 3, 2, 5]
+], dtype=float)
+
+print("Original augmented matrix:")
+print(A_aug)
+print()
+
+# Manual Gaussian elimination
+# R2 <- R2 - 2*R1
+A_aug[1] = A_aug[1] - 2 * A_aug[0]
+print("After R2 <- R2 - 2*R1:")
+print(A_aug)
+print()
+
+# R3 <- R3 - R1
+A_aug[2] = A_aug[2] - A_aug[0]
+print("After R3 <- R3 - R1:")
+print(A_aug)
+print()
+
+# R3 <- R3 - R2
+A_aug[2] = A_aug[2] - A_aug[1]
+print("After R3 <- R3 - R2 (REF):")
+print(A_aug)
+print()
+
+# Back-substitution
+x3 = A_aug[2, 3] / A_aug[2, 2]
+x2 = (A_aug[1, 3] - A_aug[1, 2] * x3) / A_aug[1, 1]
+x1 = (A_aug[0, 3] - A_aug[0, 1] * x2 - A_aug[0, 2] * x3) / A_aug[0, 0]
+
+print(f"Solution: x1 = {x1}, x2 = {x2}, x3 = {x3}")
+
+# Verify with numpy.linalg.solve
+A = np.array([[1,2,1],[2,5,2],[1,3,2]], dtype=float)
+b = np.array([3,7,5], dtype=float)
+x = np.linalg.solve(A, b)
+print(f"Verification via np.linalg.solve: {x}")`}
+/>
+
+## Characterizing Consistency via Pivots
+
+We can now summarize the relationship between pivot structure and solution behavior.
+
+<Callout type="tip" title="The Pivot Taxonomy">
+  For an $m \times n$ system $A\mathbf{x} = \mathbf{b}$ with $r$ pivot columns:
+  | Condition | Meaning |
+  |-----------|---------|
+  | $r = n$ and consistent | Unique solution |
+  | $r < n$ and consistent | Infinitely many solutions ($n - r$ free variables) |
+  | Pivot in augmented column | Inconsistent (no solution) |
+  | $r = m$ (every row has a pivot) | Consistent for every $\mathbf{b}$ |
+  In particular, if $m < n$ (more unknowns than equations) and the system is consistent, the solution is never unique.
+</Callout>
+
+<Problem title="Theorem Application: More Unknowns Than Equations">
+  Prove that if $A$ is an $m \times n$ matrix with $m < n$, then the homogeneous system $A\mathbf{x} = \mathbf{0}$ has a nontrivial solution.
+<Solution>
+  **Proof.** Apply Gaussian elimination to $A$ to obtain a matrix in REF. The number of pivots $r$ satisfies $r \leq m$ (since there are only $m$ rows, there can be at most $m$ pivots). Since $m < n$, we have $r \leq m < n$, so the number of free variables is $n - r \geq n - m > 0$.
+  A homogeneous system is always consistent (the trivial solution $\mathbf{x} = \mathbf{0}$ exists). Since there is at least one free variable, we can assign it a nonzero value. Back-substitution then yields a solution $\mathbf{x} \neq \mathbf{0}$. Hence a nontrivial solution exists. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Counterexample: Consistency Does Not Imply Uniqueness">
+  Give an example of a consistent system $A\mathbf{x} = \mathbf{b}$ (with $\mathbf{b} \neq \mathbf{0}$) that has infinitely many solutions. Verify by finding two distinct solutions.
+<Solution>
+  Consider the system:
+  $$\begin{aligned}
+  x_1 + x_2 &= 1 \\
+  2x_1 + 2x_2 &= 2
+  \end{aligned}$$
+  The augmented matrix reduces to:
+  $$\begin{pmatrix} 1 & 1 & 1 \\ 2 & 2 & 2 \end{pmatrix} \xrightarrow{R_2 - 2R_1} \begin{pmatrix} 1 & 1 & 1 \\ 0 & 0 & 0 \end{pmatrix}.$$
+  There is one pivot (column 1) and one free variable ($x_2$). Setting $x_2 = t$: $x_1 = 1 - t$.
+  Two distinct solutions: $t = 0$ gives $(1, 0)$; $t = 1$ gives $(0, 1)$. Both satisfy $x_1 + x_2 = 1$ and $2x_1 + 2x_2 = 2$. Since the free variable ranges over all of $\mathbb{R}$, there are infinitely many solutions.
+</Solution>
+</Problem>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+  Write the $3 \times 3$ identity matrix $I_3$ and verify directly that $I_3 \mathbf{x} = \mathbf{x}$ for an arbitrary vector $\mathbf{x} \in \mathbb{R}^3$, using the definition of matrix-vector multiplication.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+  Let $A$ be an $n \times n$ matrix. Prove that $A\mathbf{x} = \mathbf{b}$ has a unique solution for every $\mathbf{b} \in \mathbb{R}^n$ if and only if $A$ has $n$ pivot positions.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+  Give an example of a $2 \times 3$ system $A\mathbf{x} = \mathbf{b}$ that is inconsistent. Explain why having more unknowns than equations does not guarantee consistency when $\mathbf{b} \neq \mathbf{0}$.
+</Problem>

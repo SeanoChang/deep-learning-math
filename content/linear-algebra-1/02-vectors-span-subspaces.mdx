@@ -1,0 +1,268 @@
+---
+title: "Vectors, Linear Combinations, Span, and Subspaces"
+description: "Vectors in R^n, linear combinations, span, subspace definition, column space, null space, and closure properties"
+order: 2
+prerequisites: ["01-systems-linear-equations"]
+---
+
+## Vectors in $\mathbb{R}^n$
+
+<Callout type="definition" title="Vectors in R^n">
+  A **vector** in $\mathbb{R}^n$ is an ordered $n$-tuple of real numbers, written as a column:
+  $$\mathbf{v} = \begin{pmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{pmatrix} \in \mathbb{R}^n.$$
+  **Vector addition** and **scalar multiplication** are defined component-wise:
+  $$\mathbf{u} + \mathbf{v} = \begin{pmatrix} u_1 + v_1 \\ \vdots \\ u_n + v_n \end{pmatrix}, \qquad c\mathbf{v} = \begin{pmatrix} cv_1 \\ \vdots \\ cv_n \end{pmatrix}.$$
+  The **zero vector** is $\mathbf{0} = (0, 0, \ldots, 0)^T$.
+</Callout>
+
+These operations satisfy eight axioms (commutativity, associativity, distributivity, etc.) that make $\mathbb{R}^n$ a **vector space**. We will formalize this in Lesson 5. For now, we work concretely in $\mathbb{R}^n$ and build intuition for the abstract definition.
+
+## Linear Combinations
+
+<Callout type="definition" title="Linear Combination">
+  A **linear combination** of vectors $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_p \in \mathbb{R}^n$ is any vector of the form
+  $$c_1 \mathbf{v}_1 + c_2 \mathbf{v}_2 + \cdots + c_p \mathbf{v}_p,$$
+  where $c_1, c_2, \ldots, c_p \in \mathbb{R}$ are scalars called the **weights** (or coefficients).
+</Callout>
+
+The question "Is $\mathbf{b}$ a linear combination of $\mathbf{v}_1, \ldots, \mathbf{v}_p$?" is equivalent to asking whether the system
+
+$$x_1 \mathbf{v}_1 + x_2 \mathbf{v}_2 + \cdots + x_p \mathbf{v}_p = \mathbf{b}$$
+
+has a solution -- that is, whether the linear system with augmented matrix $[\mathbf{v}_1 \; \mathbf{v}_2 \; \cdots \; \mathbf{v}_p \mid \mathbf{b}]$ is consistent. This connection between geometric/algebraic questions and linear systems is the bridge between the two perspectives of linear algebra.
+
+<Problem title="Definition Drill: Linear Combinations">
+  Determine whether $\mathbf{b} = \begin{pmatrix} 7 \\ 4 \\ -3 \end{pmatrix}$ is a linear combination of $\mathbf{v}_1 = \begin{pmatrix} 1 \\ -2 \\ -5 \end{pmatrix}$ and $\mathbf{v}_2 = \begin{pmatrix} 2 \\ 5 \\ 6 \end{pmatrix}$.
+<Solution>
+  We need to solve $x_1 \mathbf{v}_1 + x_2 \mathbf{v}_2 = \mathbf{b}$, which gives the augmented matrix:
+  $$\begin{pmatrix} 1 & 2 & 7 \\ -2 & 5 & 4 \\ -5 & 6 & -3 \end{pmatrix} \xrightarrow{R_2 + 2R_1} \begin{pmatrix} 1 & 2 & 7 \\ 0 & 9 & 18 \\ -5 & 6 & -3 \end{pmatrix} \xrightarrow{R_3 + 5R_1} \begin{pmatrix} 1 & 2 & 7 \\ 0 & 9 & 18 \\ 0 & 16 & 32 \end{pmatrix}$$
+  $$\xrightarrow{R_2/9,\; R_3/16} \begin{pmatrix} 1 & 2 & 7 \\ 0 & 1 & 2 \\ 0 & 1 & 2 \end{pmatrix} \xrightarrow{R_3 - R_2} \begin{pmatrix} 1 & 2 & 7 \\ 0 & 1 & 2 \\ 0 & 0 & 0 \end{pmatrix}$$
+  The system is consistent. Back-substituting: $x_2 = 2$, $x_1 = 7 - 2(2) = 3$.
+  Therefore $\mathbf{b} = 3\mathbf{v}_1 + 2\mathbf{v}_2$, and $\mathbf{b}$ is indeed a linear combination of $\mathbf{v}_1$ and $\mathbf{v}_2$.
+</Solution>
+</Problem>
+
+## Span
+
+<Callout type="definition" title="Span">
+  The **span** of vectors $\mathbf{v}_1, \ldots, \mathbf{v}_p \in \mathbb{R}^n$ is the set of all linear combinations:
+  $$\text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\} = \{c_1 \mathbf{v}_1 + \cdots + c_p \mathbf{v}_p : c_1, \ldots, c_p \in \mathbb{R}\}.$$
+  We say that $\mathbf{v}_1, \ldots, \mathbf{v}_p$ **span** (or **generate**) the set $\text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$.
+</Callout>
+
+Geometrically:
+- $\text{Span}\{\mathbf{0}\} = \{\mathbf{0}\}$: just the origin.
+- $\text{Span}\{\mathbf{v}\}$ for $\mathbf{v} \neq \mathbf{0}$: a line through the origin.
+- $\text{Span}\{\mathbf{u}, \mathbf{v}\}$ for non-parallel nonzero vectors: a plane through the origin.
+
+<Callout type="tip" title="Span and Linear Systems">
+  $\mathbf{b} \in \text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ if and only if the linear system $[\mathbf{v}_1 \; \cdots \; \mathbf{v}_p \mid \mathbf{b}]$ is consistent. Thus $\text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\} = \mathbb{R}^n$ if and only if the matrix $[\mathbf{v}_1 \; \cdots \; \mathbf{v}_p]$ has a pivot in every row.
+</Callout>
+
+<MultipleChoice
+  question="Let $\\mathbf\{v\}_1 = (1, 0, 0)^T$ and $\\mathbf\{v\}_2 = (0, 1, 0)^T$. Which vector is NOT in $\\text\{Span\}\\{\\mathbf\{v\}_1, \\mathbf\{v\}_2\\}$?"
+  options={[
+    "$(3, -2, 0)^T$",
+    "$(0, 0, 0)^T$",
+    "$(1, 1, 1)^T$",
+    "$(-5, 7, 0)^T$"
+  ]}
+  correctIndex={2}
+  explanation="$\\text\{Span\}\\{\\mathbf\{v\}_1, \\mathbf\{v\}_2\\}$ consists of all vectors of the form $(a, b, 0)^T$. The vector $(1,1,1)^T$ has a nonzero third component, so it is not in the span."
+/>
+
+## Subspaces of $\mathbb{R}^n$
+
+<Callout type="definition" title="Subspace">
+  A **subspace** of $\mathbb{R}^n$ is a subset $H \subseteq \mathbb{R}^n$ satisfying:
+  1. $\mathbf{0} \in H$ (contains the zero vector).
+  2. If $\mathbf{u}, \mathbf{v} \in H$, then $\mathbf{u} + \mathbf{v} \in H$ (closed under addition).
+  3. If $\mathbf{u} \in H$ and $c \in \mathbb{R}$, then $c\mathbf{u} \in H$ (closed under scalar multiplication).
+</Callout>
+
+<Callout type="tip" title="Compact Subspace Test">
+  Conditions (2) and (3) can be combined: $H$ is a subspace if and only if $H$ is nonempty and $c_1\mathbf{u} + c_2\mathbf{v} \in H$ for all $\mathbf{u}, \mathbf{v} \in H$ and all $c_1, c_2 \in \mathbb{R}$. Condition (1) then follows by taking $c_1 = c_2 = 0$.
+</Callout>
+
+<Callout type="theorem" title="Subspace Iff Closed Under + and Scalar Mult">
+  A nonempty subset $H \subseteq \mathbb{R}^n$ is a subspace if and only if for all $\mathbf{u}, \mathbf{v} \in H$ and all $c \in \mathbb{R}$:
+  1. $\mathbf{u} + \mathbf{v} \in H$, and
+  2. $c\mathbf{u} \in H$.
+</Callout>
+
+**Proof.** ($\Rightarrow$) This is immediate from the definition.
+
+($\Leftarrow$) We must show $\mathbf{0} \in H$. Since $H$ is nonempty, there exists some $\mathbf{u} \in H$. By closure under scalar multiplication, $0 \cdot \mathbf{u} = \mathbf{0} \in H$. $\blacksquare$
+
+### Examples and Non-Examples
+
+**Examples of subspaces of $\mathbb{R}^3$:**
+- $\{\mathbf{0}\}$ (the trivial subspace).
+- Any line through the origin: $\{t\mathbf{v} : t \in \mathbb{R}\}$ for a fixed nonzero $\mathbf{v}$.
+- Any plane through the origin: $\{s\mathbf{u} + t\mathbf{v} : s, t \in \mathbb{R}\}$ for non-parallel $\mathbf{u}, \mathbf{v}$.
+- $\mathbb{R}^3$ itself.
+
+**Non-examples:**
+- A line not through the origin: e.g., $\{(t, t+1, 0)^T : t \in \mathbb{R}\}$ does not contain $\mathbf{0}$ (when $t = 0$, the vector is $(0,1,0)^T \neq \mathbf{0}$).
+- The first quadrant $\{(x,y) : x \geq 0, y \geq 0\}$ in $\mathbb{R}^2$: not closed under scalar multiplication (multiply by $-1$).
+
+<Problem title="Counterexample: A Set That Fails One Closure Property">
+  Show that $S = \{(x, y) \in \mathbb{R}^2 : xy \geq 0\}$ is not a subspace of $\mathbb{R}^2$, even though it contains $\mathbf{0}$ and is closed under scalar multiplication.
+<Solution>
+  First, note $\mathbf{0} = (0,0) \in S$ since $0 \cdot 0 = 0 \geq 0$.
+  **Closure under scalar multiplication:** If $(x,y) \in S$, then $xy \geq 0$. For any $c \in \mathbb{R}$, we have $(cx)(cy) = c^2(xy) \geq 0$ (since $c^2 \geq 0$ and $xy \geq 0$). So $c(x,y) = (cx, cy) \in S$.
+  **Failure of closure under addition:** Take $\mathbf{u} = (1, -1)$ and $\mathbf{v} = (-1, 1)$. Then $\mathbf{u} \in S$ since $1 \cdot (-1) = -1$... wait, $-1 \not\geq 0$, so $\mathbf{u} \notin S$.
+  Let me reconsider. $S$ consists of points in the first and third quadrants (plus axes). Take $\mathbf{u} = (1, 0) \in S$ (since $1 \cdot 0 = 0 \geq 0$) and $\mathbf{v} = (0, -1) \in S$ (since $0 \cdot (-1) = 0 \geq 0$). Wait, these are on the axes and their sum $(1, -1)$ has $1 \cdot (-1) = -1 < 0$, so $(1, -1) \notin S$.
+  Therefore $S$ is not closed under addition, so $S$ is not a subspace. $\blacksquare$
+</Solution>
+</Problem>
+
+## Spans Are Subspaces
+
+<Callout type="theorem" title="Span Is a Subspace">
+  For any vectors $\mathbf{v}_1, \ldots, \mathbf{v}_p \in \mathbb{R}^n$, the set $\text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ is a subspace of $\mathbb{R}^n$.
+</Callout>
+
+**Proof.** Let $H = \text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$.
+
+**Zero vector:** $\mathbf{0} = 0\mathbf{v}_1 + \cdots + 0\mathbf{v}_p \in H$.
+
+**Closed under addition:** Let $\mathbf{u} = a_1\mathbf{v}_1 + \cdots + a_p\mathbf{v}_p$ and $\mathbf{w} = b_1\mathbf{v}_1 + \cdots + b_p\mathbf{v}_p$ be in $H$. Then
+
+$$\mathbf{u} + \mathbf{w} = (a_1 + b_1)\mathbf{v}_1 + \cdots + (a_p + b_p)\mathbf{v}_p \in H.$$
+
+**Closed under scalar multiplication:** For $c \in \mathbb{R}$,
+
+$$c\mathbf{u} = (ca_1)\mathbf{v}_1 + \cdots + (ca_p)\mathbf{v}_p \in H.$$
+
+Hence $H$ is a subspace. $\blacksquare$
+
+In fact, $\text{Span}\{\mathbf{v}_1, \ldots, \mathbf{v}_p\}$ is the **smallest** subspace containing $\mathbf{v}_1, \ldots, \mathbf{v}_p$: it is contained in every subspace that contains those vectors.
+
+## Column Space and Null Space
+
+Two subspaces arise naturally from any matrix $A$.
+
+<Callout type="definition" title="Column Space">
+  The **column space** of an $m \times n$ matrix $A$ is
+  $$\text{Col}(A) = \text{Span}\{\mathbf{a}_1, \ldots, \mathbf{a}_n\} \subseteq \mathbb{R}^m,$$
+  where $\mathbf{a}_1, \ldots, \mathbf{a}_n$ are the columns of $A$. Equivalently,
+  $$\text{Col}(A) = \{A\mathbf{x} : \mathbf{x} \in \mathbb{R}^n\} = \{\text{all } \mathbf{b} \text{ such that } A\mathbf{x} = \mathbf{b} \text{ is consistent}\}.$$
+</Callout>
+
+<Callout type="definition" title="Null Space">
+  The **null space** of an $m \times n$ matrix $A$ is
+  $$\text{Nul}(A) = \{\mathbf{x} \in \mathbb{R}^n : A\mathbf{x} = \mathbf{0}\}.$$
+  That is, the null space is the solution set of the homogeneous system $A\mathbf{x} = \mathbf{0}$.
+</Callout>
+
+<Callout type="theorem" title="Null Space Is a Subspace">
+  For any $m \times n$ matrix $A$, $\text{Nul}(A)$ is a subspace of $\mathbb{R}^n$.
+</Callout>
+
+**Proof.** We verify the three subspace properties.
+
+**Zero vector:** $A\mathbf{0} = \mathbf{0}$, so $\mathbf{0} \in \text{Nul}(A)$.
+
+**Closed under addition:** If $\mathbf{u}, \mathbf{v} \in \text{Nul}(A)$, then $A(\mathbf{u} + \mathbf{v}) = A\mathbf{u} + A\mathbf{v} = \mathbf{0} + \mathbf{0} = \mathbf{0}$, so $\mathbf{u} + \mathbf{v} \in \text{Nul}(A)$.
+
+**Closed under scalar multiplication:** If $\mathbf{u} \in \text{Nul}(A)$ and $c \in \mathbb{R}$, then $A(c\mathbf{u}) = c(A\mathbf{u}) = c\mathbf{0} = \mathbf{0}$, so $c\mathbf{u} \in \text{Nul}(A)$.
+
+Hence $\text{Nul}(A)$ is a subspace of $\mathbb{R}^n$. $\blacksquare$
+
+<Callout type="tip" title="Col(A) Lives in R^m, Nul(A) Lives in R^n">
+  For an $m \times n$ matrix $A$: $\text{Col}(A) \subseteq \mathbb{R}^m$ (it is a set of outputs) and $\text{Nul}(A) \subseteq \mathbb{R}^n$ (it is a set of inputs). Don't confuse the ambient spaces.
+</Callout>
+
+<MultipleChoice
+  question="Let $A$ be a $3 \\times 4$ matrix. In which space does $\\text\{Nul\}(A)$ live?"
+  options={[
+    "$\\mathbb\{R\}^3$",
+    "$\\mathbb\{R\}^4$",
+    "$\\mathbb\{R\}^7$",
+    "$\\mathbb\{R\}^{12}$"
+  ]}
+  correctIndex={1}
+  explanation="$\\text\{Nul\}(A) = \\{\\mathbf\{x\} \\in \\mathbb\{R\}^4 : A\\mathbf\{x\} = \\mathbf\{0\}\\}$. The null space lives in the domain of $A$, which is $\\mathbb\{R\}^4$ since $A$ has 4 columns."
+/>
+
+## Computing Null Space and Column Space
+
+<PythonPlayground
+  title="Computing Column Space and Null Space"
+  defaultCode={`import numpy as np
+
+# Define a matrix A
+A = np.array([
+    [1, 3, 5, 7],
+    [2, 6, 10, 14],
+    [0, 1, 2, 3]
+], dtype=float)
+
+print("Matrix A:")
+print(A)
+print(f"Shape: {A.shape[0]} x {A.shape[1]}")
+print()
+
+# Find null space via RREF (manual reduction)
+# Row reduce [A]
+R = A.copy()
+R[1] = R[1] - 2*R[0]  # R2 is now all zeros
+print("After R2 <- R2 - 2*R1:")
+print(R)
+R[[1,2]] = R[[2,1]]     # Swap R2 and R3
+print("\\nAfter swapping R2 and R3:")
+print(R)
+R[0] = R[0] - 3*R[1]     # Clear above pivot 2
+print("\\nAfter R1 <- R1 - 3*R2:")
+print(R)
+
+print("\\nREF form:")
+print(R)
+print("\\nPivot columns: 1 and 2 (0-indexed: 0 and 1)")
+print("Free variables: x3 and x4")
+print()
+
+# Null space: set free vars to parameters
+# From REF: x1 + 5*x3 + 7*x4 - 3*(x2 + 2*x3 + 3*x4) = ...
+# Actually read off from the reduced form:
+# x1 - x3 - 2*x4 = 0   =>  x1 = x3 + 2*x4
+# x2 + 2*x3 + 3*x4 = 0  =>  x2 = -2*x3 - 3*x4
+# x3 = s, x4 = t (free)
+print("Null space basis vectors:")
+v1 = np.array([1, -2, 1, 0])   # s=1, t=0
+v2 = np.array([2, -3, 0, 1])   # s=0, t=1
+print(f"v1 = {v1}  (set x3=1, x4=0)")
+print(f"v2 = {v2}  (set x3=0, x4=1)")
+
+# Verify
+print(f"\\nA @ v1 = {A @ v1}")
+print(f"A @ v2 = {A @ v2}")
+
+# Column space: pivot columns of A
+print(f"\\nColumn space basis: columns 0 and 1 of A")
+print(f"col0 = {A[:, 0]}")
+print(f"col1 = {A[:, 1]}")`}
+/>
+
+<NumericInput
+  question="Let $A = \\begin\{pmatrix\} 1 & 2 & 1 \\\\ 0 & 1 & 1 \\\\ 1 & 3 & 2 \\end\{pmatrix\}$. Find the number of vectors in a basis for $\\text\{Nul\}(A)$ by row reducing $A$."
+  answer={1}
+  tolerance={0}
+  explanation="Row reducing: $R_3 \\leftarrow R_3 - R_1$ gives $(0, 1, 1)$ in row 3, then $R_3 - R_2$ gives a zero row. Pivots in columns 1 and 2, so 1 free variable, meaning the null space has a 1-element basis."
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+  Let $H = \{(a - b,\; b - c,\; c - a) : a, b, c \in \mathbb{R}\}$. Prove directly from the definition that $H$ is a subspace of $\mathbb{R}^3$. Find a spanning set for $H$ and determine whether $H = \mathbb{R}^3$ or $H$ is a proper subspace.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+  Let $A$ be an $m \times n$ matrix and let $\mathbf{b} \in \mathbb{R}^m$. Prove that the solution set of $A\mathbf{x} = \mathbf{b}$ (when nonempty) is a subspace of $\mathbb{R}^n$ if and only if $\mathbf{b} = \mathbf{0}$.
+  *Hint:* For the "only if" direction, recall that every subspace must contain $\mathbf{0}$.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+  Find a subset of $\mathbb{R}^2$ that is closed under scalar multiplication but not under addition. Prove both properties hold.
+</Problem>

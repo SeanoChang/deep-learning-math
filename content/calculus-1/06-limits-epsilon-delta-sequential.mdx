@@ -1,0 +1,232 @@
+---
+title: "Limits of Functions: Definition and Sequential Criterion"
+description: "The epsilon-delta definition of function limits, one-sided limits, and the sequential criterion"
+order: 6
+prerequisites: ["05-cauchy-sequences-completeness"]
+---
+
+# Limits of Functions: ε-δ and Sequential Criterion
+
+Having built a rigorous theory of sequences and their limits, we now extend these ideas to functions. The epsilon-delta definition of a limit, due to Weierstrass, is the foundation upon which all of calculus rests.
+
+## The ε-δ Definition
+
+<Callout type="definition">
+**Definition 6.1 (Limit of a Function).** Let $A \subseteq \mathbb{R}$, let $f : A \to \mathbb{R}$, and let $c$ be a limit point of $A$. We say that $\lim_{x \to c} f(x) = L$ if for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+
+$$|f(x) - L| < \varepsilon \quad \text{whenever} \quad 0 < |x - c| < \delta \text{ and } x \in A.$$
+
+Equivalently, for every $\varepsilon > 0$ there exists $\delta > 0$ such that $f\bigl((c - \delta, c + \delta) \cap A \setminus \{c\}\bigr) \subseteq (L - \varepsilon, L + \varepsilon)$.
+</Callout>
+
+Note the condition $0 < |x - c|$: we never evaluate $f$ at $c$ itself when computing a limit. The function need not even be defined at $c$.
+
+<Callout type="info">
+**Remark.** The requirement that $c$ be a limit point of $A$ ensures that for every $\delta > 0$, the set $(c - \delta, c + \delta) \cap A \setminus \{c\}$ is nonempty, so the definition is not vacuously true.
+</Callout>
+
+### Visualizing ε-δ
+
+The following plot illustrates the ε-δ definition for $f(x) = \frac{\sin(x)}{x}$ near $x = 0$. For any $\varepsilon$-band around $L = 1$, we can find a $\delta$-band around $x = 0$ such that the function stays within the $\varepsilon$-band.
+
+<FunctionPlot
+  fn={"Math.sin(x) / x"}
+  title={"f(x) = sin(x)/x approaching L = 1 as x → 0"}
+  domain={[-6, 6]}
+  range={[-0.5, 1.5]}
+/>
+
+## Uniqueness of Limits
+
+<Callout type="theorem">
+**Theorem 6.2 (Uniqueness of Limits).** Let $c$ be a limit point of $A$ and let $f : A \to \mathbb{R}$. If $\lim_{x \to c} f(x) = L_1$ and $\lim_{x \to c} f(x) = L_2$, then $L_1 = L_2$.
+</Callout>
+
+*Proof.* Suppose for contradiction that $L_1 \neq L_2$. Set $\varepsilon = |L_1 - L_2| / 2 > 0$. By the definition of limit, there exist $\delta_1, \delta_2 > 0$ such that
+
+$$0 < |x - c| < \delta_1 \implies |f(x) - L_1| < \varepsilon, \qquad 0 < |x - c| < \delta_2 \implies |f(x) - L_2| < \varepsilon.$$
+
+Let $\delta = \min(\delta_1, \delta_2)$. Since $c$ is a limit point of $A$, there exists $x_0 \in A$ with $0 < |x_0 - c| < \delta$. Then by the triangle inequality:
+
+$$|L_1 - L_2| \leq |L_1 - f(x_0)| + |f(x_0) - L_2| < \varepsilon + \varepsilon = |L_1 - L_2|,$$
+
+a contradiction. $\square$
+
+## One-Sided Limits
+
+<Callout type="definition">
+**Definition 6.3 (One-Sided Limits).** Let $f : A \to \mathbb{R}$ and let $c$ be a limit point of $A \cap (c, \infty)$.
+
+The **right-hand limit** $\lim_{x \to c^+} f(x) = L$ means: for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+
+$$|f(x) - L| < \varepsilon \quad \text{whenever} \quad 0 < x - c < \delta \text{ and } x \in A.$$
+
+Similarly, the **left-hand limit** $\lim_{x \to c^-} f(x) = L$ means: for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+
+$$|f(x) - L| < \varepsilon \quad \text{whenever} \quad 0 < c - x < \delta \text{ and } x \in A.$$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 6.4.** Suppose $c$ is a limit point of both $A \cap (-\infty, c)$ and $A \cap (c, \infty)$. Then $\lim_{x \to c} f(x) = L$ if and only if $\lim_{x \to c^-} f(x) = L$ and $\lim_{x \to c^+} f(x) = L$.
+</Callout>
+
+## The Sequential Criterion
+
+The sequential criterion connects our theory of sequences to the theory of function limits, and is an extremely powerful tool.
+
+<Callout type="theorem">
+**Theorem 6.5 (Sequential Criterion for Function Limits).** Let $f : A \to \mathbb{R}$ and let $c$ be a limit point of $A$. Then $\lim_{x \to c} f(x) = L$ if and only if for every sequence $(x_n)$ in $A$ with $x_n \neq c$ for all $n$ and $x_n \to c$, we have $f(x_n) \to L$.
+</Callout>
+
+*Proof.*
+
+($\Rightarrow$) Suppose $\lim_{x \to c} f(x) = L$ and let $(x_n)$ be a sequence in $A$ with $x_n \neq c$ and $x_n \to c$. Given $\varepsilon > 0$, choose $\delta > 0$ such that $0 < |x - c| < \delta \implies |f(x) - L| < \varepsilon$. Since $x_n \to c$, there exists $N$ such that $|x_n - c| < \delta$ for all $n \geq N$. Since $x_n \neq c$, we have $0 < |x_n - c| < \delta$, so $|f(x_n) - L| < \varepsilon$ for all $n \geq N$.
+
+($\Leftarrow$) We prove the contrapositive. Suppose $\lim_{x \to c} f(x) \neq L$. Then there exists $\varepsilon_0 > 0$ such that for every $\delta > 0$, there exists $x \in A$ with $0 < |x - c| < \delta$ and $|f(x) - L| \geq \varepsilon_0$. Taking $\delta = 1/n$, we obtain a sequence $(x_n)$ with $x_n \in A$, $0 < |x_n - c| < 1/n$, and $|f(x_n) - L| \geq \varepsilon_0$. Then $x_n \to c$ but $f(x_n) \not\to L$. $\square$
+
+<Callout type="tip">
+**Strategy.** The sequential criterion is especially useful for showing limits do **not** exist: find two sequences converging to $c$ for which $f$ produces different limits.
+</Callout>
+
+## Algebra of Function Limits
+
+<Callout type="theorem">
+**Theorem 6.6 (Limit Laws).** Let $f, g : A \to \mathbb{R}$, let $c$ be a limit point of $A$, and suppose $\lim_{x \to c} f(x) = L$ and $\lim_{x \to c} g(x) = M$. Then:
+
+1. $\lim_{x \to c} [f(x) + g(x)] = L + M$
+2. $\lim_{x \to c} [f(x) \cdot g(x)] = L \cdot M$
+3. If $M \neq 0$, then $\lim_{x \to c} \frac{f(x)}{g(x)} = \frac{L}{M}$
+</Callout>
+
+*Proof of (1) via ε-δ.* Let $\varepsilon > 0$. Choose $\delta_1 > 0$ such that $0 < |x - c| < \delta_1 \implies |f(x) - L| < \varepsilon/2$ and $\delta_2 > 0$ such that $0 < |x - c| < \delta_2 \implies |g(x) - M| < \varepsilon/2$. Set $\delta = \min(\delta_1, \delta_2)$. Then for $0 < |x - c| < \delta$:
+
+$$|f(x) + g(x) - (L + M)| \leq |f(x) - L| + |g(x) - M| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon. \quad \square$$
+
+## Squeeze Theorem for Functions
+
+<Callout type="theorem">
+**Theorem 6.7 (Squeeze Theorem).** Let $f, g, h : A \to \mathbb{R}$ with $f(x) \leq g(x) \leq h(x)$ for all $x \in A \setminus \{c\}$. If $\lim_{x \to c} f(x) = L = \lim_{x \to c} h(x)$, then $\lim_{x \to c} g(x) = L$.
+</Callout>
+
+*Proof.* Let $\varepsilon > 0$. Choose $\delta_1, \delta_2 > 0$ such that
+
+$$0 < |x - c| < \delta_1 \implies |f(x) - L| < \varepsilon, \qquad 0 < |x - c| < \delta_2 \implies |h(x) - L| < \varepsilon.$$
+
+Set $\delta = \min(\delta_1, \delta_2)$. For $0 < |x - c| < \delta$ and $x \in A$:
+
+$$L - \varepsilon < f(x) \leq g(x) \leq h(x) < L + \varepsilon,$$
+
+so $|g(x) - L| < \varepsilon$. $\square$
+
+## Exercises
+
+<Problem>
+**Exercise 6.1.** Prove directly from the ε-δ definition that $\lim_{x \to 2} (3x - 1) = 5$.
+
+*Hint:* Given $\varepsilon > 0$, express $|f(x) - 5|$ in terms of $|x - 2|$ and choose $\delta$ accordingly.
+</Problem>
+
+<Solution>
+*Proof.* Let $\varepsilon > 0$. We need $|(3x - 1) - 5| < \varepsilon$, i.e., $|3x - 6| = 3|x - 2| < \varepsilon$, i.e., $|x - 2| < \varepsilon / 3$.
+
+Choose $\delta = \varepsilon / 3$. Then $0 < |x - 2| < \delta$ implies
+
+$$|(3x - 1) - 5| = 3|x - 2| < 3 \cdot \frac{\varepsilon}{3} = \varepsilon. \quad \square$$
+</Solution>
+
+<MultipleChoice
+  question={"Which of the following correctly states the sequential criterion for function limits?"}
+  options={[
+    "lim f(xₙ) = L for some sequence xₙ → c implies lim(x→c) f(x) = L",
+    "lim(x→c) f(x) = L iff for every sequence xₙ → c with xₙ ≠ c, f(xₙ) → L",
+    "lim(x→c) f(x) = L iff there exists a sequence xₙ → c with f(xₙ) → L",
+    "The sequential criterion requires xₙ = c for infinitely many n"
+  ]}
+  correctIndex={1}
+  explanation={"The sequential criterion requires the implication for ALL sequences converging to c (with xₙ ≠ c), not just some. A single sequence suffices to disprove a limit, but all sequences must agree to prove one."}
+/>
+
+<NumericInput
+  question={"Consider f(x) = (x² - 9)/(x - 3) for x ≠ 3. What is lim(x→3) f(x)?"}
+  answer={6}
+  tolerance={0.01}
+  hint={"Factor the numerator: x² - 9 = (x-3)(x+3)."}
+/>
+
+<Problem>
+**Exercise 6.2.** Use the sequential criterion to show that $\lim_{x \to 0} \sin(1/x)$ does not exist.
+
+*Hint:* Find two sequences converging to $0$ that produce different limits under $\sin(1/x)$.
+</Problem>
+
+<Solution>
+*Proof.* Consider the sequences $x_n = \frac{1}{2\pi n}$ and $y_n = \frac{1}{2\pi n + \pi/2}$. Both satisfy $x_n \to 0$ and $y_n \to 0$ with $x_n \neq 0$ and $y_n \neq 0$ for all $n$.
+
+We have $\sin(1/x_n) = \sin(2\pi n) = 0$ for all $n$, so $f(x_n) \to 0$.
+
+We have $\sin(1/y_n) = \sin(2\pi n + \pi/2) = 1$ for all $n$, so $f(y_n) \to 1$.
+
+Since two sequences converging to $0$ give different limits under $f$, the sequential criterion implies $\lim_{x \to 0} \sin(1/x)$ does not exist. $\square$
+</Solution>
+
+<Problem>
+**Exercise 6.3 (Counterexample).** Give an example of a function $f$ defined on $\mathbb{R} \setminus \{0\}$ for which the left-hand limit $\lim_{x \to 0^-} f(x)$ exists but the right-hand limit $\lim_{x \to 0^+} f(x)$ does not exist. Prove both claims.
+
+*Hint:* Consider a function that is constant for $x < 0$ but oscillates for $x > 0$.
+</Problem>
+
+<Solution>
+*Answer.* Define
+
+$$f(x) = \begin{cases} 1 & \text{if } x < 0 \\ \sin(1/x) & \text{if } x > 0. \end{cases}$$
+
+**Left-hand limit exists:** For all $x < 0$, $f(x) = 1$. Given any $\varepsilon > 0$, choose $\delta = 1$. If $-\delta < x < 0$, then $|f(x) - 1| = 0 < \varepsilon$. Thus $\lim_{x \to 0^-} f(x) = 1$.
+
+**Right-hand limit does not exist:** Consider the sequences $x_n = \frac{1}{2\pi n} \to 0^+$ and $y_n = \frac{1}{2\pi n + \pi/2} \to 0^+$. Then $f(x_n) = \sin(2\pi n) = 0$ for all $n$, so $f(x_n) \to 0$. And $f(y_n) = \sin(2\pi n + \pi/2) = 1$ for all $n$, so $f(y_n) \to 1$. Since two sequences approaching $0$ from the right give different limits under $f$, the sequential criterion implies $\lim_{x \to 0^+} f(x)$ does not exist.
+
+In particular, the two-sided limit $\lim_{x \to 0} f(x)$ does not exist either, by Theorem 6.4. $\square$
+</Solution>
+
+## Numerical Exploration
+
+Use the playground below to numerically explore limits by evaluating a function at points approaching $c$ from both sides.
+
+<PythonPlayground
+  title={"Numerical Exploration of Function Limits"}
+  defaultCode={`import math
+
+def f(x):
+    """Modify this function to explore different limits."""
+    if x == 0:
+        return float('nan')
+    return math.sin(x) / x
+
+c = 0  # The point we approach
+print(f"Exploring lim(x -> {c}) f(x)")
+print(f"{'x':>15} {'f(x)':>20}")
+print("-" * 37)
+
+# Approach from the right
+for k in range(1, 10):
+    x = c + 10**(-k)
+    try:
+        val = f(x)
+        print(f"{x:>15.10f} {val:>20.15f}")
+    except:
+        print(f"{x:>15.10f} {'undefined':>20}")
+
+print()
+
+# Approach from the left
+for k in range(1, 10):
+    x = c - 10**(-k)
+    try:
+        val = f(x)
+        print(f"{x:>15.10f} {val:>20.15f}")
+    except:
+        print(f"{x:>15.10f} {'undefined':>20}")
+
+print()
+print("If both sides converge to the same value, the limit likely exists.")
+`}
+/>

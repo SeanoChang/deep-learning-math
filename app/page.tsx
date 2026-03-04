@@ -79,7 +79,7 @@ export default function HomePage() {
       {/* Prerequisites note */}
       <div className="mt-16 text-center text-sm text-muted-foreground">
         <p>
-          Topics are ordered by dependency. Start with Calculus and work your way through.
+          Topics are ordered by dependency. Start with Calculus I and work your way through.
         </p>
       </div>
     </div>

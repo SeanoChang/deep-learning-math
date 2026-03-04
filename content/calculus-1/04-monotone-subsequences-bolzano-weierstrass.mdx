@@ -1,0 +1,255 @@
+---
+title: "Monotone Sequences, Subsequences, Bolzano-Weierstrass"
+description: "Monotone convergence, subsequences, and the Bolzano-Weierstrass theorem"
+order: 4
+prerequisites: ["03-sequences-formal-limit"]
+---
+
+## Monotone Sequences
+
+<Callout type="definition" title="Monotone Sequences">
+A sequence $(a_n)$ is:
+- **Monotone increasing** (or nondecreasing) if $a_n \leq a_{n+1}$ for all $n$.
+- **Strictly increasing** if $a_n < a_{n+1}$ for all $n$.
+- **Monotone decreasing** (or nonincreasing) if $a_n \geq a_{n+1}$ for all $n$.
+- **Strictly decreasing** if $a_n > a_{n+1}$ for all $n$.
+- **Monotone** if it is either monotone increasing or monotone decreasing.
+</Callout>
+
+Monotone sequences have a powerful convergence criterion that relies directly on completeness.
+
+## The Monotone Convergence Theorem
+
+<Callout type="theorem" title="Monotone Convergence Theorem (MCT)">
+Every bounded monotone sequence converges.
+
+More precisely:
+- If $(a_n)$ is monotone increasing and bounded above, then $\lim_{n \to \infty} a_n = \sup\{a_n : n \in \mathbb{N}\}$.
+- If $(a_n)$ is monotone decreasing and bounded below, then $\lim_{n \to \infty} a_n = \inf\{a_n : n \in \mathbb{N}\}$.
+</Callout>
+
+**Proof (increasing case).** Let $(a_n)$ be monotone increasing and bounded above. The set $S = \{a_n : n \in \mathbb{N}\}$ is nonempty and bounded above, so by completeness, $L = \sup S$ exists in $\mathbb{R}$.
+
+We claim $a_n \to L$. Let $\epsilon > 0$. By the $\epsilon$-characterization of supremum, there exists $a_N \in S$ with $a_N > L - \epsilon$. Since $(a_n)$ is monotone increasing, for all $n \geq N$:
+
+$$L - \epsilon < a_N \leq a_n \leq L < L + \epsilon.$$
+
+Therefore $|a_n - L| < \epsilon$ for all $n \geq N$, so $a_n \to L$. $\blacksquare$
+
+<Callout type="tip" title="Why MCT is Powerful">
+MCT gives convergence without knowing the limit. You only need to verify two things: (1) the sequence is monotone, and (2) it is bounded. The limit is then guaranteed to exist, and equals the supremum (or infimum). This is a quintessential use of completeness.
+</Callout>
+
+<Problem title="Apply the Monotone Convergence Theorem">
+Define $a_1 = 1$ and $a_{n+1} = \frac{1}{2}(a_n + 3/a_n)$ for $n \geq 1$. Show that $(a_n)$ converges, and find its limit.
+
+<Solution>
+**Step 1: Show $a_n \geq \sqrt{3}$ for all $n \geq 2$.**
+
+By AM-GM: $a_{n+1} = \frac{1}{2}(a_n + 3/a_n) \geq \frac{1}{2} \cdot 2\sqrt{a_n \cdot 3/a_n} = \sqrt{3}$ for all $n \geq 1$. So $a_n \geq \sqrt{3}$ for $n \geq 2$.
+
+**Step 2: Show $(a_n)_{n \geq 2}$ is monotone decreasing.**
+
+For $n \geq 2$: $a_{n+1} - a_n = \frac{1}{2}(a_n + 3/a_n) - a_n = \frac{1}{2}(3/a_n - a_n) = \frac{3 - a_n^2}{2a_n}$.
+
+Since $a_n \geq \sqrt{3}$ for $n \geq 2$, we have $a_n^2 \geq 3$, so $a_{n+1} - a_n \leq 0$.
+
+**Step 3: Converge and find the limit.**
+
+$(a_n)_{n \geq 2}$ is monotone decreasing and bounded below by $\sqrt{3}$. By MCT, $L = \lim a_n$ exists.
+
+Taking limits in the recurrence: $L = \frac{1}{2}(L + 3/L)$, so $2L = L + 3/L$, hence $L = 3/L$, giving $L^2 = 3$. Since $L \geq \sqrt{3} > 0$, we conclude $L = \sqrt{3}$. $\blacksquare$
+</Solution>
+</Problem>
+
+<FunctionPlot
+  fn="0.5 * (x + 3/x)"
+  title="f(x) = (x + 3/x)/2: the recurrence map, with fixed point at sqrt(3)"
+  domain={[0.5, 5]}
+  range={[0, 5]}
+/>
+
+## Subsequences
+
+<Callout type="definition" title="Subsequence">
+Let $(a_n)$ be a sequence and let $n_1 < n_2 < n_3 < \cdots$ be a strictly increasing sequence of natural numbers. The sequence $(a_{n_k})_{k=1}^{\infty}$ is called a **subsequence** of $(a_n)$.
+</Callout>
+
+<Callout type="theorem" title="Subsequences of Convergent Sequences">
+If $a_n \to L$, then every subsequence $(a_{n_k})$ also converges to $L$.
+</Callout>
+
+**Proof.** Let $\epsilon > 0$. Since $a_n \to L$, there exists $N$ with $|a_n - L| < \epsilon$ for all $n \geq N$. For $k \geq N$: $n_k \geq k \geq N$ (since the indices are strictly increasing), so $|a_{n_k} - L| < \epsilon$. $\blacksquare$
+
+<Callout type="info" title="Contrapositive for Divergence">
+The contrapositive gives a useful divergence test: if a sequence has two subsequences converging to different limits, then the sequence diverges.
+
+Example: $a_n = (-1)^n$. The subsequence $a_{2k} = 1 \to 1$ and $a_{2k-1} = -1 \to -1$. Since $1 \neq -1$, the sequence diverges.
+</Callout>
+
+## The Bolzano-Weierstrass Theorem
+
+<Callout type="theorem" title="Bolzano-Weierstrass Theorem">
+Every bounded sequence in $\mathbb{R}$ has a convergent subsequence.
+</Callout>
+
+**Proof.** Let $(a_n)$ be bounded: $a_n \in [A, B]$ for all $n$.
+
+We construct a convergent subsequence using **interval bisection**.
+
+**Step 1:** Set $[a^{(0)}, b^{(0)}] = [A, B]$. This interval contains infinitely many terms of $(a_n)$ (in fact, all of them).
+
+**Step 2:** Bisect: consider $[A, (A+B)/2]$ and $[(A+B)/2, B]$. At least one of these half-intervals contains infinitely many terms. Choose one that does; call it $[a^{(1)}, b^{(1)}]$ and pick one term $a_{n_1}$ from it.
+
+**Step 3 (Induction):** Having chosen $[a^{(k)}, b^{(k)}]$ with length $(B-A)/2^k$ containing infinitely many terms, and having picked $a_{n_k}$ from it, bisect $[a^{(k)}, b^{(k)}]$ and choose a half containing infinitely many terms. Call it $[a^{(k+1)}, b^{(k+1)}]$ and pick $a_{n_{k+1}}$ with $n_{k+1} > n_k$ (possible since infinitely many terms remain).
+
+**Step 4:** The nested intervals $[a^{(k)}, b^{(k)}]$ have lengths $(B-A)/2^k \to 0$. By the nested interval property, there is a unique $L \in \bigcap_k [a^{(k)}, b^{(k)}]$.
+
+Since $a_{n_k} \in [a^{(k)}, b^{(k)}]$ and $b^{(k)} - a^{(k)} = (B-A)/2^k \to 0$, we have $|a_{n_k} - L| \leq (B-A)/2^k \to 0$, so $a_{n_k} \to L$. $\blacksquare$
+
+<MultipleChoice
+  question="What is the key property of $\\mathbb{R}$ used in the proof of the Bolzano-Weierstrass theorem?"
+  options={[
+    "The Archimedean property",
+    "The density of $\\mathbb{Q}$ in $\\mathbb{R}$",
+    "The completeness axiom (via nested intervals)",
+    "The triangle inequality"
+  ]}
+  correctIndex={2}
+  explanation="The proof uses interval bisection and the nested interval property, which is a consequence of completeness. Without completeness, the intersection of nested intervals could be empty (as happens in $\\mathbb{Q}$)."
+/>
+
+## Divergence versus Oscillation
+
+Not all non-convergent sequences behave the same way.
+
+<Callout type="definition" title="Types of Divergence">
+A sequence $(a_n)$ **diverges to $+\infty$** if for every $M > 0$, there exists $N$ such that $a_n > M$ for all $n \geq N$. We write $a_n \to +\infty$.
+
+Similarly for $a_n \to -\infty$.
+
+A sequence that diverges but does not diverge to $\pm\infty$ is said to **oscillate**. Example: $(-1)^n$.
+</Callout>
+
+<NumericInput
+  question="The sequence $a_n = (1 + 1/n)^n$ is monotone increasing and bounded above (by $e$). By MCT, it converges. To 3 decimal places, what is $\\lim_{n \\to \\infty} (1 + 1/n)^n$?"
+  answer={2.718}
+  tolerance={0.001}
+  hint="This is the definition of Euler's number $e \\approx 2.71828\\ldots$"
+/>
+
+## Visualizing Monotone Convergence and Subsequence Extraction
+
+<PythonPlayground
+  title="Monotone Convergence and Subsequence Extraction"
+  defaultCode={`import math
+
+# 1) Monotone Convergence: a_1 = 1, a_{n+1} = (a_n + 3/a_n)/2
+print("=== Monotone Convergence to sqrt(3) ===")
+a = 1.0
+terms = [a]
+for i in range(15):
+    a = 0.5 * (a + 3.0/a)
+    terms.append(a)
+
+for i, t in enumerate(terms):
+    marker = " <-- sqrt(3)" if abs(t - math.sqrt(3)) < 1e-10 else ""
+    print(f"  a_{i+1:2d} = {t:.12f}{marker}")
+print(f"  sqrt(3) = {math.sqrt(3):.12f}")
+
+# 2) Bolzano-Weierstrass: extract convergent subsequence from bounded sequence
+print()
+print("=== Bolzano-Weierstrass: Subsequence from sin(n) ===")
+# sin(n) is bounded in [-1, 1] but does not converge
+
+# Bisection extraction
+seq = [math.sin(n) for n in range(1, 10001)]
+a_bw, b_bw = -1.0, 1.0
+subseq_indices = []
+
+for step in range(30):
+    mid = (a_bw + b_bw) / 2
+    # Count terms in each half
+    left = [(i, s) for i, s in enumerate(seq) if a_bw <= s <= mid and i not in [x[0] for x in subseq_indices]]
+    right = [(i, s) for i, s in enumerate(seq) if mid < s <= b_bw and i not in [x[0] for x in subseq_indices]]
+
+    if len(left) >= len(right):
+        b_bw = mid
+        if left:
+            pick = left[0]
+            subseq_indices.append(pick)
+    else:
+        a_bw = mid
+        if right:
+            pick = right[0]
+            subseq_indices.append(pick)
+
+print(f"Interval after 30 bisections: [{a_bw:.8f}, {b_bw:.8f}]")
+print(f"Interval length: {b_bw - a_bw:.2e}")
+print(f"Subsequence limit approx: {(a_bw + b_bw)/2:.8f}")
+print(f"First 5 extracted terms: {[round(s, 6) for _, s in subseq_indices[:5]]}")`}
+/>
+
+<Problem title="Prove: A Convergent Sequence Has a Unique Subsequential Limit">
+Prove that if $a_n \to L$, then every subsequence of $(a_n)$ converges to $L$. Then use the contrapositive to show that $a_n = (-1)^n$ diverges.
+
+<Solution>
+**Part 1.** Let $(a_{n_k})$ be a subsequence of $(a_n)$, and let $\epsilon > 0$. Since $a_n \to L$, there exists $N$ with $|a_n - L| < \epsilon$ for all $n \geq N$.
+
+We claim $n_k \geq k$ for all $k$ (proved by induction: $n_1 \geq 1$, and if $n_k \geq k$, then $n_{k+1} > n_k \geq k$, so $n_{k+1} \geq k + 1$).
+
+For $k \geq N$: $n_k \geq k \geq N$, so $|a_{n_k} - L| < \epsilon$. Hence $a_{n_k} \to L$.
+
+**Part 2.** Consider $a_n = (-1)^n$. The subsequence $a_{2k} = 1 \to 1$. The subsequence $a_{2k-1} = -1 \to -1$. If $(a_n)$ converged to some $L$, then by Part 1, both subsequences would converge to $L$, giving $L = 1$ and $L = -1$, a contradiction. Therefore $(a_n)$ diverges. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem>
+**Exercise 4.3 (Definition Drill).** Prove directly from the definition that the sequence $a_n = \frac{n}{n+1}$ is monotone increasing. Then use the Monotone Convergence Theorem to conclude it converges, and find the limit.
+
+*Hint:* Show $a_{n+1} - a_n > 0$ for all $n \geq 1$.
+</Problem>
+
+<Solution>
+*Proof.* **Monotone increasing:** We compute
+
+$$a_{n+1} - a_n = \frac{n+1}{n+2} - \frac{n}{n+1} = \frac{(n+1)^2 - n(n+2)}{(n+2)(n+1)} = \frac{n^2 + 2n + 1 - n^2 - 2n}{(n+2)(n+1)} = \frac{1}{(n+2)(n+1)} > 0$$
+
+for all $n \geq 1$. So $(a_n)$ is strictly increasing.
+
+**Bounded above:** For all $n \geq 1$, $a_n = \frac{n}{n+1} = 1 - \frac{1}{n+1} < 1$.
+
+**Convergence by MCT:** Since $(a_n)$ is monotone increasing and bounded above by $1$, the Monotone Convergence Theorem guarantees $L = \lim a_n$ exists and equals $\sup\{a_n\}$.
+
+**Finding the limit:** By the algebra of limits, $L = \lim \frac{n}{n+1} = \lim \frac{1}{1 + 1/n} = \frac{1}{1+0} = 1$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 4.4 (Counterexample).** Give an example of a sequence that has a convergent subsequence but is itself divergent. Prove both claims.
+
+*Hint:* Consider a sequence that oscillates between two values while also visiting increasingly large numbers.
+</Problem>
+
+<Solution>
+*Answer.* Define $a_n$ by:
+
+$$a_n = \begin{cases} 0 & \text{if } n \text{ is even} \\ n & \text{if } n \text{ is odd} \end{cases}$$
+
+**Convergent subsequence:** The subsequence $(a_{2k})_{k=1}^\infty = (0, 0, 0, \ldots)$ converges to $0$.
+
+**Divergent:** The sequence is unbounded since $a_{2k-1} = 2k - 1 \to \infty$. A convergent sequence must be bounded (Theorem: convergent implies bounded), so $(a_n)$ diverges.
+
+This shows that the converse of "if $a_n \to L$ then every subsequence converges to $L$" fails: a sequence can have a convergent subsequence without being convergent itself. The Bolzano-Weierstrass theorem guarantees a convergent subsequence for any *bounded* sequence, but does not require the full sequence to converge. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following is TRUE about the Bolzano-Weierstrass theorem?"
+  options={[
+    "Every bounded sequence converges",
+    "Every bounded sequence has a convergent subsequence",
+    "Every sequence has a bounded subsequence",
+    "Every monotone sequence converges"
+  ]}
+  correctIndex={1}
+  explanation="Bolzano-Weierstrass says every BOUNDED sequence has a convergent SUBSEQUENCE. The sequence itself need not converge (e.g., $(-1)^n$ is bounded but divergent). And not every monotone sequence converges -- it must also be bounded."
+/>

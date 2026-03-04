@@ -1,0 +1,226 @@
+---
+title: "Singular Value Decomposition"
+description: "The SVD as rotation-stretch-rotation, existence from the Spectral Theorem, geometric meaning, and the Eckart-Young best rank-r approximation"
+order: 12
+prerequisites: ["11-spectral-theorem"]
+---
+
+# Singular Value Decomposition
+
+The Spectral Theorem applies to self-adjoint (or normal) operators. But what about an arbitrary linear map $T : V \to W$ between possibly different spaces, with no symmetry at all? The Singular Value Decomposition (SVD) answers this question completely: every matrix can be decomposed into a rotation, a stretch along coordinate axes, and another rotation.
+
+## What Does a Matrix Do Geometrically?
+
+Consider a linear map $A : \mathbb{R}^n \to \mathbb{R}^m$. It maps the unit sphere $S^{n-1} \subset \mathbb{R}^n$ to an ellipsoid in $\mathbb{R}^m$. The SVD makes this precise: there exist orthonormal bases for the domain and codomain in which $A$ acts as a simple coordinate-wise scaling.
+
+The key idea: even though $A$ itself may not be symmetric, the matrices $A^T A$ and $AA^T$ are always symmetric and positive semidefinite.
+
+## The Gram Matrices $A^T A$ and $AA^T$
+
+<Callout type="theorem" title="A^T A is Positive Semidefinite">
+  For any $A \in \mathbb{R}^{m \times n}$, the matrix $A^T A$ is symmetric and positive semidefinite. Moreover, $\operatorname{rank}(A^T A) = \operatorname{rank}(A)$.
+</Callout>
+
+**Proof.** Symmetry: $(A^T A)^T = A^T (A^T)^T = A^T A$.
+
+Positive semidefiniteness: for any $x \in \mathbb{R}^n$,
+
+$$x^T (A^T A) x = (Ax)^T (Ax) = \|Ax\|^2 \geq 0.$$
+
+Rank equality: $\ker(A^T A) = \ker(A)$. Indeed, if $A^T Ax = 0$, then $x^T A^T Ax = \|Ax\|^2 = 0$, so $Ax = 0$. Conversely, $Ax = 0$ trivially implies $A^T Ax = 0$. Since the null spaces are equal, the rank-nullity theorem gives $\operatorname{rank}(A^T A) = \operatorname{rank}(A)$. $\blacksquare$
+
+<Callout type="tip" title="The Same Holds for $AA^T$">
+  By identical reasoning, $AA^T \in \mathbb{R}^{m \times m}$ is symmetric positive semidefinite with $\operatorname{rank}(AA^T) = \operatorname{rank}(A)$.
+</Callout>
+
+## Singular Values
+
+<Callout type="definition" title="Singular Values">
+  Let $A \in \mathbb{R}^{m \times n}$ with $\operatorname{rank}(A) = r$. The **singular values** of $A$ are the numbers
+  $$\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r > 0$$
+  where $\sigma_i = \sqrt{\lambda_i}$ and $\lambda_1 \geq \cdots \geq \lambda_r > 0$ are the positive eigenvalues of $A^T A$ (equivalently, of $AA^T$).
+</Callout>
+
+The singular values measure how much $A$ stretches vectors along its principal directions. The largest singular value $\sigma_1$ equals the operator norm $\|A\|$.
+
+## The SVD Theorem
+
+<Callout type="theorem" title="Singular Value Decomposition">
+  Let $A \in \mathbb{R}^{m \times n}$ with $\operatorname{rank}(A) = r$. Then there exist:
+  - An orthogonal matrix $U \in \mathbb{R}^{m \times m}$ (left singular vectors),
+  - An orthogonal matrix $V \in \mathbb{R}^{n \times n}$ (right singular vectors),
+  - A matrix $\Sigma \in \mathbb{R}^{m \times n}$ with $\Sigma_{ii} = \sigma_i$ for $i = 1, \ldots, r$ and all other entries zero,
+  such that
+  $$A = U \Sigma V^T.$$
+</Callout>
+
+**Proof (from the Spectral Theorem).**
+
+**Step 1 (Right singular vectors).** $A^T A$ is symmetric positive semidefinite. By the Real Spectral Theorem, there exists an orthonormal basis $\{v_1, \ldots, v_n\}$ of $\mathbb{R}^n$ consisting of eigenvectors:
+
+$$A^T A v_i = \lambda_i v_i, \quad \lambda_1 \geq \cdots \geq \lambda_r > 0 = \lambda_{r+1} = \cdots = \lambda_n.$$
+
+Set $V = [v_1 \mid \cdots \mid v_n]$.
+
+**Step 2 (Singular values and left singular vectors).** Define $\sigma_i = \sqrt{\lambda_i}$ for $i = 1, \ldots, r$. For $i = 1, \ldots, r$, define:
+
+$$u_i = \frac{1}{\sigma_i} Av_i.$$
+
+We verify these are orthonormal:
+
+$$\langle u_i, u_j \rangle = \frac{1}{\sigma_i \sigma_j} \langle Av_i, Av_j \rangle = \frac{1}{\sigma_i \sigma_j} v_i^T A^T A v_j = \frac{\lambda_j}{\sigma_i \sigma_j} \langle v_i, v_j \rangle = \frac{\lambda_j}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij}.$$
+
+**Step 3 (Extend to a full basis).** Extend $\{u_1, \ldots, u_r\}$ to an orthonormal basis $\{u_1, \ldots, u_m\}$ of $\mathbb{R}^m$. Set $U = [u_1 \mid \cdots \mid u_m]$.
+
+**Step 4 (Verify $A = U\Sigma V^T$).** For $i = 1, \ldots, r$: $Av_i = \sigma_i u_i$. For $i = r+1, \ldots, n$: $Av_i = 0$ (since $v_i \in \ker A$). This is exactly the statement $AV = U\Sigma$, i.e., $A = U\Sigma V^T$. $\blacksquare$
+
+<Callout type="tip" title="Geometric Interpretation: Rotation-Stretch-Rotation">
+  The SVD says every linear map is the composition:
+  1. **$V^T$:** Rotate/reflect the domain to align with the right singular vectors.
+  2. **$\Sigma$:** Stretch along each coordinate axis by $\sigma_i$ (and possibly embed into a higher/lower dimension).
+  3. **$U$:** Rotate/reflect the result to align with the left singular vectors.
+  No matter how complicated $A$ is, its action is always "rotate, stretch, rotate."
+</Callout>
+
+## The Compact (Reduced) SVD
+
+The full SVD uses $m \times m$ and $n \times n$ orthogonal matrices, but the essential information is in the rank-$r$ part. The **compact SVD** is:
+
+$$A = U_r \Sigma_r V_r^T = \sum_{i=1}^{r} \sigma_i u_i v_i^T$$
+
+where $U_r = [u_1 \mid \cdots \mid u_r] \in \mathbb{R}^{m \times r}$, $\Sigma_r = \operatorname{diag}(\sigma_1, \ldots, \sigma_r) \in \mathbb{R}^{r \times r}$, and $V_r = [v_1 \mid \cdots \mid v_r] \in \mathbb{R}^{n \times r}$.
+
+The outer product form $A = \sum_{i=1}^{r} \sigma_i u_i v_i^T$ writes $A$ as a sum of rank-1 matrices, ordered by importance ($\sigma_1 \geq \sigma_2 \geq \cdots$).
+
+## Relationship Between Left and Right Singular Vectors
+
+<Callout type="theorem" title="Singular Vectors as Eigenvectors">
+  The right singular vectors $v_1, \ldots, v_n$ are eigenvectors of $A^T A$:
+  $$A^T A v_i = \sigma_i^2 v_i.$$
+  The left singular vectors $u_1, \ldots, u_m$ are eigenvectors of $AA^T$:
+  $$AA^T u_i = \sigma_i^2 u_i.$$
+</Callout>
+
+**Proof of the second claim.** For $i \leq r$:
+
+$$AA^T u_i = AA^T \cdot \frac{1}{\sigma_i} Av_i = \frac{1}{\sigma_i} A(A^T A v_i) = \frac{1}{\sigma_i} A(\sigma_i^2 v_i) = \sigma_i A v_i = \sigma_i^2 u_i.$$
+
+For $i > r$: $u_i \in (\operatorname{col} A)^{\perp} = \ker A^T$, so $AA^T u_i = 0 = 0 \cdot u_i$. $\blacksquare$
+
+## The Eckart-Young Theorem: Best Low-Rank Approximation
+
+<Callout type="theorem" title="Eckart-Young Theorem">
+  Let $A = U\Sigma V^T$ be the SVD with singular values $\sigma_1 \geq \cdots \geq \sigma_r > 0$. For $k \leq r$, define the rank-$k$ truncation:
+  $$A_k = \sum_{i=1}^{k} \sigma_i u_i v_i^T.$$
+  Then $A_k$ is the best rank-$k$ approximation to $A$ in both the Frobenius and operator norms:
+  $$\min_{\operatorname{rank}(B) \leq k} \|A - B\|_F = \|A - A_k\|_F = \sqrt{\sigma_{k+1}^2 + \cdots + \sigma_r^2}.$$
+  $$\min_{\operatorname{rank}(B) \leq k} \|A - B\|_2 = \|A - A_k\|_2 = \sigma_{k+1}.$$
+</Callout>
+
+**Proof sketch (Frobenius norm).** Since $U$ and $V$ are orthogonal, the Frobenius norm is invariant under orthogonal transformations: $\|A\|_F = \|\Sigma\|_F$. For any rank-$k$ matrix $B$:
+
+$$\|A - B\|_F^2 = \|U\Sigma V^T - B\|_F^2 = \|\Sigma - U^T BV\|_F^2.$$
+
+The matrix $U^T BV$ has rank at most $k$. The problem reduces to finding the best rank-$k$ approximation to the diagonal matrix $\Sigma$, which is clearly the truncation keeping the $k$ largest diagonal entries. Thus:
+
+$$\|A - A_k\|_F^2 = \sigma_{k+1}^2 + \cdots + \sigma_r^2. \quad \blacksquare$$
+
+<Callout type="tip" title="Why Eckart-Young Matters">
+  This theorem is the theoretical backbone of **dimensionality reduction**:
+  - **PCA** (Principal Component Analysis) is SVD applied to the centered data matrix.
+  - **Image compression**: keep the top-$k$ singular values to approximate an image.
+  - **Latent semantic analysis**: approximate a term-document matrix.
+  The singular values tell you exactly how much information each component carries.
+</Callout>
+
+---
+
+## Exercises
+
+<Problem title="Prove: Nonzero Singular Values of A and A^T Coincide">
+  Show that $A$ and $A^T$ have the same nonzero singular values. (Hint: relate the eigenvalues of $A^T A$ and $AA^T$.)
+<Solution>
+  **Proof.** The nonzero singular values of $A$ are the square roots of the nonzero eigenvalues of $A^T A$. The nonzero singular values of $A^T$ are the square roots of the nonzero eigenvalues of $(A^T)^T A^T = AA^T$.
+  We show $A^T A$ and $AA^T$ have the same nonzero eigenvalues. If $A^T A v = \lambda v$ with $\lambda \neq 0$ and $v \neq 0$, set $u = Av \neq 0$ (since $\lambda \neq 0$ implies $v \notin \ker A$). Then:
+  $$AA^T u = AA^T(Av) = A(A^T A v) = A(\lambda v) = \lambda (Av) = \lambda u.$$
+  So $\lambda$ is also an eigenvalue of $AA^T$. By symmetry (replacing $A$ with $A^T$), every nonzero eigenvalue of $AA^T$ is an eigenvalue of $A^T A$. The nonzero eigenvalues coincide, so the nonzero singular values of $A$ and $A^T$ are identical. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="SVD of a Rank-1 Matrix">
+  Let $A = uv^T$ where $u \in \mathbb{R}^m$ and $v \in \mathbb{R}^n$ are nonzero vectors. Find the singular values, left singular vectors, and right singular vectors of $A$ explicitly.
+<Solution>
+  **Solution.** Since $A = uv^T$ has rank 1, there is exactly one nonzero singular value.
+  Compute $A^T A = (uv^T)^T(uv^T) = v u^T u v^T = \|u\|^2 v v^T$. This is a rank-1 matrix with eigenvector $v$ and eigenvalue $\|u\|^2 \|v\|^2$ (since $vv^T \cdot v = \|v\|^2 v$). All other eigenvalues are 0.
+  Therefore: the single nonzero singular value is $\sigma_1 = \|u\| \cdot \|v\|$.
+  The right singular vector is $\hat{v} = v / \|v\|$.
+  The left singular vector is $\hat{u} = Av / (\sigma_1 \|v\|^{-1} \cdot \|v\|) = uv^Tv / (\sigma_1) = u\|v\|^2 / (\|u\|\|v\|) = u\|v\| / (\|u\|\|v\|) \cdot \|v\| / \|v\|$. Simplifying: $\hat{u} = u/\|u\|$.
+  So the compact SVD is: $A = \sigma_1 \hat{u} \hat{v}^T = (\|u\|\|v\|) \cdot \frac{u}{\|u\|} \cdot \frac{v^T}{\|v\|}$, which is indeed $uv^T$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $A$ be a $5 \times 3$ matrix of rank 2. How many nonzero singular values does $A$ have?"
+  options={[
+    "5",
+    "3",
+    "2",
+    "It depends on the specific entries of $A$"
+  ]}
+  correctIndex={2}
+  explanation="The number of nonzero singular values equals the rank of the matrix. Since $\text{rank}(A) = 2$, there are exactly 2 nonzero singular values."
+/>
+
+<NumericInput
+  question="Let $A = \begin{pmatrix} 3 & 0 \\\\ 0 & 4 \end{pmatrix}$. What is the largest singular value $\sigma_1$ of $A$?"
+  answer={4}
+  tolerance={0.01}
+  explanation="For a diagonal matrix, the singular values are the absolute values of the diagonal entries. So $\sigma_1 = \max(|3|, |4|) = 4$."
+/>
+
+<PythonPlayground
+  title="SVD Computation and Low-Rank Approximation"
+  initialCode={`import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+# Create a matrix and compute its SVD
+A = np.array([
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [10, 11, 12]
+], dtype=float)
+
+print("Matrix A (4x3):")
+print(A)
+print(f"Rank of A: {np.linalg.matrix_rank(A)}")
+print()
+
+U, s, Vt = np.linalg.svd(A, full_matrices=True)
+print("Singular values:", s)
+print(f"Number of nonzero singular values: {np.sum(s > 1e-10)}")
+print()
+
+# Verify A = U Sigma V^T
+Sigma = np.zeros_like(A)
+for i in range(len(s)):
+    Sigma[i, i] = s[i]
+A_reconstructed = U @ Sigma @ Vt
+print("Reconstruction error ||A - U Sigma V^T||:", np.linalg.norm(A - A_reconstructed))
+print()
+
+# Best rank-1 approximation (Eckart-Young)
+A_rank1 = s[0] * np.outer(U[:, 0], Vt[0, :])
+print("Best rank-1 approximation:")
+print(A_rank1)
+print(f"||A - A_1||_F = {np.linalg.norm(A - A_rank1):.4f}")
+print(f"sqrt(sigma_2^2 + ...) = {np.sqrt(np.sum(s[1:]**2)):.4f}")
+print()
+
+# Verify: A^T A and AA^T share nonzero eigenvalues
+eig_ATA = np.sort(np.linalg.eigvalsh(A.T @ A))[::-1]
+eig_AAT = np.sort(np.linalg.eigvalsh(A @ A.T))[::-1]
+print("Eigenvalues of A^T A:", eig_ATA)
+print("Eigenvalues of AA^T:", eig_AAT)
+print("(Nonzero eigenvalues match, as expected)")`}
+/>

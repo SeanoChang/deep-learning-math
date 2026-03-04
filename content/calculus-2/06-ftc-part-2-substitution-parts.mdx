@@ -1,0 +1,285 @@
+---
+title: "FTC Part II, Substitution, and Integration by Parts"
+description: "The evaluation theorem, change of variables, and integration by parts — all derived from first principles"
+order: 6
+prerequisites: ["05-ftc-part-1"]
+---
+
+# FTC Part II, Substitution, and Integration by Parts
+
+The First Fundamental Theorem (FTC I) told us that every continuous function has an antiderivative: the
+accumulation function $F(x) = \int_a^x f(t)\,dt$ satisfies $F'(x) = f(x)$. We now prove the converse
+direction -- the **Evaluation Theorem** (FTC II) -- and develop the two most important techniques for
+computing integrals: substitution and integration by parts.
+
+## The Second Fundamental Theorem of Calculus
+
+<Callout type="theorem">
+**Theorem 6.1 (FTC Part II — Evaluation Theorem).** Let $f : [a,b] \to \mathbb{R}$ be continuous, and suppose $F$ is any antiderivative of $f$ on $[a,b]$ (i.e., $F$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $F'(x) = f(x)$ for all $x \in (a,b)$). Then
+
+$$\int_a^b f(x)\,dx = F(b) - F(a).$$
+</Callout>
+
+*Proof.* By FTC I, the function $G(x) = \int_a^x f(t)\,dt$ is an antiderivative of $f$ on $[a,b]$, i.e., $G'(x) = f(x)$ for all $x \in (a,b)$.
+
+Since $F$ and $G$ are both antiderivatives of $f$ on $(a,b)$, the function $H = F - G$ satisfies $H'(x) = 0$ for all $x \in (a,b)$. By the Mean Value Theorem, $H$ is constant on $[a,b]$: for any $x, y \in [a,b]$ with $x < y$, there exists $c \in (x,y)$ such that $H(y) - H(x) = H'(c)(y - x) = 0$.
+
+Therefore $F(x) - G(x) = C$ for some constant $C$, for all $x \in [a,b]$.
+
+Now $G(a) = \int_a^a f(t)\,dt = 0$, so $C = F(a) - G(a) = F(a)$. Hence $G(x) = F(x) - F(a)$ for all $x \in [a,b]$. Evaluating at $x = b$:
+
+$$\int_a^b f(t)\,dt = G(b) = F(b) - F(a). \quad \blacksquare$$
+
+<Callout type="info">
+**Remark.** The proof crucially uses two facts: (1) FTC I guarantees an antiderivative exists, and (2) the Mean Value Theorem implies any two antiderivatives differ by a constant. Without the MVT, we could not bridge from $H'(x) = 0$ to $H$ being constant.
+</Callout>
+
+### A Classical Application
+
+As an immediate application, we can now evaluate definite integrals without computing Riemann sums:
+
+$$\int_0^1 x^2\,dx = \left[\frac{x^3}{3}\right]_0^1 = \frac{1}{3} - 0 = \frac{1}{3}.$$
+
+<FunctionPlot
+  fn={"x*x"}
+  title={"Area under f(x) = x^2 on [0,1] equals 1/3"}
+  domain={[-0.5, 1.5]}
+  range={[-0.2, 1.5]}
+/>
+
+## The Substitution Theorem
+
+<Callout type="theorem">
+**Theorem 6.2 (Change of Variables / Substitution).** Let $g : [a,b] \to \mathbb{R}$ be continuously differentiable (i.e., $g' $ exists and is continuous on $[a,b]$), and let $f$ be continuous on an interval containing the range of $g$. Then
+
+$$\int_a^b f(g(t)) \cdot g'(t)\,dt = \int_{g(a)}^{g(b)} f(u)\,du.$$
+</Callout>
+
+*Proof.* Since $f$ is continuous, by FTC I it has an antiderivative $F$ with $F' = f$. Consider the composite function $H(t) = F(g(t))$. By the chain rule:
+
+$$H'(t) = F'(g(t)) \cdot g'(t) = f(g(t)) \cdot g'(t).$$
+
+The right-hand side is continuous on $[a,b]$ (as a product of continuous functions), so by FTC II:
+
+$$\int_a^b f(g(t)) \cdot g'(t)\,dt = H(b) - H(a) = F(g(b)) - F(g(a)).$$
+
+Applying FTC II again to the right-hand side:
+
+$$\int_{g(a)}^{g(b)} f(u)\,du = F(g(b)) - F(g(a)).$$
+
+The two expressions are equal. $\blacksquare$
+
+<Callout type="tip">
+**When to substitute.** Look for an integrand of the form $f(g(x)) \cdot g'(x)$. Setting $u = g(x)$, $du = g'(x)\,dx$ converts the integral into $\int f(u)\,du$, which may be simpler. The theorem guarantees this is valid when $g$ is $C^1$ and $f$ is continuous.
+</Callout>
+
+### Example: Substitution in Action
+
+Compute $\int_0^{\pi/2} \sin(x) \cos(x)\,dx$.
+
+Set $u = \sin(x)$, so $du = \cos(x)\,dx$. When $x = 0$, $u = 0$; when $x = \pi/2$, $u = 1$. Then:
+
+$$\int_0^{\pi/2} \sin(x)\cos(x)\,dx = \int_0^1 u\,du = \left[\frac{u^2}{2}\right]_0^1 = \frac{1}{2}.$$
+
+## Integration by Parts
+
+<Callout type="theorem">
+**Theorem 6.3 (Integration by Parts).** Let $f, g : [a,b] \to \mathbb{R}$ be continuously differentiable. Then
+
+$$\int_a^b f(x) g'(x)\,dx = \bigl[f(x)g(x)\bigr]_a^b - \int_a^b f'(x) g(x)\,dx.$$
+</Callout>
+
+*Proof.* By the product rule for derivatives:
+
+$$(f \cdot g)'(x) = f'(x)g(x) + f(x)g'(x).$$
+
+Since $f, g$ are $C^1$, both $f'g$ and $fg'$ are continuous. Integrating both sides from $a$ to $b$ and applying FTC II:
+
+$$f(b)g(b) - f(a)g(a) = \int_a^b f'(x)g(x)\,dx + \int_a^b f(x)g'(x)\,dx.$$
+
+Rearranging gives the result. $\blacksquare$
+
+<Callout type="definition">
+**Notation.** In the traditional shorthand, we write $u = f(x)$, $dv = g'(x)\,dx$, $du = f'(x)\,dx$, $v = g(x)$, and the formula becomes:
+
+$$\int u\,dv = uv - \int v\,du.$$
+</Callout>
+
+### Example: Integration by Parts
+
+Compute $\int_0^1 x e^x\,dx$.
+
+Let $u = x$, $dv = e^x\,dx$. Then $du = dx$, $v = e^x$.
+
+$$\int_0^1 x e^x\,dx = \bigl[xe^x\bigr]_0^1 - \int_0^1 e^x\,dx = e - \bigl[e^x\bigr]_0^1 = e - (e - 1) = 1.$$
+
+## Exercises
+
+<Problem>
+**Exercise 6.1.** Prove FTC II directly using a telescoping argument. That is, given a partition $P = \{x_0, x_1, \ldots, x_n\}$ of $[a,b]$, write $F(b) - F(a)$ as a telescoping sum, apply the Mean Value Theorem on each subinterval, and show the sum equals a Riemann sum for $f$.
+</Problem>
+
+<Solution>
+*Proof.* Let $P = \{a = x_0 < x_1 < \cdots < x_n = b\}$ be any partition. Then:
+
+$$F(b) - F(a) = \sum_{k=1}^n \bigl[F(x_k) - F(x_{k-1})\bigr].$$
+
+By the Mean Value Theorem, for each $k$ there exists $c_k \in (x_{k-1}, x_k)$ such that
+
+$$F(x_k) - F(x_{k-1}) = F'(c_k)(x_k - x_{k-1}) = f(c_k)\Delta x_k.$$
+
+Therefore $F(b) - F(a) = \sum_{k=1}^n f(c_k)\Delta x_k$. This is a Riemann sum for $f$ on $[a,b]$ with sample points $c_k$.
+
+Since $f$ is continuous on $[a,b]$ (hence Riemann integrable), as $\|P\| \to 0$ all Riemann sums converge to $\int_a^b f(x)\,dx$. But the left-hand side $F(b) - F(a)$ is independent of the partition, so:
+
+$$F(b) - F(a) = \int_a^b f(x)\,dx. \quad \blacksquare$$
+</Solution>
+
+<MultipleChoice
+  question={"Which hypothesis is NOT required for the substitution theorem as stated?"}
+  options={[
+    "g is continuously differentiable on [a,b]",
+    "f is continuous on the range of g",
+    "g is injective (one-to-one) on [a,b]",
+    "f has an antiderivative on the range of g"
+  ]}
+  correctIndex={2}
+  explanation={"The substitution theorem does not require g to be injective. The proof uses only the chain rule and FTC II. Injectivity of g is needed for inverse substitution (changing the variable of integration back), but not for the basic substitution formula."}
+/>
+
+<NumericInput
+  question={"Compute the integral using integration by parts: integral from 0 to 1 of x * e^x dx. Give your answer to two decimal places."}
+  answer={1}
+  tolerance={0.01}
+  hint={"Let u = x, dv = e^x dx. Then du = dx, v = e^x. Apply the IBP formula and evaluate the boundary terms."}
+/>
+
+<Problem>
+**Exercise 6.2.** Using integration by parts twice, derive the reduction formula:
+
+$$\int e^x \sin(x)\,dx = \frac{e^x(\sin x - \cos x)}{2} + C.$$
+</Problem>
+
+<Solution>
+Apply IBP with $u = \sin x$, $dv = e^x\,dx$, so $du = \cos x\,dx$, $v = e^x$:
+
+$$I = \int e^x \sin x\,dx = e^x \sin x - \int e^x \cos x\,dx.$$
+
+Apply IBP again to $\int e^x \cos x\,dx$ with $u = \cos x$, $dv = e^x\,dx$:
+
+$$\int e^x \cos x\,dx = e^x \cos x + \int e^x \sin x\,dx = e^x \cos x + I.$$
+
+Substituting back:
+
+$$I = e^x \sin x - e^x \cos x - I.$$
+
+Therefore $2I = e^x(\sin x - \cos x)$, giving $I = \frac{e^x(\sin x - \cos x)}{2} + C$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 6.3 (Counterexample).** Show that the substitution formula can produce an incorrect result if the hypothesis that $g'$ is continuous is violated. Consider the function $g \colon [-1, 1] \to \mathbb{R}$ defined by $g(t) = t^2 \sin(1/t)$ for $t \neq 0$ and $g(0) = 0$. Show that $g$ is differentiable everywhere on $[-1, 1]$ but $g'$ is **not** continuous at $t = 0$. Then explain why the substitution theorem (Theorem 6.2) does not apply with this $g$.
+
+*Hint:* Compute $g'(0)$ from the definition and $g'(t)$ for $t \neq 0$ using the product/chain rule. Show $\lim_{t \to 0} g'(t)$ does not exist.
+</Problem>
+
+<Solution>
+*Proof.* **$g$ is differentiable at $t = 0$:**
+
+$$g'(0) = \lim_{h \to 0} \frac{g(h) - g(0)}{h} = \lim_{h \to 0} \frac{h^2 \sin(1/h)}{h} = \lim_{h \to 0} h \sin(1/h) = 0$$
+
+since $|h \sin(1/h)| \leq |h| \to 0$.
+
+**$g'$ for $t \neq 0$:** By the product and chain rules:
+
+$$g'(t) = 2t \sin(1/t) + t^2 \cdot \cos(1/t) \cdot (-1/t^2) = 2t\sin(1/t) - \cos(1/t).$$
+
+**$g'$ is not continuous at $t = 0$:** We have $g'(0) = 0$, but
+
+$$\lim_{t \to 0} g'(t) = \lim_{t \to 0} \bigl[2t\sin(1/t) - \cos(1/t)\bigr].$$
+
+The term $2t\sin(1/t) \to 0$, but $\cos(1/t)$ oscillates between $-1$ and $1$ as $t \to 0$. So $\lim_{t \to 0} g'(t)$ does not exist, and in particular $g'$ is not continuous at $0$.
+
+**Why the substitution theorem fails:** Theorem 6.2 requires $g$ to be **continuously differentiable** ($C^1$), meaning $g'$ exists and is continuous. The proof uses the fact that $f(g(t)) \cdot g'(t)$ is continuous (hence Riemann integrable) to apply FTC II. With $g'$ discontinuous, the composite $f(g(t)) \cdot g'(t)$ may fail to be Riemann integrable, and the chain rule argument that $H'(t) = f(g(t))g'(t)$ may not yield an integrable function to which FTC II applies.
+
+This does not mean the substitution always gives a wrong answer for non-$C^1$ functions -- it may still work in special cases. But the theorem's guarantee is lost. $\square$
+</Solution>
+
+## Symbolic and Numerical Verification
+
+<PythonPlayground
+  title={"Symbolic and Numerical Integration Verification"}
+  defaultCode={`import math
+
+# --- Numerical integration via the trapezoidal rule ---
+def trapezoidal(f, a, b, n=10000):
+    h = (b - a) / n
+    total = 0.5 * (f(a) + f(b))
+    for i in range(1, n):
+        total += f(a + i * h)
+    return total * h
+
+# --- Verify FTC II: integral of x^2 from 0 to 1 ---
+f1 = lambda x: x**2
+numerical = trapezoidal(f1, 0, 1)
+exact = 1/3
+print("=== FTC II Verification ===")
+print(f"Numerical: {numerical:.10f}")
+print(f"Exact:     {exact:.10f}")
+print(f"Error:     {abs(numerical - exact):.2e}")
+print()
+
+# --- Verify substitution: integral of sin(x)cos(x) from 0 to pi/2 ---
+f2 = lambda x: math.sin(x) * math.cos(x)
+numerical2 = trapezoidal(f2, 0, math.pi/2)
+exact2 = 0.5
+print("=== Substitution Verification ===")
+print(f"Numerical: {numerical2:.10f}")
+print(f"Exact:     {exact2:.10f}")
+print(f"Error:     {abs(numerical2 - exact2):.2e}")
+print()
+
+# --- Verify IBP: integral of x*e^x from 0 to 1 ---
+f3 = lambda x: x * math.exp(x)
+numerical3 = trapezoidal(f3, 0, 1)
+exact3 = 1.0  # (b-1)e^b - (a-1)e^a at b=1, a=0
+print("=== Integration by Parts Verification ===")
+print(f"Numerical: {numerical3:.10f}")
+print(f"Exact:     {exact3:.10f}")
+print(f"Error:     {abs(numerical3 - exact3):.2e}")
+print()
+
+# --- Verify the e^x sin(x) formula ---
+f4 = lambda x: math.exp(x) * math.sin(x)
+F4 = lambda x: math.exp(x) * (math.sin(x) - math.cos(x)) / 2
+a, b = 0, math.pi
+numerical4 = trapezoidal(f4, a, b)
+exact4 = F4(b) - F4(a)
+print("=== Reduction Formula: e^x sin(x) ===")
+print(f"Numerical: {numerical4:.10f}")
+print(f"Exact:     {exact4:.10f}")
+print(f"Error:     {abs(numerical4 - exact4):.2e}")
+`}
+/>
+
+<Callout type="tip">
+Try modifying the playground above to verify other integrals. For instance, change the substitution example to $\int_0^1 2x\cos(x^2)\,dx$ with $u = x^2$, or test integration by parts on $\int_0^{\pi} x\sin(x)\,dx$.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove rigorously that if $F' = G'$ on an interval, then $F-G$ is constant.
+Your proof must use only Mean Value Theorem machinery.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Use substitution and then integration by parts to evaluate
+$\int_0^1 x^2 e^{x^3}\,dx$ and
+$\int_0^1 x\ln(1+x)\,dx$,
+with every theorem invocation stated explicitly.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Give an example showing why one cannot blindly apply substitution when the inner map is not differentiable at an interior point.
+State where the standard substitution proof breaks.
+</Problem>

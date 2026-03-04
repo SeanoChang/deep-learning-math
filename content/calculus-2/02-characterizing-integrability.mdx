@@ -1,0 +1,265 @@
+---
+title: "Characterizing Integrability"
+description: "The epsilon-partition criterion, oscillation, and examples of integrable and non-integrable functions"
+order: 2
+prerequisites: ["01-partitions-upper-lower-sums"]
+---
+
+# Characterizing Integrability
+
+The Darboux definition of integrability asks whether the upper and lower integrals coincide. In practice
+we need a *workable criterion* that lets us verify integrability without computing these integrals directly.
+The epsilon-partition criterion provides exactly this: a function is integrable if and only if its upper
+and lower sums can be made arbitrarily close.
+
+## The Epsilon-Partition Criterion
+
+<Callout type="theorem" title="Epsilon-Partition Criterion (Riemann/Darboux)">
+A bounded function $f \colon [a, b] \to \mathbb{R}$ is Riemann integrable on $[a, b]$ if and only if for every $\epsilon > 0$, there exists a partition $P$ of $[a, b]$ such that
+
+$$U(f, P) - L(f, P) < \epsilon.$$
+</Callout>
+
+**Proof.** ($\Rightarrow$) Suppose $f$ is integrable, so $\underline{\int_a^b} f = \overline{\int_a^b} f = \int_a^b f$. Let $\epsilon > 0$. By the definition of supremum, there exists a partition $P_1$ with $L(f, P_1) > \int_a^b f - \epsilon/2$. By the definition of infimum, there exists a partition $P_2$ with $U(f, P_2) < \int_a^b f + \epsilon/2$. Let $P = P_1 \cup P_2$. By the refinement inequality:
+
+$$U(f, P) \leq U(f, P_2) < \int_a^b f + \frac{\epsilon}{2}$$
+
+$$L(f, P) \geq L(f, P_1) > \int_a^b f - \frac{\epsilon}{2}$$
+
+Subtracting: $U(f, P) - L(f, P) < \epsilon$.
+
+($\Leftarrow$) Suppose for every $\epsilon > 0$ there exists $P$ with $U(f, P) - L(f, P) < \epsilon$. Since
+
+$$L(f, P) \leq \underline{\int_a^b} f \leq \overline{\int_a^b} f \leq U(f, P),$$
+
+we get $0 \leq \overline{\int_a^b} f - \underline{\int_a^b} f \leq U(f, P) - L(f, P) < \epsilon$. Since $\epsilon > 0$ was arbitrary, $\overline{\int_a^b} f = \underline{\int_a^b} f$, so $f$ is integrable. $\blacksquare$
+
+<Callout type="tip" title="The Workhorse of Integration Theory">
+The $\epsilon$-criterion is the standard tool for proving integrability. You never need to compute upper and lower integrals directly -- just find partitions that make the gap $U - L$ small.
+</Callout>
+
+## Oscillation
+
+<Callout type="definition" title="Oscillation on a Subinterval">
+Let $f \colon [a, b] \to \mathbb{R}$ be bounded and let $P = \{x_0, \ldots, x_n\}$ be a partition. The **oscillation** of $f$ on the $i$-th subinterval is
+
+$$\omega_i(f, P) = M_i - m_i = \sup_{[x_{i-1}, x_i]} f - \inf_{[x_{i-1}, x_i]} f.$$
+
+The difference $U(f, P) - L(f, P)$ can be written as
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^{n} \omega_i(f, P) \cdot \Delta x_i.$$
+</Callout>
+
+The $\epsilon$-criterion thus says: $f$ is integrable iff for every $\epsilon > 0$, we can partition $[a, b]$ so that the weighted sum of oscillations is less than $\epsilon$. Integrability is about controlling how much $f$ "wiggles" on each subinterval.
+
+## Boundedness Is Necessary
+
+<Callout type="theorem" title="Integrability Requires Boundedness">
+If $f \colon [a, b] \to \mathbb{R}$ is Riemann integrable, then $f$ is bounded on $[a, b]$.
+</Callout>
+
+**Proof (contrapositive).** Suppose $f$ is unbounded above on $[a, b]$ (the unbounded below case is analogous). For any partition $P = \{x_0, \ldots, x_n\}$, the function $f$ must be unbounded on at least one subinterval $[x_{k-1}, x_k]$ (if it were bounded on each, it would be bounded on $[a, b]$). Then $M_k = \sup_{[x_{k-1}, x_k]} f = +\infty$, so $U(f, P) = +\infty$. Since this holds for every partition, $\overline{\int_a^b} f = +\infty$, and $f$ is not integrable. $\blacksquare$
+
+## The Dirichlet Function: A Non-Integrable Monster
+
+<Callout type="definition" title="Dirichlet Function">
+The **Dirichlet function** $D \colon [0, 1] \to \mathbb{R}$ is defined by
+
+$$D(x) = \begin{cases} 1 & \text{if } x \in \mathbb{Q} \\ 0 & \text{if } x \notin \mathbb{Q} \end{cases}$$
+</Callout>
+
+<Callout type="theorem" title="The Dirichlet Function Is Not Integrable">
+$D$ is not Riemann integrable on $[0, 1]$.
+</Callout>
+
+**Proof.** Let $P = \{x_0, \ldots, x_n\}$ be any partition of $[0, 1]$. On every subinterval $[x_{i-1}, x_i]$, both rationals and irrationals are dense, so $M_i = 1$ and $m_i = 0$. Therefore
+
+$$U(D, P) = \sum_{i=1}^n 1 \cdot \Delta x_i = 1, \qquad L(D, P) = \sum_{i=1}^n 0 \cdot \Delta x_i = 0.$$
+
+Since $U(D, P) - L(D, P) = 1$ for every partition, the $\epsilon$-criterion fails for any $\epsilon < 1$. $\blacksquare$
+
+## Thomae's Function: An Integrable Surprise
+
+<Callout type="definition" title="Thomae's Function (Popcorn Function)">
+**Thomae's function** $T \colon [0, 1] \to \mathbb{R}$ is defined by
+
+$$T(x) = \begin{cases} 1/q & \text{if } x = p/q \text{ in lowest terms, } q \geq 1 \\ 0 & \text{if } x \notin \mathbb{Q} \end{cases}$$
+
+with $T(0) = 1$.
+</Callout>
+
+Thomae's function is discontinuous at every rational and continuous at every irrational. Despite this wild behavior, it is Riemann integrable with $\int_0^1 T = 0$.
+
+The key insight is that for any $\epsilon > 0$, only finitely many points have $T(x) \geq \epsilon$ (namely those rationals $p/q$ with $q \leq 1/\epsilon$). These "bad" points can be trapped in subintervals of tiny total width, while on the remaining subintervals the oscillation is at most $\epsilon$.
+
+## Finite Modifications Preserve Integrability
+
+<Callout type="theorem" title="Modifying Finitely Many Points">
+If $f$ is integrable on $[a, b]$ and $g$ differs from $f$ at finitely many points, then $g$ is integrable on $[a, b]$ and $\int_a^b g = \int_a^b f$.
+</Callout>
+
+**Proof.** It suffices to handle the case where $g$ differs from $f$ at a single point $c \in [a, b]$ (apply the result repeatedly for finitely many points). Let $\epsilon > 0$. Since $f$ is integrable, choose a partition $P_0$ with $U(f, P_0) - L(f, P_0) < \epsilon/2$.
+
+Refine $P_0$ by adding points that trap $c$ in a subinterval of width $\delta$ (to be chosen). On this subinterval, the oscillation of $g$ is at most $|g(c) - f(c)| + \omega_{\text{original}}$. By choosing $\delta$ small enough, the contribution from this subinterval to $U(g, P) - L(g, P)$ can be made less than $\epsilon/2$. All other subintervals contribute the same as for $f$.
+
+Thus $U(g, P) - L(g, P) < \epsilon$, and since $\epsilon$ was arbitrary, $g$ is integrable. A similar refinement argument shows the integrals must be equal. $\blacksquare$
+
+## Exercises
+
+<Problem title="Apply the Epsilon-Criterion">
+Let $f(x) = c$ (constant) on $[a, b]$. Use the $\epsilon$-partition criterion to prove $f$ is Riemann integrable and $\int_a^b f = c(b - a)$.
+
+<Solution>
+**Proof.** Let $\epsilon > 0$. Take any partition $P$ of $[a, b]$. On each subinterval $[x_{i-1}, x_i]$, we have $M_i = c$ and $m_i = c$, so $\omega_i = 0$. Therefore
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^n 0 \cdot \Delta x_i = 0 < \epsilon.$$
+
+Since the $\epsilon$-criterion is satisfied, $f$ is integrable. Moreover,
+
+$$L(f, P) = \sum_{i=1}^n c \cdot \Delta x_i = c(b - a) = U(f, P),$$
+
+so $\int_a^b f = c(b - a)$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Why is the Dirichlet function not Riemann integrable on $[0,1]$?"
+  options={[
+    "It is unbounded",
+    "It is not defined at irrational numbers",
+    "For every partition, $U(D,P) - L(D,P) = 1$, so the gap never shrinks below 1",
+    "It has infinitely many discontinuities"
+  ]}
+  correctIndex={2}
+  explanation="The Dirichlet function is bounded (values 0 and 1) and defined everywhere. The issue is that rationals and irrationals are both dense, so on every subinterval $M_i = 1$ and $m_i = 0$, giving a constant gap of 1. Note: infinitely many discontinuities alone don't prevent integrability (Thomae's function is a counterexample)."
+/>
+
+<NumericInput
+  question="Consider Thomae's function $T$ on $[0,1]$. How many points $x$ satisfy $T(x) \geq 1/3$? (Count $x = 0, 1/3, 2/3, 1/2, 1$ with denominators $q \leq 3$ in lowest terms.)"
+  answer={5}
+  tolerance={0}
+  hint="List rationals $p/q$ in $[0,1]$ with $q \\leq 3$ in lowest terms: $0/1, 1/1, 1/2, 1/3, 2/3$. That's 5 points."
+/>
+
+<Problem title="Prove the Epsilon-Criterion (Forward Direction)">
+Let $f \colon [a, b] \to \mathbb{R}$ be bounded and Riemann integrable. Prove that for every $\epsilon > 0$, there exists a partition $P$ with $U(f, P) - L(f, P) < \epsilon$.
+
+<Solution>
+**Proof.** Since $f$ is integrable, $\underline{\int_a^b} f = \overline{\int_a^b} f = I$. Let $\epsilon > 0$.
+
+By definition of the lower integral as $\sup_P L(f, P)$, there exists a partition $P_1$ with
+
+$$L(f, P_1) > I - \frac{\epsilon}{2}.$$
+
+By definition of the upper integral as $\inf_P U(f, P)$, there exists a partition $P_2$ with
+
+$$U(f, P_2) < I + \frac{\epsilon}{2}.$$
+
+Let $P = P_1 \cup P_2$ (common refinement). By the refinement inequality:
+
+$$L(f, P) \geq L(f, P_1) > I - \frac{\epsilon}{2}, \qquad U(f, P) \leq U(f, P_2) < I + \frac{\epsilon}{2}.$$
+
+Therefore $U(f, P) - L(f, P) < (I + \epsilon/2) - (I - \epsilon/2) = \epsilon$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem>
+**Exercise 2.3 (Counterexample).** Give an explicit $\varepsilon$-partition argument showing the Dirichlet function $D$ is not integrable. That is, exhibit a specific $\varepsilon > 0$ and prove that for **every** partition $P$ of $[0, 1]$, we have $U(D, P) - L(D, P) \geq \varepsilon$.
+
+*Hint:* Take $\varepsilon = 1/2$ and use the density of rationals and irrationals.
+</Problem>
+
+<Solution>
+*Proof.* Let $\varepsilon = 1/2$. Let $P = \{x_0, x_1, \ldots, x_n\}$ be an arbitrary partition of $[0, 1]$.
+
+On each subinterval $[x_{i-1}, x_i]$, both $\mathbb{Q}$ and $\mathbb{R} \setminus \mathbb{Q}$ are dense in $\mathbb{R}$. Therefore:
+- There exists a rational in $[x_{i-1}, x_i]$, so $M_i = \sup D|_{[x_{i-1}, x_i]} = 1$.
+- There exists an irrational in $[x_{i-1}, x_i]$, so $m_i = \inf D|_{[x_{i-1}, x_i]} = 0$.
+
+The oscillation on each subinterval is $\omega_i = M_i - m_i = 1$. Hence:
+
+$$U(D, P) - L(D, P) = \sum_{i=1}^n \omega_i \, \Delta x_i = \sum_{i=1}^n 1 \cdot \Delta x_i = 1 \geq \frac{1}{2} = \varepsilon.$$
+
+Since this holds for every partition $P$, there is no partition achieving $U - L < \varepsilon$. By the $\varepsilon$-partition criterion, $D$ is not Riemann integrable.
+
+**Key observation:** The Dirichlet function has maximal oscillation on every subinterval. No refinement can reduce the oscillation because the "bad" points (rationals and irrationals) are everywhere dense. Compare with Thomae's function, where the "bad" points with large function values are only finitely many for each threshold. $\square$
+</Solution>
+
+## Exploring Thomae's Function Numerically
+
+<PythonPlayground
+  title="Thomae's Function and Darboux Sums"
+  defaultCode={`import numpy as np
+from math import gcd
+
+def thomae(x, max_denom=1000):
+    """Approximate Thomae's function by checking rationals p/q with q <= max_denom."""
+    if x == 0 or x == 1:
+        return 1.0
+    best = 0.0
+    for q in range(1, max_denom + 1):
+        p = round(x * q)
+        if 0 <= p <= q and abs(x - p/q) < 1e-12:
+            g = gcd(p, q)
+            reduced_q = q // g
+            best = max(best, 1.0 / reduced_q)
+    return best
+
+# Count points with T(x) >= epsilon for various epsilon
+print("Points with T(x) >= epsilon in [0,1]:")
+for eps in [1, 0.5, 1/3, 0.25, 0.2, 0.1]:
+    count = 0
+    for q in range(1, int(1/eps) + 1):
+        for p in range(0, q + 1):
+            if gcd(p, q) == 1:
+                count += 1
+    print(f"  eps = {eps:.4f}: {count} points (denominators q <= {int(1/eps)})")
+
+print()
+
+# Compute upper sums (lower sums are always 0 for Thomae)
+print("Upper Darboux sums for Thomae's function:")
+for n in [10, 50, 100, 500, 1000]:
+    x = np.linspace(0, 1, n + 1)
+    upper_sum = 0.0
+    for i in range(n):
+        # Sample points in subinterval
+        samples = np.linspace(x[i], x[i+1], 200)
+        M_i = max(thomae(s) for s in samples)
+        dx = x[i+1] - x[i]
+        upper_sum += M_i * dx
+    print(f"  n = {n:>4}: U(T, P) = {upper_sum:.6f}")
+
+print("\\nThe upper sums converge to 0, confirming integrability!")`}
+/>
+
+<MultipleChoice
+  question="Thomae's function $T$ is discontinuous at every rational and continuous at every irrational. Which property makes it Riemann integrable despite having uncountably many points of continuity?"
+  options={[
+    "It is bounded and monotone",
+    "For any $\\epsilon > 0$, only finitely many points have $T(x) \\geq \\epsilon$",
+    "It is continuous almost everywhere in the Lebesgue sense",
+    "Both (B) and (C) are correct characterizations"
+  ]}
+  correctIndex={3}
+  explanation="Option (B) is the direct mechanism: finitely many 'tall' points can be trapped in thin subintervals. Option (C) is also correct -- by Lebesgue's criterion, $f$ is Riemann integrable iff it is bounded and continuous almost everywhere. The rationals have Lebesgue measure zero, so Thomae's function qualifies."
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove the reverse implication of the $\varepsilon$-partition criterion in full detail:
+if for every $\varepsilon>0$ there exists a partition $P$ with $U(f,P)-L(f,P)<\varepsilon$,
+then $\underline{\int_a^b}f=\overline{\int_a^b}f$.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Let $f:[a,b]\to\mathbb{R}$ be bounded and continuous except at finitely many points.
+Prove from the $\varepsilon$-partition criterion that $f$ is Riemann integrable.
+You may not cite Lebesgue's criterion.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Give an explicit function with dense sets of continuity points and dense sets of discontinuity points on $[0,1]$.
+Determine whether it is Riemann integrable, and justify your answer using upper/lower sum oscillation control.
+</Problem>

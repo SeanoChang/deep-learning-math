@@ -1,0 +1,311 @@
+---
+title: "Inner Products and Orthogonality"
+description: "Inner product spaces, norms, orthogonality, orthogonal complements, Cauchy-Schwarz, and the triangle inequality"
+order: 13
+prerequisites: ["12-dual-spaces"]
+---
+
+# Inner Products and Orthogonality
+
+Until now, our theory of vector spaces has been purely algebraic: we can add vectors, scale them,
+and study linear maps, but we cannot measure *lengths* or *angles*. An inner product introduces
+geometry into a vector space, allowing us to define distance, perpendicularity, and projection.
+These geometric ideas are not merely visual aids -- they underpin least squares, Fourier analysis,
+quantum mechanics, and the optimization algorithms at the heart of deep learning.
+
+## Inner Products
+
+<Callout type="definition">
+  **Definition (Inner product, real case).** Let $V$ be a vector space over $\mathbb{R}$. An **inner product**
+  on $V$ is a function $\langle \cdot, \cdot \rangle \colon V \times V \to \mathbb{R}$ satisfying for all
+  $u, v, w \in V$ and $c \in \mathbb{R}$:
+  1. **Symmetry:** $\langle u, v \rangle = \langle v, u \rangle$.
+  2. **Linearity in the first argument:** $\langle cu + w, v \rangle = c\langle u, v \rangle + \langle w, v \rangle$.
+  3. **Positive definiteness:** $\langle v, v \rangle \geq 0$, with equality if and only if $v = 0$.
+  A vector space equipped with an inner product is called an **inner product space**.
+</Callout>
+
+<Callout type="definition">
+  **Definition (Inner product, complex case).** Let $V$ be a vector space over $\mathbb{C}$. An **inner product**
+  on $V$ is a function $\langle \cdot, \cdot \rangle \colon V \times V \to \mathbb{C}$ satisfying:
+  1. **Conjugate symmetry:** $\langle u, v \rangle = \overline{\langle v, u \rangle}$.
+  2. **Linearity in the first argument:** $\langle cu + w, v \rangle = c\langle u, v \rangle + \langle w, v \rangle$.
+  3. **Positive definiteness:** $\langle v, v \rangle \geq 0$ (this value is real by conjugate symmetry), with equality iff $v = 0$.
+  Note that conjugate symmetry and linearity in the first argument imply **conjugate-linearity in the second argument:**
+  $\langle u, cv \rangle = \bar{c}\langle u, v \rangle$.
+</Callout>
+
+**Examples.**
+
+1. **Standard inner product on $\mathbb{R}^n$.** $\langle x, y \rangle = x^T y = \sum_{i=1}^n x_i y_i$.
+
+2. **Standard inner product on $\mathbb{C}^n$.** $\langle x, y \rangle = x^* y = \sum_{i=1}^n \bar{x}_i y_i$,
+   where $x^*$ denotes the conjugate transpose.
+
+3. **$L^2$ inner product on $C([a,b])$.** $\langle f, g \rangle = \int_a^b f(x)g(x)\,dx$ (real-valued)
+   or $\int_a^b \overline{f(x)}g(x)\,dx$ (complex-valued).
+
+4. **Weighted inner product.** $\langle x, y \rangle_W = x^T W y$ where $W$ is a symmetric positive definite matrix.
+
+## Norms
+
+<Callout type="definition">
+  **Definition (Induced norm).** Given an inner product space $(V, \langle \cdot, \cdot \rangle)$, the
+  **norm** (or **length**) of $v \in V$ is
+  $$\|v\| = \sqrt{\langle v, v \rangle}.$$
+  The **distance** between $u$ and $v$ is $\|u - v\|$.
+</Callout>
+
+<Callout type="theorem">
+  **Proposition (Basic norm properties).** For all $u, v \in V$ and $c \in \mathbb{F}$:
+  1. $\|v\| \geq 0$, with equality iff $v = 0$.
+  2. $\|cv\| = |c| \cdot \|v\|$ (absolute homogeneity).
+  3. $\|u + v\| \leq \|u\| + \|v\|$ (triangle inequality -- proved below).
+  *Proof of (2).* $\|cv\|^2 = \langle cv, cv \rangle = c\bar{c}\langle v, v \rangle = |c|^2 \|v\|^2$.
+  Taking square roots: $\|cv\| = |c| \cdot \|v\|$. $\blacksquare$
+</Callout>
+
+## The Cauchy-Schwarz Inequality
+
+This is arguably the most important inequality in all of mathematics.
+
+<Callout type="theorem">
+  **Theorem (Cauchy-Schwarz inequality).** For all $u, v$ in an inner product space,
+  $$|\langle u, v \rangle| \leq \|u\| \cdot \|v\|.$$
+  Equality holds if and only if $u$ and $v$ are linearly dependent (i.e., one is a scalar multiple of the other).
+  *Proof.* If $v = 0$, both sides are zero. Assume $v \neq 0$.
+  For any $t \in \mathbb{F}$, consider the vector $u - tv$. By positive definiteness:
+  $$0 \leq \|u - tv\|^2 = \langle u - tv, u - tv \rangle = \langle u, u \rangle - t\langle v, u \rangle - \bar{t}\langle u, v \rangle + |t|^2 \langle v, v \rangle.$$
+  Choose $t = \frac{\langle u, v \rangle}{\langle v, v \rangle}$ (the optimal value that minimizes the expression). Then $\bar{t} = \frac{\overline{\langle u, v \rangle}}{\langle v, v \rangle} = \frac{\langle v, u \rangle}{\|v\|^2}$.
+  Substituting:
+  $$0 \leq \|u\|^2 - \frac{\langle u, v \rangle \langle v, u \rangle}{\|v\|^2} - \frac{\langle v, u \rangle \langle u, v \rangle}{\|v\|^2} + \frac{|\langle u, v \rangle|^2}{\|v\|^4}\|v\|^2$$
+  $$= \|u\|^2 - \frac{2|\langle u, v \rangle|^2}{\|v\|^2} + \frac{|\langle u, v \rangle|^2}{\|v\|^2} = \|u\|^2 - \frac{|\langle u, v \rangle|^2}{\|v\|^2}.$$
+  Rearranging: $|\langle u, v \rangle|^2 \leq \|u\|^2 \|v\|^2$. Taking square roots gives the result.
+  **Equality case:** Equality holds iff $\|u - tv\|^2 = 0$ iff $u = tv$, i.e., $u$ and $v$ are linearly dependent. $\blacksquare$
+</Callout>
+
+<Callout type="tip">
+  **Geometric interpretation.** In $\mathbb{R}^n$ with the standard inner product, $\langle u, v \rangle = \|u\|\|v\|\cos\theta$
+  where $\theta$ is the angle between $u$ and $v$. Cauchy-Schwarz says $|\cos\theta| \leq 1$ -- a fact
+  obvious geometrically but whose proof requires the algebraic argument above. The inner product lets us
+  *define* angles in abstract vector spaces.
+</Callout>
+
+## The Triangle Inequality
+
+<Callout type="theorem">
+  **Theorem (Triangle inequality).** For all $u, v$ in an inner product space,
+  $$\|u + v\| \leq \|u\| + \|v\|.$$
+  *Proof.* Expand $\|u + v\|^2$:
+  $$\|u + v\|^2 = \langle u + v, u + v \rangle = \|u\|^2 + \langle u, v \rangle + \overline{\langle u, v \rangle} + \|v\|^2 = \|u\|^2 + 2\operatorname{Re}\langle u, v \rangle + \|v\|^2.$$
+  Since $\operatorname{Re}\langle u, v \rangle \leq |\langle u, v \rangle| \leq \|u\|\|v\|$ (by Cauchy-Schwarz):
+  $$\|u + v\|^2 \leq \|u\|^2 + 2\|u\|\|v\| + \|v\|^2 = (\|u\| + \|v\|)^2.$$
+  Taking square roots (both sides are nonneg): $\|u + v\| \leq \|u\| + \|v\|$. $\blacksquare$
+</Callout>
+
+## Orthogonality
+
+<Callout type="definition">
+  **Definition (Orthogonal vectors).** Two vectors $u, v$ in an inner product space are **orthogonal**
+  (written $u \perp v$) if $\langle u, v \rangle = 0$.
+  A set of vectors $\{v_1, \ldots, v_k\}$ is **orthogonal** if $\langle v_i, v_j \rangle = 0$ for all $i \neq j$.
+  It is **orthonormal** if additionally $\|v_i\| = 1$ for all $i$.
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Orthogonal vectors are independent).** An orthogonal set of nonzero vectors is linearly independent.
+  *Proof.* Suppose $c_1 v_1 + \cdots + c_k v_k = 0$ where $\{v_1, \ldots, v_k\}$ is orthogonal with each
+  $v_i \neq 0$. Take the inner product with $v_j$:
+  $$0 = \left\langle \sum_{i=1}^k c_i v_i, v_j \right\rangle = \sum_{i=1}^k c_i \langle v_i, v_j \rangle = c_j \langle v_j, v_j \rangle = c_j \|v_j\|^2.$$
+  Since $v_j \neq 0$, $\|v_j\|^2 > 0$, so $c_j = 0$. This holds for all $j$. $\blacksquare$
+</Callout>
+
+## Orthogonal Complements
+
+<Callout type="definition">
+  **Definition (Orthogonal complement).** Let $U$ be a subset (typically a subspace) of an inner product space $V$.
+  The **orthogonal complement** of $U$ is
+  $$U^\perp = \{v \in V : \langle v, u \rangle = 0 \text{ for all } u \in U\}.$$
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Properties of orthogonal complements).** Let $V$ be a finite-dimensional inner product space
+  and $U \subseteq V$ a subspace. Then:
+  1. $U^\perp$ is a subspace of $V$.
+  2. $V = U \oplus U^\perp$ (direct sum decomposition).
+  3. $\dim U^\perp = \dim V - \dim U$.
+  4. $(U^\perp)^\perp = U$.
+  *Proof of (1).* Let $v_1, v_2 \in U^\perp$ and $c \in \mathbb{F}$. For any $u \in U$:
+  $\langle cv_1 + v_2, u \rangle = c\langle v_1, u \rangle + \langle v_2, u \rangle = 0 + 0 = 0$.
+  So $cv_1 + v_2 \in U^\perp$.
+  *Proof of (2).* First, $U \cap U^\perp = \{0\}$: if $v \in U \cap U^\perp$, then $\langle v, v \rangle = 0$,
+  so $v = 0$.
+  To show $V = U + U^\perp$: let $\{e_1, \ldots, e_k\}$ be an orthonormal basis for $U$ (obtained by
+  Gram-Schmidt, which we prove in the next lesson). For any $v \in V$, define
+  $$u = \sum_{i=1}^k \langle v, e_i \rangle e_i \in U, \qquad w = v - u.$$
+  We claim $w \in U^\perp$. For any $e_j$ ($j \leq k$):
+  $$\langle w, e_j \rangle = \langle v, e_j \rangle - \sum_{i=1}^k \langle v, e_i \rangle \langle e_i, e_j \rangle = \langle v, e_j \rangle - \langle v, e_j \rangle = 0.$$
+  Since $\{e_1, \ldots, e_k\}$ spans $U$, $w \perp u'$ for all $u' \in U$. Hence $v = u + w$ with $u \in U$, $w \in U^\perp$.
+  *Proof of (3).* Follows from $V = U \oplus U^\perp$: $\dim V = \dim U + \dim U^\perp$.
+  *Proof of (4).* $U \subseteq (U^\perp)^\perp$ is clear (if $u \in U$, then $\langle u, w \rangle = 0$ for all
+  $w \in U^\perp$, so $u \in (U^\perp)^\perp$). By (3), $\dim(U^\perp)^\perp = \dim V - \dim U^\perp = \dim V - (\dim V - \dim U) = \dim U$.
+  Since $U \subseteq (U^\perp)^\perp$ and they have the same dimension, $U = (U^\perp)^\perp$. $\blacksquare$
+</Callout>
+
+## The Pythagorean Theorem
+
+<Callout type="theorem">
+  **Theorem (Pythagorean theorem).** If $u \perp v$, then
+  $$\|u + v\|^2 = \|u\|^2 + \|v\|^2.$$
+  *Proof.* $\|u + v\|^2 = \|u\|^2 + 2\operatorname{Re}\langle u, v \rangle + \|v\|^2 = \|u\|^2 + 0 + \|v\|^2$. $\blacksquare$
+</Callout>
+
+More generally, if $\{v_1, \ldots, v_k\}$ is an orthogonal set, then
+$\|v_1 + \cdots + v_k\|^2 = \|v_1\|^2 + \cdots + \|v_k\|^2$.
+
+<PythonPlayground
+  title="Inner products, Cauchy-Schwarz, and orthogonal complements"
+  defaultCode={`import numpy as np
+
+# Cauchy-Schwarz verification
+print("=== Cauchy-Schwarz Inequality ===")
+for _ in range(5):
+    u = np.random.randn(4)
+    v = np.random.randn(4)
+    lhs = abs(np.dot(u, v))
+    rhs = np.linalg.norm(u) * np.linalg.norm(v)
+    print(f"|<u,v>| = {lhs:.6f} <= ||u|| ||v|| = {rhs:.6f}  "
+          f"({'tight' if abs(lhs - rhs) < 1e-10 else 'strict'})")
+
+# Equality case: u = c*v
+print("\\nEquality case (u = 3v):")
+v = np.array([1.0, 2.0, -1.0, 3.0])
+u = 3 * v
+lhs = abs(np.dot(u, v))
+rhs = np.linalg.norm(u) * np.linalg.norm(v)
+print(f"|<u,v>| = {lhs:.6f}, ||u|| ||v|| = {rhs:.6f}, diff = {abs(lhs-rhs):.2e}")
+
+# Orthogonal complement
+print("\\n=== Orthogonal Complement ===")
+# U = span of columns of A
+A = np.array([[1, 0], [0, 1], [1, 1], [0, 0]], dtype=float)
+print(f"U = column space of:\\n{A}")
+print(f"dim U = {np.linalg.matrix_rank(A)}")
+
+# Find U^perp via null space of A^T
+# U^perp = null(A^T) since <A*x, v> = x^T A^T v = 0 for all x iff A^T v = 0
+from numpy.linalg import svd
+_, s, Vt = svd(A.T)
+null_mask = s < 1e-10  # find zero singular values
+# null space basis from rows of Vt corresponding to zero singular values
+# Actually, null space of A^T is the last n-r rows of V from SVD of A^T
+U_AT, S_AT, Vt_AT = svd(A.T)
+rank = np.sum(S_AT > 1e-10)
+null_basis = Vt_AT[rank:]  # rows form basis of null space
+print(f"\\nBasis for U^perp (rows):\\n{np.round(null_basis, 4)}")
+print(f"dim U^perp = {null_basis.shape[0]}")
+print(f"dim U + dim U^perp = {np.linalg.matrix_rank(A)} + {null_basis.shape[0]} = {np.linalg.matrix_rank(A) + null_basis.shape[0]}")
+
+# Verify orthogonality
+print("\\nVerification (columns of A are orthogonal to null space vectors):")
+for i in range(A.shape[1]):
+    for j in range(null_basis.shape[0]):
+        print(f"  <A[:,{i}], null[{j}]> = {np.dot(A[:,i], null_basis[j]):.10f}")
+
+# Pythagorean theorem
+print("\\n=== Pythagorean Theorem ===")
+u = np.array([3.0, 0.0, 0.0])
+v = np.array([0.0, 4.0, 0.0])
+print(f"u = {u}, v = {v}")
+print(f"<u,v> = {np.dot(u,v)} (orthogonal)")
+print(f"||u+v||^2 = {np.linalg.norm(u+v)**2:.1f}")
+print(f"||u||^2 + ||v||^2 = {np.linalg.norm(u)**2 + np.linalg.norm(v)**2:.1f}")
+`}
+/>
+
+## Exercises
+
+<Problem>
+  **Exercise 1 (Cauchy-Schwarz proof).** Reproduce the proof of the Cauchy-Schwarz inequality.
+  Your proof should:
+  (a) State the inequality precisely.
+  (b) Handle the case $v = 0$ separately.
+  (c) For $v \neq 0$, expand $\|u - tv\|^2 \geq 0$ with the optimal choice of $t$.
+  (d) Characterize when equality holds.
+</Problem>
+
+<Solution>
+  **Theorem.** For all $u, v$ in an inner product space, $|\langle u, v \rangle| \leq \|u\|\|v\|$.
+  Equality holds iff $u$ and $v$ are linearly dependent.
+  *Proof.*
+  **(b)** If $v = 0$, then $\langle u, v \rangle = 0$ and $\|v\| = 0$, so both sides are $0$.
+  **(c)** Assume $v \neq 0$. For any $t \in \mathbb{F}$, positive definiteness gives:
+  $$0 \leq \|u - tv\|^2 = \|u\|^2 - t\langle v, u \rangle - \bar{t}\langle u, v \rangle + |t|^2\|v\|^2.$$
+  Set $t = \frac{\langle u, v \rangle}{\|v\|^2}$. Then $|t|^2 = \frac{|\langle u, v \rangle|^2}{\|v\|^4}$,
+  $t\langle v, u \rangle = \frac{\langle u, v \rangle \overline{\langle u, v \rangle}}{\|v\|^2} = \frac{|\langle u, v \rangle|^2}{\|v\|^2}$,
+  and $\bar{t}\langle u, v \rangle = \frac{|\langle u, v \rangle|^2}{\|v\|^2}$.
+  Substituting:
+  $$0 \leq \|u\|^2 - \frac{|\langle u, v \rangle|^2}{\|v\|^2} - \frac{|\langle u, v \rangle|^2}{\|v\|^2} + \frac{|\langle u, v \rangle|^2}{\|v\|^2} = \|u\|^2 - \frac{|\langle u, v \rangle|^2}{\|v\|^2}.$$
+  Therefore $|\langle u, v \rangle|^2 \leq \|u\|^2\|v\|^2$, giving $|\langle u, v \rangle| \leq \|u\|\|v\|$.
+  **(d)** Equality holds iff $\|u - tv\| = 0$ iff $u = tv$, i.e., $\{u, v\}$ is linearly dependent. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Let $u = (1, 2, 3)$ and $v = (4, -2, 0)$ in $\mathbb{R}^3$ with the standard inner product. What is $\langle u, v \rangle$?"
+  options={[
+    "10",
+    "0",
+    "-2",
+    "4"
+  ]}
+  correctIndex={1}
+  explanation="The inner product is u^T v = 1(4) + 2(-2) + 3(0) = 4 - 4 + 0 = 0. The vectors are orthogonal."
+/>
+
+<NumericInput
+  question="In $\mathbb{R}^3$, let $U = \operatorname{span}\{(1, 1, 0)^T, (0, 1, 1)^T\}$. What is $\dim U^\perp$?"
+  answer={1}
+  tolerance={0}
+  explanation="The two given vectors are linearly independent (neither is a scalar multiple of the other), so dim U = 2. By the orthogonal complement dimension formula, dim U^perp = dim V - dim U = 3 - 2 = 1."
+/>
+
+<Problem>
+  **Exercise 2 (Orthogonal complement computation).** Let $V = \mathbb{R}^3$ with the standard inner product,
+  and let $U = \operatorname{span}\{(1, 1, 1)^T\}$.
+  (a) Find $U^\perp$ by solving $\langle v, (1,1,1)^T \rangle = 0$.
+  (b) Verify that $\dim U + \dim U^\perp = 3$.
+  (c) Decompose $w = (3, 1, 2)^T$ as $w = u + u^\perp$ where $u \in U$ and $u^\perp \in U^\perp$.
+</Problem>
+
+<Solution>
+  **(a)** $U^\perp = \{(x_1, x_2, x_3)^T : x_1 + x_2 + x_3 = 0\}$. This is a plane through the origin
+  with normal vector $(1,1,1)^T$. A basis is $\{(1,-1,0)^T, (1,0,-1)^T\}$.
+  **(b)** $\dim U = 1$ and $\dim U^\perp = 2$. Sum: $1 + 2 = 3 = \dim V$.
+  **(c)** The projection of $w$ onto $U$:
+  $$u = \frac{\langle w, (1,1,1)^T \rangle}{\|(1,1,1)^T\|^2}(1,1,1)^T = \frac{3+1+2}{3}(1,1,1)^T = 2(1,1,1)^T = (2,2,2)^T.$$
+  Then $u^\perp = w - u = (3,1,2)^T - (2,2,2)^T = (1,-1,0)^T$.
+  Verification: $\langle u^\perp, (1,1,1)^T \rangle = 1 - 1 + 0 = 0$, confirming $u^\perp \in U^\perp$. $\square$
+</Solution>
+
+<Problem>
+  **Exercise 3 (Parallelogram law).** Prove the **parallelogram law**: for all $u, v$ in an inner product space,
+  $$\|u + v\|^2 + \|u - v\|^2 = 2\|u\|^2 + 2\|v\|^2.$$
+  Then show that the converse holds: if a norm satisfies the parallelogram law, it arises from an inner
+  product (state the polarization identity but you need not prove the full converse).
+</Problem>
+
+<Solution>
+  *Proof of the parallelogram law.* Expand both sides:
+  $$\|u + v\|^2 = \langle u+v, u+v \rangle = \|u\|^2 + 2\operatorname{Re}\langle u, v \rangle + \|v\|^2$$
+  $$\|u - v\|^2 = \langle u-v, u-v \rangle = \|u\|^2 - 2\operatorname{Re}\langle u, v \rangle + \|v\|^2$$
+  Adding: $\|u+v\|^2 + \|u-v\|^2 = 2\|u\|^2 + 2\|v\|^2$. The cross terms cancel. $\blacksquare$
+  **Polarization identity (real case).** If $\|\cdot\|$ satisfies the parallelogram law, the inner product
+  can be recovered as:
+  $$\langle u, v \rangle = \frac{1}{4}\left(\|u+v\|^2 - \|u-v\|^2\right).$$
+  This follows from the expansion above: $\|u+v\|^2 - \|u-v\|^2 = 4\operatorname{Re}\langle u,v\rangle = 4\langle u,v\rangle$
+  in the real case.
+  **Geometric interpretation:** The parallelogram law says that the sum of the squares of the diagonals of
+  a parallelogram equals the sum of the squares of its four sides. This is a necessary (and, with suitable
+  verification of the inner product axioms, sufficient) condition for a norm to come from an inner product.
+  Not all norms arise from inner products -- the $\ell^1$ and $\ell^\infty$ norms violate the parallelogram law. $\square$
+</Solution>

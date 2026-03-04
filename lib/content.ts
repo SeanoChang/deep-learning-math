@@ -27,19 +27,33 @@ export interface TopicInfo {
 }
 
 export const TOPICS: Record<string, Omit<TopicInfo, "lessons">> = {
-  calculus: {
-    id: "calculus",
-    title: "Calculus",
-    description: "Limits, derivatives, chain rule, gradients, integrals, and multivariable calculus",
+  "calculus-1": {
+    id: "calculus-1",
+    title: "Calculus I",
+    description: "Real numbers, limits, continuity, differentiation, and the Mean Value Theorem — rigorous and proof-based",
     icon: "TrendingUp",
     color: "text-blue-500",
   },
-  "linear-algebra": {
-    id: "linear-algebra",
-    title: "Linear Algebra",
-    description: "Vectors, matrices, eigenvalues, SVD, matrix calculus, and projections",
+  "calculus-2": {
+    id: "calculus-2",
+    title: "Calculus II",
+    description: "Riemann integration, infinite series, power series, and uniform convergence — rigorous and proof-based",
+    icon: "TrendingUp",
+    color: "text-sky-500",
+  },
+  "linear-algebra-1": {
+    id: "linear-algebra-1",
+    title: "Linear Algebra I",
+    description: "Vector spaces, linear transformations, eigenvalues, diagonalization, inner products, and orthogonality — rigorous and proof-based",
     icon: "Grid3X3",
     color: "text-purple-500",
+  },
+  "linear-algebra-2": {
+    id: "linear-algebra-2",
+    title: "Linear Algebra II",
+    description: "Spectral theory, Jordan canonical form, bilinear forms, SVD, and the pseudoinverse — rigorous and proof-based",
+    icon: "Grid3X3",
+    color: "text-violet-500",
   },
   probability: {
     id: "probability",

@@ -1,0 +1,306 @@
+---
+title: "Cayley–Hamilton Theorem"
+description: "Statement and proof that every operator satisfies its characteristic polynomial, consequences for inverses via polynomials, reducing high powers of matrices, and degree bounds on the minimal polynomial"
+order: 4
+prerequisites: ["03-minimal-polynomial"]
+---
+
+# The Cayley-Hamilton Theorem
+
+The Cayley-Hamilton theorem is one of the most important results in linear algebra. Its statement is
+deceptively simple: every square matrix satisfies its own characteristic polynomial. The proof, however,
+requires care -- the naive argument of "just plug $A$ into $\det(A - \lambda I)$" is nonsensical because
+$\det(A - \lambda I)$ is a scalar polynomial in $\lambda$, not a matrix polynomial. We give a rigorous
+proof, then explore the powerful consequences.
+
+## Statement
+
+<Callout type="theorem" title="Cayley-Hamilton Theorem">
+  Let $A \in M_n(\mathbb{F})$ be an $n \times n$ matrix with characteristic polynomial
+  $$p_A(\lambda) = \det(A - \lambda I) = (-1)^n \lambda^n + c_{n-1}\lambda^{n-1} + \cdots + c_1 \lambda + c_0.$$
+  Then $p_A(A) = 0$. That is, if we substitute the matrix $A$ for the variable $\lambda$, the result is the zero matrix:
+  $$(-1)^n A^n + c_{n-1} A^{n-1} + \cdots + c_1 A + c_0 I = 0.$$
+</Callout>
+
+<Callout type="tip" title="Why the Naive Approach Fails">
+  It is tempting to argue: "$p_A(\lambda) = \det(A - \lambda I)$, so $p_A(A) = \det(A - AI) = \det(0) = 0$."
+  This is **wrong**. The expression $\det(A - \lambda I)$ is a polynomial in the scalar $\lambda$. When
+  we write $p_A(A)$, we substitute a *matrix* for $\lambda$, obtaining a matrix. The determinant
+  $\det(A - AI)$ is meaningless as a step in this argument because $\det$ expects a matrix argument,
+  and $A - AI = 0$ gives $\det(0) = 0$, which happens to be the right answer for the wrong reason.
+  The proof must actually show that the *matrix* $p_A(A)$ is zero.
+</Callout>
+
+## Proof of Cayley-Hamilton
+
+We give a proof using the adjugate matrix.
+
+**Proof.** Let $B(\lambda) = \operatorname{adj}(A - \lambda I)$ be the classical adjugate (matrix of cofactors, transposed). By the adjugate formula:
+
+$$(A - \lambda I) \cdot B(\lambda) = \det(A - \lambda I) \cdot I = p_A(\lambda) \cdot I.$$
+
+Each entry of $B(\lambda)$ is a cofactor of $A - \lambda I$, hence a polynomial in $\lambda$ of degree
+at most $n - 1$. So we can write $B(\lambda)$ as a polynomial in $\lambda$ with matrix coefficients:
+
+$$B(\lambda) = B_0 + B_1 \lambda + B_2 \lambda^2 + \cdots + B_{n-1} \lambda^{n-1},$$
+
+where each $B_j \in M_n(\mathbb{F})$.
+
+Write the characteristic polynomial as $p_A(\lambda) = c_0 + c_1 \lambda + \cdots + c_{n-1}\lambda^{n-1} + (-1)^n \lambda^n$.
+
+The identity $(A - \lambda I) B(\lambda) = p_A(\lambda) I$ becomes:
+
+$$(A - \lambda I)(B_0 + B_1 \lambda + \cdots + B_{n-1}\lambda^{n-1}) = (c_0 + c_1\lambda + \cdots + (-1)^n \lambda^n) I.$$
+
+Expanding the left side and comparing coefficients of $\lambda^k$:
+
+$$\begin{aligned}
+\lambda^0 &: \quad AB_0 = c_0 I \\
+\lambda^1 &: \quad AB_1 - B_0 = c_1 I \\
+\lambda^2 &: \quad AB_2 - B_1 = c_2 I \\
+&\;\;\vdots \\
+\lambda^{n-1} &: \quad AB_{n-1} - B_{n-2} = c_{n-1} I \\
+\lambda^n &: \quad -B_{n-1} = (-1)^n I
+\end{aligned}$$
+
+Now multiply the $\lambda^k$ equation on the left by $A^k$:
+
+$$\begin{aligned}
+A^0 \cdot AB_0 &= c_0 I \\
+A^1 (AB_1 - B_0) &= c_1 A \\
+A^2 (AB_2 - B_1) &= c_2 A^2 \\
+&\;\;\vdots \\
+A^{n-1}(AB_{n-1} - B_{n-2}) &= c_{n-1} A^{n-1} \\
+A^n(-B_{n-1}) &= (-1)^n A^n
+\end{aligned}$$
+
+Summing all these equations, the left side telescopes:
+
+$$AB_0 + A^2 B_1 - AB_0 + A^3 B_2 - A^2 B_1 + \cdots - A^n B_{n-1} = 0.$$
+
+The right side is $c_0 I + c_1 A + c_2 A^2 + \cdots + (-1)^n A^n = p_A(A)$.
+
+Therefore $p_A(A) = 0$. $\blacksquare$
+
+<Callout type="tip" title="Structure of the Proof">
+  The key idea is to work with the matrix identity $(A - \lambda I) \operatorname{adj}(A - \lambda I) = p_A(\lambda) I$
+  in the polynomial ring $M_n(\mathbb{F})[\lambda]$, then evaluate at $\lambda = A$ by the telescoping trick.
+  We cannot simply substitute $\lambda = A$ into the original identity because $A$ and $\lambda I$ do not
+  commute in the same way (though in this case they do, since $AI = IA$). The telescoping argument
+  avoids this subtlety entirely.
+</Callout>
+
+## Consequence 1: The Minimal Polynomial Divides the Characteristic Polynomial
+
+<Callout type="theorem" title="m_T Divides p_T (Proof Complete)">
+  Since $p_T(T) = 0$ (Cayley-Hamilton) and $m_T$ divides every annihilating polynomial, we conclude $m_T \mid p_T$.
+  In particular, $\deg m_T \leq n = \dim V$.
+</Callout>
+
+This was stated in the previous lesson; Cayley-Hamilton provides the missing ingredient.
+
+## Consequence 2: Degree Bound
+
+<Callout type="theorem" title="Degree Bound for the Minimal Polynomial">
+  For $T \colon V \to V$ with $\dim V = n$:
+  $$1 \leq \deg m_T \leq n.$$
+  The lower bound is achieved when $T = cI$ (scalar operator), giving $m_T(\lambda) = \lambda - c$.
+  The upper bound is achieved when $m_T = p_T$, e.g., for a single $n \times n$ Jordan block.
+</Callout>
+
+## Consequence 3: Expressing the Inverse as a Polynomial in $T$
+
+<Callout type="theorem" title="Inverse via Characteristic Polynomial">
+  Let $T \colon V \to V$ be invertible. Then $T^{-1}$ can be expressed as a polynomial in $T$ of degree at most $n - 1$.
+</Callout>
+
+**Proof.** Write $p_T(\lambda) = (-1)^n \lambda^n + c_{n-1}\lambda^{n-1} + \cdots + c_1 \lambda + c_0$.
+
+Since $T$ is invertible, $0$ is not an eigenvalue, so $c_0 = p_T(0) = \det(-T) = (-1)^n \det T \neq 0$.
+
+By Cayley-Hamilton, $p_T(T) = 0$:
+
+$$(-1)^n T^n + c_{n-1} T^{n-1} + \cdots + c_1 T + c_0 I = 0.$$
+
+Multiplying both sides by $T^{-1}$:
+
+$$(-1)^n T^{n-1} + c_{n-1} T^{n-2} + \cdots + c_1 I + c_0 T^{-1} = 0.$$
+
+Solving for $T^{-1}$:
+
+$$T^{-1} = -\frac{1}{c_0}\left((-1)^n T^{n-1} + c_{n-1} T^{n-2} + \cdots + c_1 I\right).$$
+
+This expresses $T^{-1}$ as a polynomial in $T$ of degree $n - 1$. $\blacksquare$
+
+<Callout type="tip" title="Practical Significance">
+  This means we never need to leave the algebra $\mathbb{F}[T] = \{p(T) : p \in \mathbb{F}[x]\}$ to
+  compute inverses. For numerical computation with large sparse matrices, this can be more efficient
+  than explicit inversion: we only need matrix-vector products $Tv$, not the full inverse.
+</Callout>
+
+## Consequence 4: Reducing High Powers
+
+<Callout type="theorem" title="Reducing Powers of a Matrix">
+  Every power $A^k$ (for $k \geq n$) can be expressed as a linear combination of $I, A, A^2, \ldots, A^{n-1}$.
+  More precisely, $A^k \equiv r(A)$ where $r$ is the remainder when $x^k$ is divided by $p_A(x)$ (or by $m_A(x)$).
+</Callout>
+
+**Proof.** By the division algorithm, $x^k = q(x) p_A(x) + r(x)$ with $\deg r < n$. Evaluating at $A$:
+
+$$A^k = q(A) p_A(A) + r(A) = q(A) \cdot 0 + r(A) = r(A).$$
+
+So $A^k = r(A)$, a polynomial in $A$ of degree less than $n$. $\blacksquare$
+
+**Example.** Let $A = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$ (rotation by $90°$). The characteristic polynomial is $p_A(\lambda) = \lambda^2 + 1$.
+
+By Cayley-Hamilton: $A^2 + I = 0$, so $A^2 = -I$.
+
+Therefore:
+- $A^3 = A \cdot A^2 = -A$
+- $A^4 = (A^2)^2 = (-I)^2 = I$
+- $A^{100} = (A^4)^{25} = I$
+
+Every power of $A$ reduces to $\pm I$ or $\pm A$.
+
+<PythonPlayground
+  title="Cayley-Hamilton verification and applications"
+  initialCode={`import numpy as np
+
+# --- Verify Cayley-Hamilton ---
+A = np.array([[1, 2, 3],
+              [0, 4, 5],
+              [0, 0, 6]], dtype=float)
+
+print("A =")
+print(A)
+
+# Characteristic polynomial coefficients (highest degree first)
+coeffs = np.poly(A)
+print(f"\nChar poly coeffs (descending): {coeffs}")
+# p(x) = x^3 - 11x^2 + 34x - 24
+
+# Evaluate p(A)
+n = A.shape[0]
+p_A = np.zeros_like(A)
+for i, c in enumerate(coeffs):
+    power = n - i
+    p_A += c * np.linalg.matrix_power(A, power)
+
+print(f"\np_A(A) =")
+print(np.round(p_A, 10))
+print("(Should be all zeros -- Cayley-Hamilton!)")
+
+# --- Express A^{-1} as polynomial in A ---
+print("\n--- Inverse via Cayley-Hamilton ---")
+# p(x) = x^3 - 11x^2 + 34x - 24
+# p(A) = A^3 - 11A^2 + 34A - 24I = 0
+# Multiply by A^{-1}: A^2 - 11A + 34I - 24A^{-1} = 0
+# A^{-1} = (1/24)(A^2 - 11A + 34I)
+
+A_inv_poly = (1/24) * (np.linalg.matrix_power(A, 2) - 11*A + 34*np.eye(3))
+A_inv_direct = np.linalg.inv(A)
+
+print(f"A^(-1) via polynomial:")
+print(np.round(A_inv_poly, 10))
+print(f"\nA^(-1) via np.linalg.inv:")
+print(np.round(A_inv_direct, 10))
+print(f"\nDifference: {np.max(np.abs(A_inv_poly - A_inv_direct)):.2e}")
+
+# --- Reduce high powers ---
+print("\n--- Reducing A^100 ---")
+# For a 2x2 rotation matrix
+R = np.array([[0, -1],
+              [1, 0]], dtype=float)
+print(f"R (90-degree rotation) = \\n{R}")
+print(f"R^2 = \\n{np.linalg.matrix_power(R, 2)}  (should be -I)")
+print(f"R^4 = \\n{np.linalg.matrix_power(R, 4)}  (should be I)")
+print(f"R^100 = \\n{np.linalg.matrix_power(R, 100)}  (100 mod 4 = 0, so I)")
+print(f"R^101 = \\n{np.linalg.matrix_power(R, 101)}  (101 mod 4 = 1, so R)")
+`}
+/>
+
+## Exercises
+
+<Problem title="Direct verification of Cayley-Hamilton">
+  Let $A = \begin{pmatrix} 1 & 3 \\ 2 & 4 \end{pmatrix}$.
+  (a) Compute the characteristic polynomial $p_A(\lambda)$.
+  (b) Verify the Cayley-Hamilton theorem by computing $p_A(A)$ directly.
+  (c) Use Cayley-Hamilton to express $A^{-1}$ as a polynomial in $A$.
+  (d) Verify your formula for $A^{-1}$ by computing $A \cdot A^{-1}$.
+</Problem>
+
+<Solution>
+  **(a)** $p_A(\lambda) = \det(A - \lambda I) = (1 - \lambda)(4 - \lambda) - 6 = \lambda^2 - 5\lambda - 2$.
+  **(b)**
+  $$A^2 = \begin{pmatrix} 1 & 3 \\ 2 & 4 \end{pmatrix}\begin{pmatrix} 1 & 3 \\ 2 & 4 \end{pmatrix} = \begin{pmatrix} 7 & 15 \\ 10 & 22 \end{pmatrix}.$$
+  $$p_A(A) = A^2 - 5A - 2I = \begin{pmatrix} 7 & 15 \\ 10 & 22 \end{pmatrix} - \begin{pmatrix} 5 & 15 \\ 10 & 20 \end{pmatrix} - \begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix} = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix}. \; \checkmark$$
+  **(c)** From $A^2 - 5A - 2I = 0$, multiply by $A^{-1}$:
+  $$A - 5I - 2A^{-1} = 0 \implies A^{-1} = \frac{1}{2}(A - 5I) = \frac{1}{2}\begin{pmatrix} -4 & 3 \\ 2 & -1 \end{pmatrix} = \begin{pmatrix} -2 & 3/2 \\ 1 & -1/2 \end{pmatrix}.$$
+  **(d)**
+  $$A \cdot A^{-1} = \begin{pmatrix} 1 & 3 \\ 2 & 4 \end{pmatrix}\begin{pmatrix} -2 & 3/2 \\ 1 & -1/2 \end{pmatrix} = \begin{pmatrix} -2 + 3 & 3/2 - 3/2 \\ -4 + 4 & 3 - 2 \end{pmatrix} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}. \; \checkmark \; \blacksquare$$
+</Solution>
+
+<Problem title="Reducing high powers via Cayley-Hamilton">
+  Let $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$.
+  (a) Find the characteristic polynomial and verify Cayley-Hamilton.
+  (b) Express $A^2$ as a linear combination of $A$ and $I$.
+  (c) Use the recurrence from (b) to express $A^k$ as a linear combination of $A$ and $I$ for general $k$.
+  (d) Verify your formula by direct computation of $A^k$ using the binomial theorem (since $A = I + N$ with $N^2 = 0$).
+</Problem>
+
+<Solution>
+  **(a)** $p_A(\lambda) = (\lambda - 1)^2 = \lambda^2 - 2\lambda + 1$.
+  $$p_A(A) = A^2 - 2A + I = \begin{pmatrix} 1 & 2 \\ 0 & 1 \end{pmatrix} - \begin{pmatrix} 2 & 2 \\ 0 & 2 \end{pmatrix} + \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix}. \; \checkmark$$
+  **(b)** From $A^2 - 2A + I = 0$: $A^2 = 2A - I$.
+  **(c)** We prove $A^k = kA - (k-1)I$ by induction.
+  Base: $A^1 = 1 \cdot A - 0 \cdot I = A$. $\checkmark$
+  Step: Assume $A^k = kA - (k-1)I$. Then
+  $$A^{k+1} = A \cdot A^k = A(kA - (k-1)I) = kA^2 - (k-1)A = k(2A - I) - (k-1)A = (k+1)A - kI.$$
+  This confirms $A^k = kA - (k-1)I$.
+  **(d)** Write $A = I + N$ where $N = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ with $N^2 = 0$. By the binomial theorem:
+  $$A^k = (I + N)^k = \sum_{j=0}^{k} \binom{k}{j} N^j = I + kN = \begin{pmatrix} 1 & k \\ 0 & 1 \end{pmatrix}.$$
+  Check: $kA - (k-1)I = k\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} - (k-1)\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 1 & k \\ 0 & 1 \end{pmatrix}$. $\checkmark$ $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Let $A$ be a $3 \times 3$ matrix with characteristic polynomial $p(\lambda) = -\lambda^3 + 6\lambda^2 - 11\lambda + 6 = -(\lambda-1)(\lambda-2)(\lambda-3)$. Which is a correct consequence of Cayley-Hamilton?"
+  options={[
+    "$A^3 = 6A^2 - 11A + 6I$",
+    "$A^3 = -6A^2 + 11A - 6I$",
+    "$A^{-1} = A^2 - 6A + 11I$",
+    "$A^{-1} = \\frac{1}{6}(A^2 - 6A + 11I)$"
+  ]}
+  correctIndex={0}
+  explanation="Cayley-Hamilton says $p(A) = 0$: $-A^3 + 6A^2 - 11A + 6I = 0$, so $A^3 = 6A^2 - 11A + 6I$. For the inverse, multiply by $A^{-1}$: $A^2 = 6A - 11I + 6A^{-1}$, giving $A^{-1} = \\frac{1}{6}(A^2 - 6A + 11I)$, which is option (D). But option (A) is the direct rearrangement of Cayley-Hamilton and is the answer to 'which is a correct consequence.'"
+/>
+
+<NumericInput
+  question="Let $A$ be a $4 \times 4$ matrix with $p_A(\lambda) = (\lambda - 2)^4$. By Cayley-Hamilton, $(A - 2I)^4 = 0$. If additionally $(A - 2I)^2 \neq 0$ but $(A - 2I)^3 = 0$, what is the degree of the minimal polynomial $m_A$?"
+  answer={3}
+  tolerance={0}
+  explanation="The minimal polynomial has the form $m_A(\lambda) = (\lambda - 2)^k$ where $k$ is the smallest positive integer with $(A - 2I)^k = 0$. We are told $(A - 2I)^2 \\neq 0$ and $(A - 2I)^3 = 0$, so $k = 3$ and $\\deg m_A = 3$."
+/>
+
+<Problem title="Cayley-Hamilton for a companion matrix">
+  The **companion matrix** of the monic polynomial $p(\lambda) = \lambda^3 - a_2\lambda^2 - a_1\lambda - a_0$ is
+  $$C = \begin{pmatrix} 0 & 0 & a_0 \\ 1 & 0 & a_1 \\ 0 & 1 & a_2 \end{pmatrix}.$$
+  (a) Verify that $p_C(\lambda) = p(\lambda)$ by computing $\det(C - \lambda I)$.
+  (b) For companion matrices, prove that $m_C = p_C$ (the minimal polynomial equals the characteristic polynomial).
+  *Hint for (b):* Show that $I, C, C^2$ are linearly independent. Conclude that no polynomial of degree less than $3$ can annihilate $C$.
+</Problem>
+
+<Solution>
+  **(a)** We compute:
+  $$C - \lambda I = \begin{pmatrix} -\lambda & 0 & a_0 \\ 1 & -\lambda & a_1 \\ 0 & 1 & a_2 - \lambda \end{pmatrix}.$$
+  Expanding along the first row:
+  $$\det(C - \lambda I) = -\lambda[(-\lambda)(a_2 - \lambda) - a_1] - 0 + a_0[1 \cdot 1 - (-\lambda) \cdot 0]$$
+  $$= -\lambda[-\lambda a_2 + \lambda^2 - a_1] + a_0 = -\lambda^3 + a_2\lambda^2 + a_1\lambda + a_0.$$
+  Wait, we need the sign convention. The characteristic polynomial is $p_C(\lambda) = \det(C - \lambda I) = -\lambda^3 + a_2\lambda^2 + a_1\lambda + a_0$. As a monic polynomial in $\lambda$: multiplying by $(-1)^3 = -1$ gives $\lambda^3 - a_2\lambda^2 - a_1\lambda - a_0 = p(\lambda)$. $\checkmark$
+  **(b)** Since $m_C \mid p_C$ and $\deg p_C = 3$, we need $\deg m_C \in \{1, 2, 3\}$.
+  Consider $e_1 = (1, 0, 0)^T$. Compute:
+  $$Ce_1 = (0, 1, 0)^T, \quad C^2 e_1 = C(0, 1, 0)^T = (0, 0, 1)^T.$$
+  If a polynomial $q(\lambda) = b_0 + b_1\lambda + b_2\lambda^2$ of degree $\leq 2$ satisfied $q(C) = 0$, then
+  $$q(C)e_1 = b_0 e_1 + b_1 Ce_1 + b_2 C^2 e_1 = b_0(1,0,0)^T + b_1(0,1,0)^T + b_2(0,0,1)^T = (b_0, b_1, b_2)^T = 0.$$
+  So $b_0 = b_1 = b_2 = 0$, meaning $q = 0$. No nonzero polynomial of degree $< 3$ annihilates $C$.
+  Therefore $\deg m_C = 3 = \deg p_C$, which forces $m_C = p_C$ (both are monic of the same degree and $m_C \mid p_C$). $\blacksquare$
+</Solution>

@@ -1,0 +1,310 @@
+---
+title: "Triangularization"
+description: "Upper triangular form over algebraically closed fields, reading eigenvalues from the diagonal, nilpotent operators and their triangular structure"
+order: 6
+prerequisites: ["05-diagonalizability-revisited"]
+---
+
+# Triangularization
+
+Not every linear operator is diagonalizable, but over an algebraically closed field every operator can
+be brought into upper triangular form. This is a powerful structural theorem: it tells us that even when
+an eigenbasis fails to exist, we can still choose a basis in which the matrix of $T$ has all its
+eigenvalues displayed on the diagonal and zeros below it. Triangularization is the gateway to the
+Jordan canonical form.
+
+## Upper Triangular Matrices
+
+<Callout type="definition" title="Upper Triangular Matrix">
+  A matrix $A \in M_n(\mathbb{F})$ is **upper triangular** if $A_{ij} = 0$ whenever $i > j$. That is,
+  all entries below the main diagonal are zero:
+  $$A = \begin{pmatrix} a_{11} & a_{12} & \cdots & a_{1n} \\ 0 & a_{22} & \cdots & a_{2n} \\ \vdots & \ddots & \ddots & \vdots \\ 0 & \cdots & 0 & a_{nn} \end{pmatrix}.$$
+</Callout>
+
+<Callout type="definition" title="Triangularizable Operator">
+  A linear operator $T \colon V \to V$ on a finite-dimensional vector space is **triangularizable** if
+  there exists an ordered basis $\mathcal{B}$ of $V$ such that $[T]_\mathcal{B}$ is upper triangular.
+  Equivalently, a matrix $A$ is **triangularizable** if there exists an invertible $P$ with $P^{-1}AP$
+  upper triangular.
+</Callout>
+
+Upper triangular matrices are pleasant to work with. Their key algebraic properties are immediate:
+
+<Callout type="theorem" title="Properties of Upper Triangular Matrices">
+  Let $A$ be an $n \times n$ upper triangular matrix with diagonal entries $a_{11}, a_{22}, \ldots, a_{nn}$. Then:
+  1. $\det(A) = a_{11} a_{22} \cdots a_{nn}$.
+  2. The eigenvalues of $A$ are exactly the diagonal entries $a_{11}, \ldots, a_{nn}$ (counted with multiplicity).
+  3. The characteristic polynomial is $\chi_A(\lambda) = (a_{11} - \lambda)(a_{22} - \lambda) \cdots (a_{nn} - \lambda)$.
+  4. $A$ is invertible if and only if all diagonal entries are nonzero.
+  *Proof.* The determinant of a triangular matrix is the product of its diagonal entries -- this follows
+  from cofactor expansion along the first column (all entries below the $(1,1)$ position are zero) and
+  induction. The matrix $A - \lambda I$ is also upper triangular with diagonal entries $a_{ii} - \lambda$,
+  so $\chi_A(\lambda) = \det(A - \lambda I) = \prod_{i=1}^n (a_{ii} - \lambda)$. The roots of this polynomial
+  are precisely the diagonal entries. $\blacksquare$
+</Callout>
+
+## The Triangularization Theorem
+
+<Callout type="theorem" title="Schur's Triangularization Theorem">
+  Let $V$ be a finite-dimensional vector space over an algebraically closed field $\mathbb{F}$ (for example,
+  $\mathbb{F} = \mathbb{C}$), and let $T \colon V \to V$ be a linear operator. Then $T$ is triangularizable:
+  there exists an ordered basis $\mathcal{B}$ of $V$ such that $[T]_\mathcal{B}$ is upper triangular.
+  Equivalently: if $A \in M_n(\mathbb{C})$, there exists an invertible $P \in M_n(\mathbb{C})$ with
+  $P^{-1}AP$ upper triangular.
+</Callout>
+
+**Proof (by induction on $n = \dim V$).**
+
+*Base case ($n = 1$):* Every $1 \times 1$ matrix is upper triangular.
+
+*Inductive step:* Assume the result holds for all operators on spaces of dimension less than $n$.
+Let $T \colon V \to V$ with $\dim V = n$. Since $\mathbb{F}$ is algebraically closed, the characteristic
+polynomial $\chi_T(\lambda)$ has a root $\lambda_1 \in \mathbb{F}$. Thus $T$ has an eigenvalue $\lambda_1$
+with corresponding eigenvector $v_1$.
+
+Let $W = \operatorname{span}\{v_1\}$ and consider the quotient space $V/W$, which has dimension $n - 1$.
+Define $\overline{T} \colon V/W \to V/W$ by $\overline{T}(v + W) = Tv + W$. This is well-defined because
+$W$ is $T$-invariant: if $w \in W$, then $w = cv_1$ for some scalar $c$, and $Tw = c\lambda_1 v_1 \in W$.
+
+By the inductive hypothesis, $\overline{T}$ is triangularizable on $V/W$. There exists a basis
+$\{\overline{v}_2, \ldots, \overline{v}_n\}$ of $V/W$ such that $[\overline{T}]$ is upper triangular.
+Choose representatives $v_2, \ldots, v_n \in V$ with $v_i + W = \overline{v}_i$.
+
+The set $\mathcal{B} = \{v_1, v_2, \ldots, v_n\}$ is a basis of $V$. We claim $[T]_\mathcal{B}$ is
+upper triangular. Indeed:
+- $Tv_1 = \lambda_1 v_1$, so the first column has $\lambda_1$ on top and zeros below.
+- For $j \geq 2$, $Tv_j \equiv \sum_{i=2}^{j} a_{ij} v_i \pmod{W}$ because $[\overline{T}]$ is upper
+  triangular. Thus $Tv_j = a_{1j} v_1 + a_{2j} v_2 + \cdots + a_{jj} v_j$ for some scalars, with all
+  coefficients of $v_{j+1}, \ldots, v_n$ equal to zero.
+
+Therefore $[T]_\mathcal{B}$ is upper triangular. $\blacksquare$
+
+<Callout type="tip" title="Why Algebraically Closed?">
+  The proof requires that $\chi_T(\lambda)$ has a root in $\mathbb{F}$. Over $\mathbb{R}$, the polynomial
+  $\lambda^2 + 1$ has no real roots, so the rotation matrix $\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$
+  is not triangularizable over $\mathbb{R}$. Over $\mathbb{C}$, every polynomial splits, so every operator
+  is triangularizable.
+</Callout>
+
+## Reading Eigenvalues from the Triangular Form
+
+<Callout type="theorem" title="Diagonal Entries Are Eigenvalues">
+  If $[T]_\mathcal{B}$ is upper triangular with diagonal entries $\lambda_1, \ldots, \lambda_n$, then
+  the eigenvalues of $T$ are exactly $\lambda_1, \ldots, \lambda_n$ (with algebraic multiplicities given
+  by the number of times each value appears on the diagonal).
+  *Proof.* The characteristic polynomial of $T$ equals the characteristic polynomial of any matrix
+  representative:
+  $$\chi_T(\lambda) = \det([T]_\mathcal{B} - \lambda I) = \prod_{i=1}^n (\lambda_i - \lambda).$$
+  The roots are $\lambda_1, \ldots, \lambda_n$, and the algebraic multiplicity of any $\mu$ equals
+  $|\{i : \lambda_i = \mu\}|$. $\blacksquare$
+</Callout>
+
+This gives an immediate corollary that is used constantly:
+
+<Callout type="theorem" title="Trace and Determinant from Eigenvalues">
+  Let $T \colon V \to V$ be an operator on a complex vector space with eigenvalues $\lambda_1, \ldots, \lambda_n$
+  (counted with algebraic multiplicity). Then:
+  $$\operatorname{tr}(T) = \lambda_1 + \cdots + \lambda_n, \qquad \det(T) = \lambda_1 \cdots \lambda_n.$$
+</Callout>
+
+## Nilpotent Operators
+
+<Callout type="definition" title="Nilpotent Operator">
+  A linear operator $N \colon V \to V$ is **nilpotent** if $N^k = 0$ for some positive integer $k$.
+  The smallest such $k$ is the **index of nilpotency** (or **nilpotency index**).
+</Callout>
+
+**Examples.**
+- The zero operator is nilpotent with index 1.
+- The shift operator $N(e_1, e_2, \ldots, e_n) = (0, e_1, \ldots, e_{n-1})$ satisfies $N^n = 0$.
+- The matrix $\begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$ is nilpotent with index 2.
+
+<Callout type="theorem" title="Nilpotent Operators Have Eigenvalue 0 Only">
+  If $N \colon V \to V$ is nilpotent, then the only eigenvalue of $N$ is $0$.
+  *Proof.* Suppose $Nv = \lambda v$ for some $v \neq 0$. Then $N^k v = \lambda^k v$. If $N^k = 0$, then
+  $\lambda^k v = 0$, so $\lambda^k = 0$ (since $v \neq 0$), hence $\lambda = 0$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem" title="Triangular Form of Nilpotent Operators">
+  Let $N$ be a nilpotent operator on a finite-dimensional vector space $V$ over any field $\mathbb{F}$.
+  Then:
+  1. $N$ is triangularizable (over any field, not just algebraically closed ones).
+  2. The triangular matrix has all zeros on the diagonal.
+  3. $N^{\dim V} = 0$; that is, the nilpotency index is at most $\dim V$.
+  *Proof.*
+  (1) The characteristic polynomial of $N$ is $\chi_N(\lambda) = (-\lambda)^n = (-1)^n \lambda^n$, which
+  splits over any field with the single root $\lambda = 0$. The proof of the triangularization theorem
+  only needs the characteristic polynomial to split, so $N$ is triangularizable.
+  (2) By the reading-eigenvalues theorem, the diagonal entries of the upper triangular form are the eigenvalues
+  of $N$, all of which are $0$.
+  (3) An upper triangular matrix with all zeros on the diagonal is **strictly upper triangular**. A strictly
+  upper triangular $n \times n$ matrix $A$ satisfies $A^n = 0$ (the product pushes nonzero entries further
+  above the diagonal at each step, and after $n$ steps everything vanishes). Since $N$ is similar to such
+  a matrix, $N^n = 0$. $\blacksquare$
+</Callout>
+
+<Callout type="tip" title="Nilpotent Power Vanishing">
+  The bound $N^n = 0$ is tight: the $n \times n$ shift matrix (ones on the superdiagonal, zeros elsewhere)
+  has nilpotency index exactly $n$. But for specific nilpotent operators, the index can be any value from
+  $1$ to $n$.
+</Callout>
+
+## Invariant Subspaces and Triangularization
+
+The key mechanism in the triangularization proof is the existence of a $T$-invariant subspace of
+dimension 1 (the eigenspace). More generally:
+
+<Callout type="definition" title="T-Invariant Subspace">
+  A subspace $W \subseteq V$ is **$T$-invariant** if $T(W) \subseteq W$, i.e., $Tw \in W$ for all $w \in W$.
+</Callout>
+
+<Callout type="theorem" title="Triangularization via Invariant Flag">
+  $T$ is triangularizable if and only if there exists a **complete flag** of $T$-invariant subspaces:
+  $$\{0\} = W_0 \subset W_1 \subset W_2 \subset \cdots \subset W_n = V$$
+  where $\dim W_i = i$ for each $i$.
+  *Proof.* ($\Rightarrow$) If $[T]_\mathcal{B}$ is upper triangular with basis $\mathcal{B} = \{v_1, \ldots, v_n\}$,
+  set $W_i = \operatorname{span}\{v_1, \ldots, v_i\}$. The upper triangularity of $[T]_\mathcal{B}$ means
+  $Tv_j \in \operatorname{span}\{v_1, \ldots, v_j\} = W_j$ for each $j$, so each $W_i$ is $T$-invariant.
+  ($\Leftarrow$) Given the flag, choose $v_i \in W_i \setminus W_{i-1}$ for each $i$. Then $\{v_1, \ldots, v_n\}$
+  is a basis, and $Tv_i \in W_i = \operatorname{span}\{v_1, \ldots, v_i\}$ gives the upper triangular form. $\blacksquare$
+</Callout>
+
+## Computational Example
+
+Let us triangularize a concrete $3 \times 3$ matrix over $\mathbb{C}$.
+
+**Example.** Consider
+
+$$A = \begin{pmatrix} 0 & 0 & -2 \\ 1 & 2 & 1 \\ 1 & 0 & 3 \end{pmatrix}.$$
+
+The characteristic polynomial is $\chi_A(\lambda) = -(\lambda - 1)(\lambda - 2)^2$. The eigenvalues
+are $\lambda_1 = 1$ and $\lambda_2 = 2$ (with algebraic multiplicity 2).
+
+For $\lambda_1 = 1$: $\ker(A - I) = \operatorname{span}\{(-2, 1, 1)^T\}$, so $\operatorname{gm}(1) = 1$.
+
+For $\lambda_2 = 2$: $\ker(A - 2I) = \operatorname{span}\{(0, 1, 0)^T\}$, so $\operatorname{gm}(2) = 1 < 2 = \operatorname{am}(2)$.
+
+Since $\operatorname{gm}(2) \neq \operatorname{am}(2)$, $A$ is **not diagonalizable**. But it is
+triangularizable over $\mathbb{C}$ (and in fact over $\mathbb{R}$ too, since the characteristic polynomial
+splits over $\mathbb{R}$).
+
+<PythonPlayground
+  title="Triangularization via Schur decomposition"
+  defaultCode={`import numpy as np
+from scipy.linalg import schur
+
+# Our matrix
+A = np.array([[0, 0, -2],
+              [1, 2,  1],
+              [1, 0,  3]], dtype=float)
+
+print("A =")
+print(A)
+print()
+
+# Schur decomposition: A = Q T Q^H where T is upper triangular
+T, Q = schur(A, output='complex')
+
+print("Upper triangular T =")
+print(np.round(T, 6))
+print()
+print("Diagonal entries (eigenvalues):", np.round(np.diag(T), 6))
+print()
+
+# Verify: Q T Q^H = A
+reconstructed = Q @ T @ Q.conj().T
+print("Q T Q^H (should be A):")
+print(np.round(reconstructed.real, 6))
+print()
+
+# Verify nilpotent example: N^n = 0
+print("=== Nilpotent example ===")
+N = np.array([[0, 1, 0, 0],
+              [0, 0, 1, 0],
+              [0, 0, 0, 1],
+              [0, 0, 0, 0]], dtype=float)
+print("N (4x4 shift) =")
+print(N)
+for k in range(1, 5):
+    Nk = np.linalg.matrix_power(N, k)
+    print(f"N^{k} is zero: {np.allclose(Nk, 0)}")
+`}
+/>
+
+## Exercises
+
+<Problem title="Prove: Strictly upper triangular matrices are nilpotent">
+  Let $A$ be an $n \times n$ strictly upper triangular matrix (upper triangular with all diagonal entries
+  equal to zero). Prove that $A^n = 0$.
+  *Hint:* Consider the standard basis $e_1, \ldots, e_n$ and show by induction that $A^k$ maps
+  $\operatorname{span}\{e_1, \ldots, e_j\}$ into $\operatorname{span}\{e_1, \ldots, e_{j-k}\}$ (with
+  the convention that this is $\{0\}$ when $j - k \leq 0$).
+<Solution>
+  **Proof.** Let $V_j = \operatorname{span}\{e_1, \ldots, e_j\}$ for $j = 1, \ldots, n$, and $V_0 = \{0\}$.
+  Since $A$ is strictly upper triangular, $Ae_j \in \operatorname{span}\{e_1, \ldots, e_{j-1}\} = V_{j-1}$
+  for each $j$ (the $j$-th column of $A$ has zeros at and below position $j$).
+  **Claim:** $A^k(V_j) \subseteq V_{j-k}$ for all $k \geq 0$ and $j$, where $V_m = \{0\}$ for $m \leq 0$.
+  *Proof of claim by induction on $k$:*
+  - $k = 0$: $A^0 = I$, and $I(V_j) = V_j \subseteq V_j$. Holds.
+  - $k \to k+1$: By the inductive hypothesis, $A^k(V_j) \subseteq V_{j-k}$. Applying $A$:
+  $A^{k+1}(V_j) = A(A^k(V_j)) \subseteq A(V_{j-k}) \subseteq V_{j-k-1}$.
+  Taking $k = n$ and $j = n$: $A^n(V_n) \subseteq V_{n-n} = V_0 = \{0\}$. Since $V_n = \mathbb{F}^n$,
+  this says $A^n v = 0$ for all $v$, so $A^n = 0$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Triangularization over R: when does it work?">
+  Determine whether each of the following real matrices is triangularizable over $\mathbb{R}$. Justify
+  your answer.
+  (a) $A = \begin{pmatrix} 1 & -1 \\ 1 & 1 \end{pmatrix}$
+  (b) $B = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$
+  (c) $C = \begin{pmatrix} 1 & 2 & 0 \\ 0 & 1 & 3 \\ 0 & 0 & 4 \end{pmatrix}$
+<Solution>
+  **(a)** The characteristic polynomial is $\chi_A(\lambda) = (1 - \lambda)^2 + 1 = \lambda^2 - 2\lambda + 2$.
+  The discriminant is $4 - 8 = -4 < 0$, so $\chi_A$ has no real roots. Therefore $A$ has no real eigenvalues
+  and is **not triangularizable over $\mathbb{R}$**. (It is triangularizable over $\mathbb{C}$, with
+  eigenvalues $1 \pm i$.)
+  **(b)** The matrix $B$ is already upper triangular, so it is trivially **triangularizable over $\mathbb{R}$**.
+  Its eigenvalues are $2, 2$.
+  **(c)** The matrix $C$ is already upper triangular with eigenvalues $1, 1, 4$. It is
+  **triangularizable over $\mathbb{R}$**. $\square$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $N$ be a nilpotent operator on a 5-dimensional vector space. Which of the following is necessarily true?"
+  options={[
+    "$N^4 = 0$",
+    "$N^5 = 0$",
+    "$N$ is diagonalizable",
+    "$N$ has exactly one eigenvalue with algebraic multiplicity 1"
+  ]}
+  correctIndex={1}
+  explanation="A nilpotent operator on an $n$-dimensional space satisfies $N^n = 0$. With $n = 5$, we get $N^5 = 0$. The bound $N^4 = 0$ need not hold (the 5x5 shift matrix has nilpotency index exactly 5). $N$ is generally not diagonalizable (unless $N = 0$). The only eigenvalue is 0 with algebraic multiplicity 5, not 1."
+/>
+
+<NumericInput
+  question="Let $A$ be a $4 \times 4$ upper triangular matrix with diagonal entries $2, 2, 3, 5$. What is $\det(A)$?"
+  answer={60}
+  tolerance={0}
+  explanation="The determinant of a triangular matrix is the product of its diagonal entries: $2 \cdot 2 \cdot 3 \cdot 5 = 60$."
+/>
+
+<MultipleChoice
+  question="Over which fields is the matrix $A = \begin{pmatrix} 0 & -1 \\\\ 1 & 0 \end{pmatrix}$ triangularizable?"
+  options={[
+    "Over $\\mathbb{R}$ only",
+    "Over $\\mathbb{C}$ only",
+    "Over both $\\mathbb{R}$ and $\\mathbb{C}$",
+    "Over neither $\\mathbb{R}$ nor $\\mathbb{C}$"
+  ]}
+  correctIndex={1}
+  explanation="The characteristic polynomial is $\\lambda^2 + 1$, which has no real roots but factors as $(\\lambda - i)(\\lambda + i)$ over $\\mathbb{C}$. So $A$ is triangularizable over $\\mathbb{C}$ but not over $\\mathbb{R}$."
+/>
+
+<NumericInput
+  question="A nilpotent $6 \times 6$ matrix $N$ satisfies $N^3 \neq 0$ but $N^4 = 0$. What is the nilpotency index of $N$?"
+  answer={4}
+  tolerance={0}
+  explanation="The nilpotency index is the smallest $k$ with $N^k = 0$. Since $N^3 \neq 0$ and $N^4 = 0$, the index is 4."
+/>

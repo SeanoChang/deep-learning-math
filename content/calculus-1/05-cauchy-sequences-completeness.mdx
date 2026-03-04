@@ -1,0 +1,245 @@
+---
+title: "Cauchy Sequences and Completeness Revisited"
+description: "The Cauchy criterion, completeness of the reals, and contrast with the rationals"
+order: 5
+prerequisites: ["04-monotone-subsequences-bolzano-weierstrass"]
+---
+
+## Motivation
+
+So far, every time we proved a sequence converges, we needed to know (or guess) the limit $L$ in advance. The Cauchy criterion offers a fundamentally different approach: it detects convergence purely from the *internal behavior* of the sequence, without reference to any candidate limit. This is one of the deepest consequences of completeness.
+
+## Cauchy Sequences
+
+<Callout type="definition" title="Cauchy Sequence">
+A sequence $(a_n)$ is a **Cauchy sequence** if: for every $\epsilon > 0$, there exists $N \in \mathbb{N}$ such that for all $m, n \geq N$,
+
+$$|a_m - a_n| < \epsilon.$$
+
+In symbols: $\forall \epsilon > 0,\; \exists N \in \mathbb{N},\; \forall m, n \geq N,\; |a_m - a_n| < \epsilon.$
+</Callout>
+
+<Callout type="tip" title="Intuition">
+A Cauchy sequence is one whose terms become arbitrarily close *to each other* for large indices. The definition says nothing about what value they approach -- only that the mutual distances shrink. The remarkable fact is that in $\mathbb{R}$, this is enough to guarantee convergence.
+</Callout>
+
+## Convergent Implies Cauchy
+
+<Callout type="theorem" title="Convergent Implies Cauchy">
+Every convergent sequence is a Cauchy sequence.
+</Callout>
+
+**Proof.** Suppose $a_n \to L$. Let $\epsilon > 0$. There exists $N$ with $|a_n - L| < \epsilon/2$ for all $n \geq N$. For $m, n \geq N$:
+
+$$|a_m - a_n| = |a_m - L + L - a_n| \leq |a_m - L| + |a_n - L| < \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon.$$
+
+Hence $(a_n)$ is Cauchy. $\blacksquare$
+
+<Callout type="info" title="The Hard Direction">
+The converse -- every Cauchy sequence converges -- is much deeper and relies on completeness. It fails in $\mathbb{Q}$, as we will see.
+</Callout>
+
+## Cauchy Implies Bounded
+
+<Callout type="theorem" title="Cauchy Implies Bounded">
+Every Cauchy sequence is bounded.
+</Callout>
+
+**Proof.** Let $(a_n)$ be Cauchy. Taking $\epsilon = 1$, there exists $N$ with $|a_m - a_n| < 1$ for all $m, n \geq N$. In particular, for all $n \geq N$:
+
+$$|a_n| = |a_n - a_N + a_N| \leq |a_n - a_N| + |a_N| < 1 + |a_N|.$$
+
+Set $M = \max(|a_1|, |a_2|, \ldots, |a_{N-1}|, 1 + |a_N|)$. Then $|a_n| \leq M$ for all $n$. $\blacksquare$
+
+<Callout type="tip" title="Parallel Structure">
+Notice the proof is almost identical to "convergent implies bounded." In both cases, we use the definition to control the tail, then handle finitely many initial terms by brute force. This is a common pattern in sequence arguments.
+</Callout>
+
+## The Cauchy Criterion: Every Cauchy Sequence in $\mathbb{R}$ Converges
+
+<Callout type="theorem" title="Cauchy Criterion (Completeness of R)">
+A sequence in $\mathbb{R}$ converges if and only if it is a Cauchy sequence.
+</Callout>
+
+We already proved ($\Rightarrow$). The key is ($\Leftarrow$): every Cauchy sequence in $\mathbb{R}$ converges.
+
+**Proof ($\Leftarrow$).** Let $(a_n)$ be a Cauchy sequence in $\mathbb{R}$.
+
+**Step 1: $(a_n)$ is bounded** (proved above).
+
+**Step 2: Extract a convergent subsequence.** By the Bolzano-Weierstrass theorem, the bounded sequence $(a_n)$ has a convergent subsequence $a_{n_k} \to L$.
+
+**Step 3: The full sequence converges to $L$.** Let $\epsilon > 0$. Since $(a_n)$ is Cauchy, there exists $N_1$ with $|a_m - a_n| < \epsilon/2$ for all $m, n \geq N_1$. Since $a_{n_k} \to L$, there exists $K$ with $|a_{n_k} - L| < \epsilon/2$ for all $k \geq K$.
+
+Choose $k_0 \geq K$ large enough that $n_{k_0} \geq N_1$ (possible since $n_k \to \infty$). Then for all $n \geq N_1$:
+
+$$|a_n - L| \leq |a_n - a_{n_{k_0}}| + |a_{n_{k_0}} - L| < \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon.$$
+
+Therefore $a_n \to L$. $\blacksquare$
+
+<Callout type="theorem" title="Summary: Three Equivalent Statements">
+The following are equivalent for a sequence $(a_n)$ in $\mathbb{R}$:
+
+1. $(a_n)$ converges.
+2. $(a_n)$ is a Cauchy sequence.
+3. $(a_n)$ is bounded and has exactly one subsequential limit.
+</Callout>
+
+## Nested Interval Theorem Revisited
+
+The nested interval property provides an alternative route to proving the Cauchy criterion, and highlights the deep connections between the various forms of completeness.
+
+<Callout type="theorem" title="Nested Interval Theorem (Restated)">
+If $[a_n, b_n]$ is a nested sequence of closed intervals with $b_n - a_n \to 0$, then $\bigcap_{n=1}^{\infty} [a_n, b_n] = \{c\}$ for a unique $c \in \mathbb{R}$.
+</Callout>
+
+The equivalences among completeness, MCT, Bolzano-Weierstrass, the Cauchy criterion, and the nested interval property form the conceptual spine of the real number system:
+
+$$\text{Completeness} \iff \text{MCT} \iff \text{BW} \iff \text{Cauchy criterion} \iff \text{Nested intervals}$$
+
+Each can be derived from any other, using only the ordered field axioms.
+
+## Contrast with $\mathbb{Q}$: Incompleteness
+
+<Callout type="warning" title="Q is Not Complete">
+The Cauchy criterion fails in $\mathbb{Q}$. There exist Cauchy sequences of rationals that do not converge in $\mathbb{Q}$. The "missing" limits are precisely the irrational numbers.
+</Callout>
+
+**Example.** Define $a_1 = 1$ and
+
+$$a_{n+1} = \frac{a_n}{2} + \frac{1}{a_n}.$$
+
+Each $a_n$ is rational (by induction). The sequence is Cauchy and converges to $\sqrt{2}$ in $\mathbb{R}$. But since $\sqrt{2} \notin \mathbb{Q}$, this Cauchy sequence has no limit in $\mathbb{Q}$.
+
+**Proof that $a_n \to \sqrt{2}$:** Note $a_{n+1} = \frac{1}{2}(a_n + 2/a_n)$. By AM-GM, $a_{n+1} \geq \sqrt{a_n \cdot 2/a_n} = \sqrt{2}$ for all $n$. For $n \geq 2$, the sequence is decreasing (since $a_n \geq \sqrt{2}$ gives $a_{n+1} - a_n = (2 - a_n^2)/(2a_n) \leq 0$). By MCT, $L = \lim a_n$ exists. The recurrence gives $L = L/2 + 1/L$, so $L/2 = 1/L$, hence $L^2 = 2$ and $L = \sqrt{2}$.
+
+<Problem title="Verify: A Sequence is Cauchy">
+Let $a_n = \sum_{k=1}^{n} 1/k!$. Show that $(a_n)$ is a Cauchy sequence. (You may use the fact that $k! \geq 2^{k-1}$ for $k \geq 1$.)
+
+<Solution>
+**Proof.** For $m > n$:
+
+$$|a_m - a_n| = \sum_{k=n+1}^{m} \frac{1}{k!} \leq \sum_{k=n+1}^{m} \frac{1}{2^{k-1}} = \frac{1}{2^n} \cdot \frac{1 - (1/2)^{m-n}}{1 - 1/2} < \frac{1}{2^n} \cdot 2 = \frac{1}{2^{n-1}}.$$
+
+Given $\epsilon > 0$, choose $N$ with $1/2^{N-1} < \epsilon$ (i.e., $N > 1 + \log_2(1/\epsilon)$). Then for all $m > n \geq N$:
+
+$$|a_m - a_n| < \frac{1}{2^{n-1}} \leq \frac{1}{2^{N-1}} < \epsilon.$$
+
+Hence $(a_n)$ is Cauchy. (By the Cauchy criterion, it converges. Its limit is $e - 1$.) $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Why does the Cauchy criterion fail in $\\mathbb{Q}$?"
+  options={[
+    "The Archimedean property fails in $\\mathbb{Q}$",
+    "The Bolzano-Weierstrass theorem fails in $\\mathbb{Q}$ because $\\mathbb{Q}$ is not complete",
+    "Cauchy sequences in $\\mathbb{Q}$ need not be bounded",
+    "The triangle inequality fails in $\\mathbb{Q}$"
+  ]}
+  correctIndex={1}
+  explanation="The proof of the Cauchy criterion uses Bolzano-Weierstrass to extract a convergent subsequence, and BW relies on completeness (nested intervals). In $\\mathbb{Q}$, nested intervals of rationals can have an empty intersection in $\\mathbb{Q}$, so the argument breaks down. Cauchy sequences in $\\mathbb{Q}$ are still bounded, and the triangle inequality and Archimedean property both hold in $\\mathbb{Q}$."
+/>
+
+<NumericInput
+  question="Consider the Cauchy sequence $a_n = \\sum_{k=0}^{n} 1/k!$. Compute $a_5$ (i.e., $1/0! + 1/1! + 1/2! + 1/3! + 1/4! + 1/5!$) to three decimal places."
+  answer={2.717}
+  tolerance={0.001}
+  hint="$a_5 = 1 + 1 + 0.5 + 1/6 + 1/24 + 1/120 = 2 + 0.5 + 0.1\\overline{6} + 0.041\\overline{6} + 0.008\\overline{3} \\approx 2.717$."
+/>
+
+## Exploring the Cauchy Criterion Numerically
+
+<PythonPlayground
+  title="Cauchy Sequences: Convergence in R vs. Incompleteness of Q"
+  defaultCode={`import math
+
+# A Cauchy sequence that converges to sqrt(2)
+# a_1 = 1, a_{n+1} = a_n/2 + 1/a_n
+# Each term is rational, but the limit sqrt(2) is not in Q
+
+print("=== Cauchy sequence converging to sqrt(2) ===")
+print("(Each term is rational, but limit is irrational)")
+print()
+
+a = 1.0
+from fractions import Fraction
+a_frac = Fraction(1)
+
+for i in range(1, 11):
+    print(f"  a_{i:2d} = {a:.15f}  (rational: {a_frac})")
+    a = a/2 + 1/a
+    a_frac = a_frac/2 + Fraction(1, 1)/a_frac
+
+print(f"  sqrt(2) = {math.sqrt(2):.15f}")
+print(f"  Error:    {abs(a - math.sqrt(2)):.2e}")
+
+# Verify the Cauchy property: |a_m - a_n| for large m, n
+print()
+print("=== Verifying the Cauchy property ===")
+terms = [1.0]
+for _ in range(50):
+    terms.append(terms[-1]/2 + 1/terms[-1])
+
+print(f"{'N':>4} {'max |a_m - a_n| for m,n >= N':>35}")
+for N in [1, 5, 10, 20, 30, 40]:
+    tail = terms[N:]
+    max_diff = max(tail) - min(tail)
+    print(f"{N:4d} {max_diff:35.2e}")
+
+# Contrast: partial sums of 1/k! (converges to e)
+print()
+print("=== Partial sums of 1/k! approaching e ===")
+partial = 0.0
+for k in range(15):
+    partial += 1/math.factorial(k)
+    print(f"  Sum to k={k:2d}: {partial:.12f}  (error: {abs(partial - math.e):.2e})")`}
+/>
+
+<MultipleChoice
+  question="Which of the following is the correct logical relationship?"
+  options={[
+    "Cauchy $\\Rightarrow$ convergent $\\Rightarrow$ bounded, and no other implications hold in $\\mathbb{R}$",
+    "Convergent $\\Leftrightarrow$ Cauchy, and both imply bounded, but bounded does not imply either",
+    "Bounded $\\Rightarrow$ Cauchy $\\Rightarrow$ convergent",
+    "Convergent $\\Rightarrow$ Cauchy $\\Rightarrow$ bounded $\\Rightarrow$ convergent"
+  ]}
+  correctIndex={1}
+  explanation="In $\\mathbb{R}$, convergent and Cauchy are equivalent (this is the Cauchy criterion). Both imply bounded. But bounded alone does not imply convergence or Cauchy: $(-1)^n$ is bounded but neither convergent nor Cauchy."
+/>
+
+<Problem>
+**Exercise 5.3 (Counterexample).** Exhibit a Cauchy sequence in $\mathbb{Q}$ that does not converge in $\mathbb{Q}$. Prove that your sequence is Cauchy and that its limit is not rational.
+
+*Hint:* Use the sequence $a_1 = 1$, $a_{n+1} = a_n/2 + 1/a_n$, which converges to $\sqrt{2}$.
+</Problem>
+
+<Solution>
+*Answer.* Define $a_1 = 1$ and $a_{n+1} = \frac{a_n}{2} + \frac{1}{a_n}$ for $n \geq 1$.
+
+**Each $a_n$ is rational:** By induction. $a_1 = 1 \in \mathbb{Q}$. If $a_n \in \mathbb{Q}$, then $a_{n+1} = a_n/2 + 1/a_n$ is a sum and quotient of rationals (with $a_n \neq 0$), so $a_{n+1} \in \mathbb{Q}$.
+
+**The sequence converges to $\sqrt{2}$ in $\mathbb{R}$:** Note $a_{n+1} = \frac{1}{2}(a_n + 2/a_n)$. By AM-GM, $a_{n+1} \geq \sqrt{a_n \cdot 2/a_n} = \sqrt{2}$ for all $n \geq 1$, so $a_n \geq \sqrt{2}$ for $n \geq 2$. For $n \geq 2$, $a_{n+1} - a_n = (2 - a_n^2)/(2a_n) \leq 0$, so the sequence is decreasing and bounded below by $\sqrt{2}$. By MCT, $L = \lim a_n$ exists. The recurrence gives $L = L/2 + 1/L$, hence $L^2 = 2$, so $L = \sqrt{2}$.
+
+**Cauchy but no limit in $\mathbb{Q}$:** Since $(a_n)$ converges in $\mathbb{R}$, it is Cauchy. But $\sqrt{2} \notin \mathbb{Q}$, so the sequence has no limit in $\mathbb{Q}$. This demonstrates that $\mathbb{Q}$ is not complete: the Cauchy criterion fails in $\mathbb{Q}$. $\square$
+</Solution>
+
+<Problem title="Prove: Cauchy Implies Bounded (Your Turn)">
+Reproduce the proof that every Cauchy sequence is bounded. Be explicit about how you handle the finitely many initial terms.
+
+<Solution>
+**Proof.** Let $(a_n)$ be Cauchy. Applying the Cauchy definition with $\epsilon = 1$: there exists $N \in \mathbb{N}$ such that $|a_m - a_n| < 1$ for all $m, n \geq N$.
+
+In particular, taking $m = N$: for all $n \geq N$, $|a_n - a_N| < 1$, so by the triangle inequality:
+
+$$|a_n| \leq |a_n - a_N| + |a_N| < 1 + |a_N|.$$
+
+Now set
+
+$$M = \max(|a_1|, |a_2|, \ldots, |a_{N-1}|, 1 + |a_N|).$$
+
+For $n < N$: $|a_n| \leq M$ by definition of the max. For $n \geq N$: $|a_n| < 1 + |a_N| \leq M$.
+
+Therefore $|a_n| \leq M$ for all $n \in \mathbb{N}$, and $(a_n)$ is bounded. $\blacksquare$
+</Solution>
+</Problem>

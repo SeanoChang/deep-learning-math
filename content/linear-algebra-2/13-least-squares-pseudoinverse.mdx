@@ -1,0 +1,227 @@
+---
+title: "Least Squares and the Pseudoinverse"
+description: "Orthogonal projection, normal equations, the Moore-Penrose pseudoinverse via SVD, and applications to overdetermined systems"
+order: 13
+prerequisites: ["12-svd"]
+---
+
+# Least Squares and the Pseudoinverse
+
+When a system $Ax = b$ has no exact solution -- the typical situation in applications with more equations than unknowns -- we seek the "best approximate solution." The theory of least squares, grounded in orthogonal projection, provides the answer. The SVD then gives an explicit formula for the optimal solution via the pseudoinverse.
+
+## Orthogonal Projection Revisited
+
+<Callout type="definition" title="Orthogonal Projection">
+  Let $W$ be a subspace of an inner product space $V$. The **orthogonal projection** of $v \in V$ onto $W$ is the unique vector $\hat{v} \in W$ such that $(v - \hat{v}) \perp W$, i.e.,
+  $$\langle v - \hat{v}, w \rangle = 0 \quad \text{for all } w \in W.$$
+</Callout>
+
+<Callout type="theorem" title="Best Approximation Theorem">
+  The orthogonal projection $\hat{v}$ is the closest point in $W$ to $v$:
+  $$\|v - \hat{v}\| \leq \|v - w\| \quad \text{for all } w \in W,$$
+  with equality if and only if $w = \hat{v}$.
+</Callout>
+
+**Proof.** For any $w \in W$, write $v - w = (v - \hat{v}) + (\hat{v} - w)$. Since $v - \hat{v} \perp W$ and $\hat{v} - w \in W$, the Pythagorean theorem gives:
+
+$$\|v - w\|^2 = \|v - \hat{v}\|^2 + \|\hat{v} - w\|^2 \geq \|v - \hat{v}\|^2,$$
+
+with equality iff $\hat{v} = w$. $\blacksquare$
+
+## The Least Squares Problem
+
+Given $A \in \mathbb{R}^{m \times n}$ (with $m \geq n$ typically) and $b \in \mathbb{R}^m$, the **least squares problem** is:
+
+$$\min_{x \in \mathbb{R}^n} \|Ax - b\|^2.$$
+
+The residual $r = b - Ax$ measures how far $Ax$ is from $b$. Since $Ax \in \operatorname{col}(A)$ for any $x$, the least squares problem asks: find the point in $\operatorname{col}(A)$ closest to $b$.
+
+By the Best Approximation Theorem, the solution $\hat{x}$ satisfies $A\hat{x} = \hat{b}$, where $\hat{b}$ is the orthogonal projection of $b$ onto $\operatorname{col}(A)$.
+
+## The Normal Equations
+
+<Callout type="theorem" title="Normal Equations">
+  $\hat{x}$ minimizes $\|Ax - b\|^2$ if and only if
+  $$A^T A \hat{x} = A^T b.$$
+  These are called the **normal equations**.
+</Callout>
+
+**Proof.** The projection condition says $b - A\hat{x} \perp \operatorname{col}(A)$, i.e., $(b - A\hat{x}) \perp Ay$ for all $y \in \mathbb{R}^n$:
+
+$$0 = \langle Ay, b - A\hat{x} \rangle = y^T A^T(b - A\hat{x}) \quad \text{for all } y.$$
+
+Since this holds for all $y$, we must have $A^T(b - A\hat{x}) = 0$, i.e., $A^T A \hat{x} = A^T b$. $\blacksquare$
+
+<Callout type="tip" title="Geometric Meaning">
+  The normal equations say: the residual $b - A\hat{x}$ is orthogonal to every column of $A$. Equivalently, $b - A\hat{x} \in (\operatorname{col} A)^{\perp} = \ker A^T$. The word "normal" refers to perpendicularity -- the residual is normal to the column space.
+</Callout>
+
+## Existence and Uniqueness
+
+<Callout type="theorem" title="Existence and Uniqueness of Least Squares Solutions">
+  The normal equations $A^T A \hat{x} = A^T b$ always have at least one solution (so a least squares solution always exists).
+  The solution is **unique** if and only if $A$ has full column rank (i.e., $\ker A = \{0\}$, equivalently $A^T A$ is invertible), in which case:
+  $$\hat{x} = (A^T A)^{-1} A^T b.$$
+</Callout>
+
+**Proof of existence.** $A^T b \in \operatorname{col}(A^T) = \operatorname{col}(A^T A)$ (since $\operatorname{col}(A^T A) = \operatorname{col}(A^T)$, which follows from $\ker(A^T A) = \ker A$). So the system is consistent.
+
+**Proof of uniqueness criterion.** The solutions to $A^T A \hat{x} = A^T b$ form an affine subspace $\hat{x}_0 + \ker(A^T A) = \hat{x}_0 + \ker(A)$. This is a single point iff $\ker A = \{0\}$, i.e., $A$ has full column rank. $\blacksquare$
+
+## The Moore-Penrose Pseudoinverse
+
+When $A$ is not square or not invertible, we cannot write $x = A^{-1}b$. The pseudoinverse provides a canonical substitute.
+
+<Callout type="definition" title="Moore-Penrose Pseudoinverse">
+  The **Moore-Penrose pseudoinverse** of $A \in \mathbb{R}^{m \times n}$ is the unique matrix $A^+ \in \mathbb{R}^{n \times m}$ satisfying the four **Moore-Penrose axioms**:
+  1. $AA^+A = A$
+  2. $A^+AA^+ = A^+$
+  3. $(AA^+)^T = AA^+$ (i.e., $AA^+$ is symmetric)
+  4. $(A^+A)^T = A^+A$ (i.e., $A^+A$ is symmetric)
+</Callout>
+
+<Callout type="tip" title="Interpretation of the Axioms">
+  - Axioms 1 and 2 say $A^+$ is a "generalized inverse."
+  - Axioms 3 and 4 say that $AA^+$ and $A^+A$ are orthogonal projections (onto $\operatorname{col}(A)$ and $\operatorname{row}(A)$, respectively).
+</Callout>
+
+## SVD Formula for the Pseudoinverse
+
+<Callout type="theorem" title="Pseudoinverse via SVD">
+  Let $A = U\Sigma V^T$ be the SVD. Then
+  $$A^+ = V \Sigma^+ U^T,$$
+  where $\Sigma^+$ is obtained from $\Sigma$ by transposing and inverting each nonzero diagonal entry:
+  $$(\Sigma^+)_{ii} = \begin{cases} 1/\sigma_i & \text{if } \sigma_i > 0, \\ 0 & \text{if } \sigma_i = 0. \end{cases}$$
+</Callout>
+
+**Proof.** We verify the four Moore-Penrose axioms. Let $A = U\Sigma V^T$ and $A^+ = V\Sigma^+ U^T$.
+
+**Axiom 1:** $AA^+A = U\Sigma V^T \cdot V\Sigma^+ U^T \cdot U\Sigma V^T = U(\Sigma \Sigma^+ \Sigma)V^T$. Now $\Sigma\Sigma^+\Sigma$ has $(\sigma_i \cdot \sigma_i^{-1} \cdot \sigma_i) = \sigma_i$ in each nonzero position, so $\Sigma\Sigma^+\Sigma = \Sigma$. Thus $AA^+A = U\Sigma V^T = A$. $\checkmark$
+
+**Axiom 2:** Similarly, $A^+AA^+ = V\Sigma^+U^T \cdot U\Sigma V^T \cdot V\Sigma^+U^T = V(\Sigma^+\Sigma\Sigma^+)U^T = V\Sigma^+U^T = A^+$. $\checkmark$
+
+**Axiom 3:** $AA^+ = U\Sigma\Sigma^+U^T$. Note $\Sigma\Sigma^+$ is diagonal with 1's in the first $r$ positions and 0's elsewhere. So $AA^+$ is symmetric: $(AA^+)^T = (U\Sigma\Sigma^+U^T)^T = U\Sigma\Sigma^+U^T = AA^+$. $\checkmark$
+
+**Axiom 4:** $A^+A = V\Sigma^+\Sigma V^T$, which is symmetric by the same argument. $\checkmark$
+
+$\blacksquare$
+
+## Least Squares via the Pseudoinverse
+
+<Callout type="theorem" title="Minimum-Norm Least Squares Solution">
+  Among all vectors that minimize $\|Ax - b\|$, the pseudoinverse solution
+  $$\hat{x} = A^+ b$$
+  has the smallest norm $\|\hat{x}\|$. It is the unique minimum-norm least squares solution.
+</Callout>
+
+**Proof sketch.** Any least squares solution satisfies $A^T A \hat{x} = A^T b$. The general solution is $\hat{x} = A^+ b + z$ for $z \in \ker A$. Since $A^+b \in \operatorname{row}(A) = (\ker A)^{\perp}$, the Pythagorean theorem gives:
+
+$$\|\hat{x}\|^2 = \|A^+b\|^2 + \|z\|^2 \geq \|A^+b\|^2,$$
+
+with equality iff $z = 0$. $\blacksquare$
+
+## Special Cases
+
+When $A$ has full column rank ($r = n \leq m$):
+
+$$A^+ = (A^T A)^{-1} A^T$$
+
+This is the familiar left inverse / least squares formula.
+
+When $A$ has full row rank ($r = m \leq n$):
+
+$$A^+ = A^T(AA^T)^{-1}$$
+
+This is the right inverse that gives the minimum-norm solution to the underdetermined system $Ax = b$.
+
+---
+
+## Exercises
+
+<Problem title="Derive the Normal Equations via Calculus">
+  Define $f(x) = \|Ax - b\|^2$. Expand this as a function of $x$, compute $\nabla_x f$, and set it to zero to derive the normal equations.
+<Solution>
+  **Solution.** Expand:
+  $$f(x) = (Ax - b)^T(Ax - b) = x^T A^T A x - 2b^T Ax + b^T b.$$
+  The gradient is:
+  $$\nabla_x f = 2A^T Ax - 2A^T b.$$
+  Setting $\nabla_x f = 0$:
+  $$2A^T Ax - 2A^T b = 0 \implies A^T Ax = A^T b.$$
+  These are exactly the normal equations. Since $f$ is convex (the Hessian $2A^T A$ is positive semidefinite), any critical point is a global minimizer. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Verify the Moore-Penrose Axioms for a Specific Matrix">
+  Let $A = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$. Find $A^+$ using the SVD formula and verify all four Moore-Penrose axioms.
+<Solution>
+  **Solution.** The SVD of $A = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ is: $U = I_2$, $\Sigma = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$, $V = (1)$, since $A$ already has the form $U\Sigma V^T$ with $\sigma_1 = 1$.
+  More carefully: $A^T A = (1)$, so $V = (1)$, $\sigma_1 = 1$, and $u_1 = Av_1/\sigma_1 = (1, 0)^T$. Extend to $U = I_2$.
+  Then $\Sigma^+ = \begin{pmatrix} 1 & 0 \end{pmatrix}$, so:
+  $$A^+ = V\Sigma^+ U^T = (1) \begin{pmatrix} 1 & 0 \end{pmatrix} I_2 = \begin{pmatrix} 1 & 0 \end{pmatrix}.$$
+  Verification:
+  1. $AA^+A = \begin{pmatrix} 1 \\ 0 \end{pmatrix}\begin{pmatrix} 1 & 0 \end{pmatrix}\begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \end{pmatrix} = A$. $\checkmark$
+  2. $A^+AA^+ = \begin{pmatrix} 1 & 0 \end{pmatrix}\begin{pmatrix} 1 \\ 0 \end{pmatrix}\begin{pmatrix} 1 & 0 \end{pmatrix} = \begin{pmatrix} 1 & 0 \end{pmatrix} = A^+$. $\checkmark$
+  3. $AA^+ = \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$, which is symmetric. $\checkmark$
+  4. $A^+A = (1)$, which is symmetric. $\checkmark$ $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="When does the least squares problem $\min_x \|Ax - b\|^2$ have a unique solution?"
+  options={[
+    "When $A$ is square",
+    "When $A$ has full column rank",
+    "When $A$ has full row rank",
+    "When $b \\in \\operatorname{col}(A)$"
+  ]}
+  correctIndex={1}
+  explanation="The least squares solution is unique iff $\ker(A) = \\\{0\\\}$, i.e., $A$ has full column rank, which makes $A^TA$ invertible. Full row rank or $b \\in \\operatorname{col}(A)$ do not guarantee uniqueness."
+/>
+
+<NumericInput
+  question="Let $A = \begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\\\ 1 & 1 \end{pmatrix}$ and $b = \begin{pmatrix} 1 \\\\ 0 \\\\ 0 \end{pmatrix}$. Compute the least squares solution $\hat{x} = (A^TA)^{-1}A^Tb$ and report $\hat{x}_1$ (the first component)."
+  answer={0.6667}
+  tolerance={0.02}
+  explanation="$A^TA = \begin{pmatrix} 2 & 1 \\\\ 1 & 2 \end{pmatrix}$, $A^Tb = \begin{pmatrix} 1 \\\\ 0 \end{pmatrix}$. $(A^TA)^{-1} = \frac{1}{3}\begin{pmatrix} 2 & -1 \\\\ -1 & 2 \end{pmatrix}$. So $\hat{x} = \frac{1}{3}(2, -1)^T$, giving $\hat{x}_1 = 2/3 \approx 0.6667$."
+/>
+
+<PythonPlayground
+  title="Least Squares and Pseudoinverse via SVD"
+  initialCode={`import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+# Overdetermined system: 3 equations, 2 unknowns
+A = np.array([[1, 0],
+              [0, 1],
+              [1, 1]], dtype=float)
+b = np.array([1, 0, 0], dtype=float)
+
+# Method 1: Normal equations
+x_normal = np.linalg.solve(A.T @ A, A.T @ b)
+print("Least squares via normal equations:", x_normal)
+
+# Method 2: Pseudoinverse
+A_pinv = np.linalg.pinv(A)
+x_pinv = A_pinv @ b
+print("Least squares via pseudoinverse:  ", x_pinv)
+
+# Method 3: SVD formula A+ = V Sigma+ U^T
+U, s, Vt = np.linalg.svd(A, full_matrices=False)
+Sigma_inv = np.diag(1.0 / s)
+A_pinv_svd = Vt.T @ Sigma_inv @ U.T
+x_svd = A_pinv_svd @ b
+print("Least squares via SVD formula:    ", x_svd)
+
+# Verify Moore-Penrose axioms
+print("\\nMoore-Penrose axioms for A+:")
+print("1. AA+A = A?      ", np.allclose(A @ A_pinv @ A, A))
+print("2. A+AA+ = A+?    ", np.allclose(A_pinv @ A @ A_pinv, A_pinv))
+print("3. (AA+)^T = AA+?  ", np.allclose((A @ A_pinv).T, A @ A_pinv))
+print("4. (A+A)^T = A+A?  ", np.allclose((A_pinv @ A).T, A_pinv @ A))
+
+# Residual is orthogonal to col(A)
+residual = b - A @ x_normal
+print("\\nResidual:", residual)
+print("A^T * residual (should be ~0):", A.T @ residual)
+print("||residual|| =", np.linalg.norm(residual))`}
+/>

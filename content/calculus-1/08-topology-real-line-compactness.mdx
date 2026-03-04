@@ -1,0 +1,225 @@
+---
+title: "Topology of the Real Line, Closed Sets, Compactness"
+description: "Open sets, closed sets, limit points, and the Heine-Borel theorem"
+order: 8
+prerequisites: ["07-continuity"]
+---
+
+# Topology of the Real Line, Closed Sets, Compactness
+
+We now develop the basic topology of $\mathbb{R}$. The concept of compactness, seemingly abstract, turns out to be the key ingredient behind the deepest theorems of calculus.
+
+## Open and Closed Sets
+
+<Callout type="definition">
+**Definition 8.1 (Open Set).** A set $O \subseteq \mathbb{R}$ is **open** if for every $x \in O$, there exists $\varepsilon > 0$ such that $(x - \varepsilon, x + \varepsilon) \subseteq O$.
+</Callout>
+
+<Callout type="definition">
+**Definition 8.2 (Closed Set).** A set $F \subseteq \mathbb{R}$ is **closed** if its complement $\mathbb{R} \setminus F$ is open.
+</Callout>
+
+<Callout type="warning">
+**Warning.** "Closed" is not the negation of "open." A set can be both open and closed ($\mathbb{R}$ and $\emptyset$), or neither (e.g., $[0, 1)$).
+</Callout>
+
+<Callout type="theorem">
+**Theorem 8.3 (Properties of Open and Closed Sets).**
+
+1. $\emptyset$ and $\mathbb{R}$ are both open and closed.
+2. The union of any collection of open sets is open.
+3. The intersection of finitely many open sets is open.
+4. The intersection of any collection of closed sets is closed.
+5. The union of finitely many closed sets is closed.
+</Callout>
+
+*Proof of (2).* Let $\{O_\alpha\}_{\alpha \in I}$ be a collection of open sets and let $x \in \bigcup_\alpha O_\alpha$. Then $x \in O_\beta$ for some $\beta \in I$. Since $O_\beta$ is open, there exists $\varepsilon > 0$ with $(x - \varepsilon, x + \varepsilon) \subseteq O_\beta \subseteq \bigcup_\alpha O_\alpha$. $\square$
+
+*Proof of (3).* Let $O_1, \ldots, O_n$ be open and let $x \in \bigcap_{k=1}^n O_k$. For each $k$, choose $\varepsilon_k > 0$ with $(x - \varepsilon_k, x + \varepsilon_k) \subseteq O_k$. Set $\varepsilon = \min(\varepsilon_1, \ldots, \varepsilon_n) > 0$. Then $(x - \varepsilon, x + \varepsilon) \subseteq \bigcap_{k=1}^n O_k$. $\square$
+
+## Limit Points and Closure
+
+<Callout type="definition">
+**Definition 8.4 (Limit Point).** A point $x \in \mathbb{R}$ is a **limit point** (or accumulation point) of $A \subseteq \mathbb{R}$ if every neighborhood of $x$ contains a point of $A$ different from $x$. That is, for every $\varepsilon > 0$, $(x - \varepsilon, x + \varepsilon) \cap A \setminus \{x\} \neq \emptyset$.
+
+The set of all limit points of $A$ is denoted $A'$.
+</Callout>
+
+<Callout type="definition">
+**Definition 8.5 (Closure).** The **closure** of $A$ is $\overline{A} = A \cup A'$. The **interior** of $A$ is $\text{int}(A) = \{x \in A : \exists \varepsilon > 0, (x - \varepsilon, x + \varepsilon) \subseteq A\}$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 8.6 (Characterizations of Closed Sets).** The following are equivalent for $F \subseteq \mathbb{R}$:
+
+1. $F$ is closed (i.e., $\mathbb{R} \setminus F$ is open).
+2. $F$ contains all its limit points: $F' \subseteq F$.
+3. $F = \overline{F}$.
+4. For every sequence $(x_n)$ in $F$ with $x_n \to x$, we have $x \in F$.
+</Callout>
+
+*Proof of $(1) \Leftrightarrow (2)$.* Suppose $F$ is closed and $x \in F'$. If $x \notin F$, then $x \in \mathbb{R} \setminus F$, which is open, so there exists $\varepsilon > 0$ with $(x - \varepsilon, x + \varepsilon) \subseteq \mathbb{R} \setminus F$. But then $(x - \varepsilon, x + \varepsilon) \cap F \setminus \{x\} = \emptyset$, contradicting $x \in F'$.
+
+Conversely, suppose $F' \subseteq F$ and let $x \in \mathbb{R} \setminus F$. Then $x \notin F'$, so there exists $\varepsilon > 0$ with $(x - \varepsilon, x + \varepsilon) \cap F \setminus \{x\} = \emptyset$. Since $x \notin F$, we get $(x - \varepsilon, x + \varepsilon) \cap F = \emptyset$, so $(x - \varepsilon, x + \varepsilon) \subseteq \mathbb{R} \setminus F$. Thus $\mathbb{R} \setminus F$ is open. $\square$
+
+*Proof of $(2) \Leftrightarrow (4)$.* Suppose $F' \subseteq F$ and $(x_n)$ is a sequence in $F$ with $x_n \to x$. If $x \in F$, we are done. If $x \notin F$, then since every neighborhood of $x$ contains terms of $(x_n)$ (and hence points of $F$ different from $x$), $x$ is a limit point of $F$, so $x \in F' \subseteq F$, a contradiction. Thus $x \in F$.
+
+Conversely, suppose (4) holds and $x \in F'$. For each $n$, choose $x_n \in (x - 1/n, x + 1/n) \cap F \setminus \{x\}$. Then $x_n \in F$ and $x_n \to x$, so by (4), $x \in F$. $\square$
+
+## Compact Sets
+
+<Callout type="definition">
+**Definition 8.7 (Open Cover).** An **open cover** of $K \subseteq \mathbb{R}$ is a collection $\{O_\alpha\}_{\alpha \in I}$ of open sets such that $K \subseteq \bigcup_{\alpha \in I} O_\alpha$. A **finite subcover** is a finite subcollection that still covers $K$.
+</Callout>
+
+<Callout type="definition">
+**Definition 8.8 (Compact Set).** A set $K \subseteq \mathbb{R}$ is **compact** if every open cover of $K$ has a finite subcover.
+</Callout>
+
+<Callout type="tip">
+**Intuition.** Compactness is a finiteness condition. It says that no matter how you try to cover $K$ with open sets, you can always get away with finitely many. This seemingly mild condition has extraordinarily powerful consequences.
+</Callout>
+
+## The Heine-Borel Theorem
+
+<Callout type="theorem">
+**Theorem 8.9 (Heine-Borel).** A subset $K \subseteq \mathbb{R}$ is compact if and only if $K$ is closed and bounded.
+</Callout>
+
+*Proof.*
+
+$(\Rightarrow)$ **Compact $\Rightarrow$ bounded:** The collection $\{(-n, n) : n \in \mathbb{N}\}$ is an open cover of $K$. Extract a finite subcover $\{(-n_1, n_1), \ldots, (-n_k, n_k)\}$. Then $K \subseteq (-N, N)$ where $N = \max(n_1, \ldots, n_k)$, so $K$ is bounded.
+
+**Compact $\Rightarrow$ closed:** We show $\mathbb{R} \setminus K$ is open. Let $x \notin K$. For each $y \in K$, let $\varepsilon_y = |x - y|/2 > 0$ and define $U_y = (y - \varepsilon_y, y + \varepsilon_y)$ and $V_y = (x - \varepsilon_y, x + \varepsilon_y)$. Note $U_y \cap V_y = \emptyset$. The collection $\{U_y : y \in K\}$ covers $K$, so extract a finite subcover $\{U_{y_1}, \ldots, U_{y_m}\}$. Set $V = \bigcap_{i=1}^m V_{y_i}$, which is a finite intersection of open sets containing $x$, hence open. For any $z \in V$ and any $y_i$, $z \in V_{y_i}$ so $z \notin U_{y_i}$. Since $K \subseteq \bigcup_i U_{y_i}$, we get $z \notin K$. Thus $V \subseteq \mathbb{R} \setminus K$.
+
+$(\Leftarrow)$ **Closed and bounded $\Rightarrow$ compact:** Since $K$ is bounded, $K \subseteq [-M, M]$ for some $M > 0$. It suffices to show $[-M, M]$ is compact (since a closed subset of a compact set is compact, proved below).
+
+We prove $[a, b]$ is compact by contradiction. Suppose $\{O_\alpha\}$ is an open cover of $[a, b]$ with no finite subcover. Bisect $[a, b]$ into $[a, (a+b)/2]$ and $[(a+b)/2, b]$. At least one half has no finite subcover; call it $[a_1, b_1]$. Continuing, we obtain nested intervals $[a_n, b_n]$ with $b_n - a_n = (b-a)/2^n$ and no finite subcover.
+
+By the Nested Interval Property, $\bigcap_{n=1}^\infty [a_n, b_n] = \{x_0\}$ for some $x_0$. Since $x_0 \in [a,b]$, there exists $O_\beta$ containing $x_0$. Since $O_\beta$ is open, there exists $\varepsilon > 0$ with $(x_0 - \varepsilon, x_0 + \varepsilon) \subseteq O_\beta$. For large $n$, $b_n - a_n < \varepsilon$, so $[a_n, b_n] \subseteq O_\beta$, giving a finite subcover $\{O_\beta\}$ of $[a_n, b_n]$--a contradiction. $\square$
+
+<Callout type="theorem">
+**Theorem 8.10.** A closed subset of a compact set is compact.
+</Callout>
+
+*Proof.* Let $K$ be compact and $F \subseteq K$ closed. Let $\{O_\alpha\}$ be an open cover of $F$. Then $\{O_\alpha\} \cup \{\mathbb{R} \setminus F\}$ is an open cover of $K$ (since $\mathbb{R} \setminus F$ is open). Extract a finite subcover of $K$. Removing $\mathbb{R} \setminus F$ (if present) gives a finite subcover of $F$. $\square$
+
+## Exercises
+
+<Problem>
+**Exercise 8.1.** Prove that $K = [0, 1]$ is compact directly using the Heine-Borel theorem.
+</Problem>
+
+<Solution>
+*Proof.* The set $[0,1]$ is bounded since $|x| \leq 1$ for all $x \in [0,1]$. It is closed because its complement $(-\infty, 0) \cup (1, \infty)$ is a union of open sets, hence open. By the Heine-Borel theorem, $[0,1]$ is compact. $\square$
+</Solution>
+
+<Problem>
+**Exercise 8.2.** Prove that the set $\{1/n : n \in \mathbb{N}\}$ is not compact. Then prove that $\{0\} \cup \{1/n : n \in \mathbb{N}\}$ is compact.
+</Problem>
+
+<Solution>
+*Proof.* Let $A = \{1/n : n \in \mathbb{N}\}$. The point $0$ is a limit point of $A$ (since $1/n \to 0$), but $0 \notin A$. Thus $A$ is not closed, and by Heine-Borel, $A$ is not compact.
+
+Alternatively, the open cover $\{(1/(n+1), 1/(n-1)) : n \geq 2\} \cup \{(1/2, 2)\}$ has no finite subcover.
+
+Now let $B = \{0\} \cup \{1/n : n \in \mathbb{N}\}$. This set is bounded (contained in $[0,1]$). To show it is closed, let $(x_k)$ be a convergent sequence in $B$ with $x_k \to x$. If infinitely many $x_k = 0$, then $x = 0 \in B$. Otherwise, infinitely many $x_k = 1/n_k$ for distinct $n_k$, and since the subsequence $1/n_k \to 0$ is the only non-eventually-constant possibility, $x = 0 \in B$ or $x = 1/m$ for some fixed $m$ (if eventually constant). In all cases $x \in B$. By Heine-Borel, $B$ is compact. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Which of the following subsets of R is compact?"}
+  options={[
+    "(0, 1) — the open interval",
+    "[0, ∞) — closed but unbounded",
+    "{1, 1/2, 1/3, 1/4, ...} — bounded but not closed",
+    "[0, 1] ∪ [2, 3] — finite union of closed bounded sets"
+  ]}
+  correctIndex={3}
+  explanation={"By Heine-Borel, compact in R means closed and bounded. (0,1) is not closed, [0,∞) is not bounded, {1/n} is not closed (0 is a limit point not in the set). The finite union [0,1] ∪ [2,3] is closed (finite union of closed sets) and bounded, hence compact."}
+/>
+
+<NumericInput
+  question={"Let K = [-3, 5]. What is the diameter of K, defined as sup{|x - y| : x, y ∈ K}?"}
+  answer={8}
+  tolerance={0.01}
+  hint={"The diameter of [a, b] is b - a."}
+/>
+
+<Problem>
+**Exercise 8.3 (Counterexample).** Give an example of a subset of $\mathbb{R}$ that is (a) closed but not compact, and (b) bounded but not compact. In each case, explain which hypothesis of the Heine-Borel theorem fails and exhibit an open cover with no finite subcover.
+
+*Hint:* For (a), try $\mathbb{N}$ or $[0, \infty)$. For (b), try $(0, 1)$.
+</Problem>
+
+<Solution>
+*Answer.*
+
+**(a) Closed but not compact: $F = [0, \infty)$.**
+
+$F$ is closed (its complement $(-\infty, 0)$ is open). It is not bounded, so by Heine-Borel it is not compact. Explicitly, $\{(-1, n) : n \in \mathbb{N}\}$ is an open cover of $F$, but any finite subcollection $\{(-1, n_1), \ldots, (-1, n_k)\}$ is contained in $(-1, N)$ where $N = \max(n_1, \ldots, n_k)$, so the point $N + 1 \in F$ is not covered.
+
+**(b) Bounded but not compact: $B = (0, 1)$.**
+
+$B$ is bounded (contained in $[-1, 2]$). It is not closed since $0$ is a limit point of $B$ not in $B$. By Heine-Borel, $B$ is not compact. Explicitly, the open cover $\{(1/n, 1) : n \geq 2\}$ covers $(0,1)$: for any $x \in (0,1)$, choose $n > 1/x$ so $x > 1/n$ and $x \in (1/n, 1)$. But any finite subcollection $\{(1/n_1, 1), \ldots, (1/n_k, 1)\}$ equals $(1/N, 1)$ where $N = \max(n_1, \ldots, n_k)$, and the point $1/(2N) \in (0,1)$ is not covered. $\square$
+</Solution>
+
+## Exploring Open Covers
+
+The following playground demonstrates the concept of open covers and finite subcovers for compact sets.
+
+<PythonPlayground
+  title={"Open Covers and Finite Subcovers"}
+  defaultCode={`# Exploring compactness: open covers of [0, 1]
+# We create an open cover and extract a finite subcover
+
+import random
+
+# Create an open cover of [0, 1] with many small intervals
+# Each interval (a - r, a + r) centered at a point in [0,1]
+random.seed(42)
+cover = []
+for _ in range(50):
+    center = random.uniform(0, 1)
+    radius = random.uniform(0.05, 0.2)
+    cover.append((center - radius, center + radius))
+
+# Check if the cover actually covers [0, 1]
+def is_covered(point, intervals):
+    return any(a < point < b for a, b in intervals)
+
+# Test coverage at many points
+test_points = [i / 1000 for i in range(1001)]
+all_covered = all(is_covered(p, cover) for p in test_points)
+print(f"Full cover ({len(cover)} intervals) covers [0,1]: {all_covered}")
+
+# Greedy algorithm to find a small subcover
+def find_subcover(intervals, a=0, b=1):
+    """Find a finite subcover of [a, b] greedily."""
+    subcover = []
+    current = a
+    while current < b:
+        # Find interval that extends furthest right from current
+        best = None
+        best_right = current
+        for (lo, hi) in intervals:
+            if lo < current + 1e-10 and hi > best_right:
+                best = (lo, hi)
+                best_right = hi
+        if best is None:
+            return None  # Gap in cover!
+        subcover.append(best)
+        current = best_right
+    return subcover
+
+subcover = find_subcover(cover)
+if subcover:
+    print(f"Finite subcover found with {len(subcover)} intervals:")
+    for lo, hi in subcover:
+        print(f"  ({lo:.4f}, {hi:.4f})")
+    print()
+    print("This illustrates Heine-Borel: every open cover of a")
+    print("closed bounded set has a finite subcover!")
+else:
+    print("Cover has a gap — increase number of intervals.")
+`}
+/>

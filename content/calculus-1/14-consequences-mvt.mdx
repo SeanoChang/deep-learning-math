@@ -1,0 +1,356 @@
+---
+title: "Consequences of the Mean Value Theorem"
+description: "Monotonicity criteria, inequalities, convexity, and L'Hopital's rule"
+order: 14
+prerequisites: ["13-mean-value-theorems"]
+---
+
+# Consequences of the Mean Value Theorem
+
+The Mean Value Theorem is not merely a theoretical curiosity -- it is the engine that drives most of the
+qualitative theory of differential calculus. In this lesson we develop its major consequences: monotonicity
+criteria, useful inequalities, convexity theory, and L'Hopital's rule for indeterminate forms.
+
+## Monotonicity Criteria
+
+We proved the basic monotonicity result in the previous lesson. Here we state the full version.
+
+<Callout type="theorem">
+**Theorem (Monotonicity criterion).** Let $f$ be continuous on $[a,b]$ and differentiable on $(a,b)$.
+
+1. $f'(x) \geq 0$ for all $x \in (a,b)$ $\iff$ $f$ is (weakly) increasing on $[a,b]$.
+2. $f'(x) > 0$ for all $x \in (a,b)$ $\implies$ $f$ is strictly increasing on $[a,b]$.
+3. $f'(x) = 0$ for all $x \in (a,b)$ $\iff$ $f$ is constant on $[a,b]$.
+
+*Proof of (1), ($\Rightarrow$).* Let $x_1 < x_2$ in $[a,b]$. By the MVT, there exists $c \in (x_1, x_2)$ with
+
+$$f(x_2) - f(x_1) = f'(c)(x_2 - x_1).$$
+
+Since $f'(c) \geq 0$ and $x_2 - x_1 > 0$, we get $f(x_2) \geq f(x_1)$.
+
+*Proof of (1), ($\Leftarrow$).* If $f$ is increasing, then for $h > 0$:
+
+$$\frac{f(a+h) - f(a)}{h} \geq 0.$$
+
+Taking the limit as $h \to 0^+$ gives $f'(a) \geq 0$. $\blacksquare$
+</Callout>
+
+<Callout type="warning">
+**The converse of (2) is false.** $f(x) = x^3$ is strictly increasing on $\mathbb{R}$, but $f'(0) = 0$.
+A strictly increasing differentiable function can have derivative zero at isolated points.
+</Callout>
+
+## Inequalities from the MVT
+
+The MVT is a powerful tool for establishing inequalities. The pattern is: bound $f'$ on an interval, then
+the MVT translates this into a bound on $f(b) - f(a)$.
+
+<Callout type="theorem">
+**Proposition (Lipschitz from bounded derivative).** If $f$ is differentiable on $(a,b)$ with $|f'(x)| \leq M$
+for all $x \in (a,b)$, then
+
+$$|f(x) - f(y)| \leq M|x - y|$$
+
+for all $x, y \in [a,b]$. That is, $f$ is **Lipschitz continuous** with constant $M$.
+
+*Proof.* For $x < y$ in $[a,b]$, the MVT gives $c \in (x,y)$ with $f(y) - f(x) = f'(c)(y-x)$.
+Taking absolute values: $|f(y)-f(x)| = |f'(c)||y-x| \leq M|y-x|$. $\blacksquare$
+</Callout>
+
+<Callout type="info">
+**Example.** Since $|\cos(x)| \leq 1$ for all $x$, we get $|\sin(x) - \sin(y)| \leq |x-y|$. Similarly,
+since $\frac{d}{dx}e^x = e^x \leq e$ on $[0,1]$, we get $|e^x - e^y| \leq e|x-y|$ for $x,y \in [0,1]$.
+</Callout>
+
+## Convexity and the Second Derivative
+
+<Callout type="definition">
+**Definition (Convexity).** A function $f \colon I \to \mathbb{R}$ is **convex** on an interval $I$ if for
+all $x, y \in I$ and all $\lambda \in [0,1]$:
+
+$$f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda)f(y).$$
+
+$f$ is **strictly convex** if equality holds only when $\lambda \in \{0,1\}$ or $x = y$.
+$f$ is **concave** if $-f$ is convex.
+</Callout>
+
+<Callout type="theorem">
+**Theorem (Second derivative test for convexity).** Let $f$ be twice differentiable on an open interval $I$.
+Then $f$ is convex on $I$ if and only if $f''(x) \geq 0$ for all $x \in I$.
+
+*Proof.*
+($\Leftarrow$) Assume $f'' \geq 0$ on $I$. Since $f'' = (f')'$, the monotonicity criterion applied to $f'$
+implies $f'$ is increasing on $I$.
+
+Take any $x < y$ in $I$ and $\lambda \in [0,1]$, and set $z = \lambda x + (1-\lambda)y$ (so $x \le z \le y$).
+By the Mean Value Theorem on $[x,z]$ and $[z,y]$, there exist $\xi_1 \in (x,z)$ and $\xi_2 \in (z,y)$ such that
+
+$$\frac{f(z)-f(x)}{z-x} = f'(\xi_1), \qquad \frac{f(y)-f(z)}{y-z} = f'(\xi_2).$$
+
+Because $\xi_1 < \xi_2$ and $f'$ is increasing, we get
+
+$$\frac{f(z)-f(x)}{z-x} \le \frac{f(y)-f(z)}{y-z}.$$
+
+Rearranging:
+
+$$(y-z)\bigl(f(z)-f(x)\bigr) \le (z-x)\bigl(f(y)-f(z)\bigr).$$
+
+Using $y-z = \lambda (y-x)$ and $z-x = (1-\lambda)(y-x)$, divide by $y-x>0$:
+
+$$\lambda f(z) - \lambda f(x) \le (1-\lambda)f(y) - (1-\lambda)f(z).$$
+
+So $f(z) \le \lambda f(x) + (1-\lambda)f(y)$, i.e. $f$ is convex.
+
+($\Rightarrow$) Assume $f$ is convex on $I$. For any $x<y<z$ in $I$, convexity with
+$y = \theta x + (1-\theta)z$, where $\theta = \frac{z-y}{z-x}$, gives
+
+$$f(y) \le \frac{z-y}{z-x}f(x) + \frac{y-x}{z-x}f(z).$$
+
+Equivalent form:
+
+$$\frac{f(y)-f(x)}{y-x} \le \frac{f(z)-f(y)}{z-y}. \tag{*}$$
+
+Now fix $u<v$ in $I$. Apply (*) to $u-h < u < v$ and to $u < v < v+h$ (for small $h>0$):
+
+$$\frac{f(u)-f(u-h)}{h} \le \frac{f(v)-f(u)}{v-u} \le \frac{f(v+h)-f(v)}{h}.$$
+
+Let $h \to 0^+$. Since $f$ is differentiable, the side quotients converge to derivatives:
+
+$$f'(u) \le \frac{f(v)-f(u)}{v-u} \le f'(v).$$
+
+Hence $f'(u) \le f'(v)$ for $u<v$, so $f'$ is increasing on $I$. Apply the monotonicity criterion to $f'$
+(which is differentiable because $f$ is twice differentiable): $(f')' = f'' \ge 0$ on $I$. $\blacksquare$
+</Callout>
+
+<FunctionPlot
+  fn="x*x"
+  title="f(x) = x^2: convex (f'' = 2 > 0), chords lie above the graph"
+  domain={[-3, 3]}
+  range={[-1, 9]}
+/>
+
+<FunctionPlot
+  fn="-x*x + 4"
+  title="f(x) = -x^2 + 4: concave (f'' = -2 < 0), chords lie below the graph"
+  domain={[-3, 3]}
+  range={[-6, 5]}
+/>
+
+## L'Hopital's Rule
+
+<Callout type="theorem">
+**Theorem (L'Hopital's Rule, $0/0$ form).** Let $f$ and $g$ be differentiable on $(a,b)$ (where $a$ can be
+$-\infty$), with $g'(x) \neq 0$ on $(a,b)$. Suppose
+
+$$\lim_{x \to a^+} f(x) = 0 \quad \text{and} \quad \lim_{x \to a^+} g(x) = 0.$$
+
+If $\lim_{x \to a^+} \frac{f'(x)}{g'(x)} = L$ (finite, $+\infty$, or $-\infty$), then
+
+$$\lim_{x \to a^+} \frac{f(x)}{g(x)} = L.$$
+
+*Proof.* Extend $f$ and $g$ to be continuous at $a$ by setting $f(a) = g(a) = 0$. For $x \in (a,b)$,
+$f$ and $g$ are continuous on $[a,x]$ and differentiable on $(a,x)$. By the Cauchy Mean Value Theorem,
+there exists $c_x \in (a,x)$ with
+
+$$\frac{f(x)}{g(x)} = \frac{f(x) - f(a)}{g(x) - g(a)} = \frac{f'(c_x)}{g'(c_x)}.$$
+
+As $x \to a^+$, we have $c_x \to a^+$ (since $a < c_x < x$). Therefore
+
+$$\lim_{x \to a^+} \frac{f(x)}{g(x)} = \lim_{x \to a^+}\frac{f'(c_x)}{g'(c_x)} = L. \quad \blacksquare$$
+</Callout>
+
+<Callout type="warning">
+**Common errors with L'Hopital's rule:**
+1. Applying it when the form is not indeterminate ($0/0$ or $\infty/\infty$).
+2. Forgetting to check that $g'(x) \neq 0$ near $a$.
+3. Concluding that $\lim f/g$ does not exist because $\lim f'/g'$ does not exist. L'Hopital's rule is a
+   *sufficient* condition, not necessary: $\lim f'/g'$ failing to exist does NOT mean $\lim f/g$ fails.
+</Callout>
+
+<Callout type="info">
+**Example.** $\lim_{x \to 0}\frac{\sin x}{x}$: both $\sin x \to 0$ and $x \to 0$, so L'Hopital gives
+$\lim_{x\to 0}\frac{\cos x}{1} = 1$. (Of course, this limit was established independently earlier as the
+foundation for differentiating $\sin$.)
+</Callout>
+
+## Error Bounds via the MVT
+
+<Callout type="theorem">
+**Proposition (First-order error bound).** If $f$ is differentiable on an interval containing $a$ and $x$,
+and $|f'(t)| \leq M$ for all $t$ between $a$ and $x$, then
+
+$$|f(x) - f(a)| \leq M|x-a|.$$
+
+More generally, if $f$ is twice differentiable and $|f''(t)| \leq M_2$, then
+
+$$|f(x) - f(a) - f'(a)(x-a)| \leq \frac{M_2}{2}(x-a)^2.$$
+
+This is a preview of the quantitative error control provided by Taylor's theorem (Lesson 15).
+</Callout>
+
+## Exercises
+
+<Problem>
+**Exercise 1.** Prove rigorously that if $f$ is continuous on $[a,b]$, differentiable on $(a,b)$, and
+$f'(x) \geq 0$ for all $x \in (a,b)$, then $f$ is increasing on $[a,b]$.
+</Problem>
+
+<Solution>
+Let $x_1, x_2 \in [a,b]$ with $x_1 < x_2$. We must show $f(x_1) \leq f(x_2)$.
+
+The function $f$ is continuous on $[x_1, x_2] \subseteq [a,b]$ and differentiable on $(x_1, x_2) \subseteq (a,b)$.
+By the Mean Value Theorem, there exists $c \in (x_1, x_2)$ such that
+
+$$f(x_2) - f(x_1) = f'(c)(x_2 - x_1).$$
+
+By hypothesis, $f'(c) \geq 0$. Since $x_2 > x_1$, we have $x_2 - x_1 > 0$. Therefore
+
+$$f(x_2) - f(x_1) = \underbrace{f'(c)}_{\geq 0} \cdot \underbrace{(x_2 - x_1)}_{> 0} \geq 0.$$
+
+Hence $f(x_2) \geq f(x_1)$, so $f$ is increasing. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following functions is convex on all of $\mathbb{R}$?"
+  options={[
+    "f(x) = x^3",
+    "f(x) = e^x",
+    "f(x) = sin(x)",
+    "f(x) = ln(x)"
+  ]}
+  correctIndex={1}
+  explanation="f(x) = e^x has f''(x) = e^x > 0 for all x, so it is strictly convex on R. x^3 has f''(x) = 6x which changes sign. sin(x) has f''(x) = -sin(x) which changes sign. ln(x) is concave (and only defined on (0, infinity))."
+/>
+
+<NumericInput
+  question="Use L'Hopital's rule to evaluate $\lim_{x \to 0} \frac{e^x - 1 - x}{x^2}$. Enter the value."
+  answer={0.5}
+  tolerance={0.01}
+  hint="Apply L'Hopital twice: first get (e^x - 1)/(2x), still 0/0, then e^x/2 -> 1/2."
+/>
+
+<Problem>
+**Exercise 2.** Use the MVT to prove that $e^x \geq 1 + x$ for all $x \geq 0$.
+</Problem>
+
+<Solution>
+Let $f(t) = e^t$. For $x > 0$, apply the MVT to $f$ on $[0, x]$: there exists $c \in (0, x)$ with
+
+$$e^x - e^0 = e^c(x - 0) = e^c \cdot x.$$
+
+Since $c > 0$, we have $e^c > 1$, so $e^x - 1 = e^c \cdot x > x$, giving $e^x > 1 + x$.
+
+For $x = 0$: $e^0 = 1 = 1 + 0$, so equality holds.
+
+Therefore $e^x \geq 1 + x$ for all $x \geq 0$. $\blacksquare$
+
+**Remark.** The inequality actually holds for all $x \in \mathbb{R}$, which can be shown using convexity:
+$e^x$ is convex and $1 + x$ is its tangent line at $x = 0$.
+</Solution>
+
+<Problem>
+**Exercise 3 (Definition Drill).** Prove directly from the definition of convexity (not the second derivative test) that $f(x) = x^2$ is convex on $\mathbb{R}$. That is, show $f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda)f(y)$ for all $x, y \in \mathbb{R}$ and $\lambda \in [0,1]$.
+
+*Hint:* Expand both sides and show the difference is $\lambda(1-\lambda)(x - y)^2 \geq 0$.
+</Problem>
+
+<Solution>
+*Proof.* Let $x, y \in \mathbb{R}$ and $\lambda \in [0,1]$. We compute:
+
+$$\lambda f(x) + (1-\lambda)f(y) - f(\lambda x + (1-\lambda)y) = \lambda x^2 + (1-\lambda)y^2 - [\lambda x + (1-\lambda)y]^2.$$
+
+Expanding the square:
+
+$$[\lambda x + (1-\lambda)y]^2 = \lambda^2 x^2 + 2\lambda(1-\lambda)xy + (1-\lambda)^2 y^2.$$
+
+So the difference is:
+
+$$\lambda x^2 + (1-\lambda)y^2 - \lambda^2 x^2 - 2\lambda(1-\lambda)xy - (1-\lambda)^2 y^2$$
+
+$$= \lambda(1-\lambda)x^2 - 2\lambda(1-\lambda)xy + \lambda(1-\lambda)y^2 = \lambda(1-\lambda)(x^2 - 2xy + y^2) = \lambda(1-\lambda)(x-y)^2.$$
+
+Since $\lambda \in [0,1]$, we have $\lambda \geq 0$ and $1 - \lambda \geq 0$, so $\lambda(1-\lambda)(x-y)^2 \geq 0$. Therefore
+
+$$f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda)f(y)$$
+
+and $f$ is convex. $\square$
+</Solution>
+
+<Problem>
+**Exercise 4 (Counterexample).** Give an example of a differentiable function $f$ on $\mathbb{R}$ such that $f'(x) > 0$ for all $x \neq 0$ and $f'(0) = 0$, but $f$ is still strictly increasing on $\mathbb{R}$. Then explain why this does not contradict the monotonicity criterion.
+
+*Hint:* Consider $f(x) = x^3$.
+</Problem>
+
+<Solution>
+*Answer.* Let $f(x) = x^3$.
+
+**$f'(x) > 0$ for $x \neq 0$ and $f'(0) = 0$:** We have $f'(x) = 3x^2$. For $x \neq 0$, $f'(x) = 3x^2 > 0$. At $x = 0$, $f'(0) = 0$.
+
+**$f$ is strictly increasing:** Let $x_1 < x_2$. Then $x_1^3 < x_2^3$ since $x \mapsto x^3$ is strictly increasing (if $x_1 < x_2$, then $x_2^3 - x_1^3 = (x_2 - x_1)(x_2^2 + x_1 x_2 + x_1^2) > 0$, where the second factor is positive because $x_2^2 + x_1 x_2 + x_1^2 = (x_2 + x_1/2)^2 + 3x_1^2/4 \geq 0$, and equals $0$ only if $x_1 = x_2 = 0$).
+
+**No contradiction:** The monotonicity criterion (Corollary in Lesson 13) states: if $f'(x) > 0$ for all $x \in (a,b)$, then $f$ is strictly increasing. This is a *sufficient* condition. The converse would say: strictly increasing implies $f' > 0$ everywhere, which is FALSE. A strictly increasing differentiable function can have $f'(c) = 0$ at isolated points. The correct converse is only: strictly increasing implies $f' \geq 0$. $\square$
+</Solution>
+
+## Exploring Monotonicity and Convexity Numerically
+
+<PythonPlayground
+  title="Monotonicity and convexity: numerical exploration"
+  defaultCode={`import numpy as np
+
+# Explore the relationship between f', f'', and shape
+x = np.linspace(-2, 2, 1000)
+h = 1e-6
+
+# Try different functions:
+# f(x) = x^3 - 3x   (changes monotonicity)
+# f(x) = e^x         (always convex)
+# f(x) = -x^4 + 2x^2 (changes convexity)
+
+def f(x):
+    return x**3 - 3*x
+
+# Numerical first and second derivatives
+def f_prime(x):
+    return (f(x + h) - f(x - h)) / (2*h)
+
+def f_double_prime(x):
+    return (f(x + h) - 2*f(x) + f(x - h)) / h**2
+
+# Analyze monotonicity
+print("=== Monotonicity Analysis for f(x) = x^3 - 3x ===")
+fp = f_prime(x)
+increasing = x[fp > 0]
+decreasing = x[fp < 0]
+if len(increasing) > 0:
+    print(f"f' > 0 (increasing) roughly on: [{increasing[0]:.2f}, ...] and [..., {increasing[-1]:.2f}]")
+if len(decreasing) > 0:
+    print(f"f' < 0 (decreasing) roughly on: [{decreasing[0]:.2f}, {decreasing[-1]:.2f}]")
+
+# Critical points (where f' ~ 0)
+sign_changes = np.where(np.diff(np.sign(fp)))[0]
+print(f"\\nCritical points (f'=0) near x = ", end="")
+print(", ".join(f"{x[i]:.3f}" for i in sign_changes))
+
+# Analyze convexity
+print("\\n=== Convexity Analysis ===")
+fpp = f_double_prime(x)
+convex = x[fpp > 0]
+concave = x[fpp < 0]
+if len(convex) > 0:
+    print(f"f'' > 0 (convex) roughly on: [{convex[0]:.2f}, {convex[-1]:.2f}]")
+if len(concave) > 0:
+    print(f"f'' < 0 (concave) roughly on: [{concave[0]:.2f}, {concave[-1]:.2f}]")
+
+inflection = np.where(np.diff(np.sign(fpp)))[0]
+print(f"Inflection points (f''=0) near x = ", end="")
+print(", ".join(f"{x[i]:.3f}" for i in inflection))
+
+# Verify convexity of e^x
+print("\\n=== Verifying e^x >= 1 + x (MVT consequence) ===")
+test_points = np.array([-2, -1, -0.5, 0, 0.5, 1, 2])
+for t in test_points:
+    gap = np.exp(t) - (1 + t)
+    print(f"x = {t:5.1f}: e^x = {np.exp(t):.4f}, 1+x = {1+t:.4f}, gap = {gap:.4f} >= 0? {gap >= -1e-10}")
+`}
+/>

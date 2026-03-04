@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { renderInlineKatex } from "@/lib/katex-render";
 
 interface MultipleChoiceProps {
-  question: string;
-  options: string[];
-  correctIndex: number;
-  explanation?: string;
+  question?: unknown;
+  options?: unknown;
+  correctIndex?: number;
+  explanation?: unknown;
 }
 
 type Status = "idle" | "checked";
@@ -24,11 +24,23 @@ export function MultipleChoice({
 }: MultipleChoiceProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [status, setStatus] = useState<Status>("idle");
+  const safeCorrectIndex = typeof correctIndex === "number" ? correctIndex : 0;
+  const safeOptions = useMemo(
+    () => (Array.isArray(options) ? options : []),
+    [options]
+  );
+  const ariaLabel = useMemo(() => {
+    const label = question == null ? "" : String(question);
+    return label || "Multiple choice question";
+  }, [question]);
 
-  const isCorrect = status === "checked" && selectedIndex === correctIndex;
+  const isCorrect = status === "checked" && selectedIndex === safeCorrectIndex;
 
   const questionHtml = useMemo(() => renderInlineKatex(question), [question]);
-  const optionHtmls = useMemo(() => options.map(renderInlineKatex), [options]);
+  const optionHtmls = useMemo(
+    () => safeOptions.map((option) => renderInlineKatex(option)),
+    [safeOptions]
+  );
   const explanationHtml = useMemo(
     () => (explanation ? renderInlineKatex(explanation) : undefined),
     [explanation]
@@ -52,10 +64,10 @@ export function MultipleChoice({
     }
 
     // Checked state
-    if (index === correctIndex) {
+    if (index === safeCorrectIndex) {
       return "border-green-500/50 bg-green-500/8 ring-1 ring-green-500/20";
     }
-    if (index === selectedIndex && index !== correctIndex) {
+    if (index === selectedIndex && index !== safeCorrectIndex) {
       return "border-red-500/50 bg-red-500/8 ring-1 ring-red-500/20";
     }
     return "border-border/50 opacity-50";
@@ -64,7 +76,7 @@ export function MultipleChoice({
   function getOptionIcon(index: number) {
     if (status !== "checked") return null;
 
-    if (index === correctIndex) {
+    if (index === safeCorrectIndex) {
       return (
         <motion.div
           initial={{ scale: 0 }}
@@ -76,7 +88,7 @@ export function MultipleChoice({
         </motion.div>
       );
     }
-    if (index === selectedIndex && index !== correctIndex) {
+    if (index === selectedIndex && index !== safeCorrectIndex) {
       return (
         <motion.div
           initial={{ scale: 0 }}
@@ -109,8 +121,8 @@ export function MultipleChoice({
       </div>
 
       {/* Options */}
-      <div className="flex flex-col gap-2 px-5 py-3" role="radiogroup" aria-label={question}>
-        {options.map((option, index) => {
+      <div className="flex flex-col gap-2 px-5 py-3" role="radiogroup" aria-label={ariaLabel}>
+        {safeOptions.map((option, index) => {
           const letter = String.fromCharCode(65 + index);
           const isSelected = selectedIndex === index;
           const isDisabled = status === "checked";
@@ -203,7 +215,7 @@ export function MultipleChoice({
 
         {/* Explanation */}
         <AnimatePresence initial={false}>
-          {status === "checked" && explanation && (
+          {status === "checked" && explanationHtml && (
             <motion.div
               key="explanation"
               initial={{ height: 0, opacity: 0 }}
@@ -219,7 +231,7 @@ export function MultipleChoice({
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Explanation
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: explanationHtml! }} />
+                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: explanationHtml ?? "" }} />
               </div>
             </motion.div>
           )}

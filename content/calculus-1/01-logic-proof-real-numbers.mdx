@@ -1,0 +1,244 @@
+---
+title: "Logic, Proof, and the Real Number System"
+description: "Mathematical statements, proof techniques, ordered field axioms, supremum and infimum"
+order: 1
+---
+
+## Mathematical Statements and Quantifiers
+
+A **mathematical statement** (or **proposition**) is a declarative sentence that is either true or false, but not both. We build complex statements from simpler ones using logical connectives: conjunction ($\land$), disjunction ($\lor$), negation ($\lnot$), implication ($\Rightarrow$), and biconditional ($\Leftrightarrow$).
+
+The **universal quantifier** $\forall$ ("for all") and the **existential quantifier** $\exists$ ("there exists") allow us to make claims about collections of objects. Their negations are crucial:
+
+$$\lnot(\forall x,\, P(x)) \iff \exists x,\, \lnot P(x)$$
+
+$$\lnot(\exists x,\, P(x)) \iff \forall x,\, \lnot P(x)$$
+
+<Callout type="tip" title="Reading Quantified Statements">
+Always read quantified statements from left to right. The statement $\forall \epsilon > 0,\, \exists N \in \mathbb{N},\, \forall n \geq N,\, |a_n - L| < \epsilon$ says: "No matter how small a positive tolerance $\epsilon$ you choose, I can find a stage $N$ beyond which every term $a_n$ stays within $\epsilon$ of $L$." The order of quantifiers matters: swapping $\forall$ and $\exists$ changes the meaning entirely.
+</Callout>
+
+## Proof Techniques
+
+### Direct Proof
+
+To prove $P \Rightarrow Q$: assume $P$ is true and derive $Q$ using definitions, axioms, and previously proven results.
+
+### Proof by Contrapositive
+
+Since $P \Rightarrow Q$ is logically equivalent to $\lnot Q \Rightarrow \lnot P$, we may instead assume $\lnot Q$ and derive $\lnot P$.
+
+### Proof by Contradiction
+
+To prove a statement $S$: assume $\lnot S$ and derive a logical contradiction. This forces $S$ to be true.
+
+### Mathematical Induction
+
+To prove $P(n)$ for all $n \geq n_0$: (1) prove $P(n_0)$ (base case), and (2) prove that $P(k) \Rightarrow P(k+1)$ for all $k \geq n_0$ (inductive step).
+
+<MultipleChoice
+  question="Which proof technique is being used when you assume the conclusion is false and derive that the hypothesis must also be false?"
+  options={["Direct proof", "Proof by contradiction", "Proof by contrapositive", "Mathematical induction"]}
+  correctIndex={2}
+  explanation="Proof by contrapositive assumes $\\lnot Q$ and derives $\\lnot P$, which is logically equivalent to proving $P \\Rightarrow Q$. Contradiction, by contrast, assumes $\\lnot S$ and derives any logical impossibility."
+/>
+
+## The Ordered Field Axioms of $\mathbb{R}$
+
+<Callout type="definition" title="Ordered Field">
+The real numbers $\mathbb{R}$ form an **ordered field**: a set equipped with operations $+$ and $\cdot$ and a total order $\leq$ satisfying:
+
+**Field axioms:** Associativity, commutativity, and distributivity of $+$ and $\cdot$; existence of additive identity $0$ and multiplicative identity $1 \neq 0$; additive inverses; multiplicative inverses for nonzero elements.
+
+**Order axioms:** For all $a, b, c \in \mathbb{R}$:
+- (Trichotomy) Exactly one holds: $a < b$, $a = b$, or $a > b$.
+- (Transitivity) $a < b$ and $b < c$ imply $a < c$.
+- (Addition) $a < b$ implies $a + c < b + c$.
+- (Multiplication) $a < b$ and $c > 0$ imply $ac < bc$.
+</Callout>
+
+## Absolute Value and the Triangle Inequality
+
+<Callout type="definition" title="Absolute Value">
+For $x \in \mathbb{R}$, the **absolute value** is defined by
+
+$$|x| = \begin{cases} x & \text{if } x \geq 0 \\ -x & \text{if } x < 0 \end{cases}$$
+
+Equivalently, $|x| = \max(x, -x)$. The key property is: $|x| \leq c \iff -c \leq x \leq c$ for $c \geq 0$.
+</Callout>
+
+<Callout type="theorem" title="Triangle Inequality">
+For all $a, b \in \mathbb{R}$,
+
+$$|a + b| \leq |a| + |b|.$$
+</Callout>
+
+**Proof.** We have $-|a| \leq a \leq |a|$ and $-|b| \leq b \leq |b|$. Adding these inequalities:
+
+$$-(|a| + |b|) \leq a + b \leq |a| + |b|.$$
+
+By the characterization of absolute value, this gives $|a + b| \leq |a| + |b|$. $\blacksquare$
+
+<Callout type="theorem" title="Reverse Triangle Inequality">
+For all $a, b \in \mathbb{R}$,
+
+$$\bigl||a| - |b|\bigr| \leq |a - b|.$$
+</Callout>
+
+**Proof.** By the triangle inequality applied to $a = (a - b) + b$:
+
+$$|a| = |(a - b) + b| \leq |a - b| + |b|,$$
+
+so $|a| - |b| \leq |a - b|$. Swapping the roles of $a$ and $b$:
+
+$$|b| - |a| \leq |b - a| = |a - b|.$$
+
+Combining: $-(|a - b|) \leq |a| - |b| \leq |a - b|$, which gives $\bigl||a| - |b|\bigr| \leq |a - b|$. $\blacksquare$
+
+## Upper Bounds, Lower Bounds, Supremum, and Infimum
+
+<Callout type="definition" title="Bounded Sets, Supremum, and Infimum">
+Let $S \subseteq \mathbb{R}$ be nonempty.
+
+- $M$ is an **upper bound** of $S$ if $s \leq M$ for all $s \in S$. If such $M$ exists, $S$ is **bounded above**.
+- $m$ is a **lower bound** of $S$ if $m \leq s$ for all $s \in S$. If such $m$ exists, $S$ is **bounded below**.
+- The **supremum** $\sup S$ is the least upper bound: $\sup S$ is an upper bound of $S$, and if $M$ is any upper bound of $S$, then $\sup S \leq M$.
+- The **infimum** $\inf S$ is the greatest lower bound, defined analogously.
+</Callout>
+
+<Callout type="tip" title="The Epsilon Characterization of Supremum">
+$\alpha = \sup S$ if and only if: (1) $\alpha$ is an upper bound of $S$, and (2) for every $\epsilon > 0$, there exists $s \in S$ with $s > \alpha - \epsilon$. This characterization is indispensable in proofs.
+</Callout>
+
+<Callout type="theorem" title="Uniqueness of Supremum">
+If $S \subseteq \mathbb{R}$ is nonempty and bounded above, then $\sup S$ is unique.
+</Callout>
+
+**Proof.** Suppose $\alpha$ and $\beta$ are both least upper bounds of $S$. Since $\alpha$ is an upper bound and $\beta$ is the *least* upper bound, we have $\beta \leq \alpha$. Since $\beta$ is an upper bound and $\alpha$ is the *least* upper bound, we have $\alpha \leq \beta$. By antisymmetry, $\alpha = \beta$. $\blacksquare$
+
+<Problem title="Prove: Uniqueness of Supremum (Your Turn)">
+Let $S \subseteq \mathbb{R}$ be nonempty and bounded above. Reproduce the proof above from memory: show that if $\alpha$ and $\beta$ are both suprema of $S$, then $\alpha = \beta$. Write your proof carefully, citing exactly which property of "least upper bound" you use at each step.
+
+<Solution>
+**Proof.** Suppose $\alpha = \sup S$ and $\beta = \sup S$. We show $\alpha = \beta$.
+
+Since $\alpha$ is a supremum, it is in particular an upper bound of $S$. Since $\beta$ is a *least* upper bound, we have $\beta \leq M$ for every upper bound $M$ of $S$. Taking $M = \alpha$, we get $\beta \leq \alpha$.
+
+By the symmetric argument (swapping $\alpha$ and $\beta$), $\alpha \leq \beta$.
+
+By antisymmetry of $\leq$, we conclude $\alpha = \beta$. $\blacksquare$
+</Solution>
+</Problem>
+
+<NumericInput
+  question="Let $S = \{1 - 1/n : n \in \mathbb{N}, n \geq 1\} = \{0, 1/2, 2/3, 3/4, \ldots\}$. What is $\sup S$?"
+  answer={1}
+  tolerance={0.001}
+  hint="Note that $1 - 1/n < 1$ for all $n$, so $1$ is an upper bound. Can you show no smaller number is an upper bound?"
+/>
+
+<NumericInput
+  question="Let $T = \{(-1)^n / n : n \in \mathbb{N}, n \geq 1\} = \{-1, 1/2, -1/3, 1/4, \ldots\}$. What is $\inf T$?"
+  answer={-1}
+  tolerance={0.001}
+  hint="The minimum element of a set is always its infimum, provided the minimum exists."
+/>
+
+## Visualizing Bounded Sets
+
+The plot below shows the function $f(x) = 1 - 1/x$ for $x \geq 1$. The values $\{f(1), f(2), f(3), \ldots\} = \{0, 1/2, 2/3, \ldots\}$ form a set whose supremum is $1$ (the horizontal asymptote), which is never attained.
+
+<FunctionPlot
+  fn="1 - 1/x"
+  title="f(x) = 1 - 1/x: the supremum of {f(1), f(2), ...} is 1"
+  domain={[1, 15]}
+  range={[-0.5, 1.5]}
+/>
+
+## Exploring Supremum Numerically
+
+<PythonPlayground
+  title="Numerical Exploration: Supremum of a Bounded Set"
+  defaultCode={`# Explore the supremum of S = {1 - 1/n : n >= 1}
+S = [1 - 1/n for n in range(1, 101)]
+
+print("First 10 elements:", [round(s, 4) for s in S[:10]])
+print("Last 5 elements: ", [round(s, 6) for s in S[-5:]])
+print()
+print(f"max(S) with 100 terms: {max(S)}")
+print(f"Conjectured sup(S):    1.0")
+print(f"Gap from sup:          {1.0 - max(S):.6f}")
+print()
+
+# For any epsilon > 0, find N such that 1 - 1/N > 1 - epsilon
+import math
+for eps in [0.1, 0.01, 0.001, 0.0001]:
+    N = math.ceil(1 / eps)
+    val = 1 - 1/N
+    print(f"eps={eps}: need N >= {N}, then 1 - 1/N = {val:.6f} > {1-eps}")`}
+/>
+
+<Problem>
+**Exercise 1.2 (Theorem Application).** Let $S$ and $T$ be nonempty subsets of $\mathbb{R}$ that are bounded above. Define $S + T = \{s + t : s \in S,\, t \in T\}$. Prove that $\sup(S + T) = \sup S + \sup T$.
+
+*Hint:* Show $\sup S + \sup T$ is an upper bound of $S + T$, then use the $\epsilon$-characterization of supremum to show no smaller number is an upper bound.
+</Problem>
+
+<Solution>
+*Proof.* Let $\alpha = \sup S$ and $\beta = \sup T$.
+
+**Upper bound:** For any $s \in S$ and $t \in T$, we have $s \leq \alpha$ and $t \leq \beta$, so $s + t \leq \alpha + \beta$. Thus $\alpha + \beta$ is an upper bound of $S + T$.
+
+**Least upper bound:** Let $\epsilon > 0$. By the $\epsilon$-characterization of supremum, there exist $s_0 \in S$ with $s_0 > \alpha - \epsilon/2$ and $t_0 \in T$ with $t_0 > \beta - \epsilon/2$. Then $s_0 + t_0 \in S + T$ and
+
+$$s_0 + t_0 > (\alpha - \epsilon/2) + (\beta - \epsilon/2) = \alpha + \beta - \epsilon.$$
+
+Since $\epsilon > 0$ was arbitrary and $\alpha + \beta$ is an upper bound of $S + T$, we conclude $\sup(S + T) = \alpha + \beta$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 1.3 (Counterexample).** Give an example of a nonempty subset $S \subseteq \mathbb{R}$ that is bounded above but has no maximum (i.e., $\sup S \notin S$). Prove that your example has the claimed properties.
+
+*Hint:* Consider an open interval.
+</Problem>
+
+<Solution>
+*Answer.* Let $S = (0, 1) = \{x \in \mathbb{R} : 0 < x < 1\}$.
+
+**$S$ is nonempty and bounded above:** $1/2 \in S$, so $S \neq \emptyset$. Every element satisfies $x < 1$, so $1$ is an upper bound.
+
+**$\sup S = 1$:** We showed $1$ is an upper bound. For any $\epsilon > 0$, choose $x = \max(1/2,\, 1 - \epsilon/2) \in (0,1)$. Then $x > 1 - \epsilon$, so no number smaller than $1$ is an upper bound. Hence $\sup S = 1$.
+
+**$S$ has no maximum:** Suppose for contradiction that $m = \max S$ exists, so $m \in S$ and $m \leq x$ fails for no $x \in S$ larger than $m$. Since $m \in (0,1)$, we have $m < 1$, so $(m + 1)/2 \in (0,1) = S$ and $(m+1)/2 > m$. This contradicts $m$ being the maximum. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following sets does NOT have a supremum in $\\mathbb{R}$?"
+  options={[
+    "$\\{1/n : n \\in \\mathbb{N}\\}$",
+    "$\\{x \\in \\mathbb{R} : x^2 < 2\\}$",
+    "$\\mathbb{N}$",
+    "$(-\\infty, 3)$"
+  ]}
+  correctIndex={2}
+  explanation="$\\mathbb{N}$ is not bounded above, so it has no supremum in $\\mathbb{R}$. All the other sets are bounded above and nonempty, so by the completeness axiom (next lesson) they have suprema."
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Using only ordered-field axioms and absolute value definition, prove
+$|x|-|y|\le |x-y|$ and then derive the reverse triangle inequality.
+You may not invoke the triangle inequality as a black box.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Let $S=\{q\in\mathbb{Q}: q^2<3\}$.
+Prove $S$ is nonempty and bounded above in $\mathbb{R}$, then show that $\sup S=\sqrt{3}$.
+Write each step using the supremum definition explicitly.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Give an example of a nonempty subset of $\mathbb{R}$ that is bounded above but has no maximum.
+Then give one that has a maximum and prove that maximum equals its supremum.
+</Problem>

@@ -1,0 +1,329 @@
+---
+title: "Algebra of Derivatives"
+description: "Product rule, quotient rule, chain rule, and inverse function derivatives — all proved rigorously"
+order: 12
+prerequisites: ["11-derivative-definition"]
+---
+
+# Algebra of Derivatives
+
+Having defined the derivative and established its first properties, we now develop the algebraic rules that
+allow us to differentiate combinations of functions. Each rule is stated precisely and proved from the
+limit definition. The chain rule, in particular, requires a careful argument that avoids a subtle pitfall
+involving division by zero.
+
+## Linearity of the Derivative
+
+<Callout type="theorem">
+**Theorem (Linearity).** If $f$ and $g$ are differentiable at $a$, and $\alpha, \beta \in \mathbb{R}$, then
+$\alpha f + \beta g$ is differentiable at $a$ and
+
+$$(\alpha f + \beta g)'(a) = \alpha f'(a) + \beta g'(a).$$
+
+*Proof.* By the sum and scalar multiple rules for limits:
+
+$$\lim_{h \to 0} \frac{[\alpha f + \beta g](a+h) - [\alpha f + \beta g](a)}{h} = \alpha \lim_{h \to 0}\frac{f(a+h)-f(a)}{h} + \beta \lim_{h \to 0}\frac{g(a+h)-g(a)}{h} = \alpha f'(a) + \beta g'(a). \quad \blacksquare$$
+</Callout>
+
+## The Product Rule
+
+<Callout type="theorem">
+**Theorem (Product rule).** If $f$ and $g$ are differentiable at $a$, then $fg$ is differentiable at $a$ and
+
+$$(fg)'(a) = f'(a)g(a) + f(a)g'(a).$$
+
+*Proof.* The key technique is **adding and subtracting a bridge term**. Write:
+
+$$\frac{(fg)(a+h) - (fg)(a)}{h} = \frac{f(a+h)g(a+h) - f(a)g(a)}{h}.$$
+
+Add and subtract $f(a+h)g(a)$ in the numerator:
+
+$$= \frac{f(a+h)g(a+h) - f(a+h)g(a) + f(a+h)g(a) - f(a)g(a)}{h}$$
+
+$$= f(a+h) \cdot \frac{g(a+h) - g(a)}{h} + g(a) \cdot \frac{f(a+h) - f(a)}{h}.$$
+
+Now take the limit as $h \to 0$. Since $f$ is differentiable at $a$, it is continuous there (by the
+theorem from Lesson 11), so $\lim_{h \to 0} f(a+h) = f(a)$. Hence:
+
+$$\lim_{h \to 0}\left[f(a+h) \cdot \frac{g(a+h)-g(a)}{h}\right] = f(a) \cdot g'(a)$$
+
+and
+
+$$\lim_{h \to 0}\left[g(a) \cdot \frac{f(a+h)-f(a)}{h}\right] = g(a) \cdot f'(a).$$
+
+By the sum rule for limits:
+
+$$(fg)'(a) = f(a)g'(a) + g(a)f'(a). \quad \blacksquare$$
+</Callout>
+
+<Callout type="info">
+**Remark.** The bridge term $f(a+h)g(a)$ is not the only choice. We could equally use $f(a)g(a+h)$, which
+leads to the same result by a symmetric argument. The essential point is that we need to isolate one factor
+at a time.
+</Callout>
+
+## The Quotient Rule
+
+<Callout type="theorem">
+**Theorem (Quotient rule).** If $f$ and $g$ are differentiable at $a$ and $g(a) \neq 0$, then $f/g$ is
+differentiable at $a$ and
+
+$$\left(\frac{f}{g}\right)'(a) = \frac{f'(a)g(a) - f(a)g'(a)}{[g(a)]^2}.$$
+
+*Proof.* It suffices to prove that $1/g$ is differentiable (the general case then follows from the product rule).
+
+$$\frac{\frac{1}{g(a+h)} - \frac{1}{g(a)}}{h} = \frac{g(a) - g(a+h)}{h \cdot g(a+h) \cdot g(a)} = \frac{-1}{g(a+h) \cdot g(a)} \cdot \frac{g(a+h) - g(a)}{h}.$$
+
+Since $g$ is differentiable at $a$, it is continuous there, so $g(a+h) \to g(a) \neq 0$. Therefore:
+
+$$\left(\frac{1}{g}\right)'(a) = \frac{-g'(a)}{[g(a)]^2}.$$
+
+Applying the product rule to $f \cdot (1/g)$:
+
+$$\left(\frac{f}{g}\right)'(a) = f'(a) \cdot \frac{1}{g(a)} + f(a) \cdot \frac{-g'(a)}{[g(a)]^2} = \frac{f'(a)g(a) - f(a)g'(a)}{[g(a)]^2}. \quad \blacksquare$$
+</Callout>
+
+## The Chain Rule
+
+The chain rule is the most important differentiation rule and the one whose proof requires the most care.
+
+<Callout type="definition">
+**Setup.** Suppose $g$ is differentiable at $a$ and $f$ is differentiable at $g(a)$. We want to differentiate
+the composition $(f \circ g)(x) = f(g(x))$ at $x = a$.
+</Callout>
+
+<Callout type="warning">
+**A naive attempt fails.** One might try:
+
+$$\frac{f(g(a+h)) - f(g(a))}{h} = \frac{f(g(a+h)) - f(g(a))}{g(a+h) - g(a)} \cdot \frac{g(a+h) - g(a)}{h}$$
+
+and take limits. But $g(a+h) - g(a)$ could be $0$ for some $h \neq 0$, making the first fraction undefined.
+We need a different approach.
+</Callout>
+
+<Callout type="theorem">
+**Theorem (Chain rule).** If $g$ is differentiable at $a$ and $f$ is differentiable at $b = g(a)$, then
+$f \circ g$ is differentiable at $a$ and
+
+$$(f \circ g)'(a) = f'(g(a)) \cdot g'(a).$$
+
+*Proof.* Since $f$ is differentiable at $b = g(a)$, by the linear approximation characterization (Lesson 11)
+there exists a function $\epsilon$ with $\lim_{k \to 0}\epsilon(k) = 0$ and $\epsilon(0) = 0$ such that
+
+$$f(b + k) - f(b) = f'(b) \cdot k + \epsilon(k) \cdot k$$
+
+for all $k$ (including $k = 0$, where both sides are $0$). Set $k = g(a+h) - g(a)$:
+
+$$f(g(a+h)) - f(g(a)) = f'(g(a)) \cdot [g(a+h) - g(a)] + \epsilon(g(a+h) - g(a)) \cdot [g(a+h) - g(a)].$$
+
+Divide by $h \neq 0$:
+
+$$\frac{f(g(a+h)) - f(g(a))}{h} = [f'(g(a)) + \epsilon(g(a+h) - g(a))] \cdot \frac{g(a+h) - g(a)}{h}.$$
+
+As $h \to 0$: $g(a+h) - g(a) \to 0$ (since $g$ is continuous at $a$), so $\epsilon(g(a+h)-g(a)) \to 0$.
+Also $\frac{g(a+h)-g(a)}{h} \to g'(a)$. Therefore:
+
+$$(f \circ g)'(a) = [f'(g(a)) + 0] \cdot g'(a) = f'(g(a)) \cdot g'(a). \quad \blacksquare$$
+</Callout>
+
+<Callout type="tip">
+The key insight in this proof is using the linear approximation form $f(b+k) = f(b) + f'(b)k + \epsilon(k)k$,
+which is valid even when $k = 0$. This avoids the division-by-zero issue entirely.
+</Callout>
+
+### Visualizing the Chain Rule
+
+<FunctionPlot
+  fn="Math.sin(x*x)"
+  title="f(g(x)) = sin(x^2): the chain rule gives f'(g(x)) * g'(x) = cos(x^2) * 2x"
+  domain={[-3, 3]}
+  range={[-2, 2]}
+/>
+
+## Derivatives of Inverse Functions
+
+<Callout type="theorem">
+**Theorem (Inverse function derivative).** Let $f$ be continuous and strictly monotone on an open interval $I$,
+and suppose $f$ is differentiable at $a \in I$ with $f'(a) \neq 0$. Then $f^{-1}$ is differentiable at
+$b = f(a)$ and
+
+$$(f^{-1})'(b) = \frac{1}{f'(f^{-1}(b))} = \frac{1}{f'(a)}.$$
+
+*Proof.* Let $y = f(a)$ and consider the difference quotient for $f^{-1}$ at $y$:
+
+$$\frac{f^{-1}(y + k) - f^{-1}(y)}{k}.$$
+
+Set $a + h = f^{-1}(y + k)$, so $k = f(a+h) - f(a)$. Since $f$ is strictly monotone, $k \neq 0$ when $h \neq 0$,
+and $k \to 0$ iff $h \to 0$ (by continuity of $f$ and $f^{-1}$). Then:
+
+$$\frac{f^{-1}(y+k) - f^{-1}(y)}{k} = \frac{h}{f(a+h) - f(a)} = \frac{1}{\frac{f(a+h)-f(a)}{h}}.$$
+
+As $k \to 0$ (equivalently $h \to 0$), the right side $\to \frac{1}{f'(a)}$, provided $f'(a) \neq 0$. $\blacksquare$
+</Callout>
+
+<Callout type="info">
+**Application.** From $\frac{d}{dx}x^n = nx^{n-1}$ and the inverse function theorem, we can derive
+
+$$\frac{d}{dx}x^{1/n} = \frac{1}{n}x^{1/n - 1}$$
+
+for $x > 0$, extending the power rule to rational exponents.
+</Callout>
+
+## Exercises
+
+<Problem>
+**Exercise 1.** Give a complete proof of the product rule using the definition of the derivative. Identify
+precisely where you use: (a) differentiability of $f$, (b) differentiability of $g$, (c) the theorem that
+differentiability implies continuity.
+</Problem>
+
+<Solution>
+We compute:
+
+$$\frac{f(a+h)g(a+h) - f(a)g(a)}{h}$$
+
+Adding and subtracting $f(a+h)g(a)$:
+
+$$= f(a+h)\frac{g(a+h)-g(a)}{h} + g(a)\frac{f(a+h)-f(a)}{h}.$$
+
+Taking limits as $h \to 0$:
+
+- **(b)** The second fraction converges to $g'(a)$ by differentiability of $g$.
+- **(a)** The fourth fraction converges to $f'(a)$ by differentiability of $f$.
+- **(c)** $\lim_{h\to 0}f(a+h) = f(a)$ because differentiability of $f$ implies continuity of $f$.
+
+By the product and sum rules for limits:
+
+$$(fg)'(a) = f(a)g'(a) + g(a)f'(a). \quad \blacksquare$$
+</Solution>
+
+<MultipleChoice
+  question="If $h(x) = f(g(x))$, $g(2) = 5$, $g'(2) = 3$, $f(5) = 1$, $f'(5) = -2$, what is $h'(2)$?"
+  options={[
+    "h'(2) = -6",
+    "h'(2) = -2",
+    "h'(2) = 3",
+    "h'(2) = -10"
+  ]}
+  correctIndex={0}
+  explanation="By the chain rule, h'(2) = f'(g(2)) * g'(2) = f'(5) * 3 = (-2)(3) = -6."
+/>
+
+<NumericInput
+  question="Let $f(x) = (3x^2 + 1)^4$. Using the chain rule, compute $f'(1)$. Enter the numerical value."
+  answer={1536}
+  tolerance={0.1}
+  hint="f'(x) = 4(3x^2+1)^3 * 6x. At x=1: 4*(4)^3 * 6 = 4*64*6."
+/>
+
+<Problem>
+**Exercise 2.** Prove that if $f$ is differentiable at $a$ and $f(a) \neq 0$, then $1/f$ is differentiable
+at $a$ and $(1/f)'(a) = -f'(a)/[f(a)]^2$.
+</Problem>
+
+<Solution>
+Compute the difference quotient:
+
+$$\frac{\frac{1}{f(a+h)} - \frac{1}{f(a)}}{h} = \frac{f(a) - f(a+h)}{h \cdot f(a+h) \cdot f(a)}.$$
+
+Rewrite as:
+
+$$= \frac{-1}{f(a+h) \cdot f(a)} \cdot \frac{f(a+h) - f(a)}{h}.$$
+
+As $h \to 0$:
+- $\frac{f(a+h)-f(a)}{h} \to f'(a)$ (differentiability of $f$).
+- $f(a+h) \to f(a)$ (differentiability implies continuity), and $f(a) \neq 0$ by hypothesis.
+
+By the product rule for limits:
+
+$$\left(\frac{1}{f}\right)'(a) = \frac{-1}{f(a) \cdot f(a)} \cdot f'(a) = \frac{-f'(a)}{[f(a)]^2}. \quad \blacksquare$$
+</Solution>
+
+<Problem>
+**Exercise 3 (Definition Drill).** Prove from the limit definition of the derivative (not the chain rule) that if $f(x) = (x^2 + 1)^2$, then $f'(x) = 4x(x^2 + 1)$.
+
+*Hint:* Expand $f(x) = x^4 + 2x^2 + 1$ and compute the difference quotient directly.
+</Problem>
+
+<Solution>
+*Proof.* Expanding: $f(x) = x^4 + 2x^2 + 1$. The difference quotient at $a$ is:
+
+$$\frac{f(a+h) - f(a)}{h} = \frac{(a+h)^4 + 2(a+h)^2 + 1 - a^4 - 2a^2 - 1}{h}.$$
+
+Expanding $(a+h)^4 = a^4 + 4a^3h + 6a^2h^2 + 4ah^3 + h^4$ and $(a+h)^2 = a^2 + 2ah + h^2$:
+
+$$= \frac{4a^3h + 6a^2h^2 + 4ah^3 + h^4 + 4ah + 2h^2}{h} = 4a^3 + 6a^2h + 4ah^2 + h^3 + 4a + 2h.$$
+
+Taking $\lim_{h \to 0}$:
+
+$$f'(a) = 4a^3 + 4a = 4a(a^2 + 1).$$
+
+This agrees with the chain rule computation: if $g(x) = x^2 + 1$ and $u(t) = t^2$, then $f = u \circ g$ and $f'(a) = u'(g(a)) \cdot g'(a) = 2(a^2+1) \cdot 2a = 4a(a^2+1)$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 4 (Counterexample).** The chain rule requires $f$ to be differentiable at $g(a)$, not merely continuous. Give an example of continuous functions $g$ and $f$ where $g$ is differentiable at $a$, $f$ is continuous but not differentiable at $g(a)$, and $(f \circ g)'(a)$ does not exist.
+
+*Hint:* Let $g(x) = x$ and $f(x) = |x|$, and examine $a = 0$.
+</Problem>
+
+<Solution>
+*Answer.* Let $g(x) = x$ (differentiable everywhere with $g'(x) = 1$) and $f(x) = |x|$ (continuous everywhere). Consider $a = 0$: $g(0) = 0$ and $f$ is not differentiable at $0$ (as shown in Lesson 11).
+
+The composition $(f \circ g)(x) = |g(x)| = |x|$, and:
+
+$$\frac{(f \circ g)(0 + h) - (f \circ g)(0)}{h} = \frac{|h|}{h}$$
+
+which has left-hand limit $-1$ and right-hand limit $+1$. So $(f \circ g)'(0)$ does not exist.
+
+If we naively tried to apply the chain rule, we would write $(f \circ g)'(0) = f'(g(0)) \cdot g'(0) = f'(0) \cdot 1$, but $f'(0)$ does not exist. The chain rule's hypothesis that $f$ be differentiable at $g(a)$ is essential.
+
+**Remark.** It is possible for $f \circ g$ to be differentiable even when $f$ is not differentiable at $g(a)$, if $g$ "smooths out" the problem. For example, $g(x) = x^2$ and $f(x) = |x|$ give $(f \circ g)(x) = x^2$, which is differentiable at $0$. The chain rule is a sufficient condition, not necessary. $\square$
+</Solution>
+
+## Verifying Derivative Rules Numerically
+
+<PythonPlayground
+  title="Numerical verification of the product, quotient, and chain rules"
+  defaultCode={`import numpy as np
+
+h = 1e-7
+a = 2.0
+
+def f(x): return x**3
+def g(x): return np.sin(x)
+
+def df(x): return 3*x**2
+def dg(x): return np.cos(x)
+
+# Product rule: (fg)' = f'g + fg'
+prod_num = (f(a+h)*g(a+h) - f(a)*g(a)) / h
+prod_exact = df(a)*g(a) + f(a)*dg(a)
+print("=== Product Rule ===")
+print(f"Numerical:  {prod_num:.8f}")
+print(f"Analytical: {prod_exact:.8f}")
+print(f"Error:      {abs(prod_num - prod_exact):.2e}")
+
+# Quotient rule: (f/g)' = (f'g - fg') / g^2
+quot_num = (f(a+h)/g(a+h) - f(a)/g(a)) / h
+quot_exact = (df(a)*g(a) - f(a)*dg(a)) / g(a)**2
+print("\\n=== Quotient Rule ===")
+print(f"Numerical:  {quot_num:.8f}")
+print(f"Analytical: {quot_exact:.8f}")
+print(f"Error:      {abs(quot_num - quot_exact):.2e}")
+
+# Chain rule: (f(g(x)))' = f'(g(x)) * g'(x)
+chain_num = (f(g(a+h)) - f(g(a))) / h
+chain_exact = df(g(a)) * dg(a)
+print("\\n=== Chain Rule ===")
+print(f"Numerical:  {chain_num:.8f}")
+print(f"Analytical: {chain_exact:.8f}")
+print(f"Error:      {abs(chain_num - chain_exact):.2e}")
+`}
+/>
+
+<Callout type="tip">
+Try changing the functions `f` and `g` in the playground above. Verify the rules work for other choices,
+such as $f(x) = e^x$ and $g(x) = x^2$. Also experiment with the step size $h$ -- what happens if you make
+it too small?
+</Callout>

@@ -1,0 +1,317 @@
+---
+title: "Diagonalization and When It Is Possible"
+description: "Diagonalizable operators, algebraic vs geometric multiplicity, the eigenbasis criterion, and failure cases"
+order: 11
+prerequisites: ["10-eigenvalues-eigenvectors"]
+---
+
+# Diagonalization and When It Is Possible
+
+Diagonalization is the central structural question of elementary spectral theory: given a linear operator
+$T \colon V \to V$ on a finite-dimensional vector space, can we choose a basis for $V$ in which the matrix
+of $T$ is diagonal? When such a basis exists, the operator decomposes into independent scalings along
+each basis direction, reducing virtually every computation -- powers, exponentials, systems of ODEs --
+to arithmetic on eigenvalues. In this lesson we develop the precise criterion for diagonalizability,
+prove that distinct eigenvalues suffice, and analyze the failure modes.
+
+## Recall: Eigenvalues and Eigenvectors
+
+We assume from the previous lesson the definitions of eigenvalue, eigenvector, eigenspace, and
+the characteristic polynomial. Let us fix notation.
+
+<Callout type="definition">
+  **Definition (Eigenspace).** Let $T \colon V \to V$ be a linear operator on a finite-dimensional vector space $V$
+  over a field $\mathbb{F}$. For $\lambda \in \mathbb{F}$, the **eigenspace** of $T$ corresponding to $\lambda$ is
+  $$E_\lambda = \ker(T - \lambda I) = \{v \in V : Tv = \lambda v\}.$$
+  This is a subspace of $V$. The eigenvalue $\lambda$ exists if and only if $E_\lambda \neq \{0\}$.
+</Callout>
+
+## What Does Diagonalizable Mean?
+
+<Callout type="definition">
+  **Definition (Diagonalizable operator).** A linear operator $T \colon V \to V$ is **diagonalizable** if there
+  exists a basis $\mathcal{B} = \{v_1, \ldots, v_n\}$ of $V$ consisting entirely of eigenvectors of $T$.
+  Such a basis is called an **eigenbasis** for $T$.
+  Equivalently, an $n \times n$ matrix $A$ is **diagonalizable** if there exists an invertible matrix $P$ such that
+  $$P^{-1}AP = D$$
+  where $D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n)$ is diagonal. The columns of $P$ are the eigenvectors
+  forming the eigenbasis.
+</Callout>
+
+<Callout type="tip">
+  **Why diagonalization matters.** If $A = PDP^{-1}$, then $A^k = PD^kP^{-1}$, and $D^k = \operatorname{diag}(\lambda_1^k, \ldots, \lambda_n^k)$.
+  Computing the $k$-th power of a diagonal matrix is trivial. This makes diagonalization indispensable for
+  solving linear recurrences, systems of differential equations, and understanding long-term behavior of
+  dynamical systems.
+</Callout>
+
+## Algebraic and Geometric Multiplicity
+
+The interplay between two notions of multiplicity governs diagonalizability.
+
+<Callout type="definition">
+  **Definition (Algebraic multiplicity).** Let $A$ be an $n \times n$ matrix with characteristic polynomial
+  $p(\lambda) = \det(A - \lambda I)$. If $\lambda_0$ is a root of $p$, its **algebraic multiplicity**
+  $\operatorname{am}(\lambda_0)$ is its multiplicity as a root of $p(\lambda)$.
+  That is, if $p(\lambda) = (\lambda_0 - \lambda)^m q(\lambda)$ where $q(\lambda_0) \neq 0$, then
+  $\operatorname{am}(\lambda_0) = m$.
+</Callout>
+
+<Callout type="definition">
+  **Definition (Geometric multiplicity).** The **geometric multiplicity** of $\lambda_0$ is
+  $$\operatorname{gm}(\lambda_0) = \dim E_{\lambda_0} = \dim \ker(A - \lambda_0 I).$$
+  This counts the maximum number of linearly independent eigenvectors for $\lambda_0$.
+</Callout>
+
+<Callout type="theorem">
+  **Lemma (Geometric $\leq$ Algebraic).** For every eigenvalue $\lambda_0$ of $A$,
+  $$1 \leq \operatorname{gm}(\lambda_0) \leq \operatorname{am}(\lambda_0).$$
+  *Proof.* The lower bound $\operatorname{gm}(\lambda_0) \geq 1$ holds because $\lambda_0$ is an eigenvalue, so
+  $E_{\lambda_0} \neq \{0\}$.
+  For the upper bound, let $g = \operatorname{gm}(\lambda_0)$ and choose a basis $\{v_1, \ldots, v_g\}$
+  of $E_{\lambda_0}$. Extend to a basis $\{v_1, \ldots, v_g, v_{g+1}, \ldots, v_n\}$ of $V$. In this
+  basis, the matrix of $T$ has the block form
+  $$[T]_\mathcal{B} = \begin{pmatrix} \lambda_0 I_g & B \\ 0 & C \end{pmatrix}$$
+  where $I_g$ is the $g \times g$ identity. The characteristic polynomial is
+  $$\det([T]_\mathcal{B} - \lambda I) = (\lambda_0 - \lambda)^g \det(C - \lambda I).$$
+  Hence $(\lambda_0 - \lambda)^g$ divides the characteristic polynomial, so $\operatorname{am}(\lambda_0) \geq g$. $\blacksquare$
+</Callout>
+
+## The Diagonalization Criterion
+
+<Callout type="theorem">
+  **Theorem (Eigenbasis criterion).** Let $T \colon V \to V$ be a linear operator on an $n$-dimensional
+  vector space. The following are equivalent:
+  1. $T$ is diagonalizable.
+  2. $V$ has a basis of eigenvectors of $T$.
+  3. $V = E_{\lambda_1} \oplus E_{\lambda_2} \oplus \cdots \oplus E_{\lambda_k}$, where $\lambda_1, \ldots, \lambda_k$
+   are the distinct eigenvalues of $T$.
+  4. $\sum_{i=1}^{k} \dim E_{\lambda_i} = n$, i.e., $\sum_{i=1}^{k} \operatorname{gm}(\lambda_i) = n$.
+  5. The characteristic polynomial splits completely over $\mathbb{F}$, and $\operatorname{gm}(\lambda_i) = \operatorname{am}(\lambda_i)$
+   for every eigenvalue $\lambda_i$.
+  *Proof.* $(1) \Leftrightarrow (2)$ is the definition.
+  $(2) \Rightarrow (3)$: If $\{v_1, \ldots, v_n\}$ is an eigenbasis, group the basis vectors by eigenvalue.
+  Each group spans a subspace of the corresponding eigenspace. Since the full set is a basis for $V$,
+  and eigenvectors for distinct eigenvalues are linearly independent (proved below), we get the direct sum.
+  $(3) \Rightarrow (4)$: The dimension of a direct sum equals the sum of dimensions.
+  $(4) \Rightarrow (2)$: Choose a basis for each $E_{\lambda_i}$. By linear independence of eigenvectors
+  for distinct eigenvalues, their union is linearly independent. Condition (4) says this union has
+  $n$ vectors, so it is a basis for $V$.
+  $(4) \Leftrightarrow (5)$: Since $\sum \operatorname{am}(\lambda_i) = n$ (when the characteristic polynomial splits)
+  and $\operatorname{gm}(\lambda_i) \leq \operatorname{am}(\lambda_i)$, the sum $\sum \operatorname{gm}(\lambda_i) = n$
+  if and only if equality holds for each $i$. $\blacksquare$
+</Callout>
+
+## Distinct Eigenvalues Suffice
+
+<Callout type="theorem">
+  **Theorem (Eigenvectors for distinct eigenvalues are independent).** Let $T \colon V \to V$ be a linear
+  operator, and let $v_1, \ldots, v_k$ be eigenvectors for *distinct* eigenvalues $\lambda_1, \ldots, \lambda_k$.
+  Then $\{v_1, \ldots, v_k\}$ is linearly independent.
+  *Proof.* By strong induction on $k$. The base case $k = 1$ is immediate: a single eigenvector is nonzero
+  by definition, hence linearly independent.
+  Suppose the result holds for any set of fewer than $k$ eigenvectors with distinct eigenvalues.
+  Assume for contradiction that
+  $$c_1 v_1 + c_2 v_2 + \cdots + c_k v_k = 0 \tag{$*$}$$
+  is a nontrivial linear combination. Apply $T$ to both sides:
+  $$c_1 \lambda_1 v_1 + c_2 \lambda_2 v_2 + \cdots + c_k \lambda_k v_k = 0. \tag{$**$}$$
+  Multiply $(*)$ by $\lambda_k$ and subtract from $(**)$:
+  $$c_1(\lambda_1 - \lambda_k) v_1 + c_2(\lambda_2 - \lambda_k) v_2 + \cdots + c_{k-1}(\lambda_{k-1} - \lambda_k) v_{k-1} = 0.$$
+  By the inductive hypothesis (applied to $v_1, \ldots, v_{k-1}$ with distinct eigenvalues), we conclude
+  $c_i(\lambda_i - \lambda_k) = 0$ for $i = 1, \ldots, k-1$. Since $\lambda_i \neq \lambda_k$ for all $i < k$,
+  we get $c_i = 0$ for $i = 1, \ldots, k-1$. Substituting back into $(*)$: $c_k v_k = 0$, and $v_k \neq 0$
+  gives $c_k = 0$. Contradiction. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+  **Corollary (Distinct eigenvalues implies diagonalizable).** If $T \colon V \to V$ has $n = \dim V$
+  distinct eigenvalues, then $T$ is diagonalizable.
+  *Proof.* Choose one eigenvector for each eigenvalue. By the theorem above, these $n$ eigenvectors are
+  linearly independent, hence form a basis of $V$. This is an eigenbasis. $\blacksquare$
+</Callout>
+
+<Callout type="warning">
+  **The converse is false.** The identity operator $I$ on $\mathbb{R}^n$ is diagonalizable (it is already
+  diagonal), but it has only one eigenvalue ($\lambda = 1$) with algebraic and geometric multiplicity $n$.
+  Distinct eigenvalues is sufficient but not necessary.
+</Callout>
+
+## Failure of Diagonalizability
+
+When does diagonalization fail? The eigenbasis criterion tells us: it fails when some eigenvalue has
+geometric multiplicity strictly less than its algebraic multiplicity. Let us see the prototypical example.
+
+**Example.** Consider the matrix
+
+$$A = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}.$$
+
+The characteristic polynomial is $p(\lambda) = (2 - \lambda)^2$, so $\lambda = 2$ is the only eigenvalue
+with $\operatorname{am}(2) = 2$.
+
+The eigenspace: $A - 2I = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}$, so $\ker(A - 2I) = \operatorname{span}\{e_1\}$,
+giving $\operatorname{gm}(2) = 1 < 2 = \operatorname{am}(2)$.
+
+Since we can only find one linearly independent eigenvector in a 2-dimensional space, $A$ is not diagonalizable.
+This matrix is in **Jordan normal form** -- the off-diagonal 1 (the Jordan block) is the obstruction.
+
+**Why does this happen geometrically?** The operator $A$ acts on $\mathbb{R}^2$ by scaling by 2 and also
+"shearing" in the $e_1$ direction. The shear component cannot be eliminated by a change of basis; it
+is an intrinsic feature of the operator. Diagonalizable operators correspond to pure scalings along
+independent directions.
+
+## The Diagonalization Algorithm
+
+Given an $n \times n$ matrix $A$:
+
+1. Compute the characteristic polynomial $p(\lambda) = \det(A - \lambda I)$.
+2. Find all roots $\lambda_1, \ldots, \lambda_k$ and their algebraic multiplicities.
+3. For each $\lambda_i$, compute $E_{\lambda_i} = \ker(A - \lambda_i I)$ and its dimension (geometric multiplicity).
+4. Check: if $\sum \operatorname{gm}(\lambda_i) = n$, then $A$ is diagonalizable. The eigenbasis is the union of bases of the eigenspaces. Otherwise, $A$ is not diagonalizable.
+5. Form $P$ with eigenvectors as columns and $D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n)$.
+
+<PythonPlayground
+  title="Diagonalization: checking and computing"
+  defaultCode={`import numpy as np
+
+# Example 1: Diagonalizable matrix
+A = np.array([[4, 1], [2, 3]], dtype=float)
+print("=== Example 1: A =")
+print(A)
+
+eigenvalues, P = np.linalg.eig(A)
+print(f"Eigenvalues: {eigenvalues}")
+print(f"Eigenvector matrix P:\\n{P}")
+
+# Verify P^{-1} A P = D
+D = np.diag(eigenvalues)
+P_inv = np.linalg.inv(P)
+print(f"P^(-1) A P =\\n{np.round(P_inv @ A @ P, 10)}")
+print(f"D =\\n{D}")
+print()
+
+# Example 2: Non-diagonalizable matrix
+B = np.array([[2, 1], [0, 2]], dtype=float)
+print("=== Example 2: B (defective) =")
+print(B)
+
+eigenvalues_B, vecs_B = np.linalg.eig(B)
+print(f"Eigenvalues: {eigenvalues_B}")
+print(f"Eigenvectors (columns):\\n{vecs_B}")
+print("Notice: numpy returns 'generalized' eigenvectors, but B is NOT diagonalizable.")
+print(f"Rank of B - 2I: {np.linalg.matrix_rank(B - 2*np.eye(2))}")
+print(f"=> geometric multiplicity of lambda=2 is {2 - np.linalg.matrix_rank(B - 2*np.eye(2))}")
+print(f"=> algebraic multiplicity is 2, so B is NOT diagonalizable.")
+print()
+
+# Example 3: 3x3 matrix
+C = np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]], dtype=float)
+print("=== Example 3: Already diagonal C =")
+print(C)
+evals_C, evecs_C = np.linalg.eig(C)
+print(f"Eigenvalues: {evals_C}")
+print(f"3 distinct eigenvalues => diagonalizable")
+`}
+/>
+
+## Exercises
+
+<Problem>
+  **Exercise 1 (Diagonalization criterion proof).** Let $A = \begin{pmatrix} 3 & 1 \\ 0 & 3 \end{pmatrix}$.
+  (a) Compute the characteristic polynomial and find all eigenvalues with their algebraic multiplicities.
+  (b) Compute the eigenspace for each eigenvalue and its geometric multiplicity.
+  (c) Determine whether $A$ is diagonalizable. Justify using the eigenbasis criterion.
+</Problem>
+
+<Solution>
+  **(a)** The characteristic polynomial is
+  $$p(\lambda) = \det(A - \lambda I) = \det\begin{pmatrix} 3 - \lambda & 1 \\ 0 & 3 - \lambda \end{pmatrix} = (3 - \lambda)^2.$$
+  The only eigenvalue is $\lambda = 3$ with $\operatorname{am}(3) = 2$.
+  **(b)** The eigenspace:
+  $$A - 3I = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}.$$
+  Solving $(A - 3I)x = 0$: the system gives $x_2 = 0$, $x_1$ free. So $E_3 = \operatorname{span}\{(1, 0)^T\}$
+  and $\operatorname{gm}(3) = 1$.
+  **(c)** Since $\operatorname{gm}(3) = 1 < 2 = \operatorname{am}(3)$, we have $\sum \operatorname{gm}(\lambda_i) = 1 < 2 = n$.
+  By the eigenbasis criterion, $A$ is **not diagonalizable**. We cannot find a basis of $\mathbb{R}^2$
+  consisting of eigenvectors of $A$. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following matrices is diagonalizable over $\mathbb{R}$?"
+  options={[
+    "A = [[0, -1], [1, 0]] (rotation by 90 degrees)",
+    "B = [[5, 0], [0, 5]] (scalar multiple of identity)",
+    "C = [[3, 1], [0, 3]] (Jordan block)",
+    "D = [[0, 1], [0, 0]] (nilpotent)"
+  ]}
+  correctIndex={1}
+  explanation="B = 5I is already diagonal, so it is trivially diagonalizable. A has characteristic polynomial lambda^2 + 1, which has no real roots, so A has no real eigenvalues and is not diagonalizable over R. C is the standard non-diagonalizable Jordan block. D is nilpotent with eigenvalue 0 of algebraic multiplicity 2 but geometric multiplicity 1."
+/>
+
+<NumericInput
+  question="Let $A$ be a $4 \times 4$ matrix with characteristic polynomial $p(\lambda) = (\lambda - 1)^2(\lambda - 3)(\lambda + 2)$. If $\dim E_1 = 2$, $\dim E_3 = 1$, and $\dim E_{-2} = 1$, what is $\sum \operatorname{gm}(\lambda_i)$? Is $A$ diagonalizable? Enter the sum."
+  answer={4}
+  tolerance={0}
+  explanation="The sum is 2 + 1 + 1 = 4 = n, so A is diagonalizable. Every eigenvalue has geometric multiplicity equal to its algebraic multiplicity."
+/>
+
+<Problem>
+  **Exercise 2 (Proof reconstruction).** Prove that if $A$ is an $n \times n$ matrix with $n$ distinct
+  eigenvalues, then $A$ is diagonalizable. You must prove the key lemma: eigenvectors for distinct
+  eigenvalues are linearly independent.
+  *Hint:* Use induction on the number of eigenvectors. Apply $A$ to a dependence relation, then subtract
+  a scaled copy to eliminate one vector.
+</Problem>
+
+<Solution>
+  **Lemma.** Let $v_1, \ldots, v_k$ be eigenvectors of $A$ for distinct eigenvalues $\lambda_1, \ldots, \lambda_k$.
+  Then $\{v_1, \ldots, v_k\}$ is linearly independent.
+  *Proof.* By induction on $k$.
+  *Base case ($k = 1$):* A single eigenvector is nonzero, hence linearly independent.
+  *Inductive step:* Assume the result for $k - 1$. Suppose $c_1 v_1 + \cdots + c_k v_k = 0$. Apply $A$:
+  $$c_1 \lambda_1 v_1 + \cdots + c_k \lambda_k v_k = 0.$$
+  Subtract $\lambda_k$ times the original relation:
+  $$c_1(\lambda_1 - \lambda_k)v_1 + \cdots + c_{k-1}(\lambda_{k-1} - \lambda_k)v_{k-1} = 0.$$
+  By the inductive hypothesis, $c_i(\lambda_i - \lambda_k) = 0$ for $i = 1, \ldots, k-1$. Since all
+  eigenvalues are distinct, $\lambda_i - \lambda_k \neq 0$, so $c_i = 0$ for all $i < k$. Then the
+  original relation gives $c_k v_k = 0$, hence $c_k = 0$.
+  **Corollary.** If $A$ has $n$ distinct eigenvalues, pick one eigenvector for each. The $n$ eigenvectors
+  are linearly independent by the lemma, hence form a basis. This basis is an eigenbasis, so $A$ is
+  diagonalizable. $\blacksquare$
+</Solution>
+
+<Problem>
+  **Exercise 3 (Counterexample analysis).** Consider the family of matrices
+  $$A_t = \begin{pmatrix} 1 & t \\ 0 & 1 \end{pmatrix}$$
+  parametrized by $t \in \mathbb{R}$.
+  (a) For which values of $t$ is $A_t$ diagonalizable?
+  (b) Interpret geometrically: what does $A_t$ do to vectors in $\mathbb{R}^2$?
+  (c) Compute $A_t^k$ for the non-diagonalizable case and explain why diagonalization would have
+  simplified this computation.
+</Problem>
+
+<Solution>
+  **(a)** The characteristic polynomial is $(\lambda - 1)^2$ for all $t$. The eigenspace is $\ker(A_t - I) = \ker\begin{pmatrix} 0 & t \\ 0 & 0 \end{pmatrix}$.
+  - If $t = 0$: $A_0 = I$, and $E_1 = \mathbb{R}^2$, so $\operatorname{gm}(1) = 2 = \operatorname{am}(1)$. Diagonalizable.
+  - If $t \neq 0$: $E_1 = \operatorname{span}\{e_1\}$, so $\operatorname{gm}(1) = 1 < 2$. Not diagonalizable.
+  **(b)** $A_t$ acts as a **horizontal shear** by factor $t$: it maps $(x, y)^T \mapsto (x + ty, y)^T$.
+  The $y$-coordinate is preserved while the $x$-coordinate is shifted proportionally to $y$. This is a
+  shearing transformation that cannot be decomposed into independent scalings (unless $t = 0$).
+  **(c)** For $t \neq 0$, write $A_t = I + N$ where $N = \begin{pmatrix} 0 & t \\ 0 & 0 \end{pmatrix}$ is nilpotent
+  ($N^2 = 0$). By the binomial theorem:
+  $$A_t^k = (I + N)^k = \sum_{j=0}^{k} \binom{k}{j} N^j = I + kN = \begin{pmatrix} 1 & kt \\ 0 & 1 \end{pmatrix}$$
+  since $N^j = 0$ for $j \geq 2$. If $A_t$ were diagonalizable as $PDP^{-1}$, then $A_t^k = PD^kP^{-1}$
+  and computing $D^k$ would be trivial. The non-diagonalizable case required the nilpotent decomposition
+  instead. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Let $T \colon \mathbb{R}^3 \to \mathbb{R}^3$ have characteristic polynomial $(\lambda - 2)^2(\lambda - 5)$. Which of the following is necessarily true?"
+  options={[
+    "T is diagonalizable",
+    "T is not diagonalizable",
+    "T is diagonalizable if and only if $\\dim E_2 = 2$",
+    "T is diagonalizable if and only if $\\dim E_5 = 2$"
+  ]}
+  correctIndex={2}
+  explanation="The eigenvalue 5 has algebraic multiplicity 1, so its geometric multiplicity must also be 1. The question is whether eigenvalue 2 has geometric multiplicity 2 (matching its algebraic multiplicity). If gm(2) = 2, then gm(2) + gm(5) = 2 + 1 = 3 = dim V, and T is diagonalizable. If gm(2) = 1, the sum is 2 < 3, and T is not diagonalizable."
+/>

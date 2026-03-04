@@ -1,0 +1,245 @@
+---
+title: "Continuous and Monotone Functions Are Integrable"
+description: "Using uniform continuity and monotonicity to establish Riemann integrability"
+order: 3
+prerequisites: ["02-characterizing-integrability"]
+---
+
+# Continuous and Monotone Functions Are Integrable
+
+We now prove two of the most important integrability theorems: every continuous function on a closed
+bounded interval is integrable, and every monotone function on a closed bounded interval is integrable.
+The proofs showcase a beautiful chain of ideas: compactness leads to uniform continuity, which leads to
+integrability. For monotone functions, the argument is more elementary but equally elegant.
+
+## Uniform Continuity (Review)
+
+<Callout type="definition" title="Uniform Continuity">
+A function $f \colon S \to \mathbb{R}$ is **uniformly continuous** on $S$ if for every $\epsilon > 0$, there exists $\delta > 0$ such that for all $x, y \in S$,
+
+$$|x - y| < \delta \implies |f(x) - f(y)| < \epsilon.$$
+
+The key distinction from pointwise continuity: $\delta$ depends only on $\epsilon$, not on the location $x$.
+</Callout>
+
+<Callout type="theorem" title="Heine-Cantor Theorem">
+If $f \colon [a, b] \to \mathbb{R}$ is continuous on the closed bounded interval $[a, b]$, then $f$ is uniformly continuous on $[a, b]$.
+</Callout>
+
+We take this theorem from Calculus I as established. The proof uses the compactness of $[a, b]$ (every open cover has a finite subcover, or equivalently, the Bolzano-Weierstrass theorem). The logical chain is:
+
+$$[a, b] \text{ compact} \implies \text{continuous } f \text{ is uniformly continuous on } [a, b].$$
+
+## Continuous Functions Are Integrable
+
+<Callout type="theorem" title="Integrability of Continuous Functions">
+If $f \colon [a, b] \to \mathbb{R}$ is continuous, then $f$ is Riemann integrable on $[a, b]$.
+</Callout>
+
+**Proof.** Since $f$ is continuous on the compact set $[a, b]$, it is bounded (by the Extreme Value Theorem), so the Darboux sums are well-defined.
+
+We use the $\epsilon$-partition criterion. Let $\epsilon > 0$. Since $f$ is continuous on $[a, b]$, by the Heine-Cantor theorem $f$ is uniformly continuous. Choose $\delta > 0$ such that
+
+$$|x - y| < \delta \implies |f(x) - f(y)| < \frac{\epsilon}{b - a}.$$
+
+Now take any partition $P = \{x_0, \ldots, x_n\}$ with mesh $\|P\| < \delta$. On each subinterval $[x_{i-1}, x_i]$ of width less than $\delta$, for any $x, y \in [x_{i-1}, x_i]$ we have $|x - y| \leq \Delta x_i < \delta$, so $|f(x) - f(y)| < \epsilon/(b-a)$. Therefore
+
+$$\omega_i = M_i - m_i = \sup_{[x_{i-1}, x_i]} f - \inf_{[x_{i-1}, x_i]} f \leq \frac{\epsilon}{b - a}.$$
+
+Summing over all subintervals:
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^n \omega_i \, \Delta x_i \leq \frac{\epsilon}{b - a} \sum_{i=1}^n \Delta x_i = \frac{\epsilon}{b - a} \cdot (b - a) = \epsilon.$$
+
+By the $\epsilon$-criterion, $f$ is integrable. $\blacksquare$
+
+<Callout type="info" title="The Proof Strategy">
+The proof follows a clean three-step pattern: (1) invoke compactness to upgrade continuity to uniform continuity, (2) use the uniform $\delta$ to control oscillation on each subinterval, (3) sum the oscillation bounds to get $U - L < \epsilon$. This pattern appears frequently in analysis.
+</Callout>
+
+## Monotone Functions Are Integrable
+
+<Callout type="theorem" title="Integrability of Monotone Functions">
+If $f \colon [a, b] \to \mathbb{R}$ is monotone (either increasing or decreasing), then $f$ is Riemann integrable on $[a, b]$.
+</Callout>
+
+**Proof.** We give the proof for $f$ increasing; the decreasing case is analogous (or apply the result to $-f$).
+
+Since $f$ is increasing, $f(a) \leq f(x) \leq f(b)$ for all $x \in [a, b]$, so $f$ is bounded.
+
+Let $\epsilon > 0$. Choose $n$ large enough that
+
+$$\frac{(b - a)(f(b) - f(a))}{n} < \epsilon.$$
+
+Let $P$ be the uniform partition with $n$ equal subintervals: $x_i = a + i(b-a)/n$ for $i = 0, 1, \ldots, n$, so $\Delta x_i = (b-a)/n$ for all $i$.
+
+Since $f$ is increasing on $[x_{i-1}, x_i]$, we have $m_i = f(x_{i-1})$ and $M_i = f(x_i)$. Therefore
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^n (f(x_i) - f(x_{i-1})) \cdot \frac{b-a}{n} = \frac{b-a}{n} \sum_{i=1}^n (f(x_i) - f(x_{i-1})).$$
+
+The sum is a **telescoping sum**:
+
+$$\sum_{i=1}^n (f(x_i) - f(x_{i-1})) = f(x_n) - f(x_0) = f(b) - f(a).$$
+
+Therefore
+
+$$U(f, P) - L(f, P) = \frac{(b-a)(f(b) - f(a))}{n} < \epsilon.$$
+
+By the $\epsilon$-criterion, $f$ is integrable. $\blacksquare$
+
+<Callout type="tip" title="Telescoping Is the Key">
+For monotone functions, the sum of oscillations telescopes. This is a purely algebraic miracle: individual oscillations $M_i - m_i = f(x_i) - f(x_{i-1})$ may be nonzero, but they sum to $f(b) - f(a)$ regardless of the partition. Dividing by $n$ makes the total as small as we like.
+</Callout>
+
+## Visualizing Convergence of Darboux Sums
+
+The plot below shows a monotone increasing function. As the partition gets finer, the gap between upper and lower sum rectangles shrinks because the oscillation on each subinterval decreases.
+
+<FunctionPlot
+  fn="Math.sqrt(x)"
+  title="f(x) = sqrt(x) on [0, 4] -- monotone increasing, hence integrable"
+  domain={[0, 4.5]}
+  range={[-0.5, 2.5]}
+/>
+
+## What Discontinuities Does Riemann Integration Tolerate?
+
+We have shown that continuous and monotone functions are integrable. But continuity is not necessary --
+monotone functions can have (countably many) jump discontinuities and remain integrable.
+
+<Callout type="info" title="Lebesgue's Criterion (Preview)">
+A bounded function $f \colon [a, b] \to \mathbb{R}$ is Riemann integrable if and only if the set of discontinuities of $f$ has **Lebesgue measure zero**. This means: countably many discontinuities are fine, and even certain uncountable sets of discontinuities are permissible (like the Cantor set). This is a deep result we will not prove here, but it unifies all our examples.
+</Callout>
+
+## Exercises
+
+<Problem title="Prove: Continuous Implies Integrable">
+Reproduce the proof that every continuous $f \colon [a, b] \to \mathbb{R}$ is Riemann integrable. Your proof should:
+1. State what result you use to go from continuous to uniformly continuous.
+2. Show how uniform continuity gives an oscillation bound on each subinterval.
+3. Sum the bounds to verify the $\epsilon$-criterion.
+
+<Solution>
+**Proof.** Let $f \colon [a, b] \to \mathbb{R}$ be continuous and let $\epsilon > 0$.
+
+**Step 1 (Uniform continuity).** Since $[a, b]$ is compact and $f$ is continuous, by the Heine-Cantor theorem $f$ is uniformly continuous on $[a, b]$. Choose $\delta > 0$ such that $|x - y| < \delta \implies |f(x) - f(y)| < \frac{\epsilon}{b - a}$.
+
+**Step 2 (Oscillation bound).** Let $P$ be any partition with $\|P\| < \delta$. For any subinterval $[x_{i-1}, x_i]$ and any $s, t \in [x_{i-1}, x_i]$, we have $|s - t| \leq \Delta x_i < \delta$, so $|f(s) - f(t)| < \frac{\epsilon}{b - a}$.
+
+Taking supremum over $s$ and infimum over $t$: $\omega_i = M_i - m_i \leq \frac{\epsilon}{b - a}$.
+
+**Step 3 (Summing).** Therefore
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^n \omega_i \, \Delta x_i \leq \frac{\epsilon}{b - a} \sum_{i=1}^n \Delta x_i = \frac{\epsilon}{b-a} \cdot (b - a) = \epsilon.$$
+
+By the $\epsilon$-partition criterion, $f$ is Riemann integrable. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="In the proof that continuous functions are integrable, what is the role of the Heine-Cantor theorem?"
+  options={[
+    "It proves that $f$ is bounded on $[a,b]$",
+    "It upgrades pointwise continuity to uniform continuity, giving a single $\\delta$ that works everywhere",
+    "It shows the partition can be chosen to have equal subintervals",
+    "It provides the Extreme Value Theorem for $f$"
+  ]}
+  correctIndex={1}
+  explanation="The Heine-Cantor theorem ensures the function is uniformly continuous on $[a,b]$, meaning we get a single $\\delta$ (depending only on $\\epsilon$) that controls $|f(x) - f(y)|$ simultaneously across the entire interval. This uniform $\\delta$ becomes the mesh bound for our partition."
+/>
+
+<NumericInput
+  question="Let $f(x) = x$ (increasing) on $[0, 3]$. Using a uniform partition with $n = 6$ subintervals, compute $U(f, P) - L(f, P)$. (Use the telescoping formula.)"
+  answer={1.5}
+  tolerance={0.01}
+  hint="$U - L = \\frac{(b-a)(f(b)-f(a))}{n} = \\frac{3 \\cdot 3}{6} = 3/2$."
+/>
+
+<MultipleChoice
+  question="Which of the following functions is NOT guaranteed to be Riemann integrable on $[0, 1]$ by the theorems proved in this lesson?"
+  options={[
+    "$f(x) = \\sin(1/x)$ for $x \\neq 0$, $f(0) = 0$",
+    "$f(x) = x^2$",
+    "$f(x) = \\lfloor 10x \\rfloor$ (floor function)",
+    "The Dirichlet function $D(x)$"
+  ]}
+  correctIndex={3}
+  explanation="$x^2$ is continuous, $\\lfloor 10x \\rfloor$ is monotone (increasing step function), and $\\sin(1/x)$ (with $f(0)=0$) is bounded and has only one discontinuity. All three are integrable. The Dirichlet function is discontinuous everywhere and is not integrable."
+/>
+
+<Problem>
+**Exercise 3.3 (Counterexample).** Define $f \colon [0, 1] \to \mathbb{R}$ by enumerating the rationals in $[0,1]$ as $\{r_1, r_2, r_3, \ldots\}$ and setting
+
+$$f(x) = \begin{cases} 1/k & \text{if } x = r_k, \\ 0 & \text{if } x \notin \mathbb{Q}. \end{cases}$$
+
+This function has **countably many** discontinuities (at every rational). Show that $f$ is Riemann integrable on $[0, 1]$ with $\int_0^1 f = 0$. Then explain why the Dirichlet function, which is also discontinuous only on a set of measure zero (the rationals), is nonetheless NOT integrable -- and identify what structural property distinguishes the two.
+
+*Hint:* For any $\varepsilon > 0$, only finitely many rationals $r_k$ have $f(r_k) \geq \varepsilon$. This is the same idea as Thomae's function.
+</Problem>
+
+<Solution>
+*Proof of integrability.* Let $\varepsilon > 0$. Choose $K$ so that $1/K < \varepsilon/2$. The set $B = \{r_1, r_2, \ldots, r_K\}$ of "bad" rationals (where $f(r_k) \geq \varepsilon/2$) is finite, $|B| = K$.
+
+Enclose each $r_k \in B$ in a subinterval of width $\delta = \varepsilon / (4K)$. The total width of these subintervals is at most $K \cdot \delta = \varepsilon/4$. On these subintervals, $\omega_i \leq 1$ (since $0 \leq f \leq 1$), contributing at most $1 \cdot \varepsilon/4 = \varepsilon/4$ to $U - L$.
+
+On all remaining subintervals, $f(x) < 1/K < \varepsilon/2$ for every $x$ in the subinterval (since all rationals $r_k$ with $k \leq K$ are already enclosed). Since $f \geq 0$, the oscillation on these subintervals is at most $\varepsilon/2$. Their total width is at most $1$, contributing at most $\varepsilon/2$ to $U - L$.
+
+Therefore $U(f, P) - L(f, P) \leq \varepsilon/4 + \varepsilon/2 < \varepsilon$, so $f$ is integrable. Since $L(f, P) = 0$ for every partition (irrationals are dense, giving $m_i = 0$), we have $\int_0^1 f = 0$.
+
+**Why the Dirichlet function fails:** The Dirichlet function $D$ has $D(x) = 1$ for ALL rationals. There is no finite "bad set" -- every rational contributes oscillation 1, and the rationals are dense in every subinterval. The key distinction is: in $f$ above, for any threshold $\varepsilon > 0$, only finitely many points exceed $\varepsilon$. For $D$, uncountably... in fact, densely many points attain the value 1 in every subinterval.
+
+More precisely, by Lebesgue's criterion: $f$ is continuous at every irrational (same argument as Thomae's function), so its discontinuity set $\mathbb{Q} \cap [0,1]$ has measure zero, and $f$ is integrable. The Dirichlet function is discontinuous at every point of $[0,1]$ (a set of measure 1), so it fails Lebesgue's criterion. $\square$
+</Solution>
+
+## Demonstrating Convergence Numerically
+
+<PythonPlayground
+  title="Darboux Sums Converging for Continuous Functions"
+  defaultCode={`import numpy as np
+
+# Test integrability for several continuous functions
+functions = {
+    "x^2":        (lambda x: x**2,       0, 1, 1/3),
+    "sin(x)":     (lambda x: np.sin(x),  0, np.pi, 2.0),
+    "sqrt(x)":    (lambda x: np.sqrt(x), 0, 1, 2/3),
+    "exp(x)":     (lambda x: np.exp(x),  0, 1, np.e - 1),
+}
+
+for name, (f, a, b, exact) in functions.items():
+    print(f"f(x) = {name} on [{a:.1f}, {b:.4f}]")
+    print(f"  Exact integral: {exact:.6f}")
+    for n in [10, 100, 1000]:
+        x = np.linspace(a, b, n + 1)
+        U, L = 0.0, 0.0
+        for i in range(n):
+            samples = np.linspace(x[i], x[i+1], 200)
+            vals = f(samples)
+            U += np.max(vals) * (x[i+1] - x[i])
+            L += np.min(vals) * (x[i+1] - x[i])
+        print(f"  n={n:>4}: L={L:.6f}, U={U:.6f}, gap={U-L:.2e}")
+    print()
+
+# Now demonstrate the monotone telescoping property
+print("--- Monotone function: f(x) = x on [0, 3] ---")
+f_vals = (0, 3)  # f(a)=0, f(b)=3
+for n in [2, 5, 10, 50, 100]:
+    gap = (3 - 0) * (3 - 0) / n
+    print(f"  n={n:>3}: U-L = (b-a)(f(b)-f(a))/n = {gap:.4f}")
+print("The gap shrinks as O(1/n) -- no need for uniform continuity!")`}
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Reprove "continuous on $[a,b]$ implies integrable" using only uniform continuity and oscillation estimates.
+Write the proof in epsilon-partition form with all constants explicit.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Let $f(x)=\lfloor 5x\rfloor$ on $[0,1]$.
+Prove integrability using the monotone-function theorem, then compute $\int_0^1 f(x)\,dx$ exactly.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Construct a function that is continuous on $(0,1]$ but unbounded near $0$ and therefore not Riemann integrable on $[0,1]$.
+State exactly which hypothesis from the week's integrability theorem fails.
+</Problem>

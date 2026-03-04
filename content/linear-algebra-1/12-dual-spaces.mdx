@@ -1,0 +1,329 @@
+---
+title: "Dual Spaces and Linear Functionals"
+description: "The dual space V*, dual basis, transpose as dual map, double dual and the natural isomorphism"
+order: 12
+prerequisites: ["11-diagonalization"]
+---
+
+# Dual Spaces and Linear Functionals
+
+Up to this point we have studied vector spaces and the operators between them. We now turn
+to a different kind of object: *linear maps from a vector space to its base field*. These deceptively
+simple maps -- called linear functionals -- form a vector space of their own (the dual space), and
+their theory reveals deep structural features of linear algebra. The dual space is the gateway to
+bilinear forms, tensor products, and the mathematical framework of quantum mechanics and optimization.
+
+## Linear Functionals
+
+<Callout type="definition">
+  **Definition (Linear functional).** Let $V$ be a vector space over a field $\mathbb{F}$. A **linear functional**
+  on $V$ is a linear map $\varphi \colon V \to \mathbb{F}$. That is:
+  1. $\varphi(u + v) = \varphi(u) + \varphi(v)$ for all $u, v \in V$.
+  2. $\varphi(cv) = c\,\varphi(v)$ for all $c \in \mathbb{F}$, $v \in V$.
+</Callout>
+
+**Examples.**
+
+1. **Evaluation at a coordinate.** Let $V = \mathbb{R}^n$ and define $\varphi_i(x_1, \ldots, x_n) = x_i$.
+   This "picks off" the $i$-th coordinate. It is clearly linear.
+
+2. **Trace.** Let $V = M_{n \times n}(\mathbb{R})$ (the space of $n \times n$ matrices). The trace
+   $\operatorname{tr}(A) = \sum_{i=1}^n a_{ii}$ is a linear functional on $V$.
+
+3. **Integration.** Let $V = C([0,1])$, the space of continuous functions on $[0,1]$. Then
+   $\varphi(f) = \int_0^1 f(x)\,dx$ is a linear functional.
+
+4. **Zero functional.** $\varphi(v) = 0$ for all $v$ is always a linear functional.
+
+## The Dual Space
+
+<Callout type="definition">
+  **Definition (Dual space).** The **dual space** of $V$, denoted $V^*$, is the set of all linear functionals on $V$:
+  $$V^* = \mathcal{L}(V, \mathbb{F}) = \{\varphi \colon V \to \mathbb{F} : \varphi \text{ is linear}\}.$$
+  Since $\mathcal{L}(V, \mathbb{F})$ is itself a vector space (with pointwise addition and scalar multiplication),
+  $V^*$ is a vector space over $\mathbb{F}$.
+</Callout>
+
+The fundamental question is: how does $V^*$ relate to $V$? In particular, what is $\dim V^*$?
+
+## The Dual Basis
+
+<Callout type="theorem">
+  **Theorem (Dual basis).** Let $V$ be a finite-dimensional vector space with basis $\mathcal{B} = \{e_1, \ldots, e_n\}$.
+  For each $i = 1, \ldots, n$, define $\varphi_i \colon V \to \mathbb{F}$ by
+  $$\varphi_i(e_j) = \delta_{ij} = \begin{cases} 1 & \text{if } i = j \\ 0 & \text{if } i \neq j \end{cases}$$
+  and extend by linearity. Then:
+  1. Each $\varphi_i$ is a well-defined linear functional (i.e., $\varphi_i \in V^*$).
+  2. $\{\varphi_1, \ldots, \varphi_n\}$ is a basis for $V^*$, called the **dual basis** of $\mathcal{B}$.
+  3. In particular, $\dim V^* = \dim V = n$.
+  *Proof.*
+  **(1)** A linear map is uniquely determined by its values on a basis. Since we specified $\varphi_i(e_j)$
+  for all basis vectors, $\varphi_i$ extends uniquely to a linear functional by
+  $$\varphi_i\left(\sum_{j=1}^n c_j e_j\right) = \sum_{j=1}^n c_j \varphi_i(e_j) = c_i.$$
+  **(2)** We show $\{\varphi_1, \ldots, \varphi_n\}$ is linearly independent and spans $V^*$.
+  **Linear independence:** Suppose $a_1 \varphi_1 + \cdots + a_n \varphi_n = 0$ (the zero functional).
+  Evaluate at $e_j$:
+  $$0 = (a_1 \varphi_1 + \cdots + a_n \varphi_n)(e_j) = a_1 \delta_{1j} + \cdots + a_n \delta_{nj} = a_j.$$
+  So $a_j = 0$ for all $j$. The functionals are linearly independent.
+  **Spanning:** Let $\psi \in V^*$ be any linear functional. Define $a_i = \psi(e_i)$. We claim
+  $\psi = a_1 \varphi_1 + \cdots + a_n \varphi_n$. For any $v = c_1 e_1 + \cdots + c_n e_n$:
+  $$(a_1 \varphi_1 + \cdots + a_n \varphi_n)(v) = \sum_{i=1}^n a_i c_i = \sum_{i=1}^n \psi(e_i) c_i = \psi\left(\sum_{i=1}^n c_i e_i\right) = \psi(v).$$
+  Since this holds for all $v$, $\psi = \sum a_i \varphi_i$.
+  **(3)** Follows immediately: a basis of $n$ elements gives $\dim V^* = n$. $\blacksquare$
+</Callout>
+
+<Callout type="tip">
+  **Notation.** The dual basis is often written $\{e^1, \ldots, e^n\}$ or $\{e_1^*, \ldots, e_n^*\}$,
+  with superscripts to distinguish from the original basis. The defining property is $e^i(e_j) = \delta^i_j$.
+  In the language of differential geometry and physics, this index placement (upper vs lower) is the
+  beginning of the distinction between **contravariant** and **covariant** objects.
+</Callout>
+
+<Callout type="warning">
+  **The dual basis depends on the choice of basis for $V$.** Different bases for $V$ yield different
+  dual bases for $V^*$. While $V$ and $V^*$ have the same dimension, there is no *canonical* (basis-independent)
+  isomorphism between them in general. This changes once we add extra structure (an inner product), as we
+  will see in later lessons.
+</Callout>
+
+## Dual Basis in Coordinates
+
+If $\mathcal{B} = \{e_1, \ldots, e_n\}$ is the standard basis of $\mathbb{R}^n$, then the dual basis
+elements are $\varphi_i(x) = x_i$ -- they extract coordinates. A general functional $\psi \in (\mathbb{R}^n)^*$
+with $\psi(e_i) = a_i$ acts as
+
+$$\psi(x) = a_1 x_1 + a_2 x_2 + \cdots + a_n x_n = a^T x.$$
+
+Every linear functional on $\mathbb{R}^n$ is a dot product with some fixed vector. This is a special
+case of the Riesz representation theorem (for inner product spaces).
+
+## The Transpose (Dual Map)
+
+<Callout type="definition">
+  **Definition (Transpose / Dual map).** Let $T \colon V \to W$ be a linear map. The **transpose** (or **dual map**)
+  is the map $T^* \colon W^* \to V^*$ defined by
+  $$T^*(\psi) = \psi \circ T$$
+  for $\psi \in W^*$. That is, $(T^*\psi)(v) = \psi(Tv)$ for all $v \in V$.
+</Callout>
+
+<Callout type="theorem">
+  **Proposition.** The transpose $T^*$ is a linear map from $W^*$ to $V^*$.
+  *Proof.* Let $\psi_1, \psi_2 \in W^*$ and $c \in \mathbb{F}$.
+  $$T^*(\psi_1 + \psi_2)(v) = (\psi_1 + \psi_2)(Tv) = \psi_1(Tv) + \psi_2(Tv) = T^*(\psi_1)(v) + T^*(\psi_2)(v).$$
+  $$T^*(c\psi)(v) = (c\psi)(Tv) = c \cdot \psi(Tv) = c \cdot T^*(\psi)(v).$$
+  These hold for all $v$, so $T^*(\psi_1 + \psi_2) = T^*\psi_1 + T^*\psi_2$ and $T^*(c\psi) = cT^*\psi$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+  **Proposition (Matrix of the transpose).** If $T \colon V \to W$ has matrix $A$ with respect to chosen bases
+  $\mathcal{B}_V$ and $\mathcal{B}_W$, then $T^* \colon W^* \to V^*$ has matrix $A^T$ with respect to the
+  corresponding dual bases.
+  *Proof sketch.* Let $\{e_1, \ldots, e_n\}$ be the basis for $V$ with dual basis $\{\varphi_1, \ldots, \varphi_n\}$,
+  and $\{f_1, \ldots, f_m\}$ for $W$ with dual $\{\psi_1, \ldots, \psi_m\}$. Then
+  $(T^*\psi_j)(e_i) = \psi_j(Te_i) = \psi_j\left(\sum_k a_{ki} f_k\right) = a_{ji}$. This means the
+  $(i,j)$-entry of the matrix of $T^*$ is $a_{ji}$, which is the $(j,i)$-entry of $A$. Hence the matrix
+  is $A^T$. $\blacksquare$
+</Callout>
+
+This justifies the name "transpose" -- the dual map is the abstract, coordinate-free version of
+matrix transposition.
+
+## The Double Dual and the Natural Isomorphism
+
+<Callout type="definition">
+  **Definition (Double dual).** The **double dual** of $V$ is $V^{**} = (V^*)^*$, the dual space of $V^*$.
+  Its elements are linear functionals on $V^*$, i.e., maps $\Phi \colon V^* \to \mathbb{F}$.
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Canonical isomorphism $V \cong V^{**}$).** For a finite-dimensional vector space $V$, there
+  is a natural (canonical, basis-independent) isomorphism $\iota \colon V \to V^{**}$ defined by
+  $$\iota(v)(\varphi) = \varphi(v)$$
+  for $v \in V$ and $\varphi \in V^*$.
+  *Proof.* We verify:
+  **$\iota$ is well-defined:** For fixed $v$, the map $\hat{v} = \iota(v)$ sends $\varphi \mapsto \varphi(v)$.
+  This is linear in $\varphi$: $\hat{v}(\varphi + \psi) = (\varphi + \psi)(v) = \varphi(v) + \psi(v) = \hat{v}(\varphi) + \hat{v}(\psi)$,
+  and $\hat{v}(c\varphi) = c\varphi(v) = c\hat{v}(\varphi)$. So $\hat{v} \in V^{**}$.
+  **$\iota$ is linear:** $\iota(u + v)(\varphi) = \varphi(u + v) = \varphi(u) + \varphi(v) = \iota(u)(\varphi) + \iota(v)(\varphi)$,
+  and $\iota(cv)(\varphi) = \varphi(cv) = c\varphi(v) = c\iota(v)(\varphi)$.
+  **$\iota$ is injective:** Suppose $\iota(v) = 0$, i.e., $\varphi(v) = 0$ for all $\varphi \in V^*$.
+  We must show $v = 0$. If $v \neq 0$, extend $\{v\}$ to a basis and let $\varphi$ be the dual basis
+  element corresponding to $v$. Then $\varphi(v) = 1 \neq 0$, a contradiction. Hence $v = 0$, and
+  $\ker \iota = \{0\}$.
+  **$\iota$ is surjective:** Since $\dim V = \dim V^* = \dim V^{**} = n$, an injective linear map
+  between spaces of equal dimension is surjective. $\blacksquare$
+</Callout>
+
+<Callout type="tip">
+  **Why "natural" matters.** The isomorphism $V \cong V^*$ *requires choosing a basis* -- different bases give
+  different isomorphisms. The isomorphism $V \cong V^{**}$ is defined *without any choice*: the formula
+  $\iota(v)(\varphi) = \varphi(v)$ makes sense for any $v$ and $\varphi$. This is a key example of
+  the distinction between a "natural" (canonical) isomorphism and a mere dimensional coincidence.
+  In category theory, this becomes the concept of a **natural transformation**.
+</Callout>
+
+## Annihilators
+
+<Callout type="definition">
+  **Definition (Annihilator).** Let $U \subseteq V$ be a subspace. The **annihilator** of $U$ is
+  $$U^0 = \{\varphi \in V^* : \varphi(u) = 0 \text{ for all } u \in U\}.$$
+  This is a subspace of $V^*$.
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Dimension of annihilator).** If $V$ is finite-dimensional and $U \subseteq V$ is a subspace, then
+  $$\dim U^0 = \dim V - \dim U.$$
+  *Proof.* Let $\dim U = k$ and choose a basis $\{e_1, \ldots, e_k\}$ of $U$. Extend to a basis
+  $\{e_1, \ldots, e_k, e_{k+1}, \ldots, e_n\}$ of $V$. Let $\{\varphi_1, \ldots, \varphi_n\}$ be the dual basis.
+  We claim $U^0 = \operatorname{span}\{\varphi_{k+1}, \ldots, \varphi_n\}$.
+  ($\supseteq$): For $i > k$ and $j \leq k$: $\varphi_i(e_j) = \delta_{ij} = 0$. By linearity,
+  $\varphi_i(u) = 0$ for all $u \in U$. So $\varphi_i \in U^0$.
+  ($\subseteq$): Let $\psi = \sum a_i \varphi_i \in U^0$. For $j \leq k$: $0 = \psi(e_j) = a_j$.
+  So $\psi = \sum_{i=k+1}^n a_i \varphi_i \in \operatorname{span}\{\varphi_{k+1}, \ldots, \varphi_n\}$.
+  Hence $\dim U^0 = n - k$. $\blacksquare$
+</Callout>
+
+<PythonPlayground
+  title="Dual basis and linear functionals on R^n"
+  defaultCode={`import numpy as np
+
+# In R^n, a linear functional phi is determined by a row vector a^T:
+# phi(x) = a^T x = a_1 x_1 + ... + a_n x_n
+
+# Example: V = R^3, basis B = {e1, e2, e3} (standard)
+# Dual basis: phi_i(x) = x_i
+
+n = 3
+print("=== Dual Basis for R^3 (standard basis) ===")
+for i in range(n):
+    phi_i = np.zeros(n)
+    phi_i[i] = 1
+    print(f"phi_{i+1} corresponds to row vector {phi_i}")
+
+# Now consider a non-standard basis
+B = np.array([[1, 1, 0],
+              [1, 0, 1],
+              [0, 1, 1]], dtype=float).T  # columns are basis vectors
+print(f"\\nBasis B (columns):\\n{B}")
+
+# The dual basis {psi_1, psi_2, psi_3} satisfies psi_i(b_j) = delta_ij
+# If B has columns b_1,...,b_n, then psi_i as a row vector satisfies
+# psi_i . b_j = delta_ij, so the matrix of row vectors is B^{-T}
+B_inv = np.linalg.inv(B)
+dual_basis = B_inv  # rows of B^{-1} are the dual basis vectors
+print(f"\\nDual basis (rows of B^(-1)):\\n{dual_basis}")
+
+# Verify: dual_basis @ B should be identity
+print(f"\\nVerification (dual basis matrix @ B):\\n{np.round(dual_basis @ B, 10)}")
+
+# Annihilator example: U = span{b_1} in R^3
+# U^0 should have dimension 3 - 1 = 2
+print(f"\\n=== Annihilator of U = span(b_1) ===")
+print(f"U^0 = span(psi_2, psi_3)")
+print(f"psi_2 = {dual_basis[1]}")
+print(f"psi_3 = {dual_basis[2]}")
+print(f"Check psi_2(b_1) = {dual_basis[1] @ B[:,0]:.1f}")
+print(f"Check psi_3(b_1) = {dual_basis[2] @ B[:,0]:.1f}")
+print(f"dim U^0 = 2 = dim V - dim U = 3 - 1 ✓")
+`}
+/>
+
+## Exercises
+
+<Problem>
+  **Exercise 1 (Dual basis construction).** Let $V = \mathbb{R}^2$ with basis
+  $\mathcal{B} = \{(1, 1)^T, (1, -1)^T\}$.
+  (a) Find the dual basis $\{\varphi_1, \varphi_2\}$ explicitly. That is, express each $\varphi_i$ as
+  $\varphi_i(x_1, x_2) = a_i x_1 + b_i x_2$.
+  (b) Verify the defining property $\varphi_i(e_j) = \delta_{ij}$.
+  (c) Express the functional $\psi(x_1, x_2) = 3x_1 + x_2$ as a linear combination of $\varphi_1$ and $\varphi_2$.
+</Problem>
+
+<Solution>
+  **(a)** We need $\varphi_1(1,1) = 1$, $\varphi_1(1,-1) = 0$, $\varphi_2(1,1) = 0$, $\varphi_2(1,-1) = 1$.
+  For $\varphi_1(x_1, x_2) = a x_1 + b x_2$:
+  - $a + b = 1$
+  - $a - b = 0$
+  Solving: $a = b = 1/2$. So $\varphi_1(x_1, x_2) = \frac{1}{2}x_1 + \frac{1}{2}x_2$.
+  For $\varphi_2(x_1, x_2) = c x_1 + d x_2$:
+  - $c + d = 0$
+  - $c - d = 1$
+  Solving: $c = 1/2$, $d = -1/2$. So $\varphi_2(x_1, x_2) = \frac{1}{2}x_1 - \frac{1}{2}x_2$.
+  **(b)** Verification:
+  - $\varphi_1(1,1) = 1/2 + 1/2 = 1$ and $\varphi_1(1,-1) = 1/2 - 1/2 = 0$.
+  - $\varphi_2(1,1) = 1/2 - 1/2 = 0$ and $\varphi_2(1,-1) = 1/2 + 1/2 = 1$.
+  **(c)** We need $\psi = \alpha \varphi_1 + \beta \varphi_2$. Evaluate at the basis vectors:
+  - $\psi(1,1) = 3 + 1 = 4 = \alpha \cdot 1 + \beta \cdot 0 = \alpha$.
+  - $\psi(1,-1) = 3 - 1 = 2 = \alpha \cdot 0 + \beta \cdot 1 = \beta$.
+  So $\psi = 4\varphi_1 + 2\varphi_2$. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Let $V$ be a 5-dimensional vector space and $U \subseteq V$ a 3-dimensional subspace. What is the dimension of the annihilator $U^0 \subseteq V^*$?"
+  options={[
+    "2",
+    "3",
+    "5",
+    "8"
+  ]}
+  correctIndex={0}
+  explanation="By the annihilator dimension theorem, dim U^0 = dim V - dim U = 5 - 3 = 2."
+/>
+
+<NumericInput
+  question="Let $V = \mathbb{R}^4$ with the standard basis, and let $\varphi(x_1, x_2, x_3, x_4) = 2x_1 - x_2 + 3x_3$ be a linear functional. What is $\dim(\ker \varphi)$?"
+  answer={3}
+  tolerance={0}
+  explanation="The kernel of a nonzero linear functional on an n-dimensional space always has dimension n - 1. Here phi is a nonzero map from R^4 to R, so by Rank-Nullity, dim(ker phi) = 4 - 1 = 3. Alternatively, ker phi is a hyperplane in R^4."
+/>
+
+<Problem>
+  **Exercise 2 (Natural isomorphism proof).** Prove that the canonical map $\iota \colon V \to V^{**}$
+  defined by $\iota(v)(\varphi) = \varphi(v)$ is injective, without using the dimension argument.
+  *Hint:* If $\iota(v) = 0$, then $\varphi(v) = 0$ for every $\varphi \in V^*$. Construct a specific
+  $\varphi$ that contradicts $v \neq 0$.
+</Problem>
+
+<Solution>
+  *Proof.* Suppose $\iota(v) = 0$, i.e., $\varphi(v) = 0$ for all $\varphi \in V^*$. We claim $v = 0$.
+  Assume for contradiction that $v \neq 0$. Extend $\{v\}$ to a basis $\{v, e_2, \ldots, e_n\}$ of $V$.
+  Let $\{\varphi_1, \varphi_2, \ldots, \varphi_n\}$ be the corresponding dual basis. By definition of the
+  dual basis, $\varphi_1(v) = 1$.
+  But $\iota(v) = 0$ means $\varphi(v) = 0$ for *all* $\varphi \in V^*$. In particular,
+  $\varphi_1(v) = 0$. This contradicts $\varphi_1(v) = 1$.
+  Therefore $v = 0$, hence $\ker \iota = \{0\}$, and $\iota$ is injective. $\blacksquare$
+</Solution>
+
+<Problem>
+  **Exercise 3 (Transpose computation).** Let $T \colon \mathbb{R}^2 \to \mathbb{R}^3$ be defined by
+  $T(x_1, x_2) = (x_1 + x_2, \, 2x_1, \, x_1 - x_2)$ with respect to standard bases.
+  (a) Write the matrix $A$ of $T$.
+  (b) Compute $A^T$ and interpret it as the matrix of $T^*$.
+  (c) If $\psi \in (\mathbb{R}^3)^*$ is given by $\psi(y_1, y_2, y_3) = y_1 + y_2 + y_3$, compute
+  $T^*(\psi) \in (\mathbb{R}^2)^*$ directly from the definition $T^*(\psi) = \psi \circ T$, and verify
+  it matches $A^T$ applied to the coordinate vector of $\psi$.
+</Problem>
+
+<Solution>
+  **(a)** $T(e_1) = (1, 2, 1)^T$ and $T(e_2) = (1, 0, -1)^T$, so
+  $$A = \begin{pmatrix} 1 & 1 \\ 2 & 0 \\ 1 & -1 \end{pmatrix}.$$
+  **(b)** $A^T = \begin{pmatrix} 1 & 2 & 1 \\ 1 & 0 & -1 \end{pmatrix}$.
+  This is a $2 \times 3$ matrix representing $T^* \colon (\mathbb{R}^3)^* \to (\mathbb{R}^2)^*$.
+  **(c)** $(T^*\psi)(x_1, x_2) = \psi(T(x_1, x_2)) = \psi(x_1 + x_2, 2x_1, x_1 - x_2)$
+  $= (x_1 + x_2) + 2x_1 + (x_1 - x_2) = 4x_1$.
+  The coordinate vector of $\psi$ is $(1, 1, 1)^T$. Applying $A^T$:
+  $$A^T \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 1 + 2 + 1 \\ 1 + 0 - 1 \end{pmatrix} = \begin{pmatrix} 4 \\ 0 \end{pmatrix}.$$
+  So $T^*\psi$ has coordinate vector $(4, 0)^T$, representing the functional $(x_1, x_2) \mapsto 4x_1 + 0x_2 = 4x_1$. This matches the direct computation. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following statements about the canonical map $\iota \colon V \to V^{**}$ is correct?"
+  options={[
+    "It requires choosing a basis to define",
+    "It is injective but not surjective in infinite dimensions",
+    "It is defined by $\\iota(v)(\\varphi) = \\varphi(v)$ and is always surjective",
+    "It maps eigenvectors to eigenvectors"
+  ]}
+  correctIndex={1}
+  explanation="The canonical map iota(v)(phi) = phi(v) is defined without any basis choice and is always injective. In finite dimensions it is also surjective (hence an isomorphism). However, in infinite dimensions V** can be strictly larger than V, so iota is injective but not surjective. This is a fundamental distinction between finite and infinite-dimensional linear algebra."
+/>

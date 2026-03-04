@@ -1,0 +1,222 @@
+---
+title: "Continuity"
+description: "Continuity at a point and on sets, sequential characterization, and algebra of continuous functions"
+order: 7
+prerequisites: ["06-limits-epsilon-delta-sequential"]
+---
+
+# Continuity
+
+Continuity is one of the most fundamental concepts in analysis. Intuitively, a function is continuous if small changes in the input produce small changes in the output. We now make this precise.
+
+## Continuity at a Point
+
+<Callout type="definition">
+**Definition 7.1 (Continuity at a Point).** Let $A \subseteq \mathbb{R}$ and $f : A \to \mathbb{R}$. We say $f$ is **continuous at $c \in A$** if for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+
+$$|f(x) - f(c)| < \varepsilon \quad \text{whenever} \quad |x - c| < \delta \text{ and } x \in A.$$
+
+If $f$ is continuous at every point of $A$, we say $f$ is **continuous on $A$**.
+</Callout>
+
+<Callout type="info">
+**Remark.** Compare with the limit definition: here we use $|x - c| < \delta$ (not $0 < |x - c| < \delta$), and we require $f(c)$ itself to be defined and equal to $L$. If $c$ is a limit point of $A$, then $f$ is continuous at $c$ if and only if $\lim_{x \to c} f(x) = f(c)$. If $c$ is an isolated point of $A$, then $f$ is automatically continuous at $c$.
+</Callout>
+
+### Visualizing Continuity vs Discontinuity
+
+The following plot shows a continuous function. Compare it with discontinuous behavior at jump points.
+
+<FunctionPlot
+  fn={"x * x - 2 * x + 1"}
+  title={"f(x) = x² - 2x + 1 — continuous on all of R"}
+  domain={[-2, 4]}
+  range={[-1, 5]}
+/>
+
+<FunctionPlot
+  fn={"x < 0 ? -1 : 1"}
+  title={"Sign function: discontinuous at x = 0"}
+  domain={[-3, 3]}
+  range={[-2, 2]}
+/>
+
+## Sequential Characterization
+
+<Callout type="theorem">
+**Theorem 7.2 (Sequential Characterization of Continuity).** Let $f : A \to \mathbb{R}$ and $c \in A$. Then $f$ is continuous at $c$ if and only if for every sequence $(x_n)$ in $A$ with $x_n \to c$, we have $f(x_n) \to f(c)$.
+</Callout>
+
+*Proof.* If $c$ is an isolated point of $A$, then eventually $x_n = c$, so $f(x_n) = f(c) \to f(c)$, and both conditions hold trivially.
+
+If $c$ is a limit point of $A$, then continuity at $c$ means $\lim_{x \to c} f(x) = f(c)$. By the sequential criterion for function limits (Theorem 6.5), this is equivalent to: for every sequence $(x_n)$ in $A \setminus \{c\}$ with $x_n \to c$, $f(x_n) \to f(c)$. Since $f(c) \to f(c)$ trivially, we may include the constant sequence at $c$ as well, giving the stated equivalence. $\square$
+
+## Algebra of Continuous Functions
+
+<Callout type="theorem">
+**Theorem 7.3 (Algebra of Continuous Functions).** Let $f, g : A \to \mathbb{R}$ be continuous at $c \in A$. Then:
+
+1. $f + g$ is continuous at $c$.
+2. $f \cdot g$ is continuous at $c$.
+3. If $g(c) \neq 0$, then $f/g$ is continuous at $c$ (on a suitable domain).
+4. $\alpha f$ is continuous at $c$ for every $\alpha \in \mathbb{R}$.
+</Callout>
+
+*Proof of (2).* Let $\varepsilon > 0$. Since $f$ is continuous at $c$, it is bounded near $c$: there exists $\delta_1 > 0$ and $M > 0$ such that $|f(x)| \leq M$ for $|x - c| < \delta_1$, $x \in A$. Choose $\delta_2 > 0$ such that $|f(x) - f(c)| < \frac{\varepsilon}{2(|g(c)| + 1)}$ for $|x - c| < \delta_2$, and $\delta_3 > 0$ such that $|g(x) - g(c)| < \frac{\varepsilon}{2M}$ for $|x - c| < \delta_3$.
+
+Set $\delta = \min(\delta_1, \delta_2, \delta_3)$. For $|x - c| < \delta$:
+
+$$|f(x)g(x) - f(c)g(c)| \leq |f(x)||g(x) - g(c)| + |g(c)||f(x) - f(c)| < M \cdot \frac{\varepsilon}{2M} + |g(c)| \cdot \frac{\varepsilon}{2(|g(c)|+1)} < \varepsilon. \quad \square$$
+
+## Composition of Continuous Functions
+
+<Callout type="theorem">
+**Theorem 7.4 (Composition Theorem).** Let $f : A \to \mathbb{R}$ and $g : B \to \mathbb{R}$ with $f(A) \subseteq B$. If $f$ is continuous at $c$ and $g$ is continuous at $f(c)$, then $g \circ f$ is continuous at $c$.
+</Callout>
+
+*Proof.* Let $\varepsilon > 0$. Since $g$ is continuous at $f(c)$, there exists $\eta > 0$ such that
+
+$$|y - f(c)| < \eta \implies |g(y) - g(f(c))| < \varepsilon.$$
+
+Since $f$ is continuous at $c$, there exists $\delta > 0$ such that
+
+$$|x - c| < \delta \implies |f(x) - f(c)| < \eta.$$
+
+Combining: $|x - c| < \delta$ implies $|f(x) - f(c)| < \eta$, which implies $|g(f(x)) - g(f(c))| < \varepsilon$. $\square$
+
+## Continuity of Polynomials and Rational Functions
+
+<Callout type="theorem">
+**Theorem 7.5.** Every polynomial $p(x) = a_n x^n + \cdots + a_1 x + a_0$ is continuous on $\mathbb{R}$. Every rational function $p(x)/q(x)$ is continuous on its domain $\{x : q(x) \neq 0\}$.
+</Callout>
+
+*Proof.* The constant function $f(x) = a_0$ and the identity function $g(x) = x$ are continuous on $\mathbb{R}$ (direct ε-δ verification). By Theorem 7.3, products $x^k$ and scalar multiples $a_k x^k$ are continuous, and sums of continuous functions are continuous. Thus $p(x)$ is continuous.
+
+For rational functions, $p/q$ is the quotient of two continuous functions, continuous wherever $q(x) \neq 0$ by Theorem 7.3(3). $\square$
+
+## Equivalent Formulations
+
+<Callout type="theorem">
+**Theorem 7.6 (Topological Characterization).** Let $f : A \to \mathbb{R}$. The following are equivalent:
+
+1. $f$ is continuous on $A$.
+2. For every open set $V \subseteq \mathbb{R}$, the preimage $f^{-1}(V) = \{x \in A : f(x) \in V\}$ is open in $A$.
+</Callout>
+
+*Proof.*
+
+$(1) \Rightarrow (2)$: Let $V$ be open in $\mathbb{R}$ and let $c \in f^{-1}(V)$. Then $f(c) \in V$, and since $V$ is open, there exists $\varepsilon > 0$ with $(f(c) - \varepsilon, f(c) + \varepsilon) \subseteq V$. By continuity, there exists $\delta > 0$ such that $|x - c| < \delta$, $x \in A$ implies $|f(x) - f(c)| < \varepsilon$, i.e., $f(x) \in V$. So $(c - \delta, c + \delta) \cap A \subseteq f^{-1}(V)$, showing $f^{-1}(V)$ is open in $A$.
+
+$(2) \Rightarrow (1)$: Let $c \in A$ and $\varepsilon > 0$. The set $V = (f(c) - \varepsilon, f(c) + \varepsilon)$ is open. By (2), $f^{-1}(V)$ is open in $A$, so there exists $\delta > 0$ with $(c - \delta, c + \delta) \cap A \subseteq f^{-1}(V)$, meaning $|x - c| < \delta$, $x \in A$ implies $|f(x) - f(c)| < \varepsilon$. $\square$
+
+## Exercises
+
+<Problem>
+**Exercise 7.1.** Prove that $f(x) = \sqrt{x}$ is continuous on $[0, \infty)$.
+
+*Hint:* For the case $c > 0$, use the identity $|\sqrt{x} - \sqrt{c}| = \frac{|x - c|}{\sqrt{x} + \sqrt{c}} \leq \frac{|x - c|}{\sqrt{c}}$. Treat $c = 0$ separately.
+</Problem>
+
+<Solution>
+*Proof.* **Case $c > 0$:** Let $\varepsilon > 0$. For $x \geq 0$:
+
+$$|\sqrt{x} - \sqrt{c}| = \frac{|x - c|}{\sqrt{x} + \sqrt{c}} \leq \frac{|x - c|}{\sqrt{c}}.$$
+
+Choose $\delta = \varepsilon \sqrt{c}$. Then $|x - c| < \delta$ implies $|\sqrt{x} - \sqrt{c}| \leq |x - c|/\sqrt{c} < \varepsilon$.
+
+**Case $c = 0$:** We need $\sqrt{x} < \varepsilon$ for $x \in [0, \infty)$ with $|x| < \delta$. Choose $\delta = \varepsilon^2$. Then $0 \leq x < \delta = \varepsilon^2$ implies $\sqrt{x} < \varepsilon$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 7.2.** Prove that the composition of two continuous functions is continuous using the sequential characterization (Theorem 7.2), providing an alternative proof of Theorem 7.4.
+</Problem>
+
+<Solution>
+*Proof.* Let $f : A \to \mathbb{R}$ be continuous at $c$ and $g : B \to \mathbb{R}$ be continuous at $f(c)$, with $f(A) \subseteq B$. Let $(x_n)$ be a sequence in $A$ with $x_n \to c$.
+
+Since $f$ is continuous at $c$ and $x_n \to c$, by the sequential characterization, $f(x_n) \to f(c)$.
+
+Now $(f(x_n))$ is a sequence in $B$ (since $f(A) \subseteq B$) converging to $f(c)$. Since $g$ is continuous at $f(c)$, by the sequential characterization, $g(f(x_n)) \to g(f(c))$.
+
+Thus $(g \circ f)(x_n) \to (g \circ f)(c)$ for every sequence $x_n \to c$, so $g \circ f$ is continuous at $c$ by the sequential characterization. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Which statement about continuity is FALSE?"}
+  options={[
+    "If f is continuous at c and c is a limit point of the domain, then lim(x→c) f(x) = f(c)",
+    "If c is an isolated point of the domain, then f is automatically continuous at c",
+    "Continuity of f at c requires f(c) to be defined",
+    "If lim(x→c) f(x) exists, then f is continuous at c"
+  ]}
+  correctIndex={3}
+  explanation={"The limit existing does not guarantee continuity: we also need f(c) to be defined and equal to the limit. For example, f(x) = sin(x)/x for x ≠ 0 has lim(x→0) f(x) = 1, but if f(0) is undefined or not equal to 1, f is not continuous at 0."}
+/>
+
+<NumericInput
+  question={"Let f(x) = x³ - 2x + 1. What is f(2)? (By Theorem 7.5, f is continuous, so lim(x→2) f(x) = f(2).)"}
+  answer={5}
+  tolerance={0.01}
+  hint={"Compute directly: 2³ - 2(2) + 1 = 8 - 4 + 1."}
+/>
+
+<Problem>
+**Exercise 7.3 (Counterexample).** Give an example of a function that is continuous on the open interval $(0, 1)$ but not uniformly continuous on $(0, 1)$. Prove both claims.
+
+*Hint:* Consider $f(x) = \sin(1/x)$ or $f(x) = 1/x$.
+</Problem>
+
+<Solution>
+*Answer.* Let $f(x) = \sin(1/x)$ on $(0,1)$.
+
+**Continuous on $(0,1)$:** For each $c \in (0,1)$, $f$ is the composition of $g(x) = 1/x$ (continuous at $c$ since $c \neq 0$) and $h(t) = \sin(t)$ (continuous everywhere). By Theorem 7.4, $f = h \circ g$ is continuous at $c$.
+
+**Not uniformly continuous on $(0,1)$:** Let $\varepsilon_0 = 1$. For any $\delta > 0$, choose $n$ large enough that $\frac{1}{2\pi n} < \delta$ and $n \geq 1$. Set
+
+$$x = \frac{1}{2\pi n + \pi/2}, \qquad y = \frac{1}{2\pi n}.$$
+
+Both $x, y \in (0,1)$ for large $n$. We have $|x - y| \leq \frac{1}{2\pi n} < \delta$. But
+
+$$|f(x) - f(y)| = |\sin(2\pi n + \pi/2) - \sin(2\pi n)| = |1 - 0| = 1 \geq \varepsilon_0.$$
+
+Since for every $\delta > 0$ we can find $x, y \in (0,1)$ with $|x - y| < \delta$ but $|f(x) - f(y)| \geq 1$, the function $f$ is not uniformly continuous on $(0,1)$.
+
+**Remark.** This does not contradict the Heine-Cantor theorem because $(0,1)$ is not compact (it is bounded but not closed). $\square$
+</Solution>
+
+## Numerical Continuity Testing
+
+Explore continuity numerically: evaluate a function at points approaching $c$ and check whether the values approach $f(c)$.
+
+<PythonPlayground
+  title={"Testing Continuity Numerically"}
+  defaultCode={`import math
+
+def f(x):
+    """A function to test for continuity."""
+    if x == 0:
+        return 1  # Define f(0) = 1
+    return math.sin(x) / x
+
+c = 0
+print(f"Testing continuity of f at c = {c}")
+print(f"f(c) = {f(c)}")
+print()
+print(f"{'x':>15} {'f(x)':>20} {'|f(x)-f(c)|':>20}")
+print("-" * 57)
+
+for k in range(1, 12):
+    for sign in [1, -1]:
+        x = c + sign * 10**(-k)
+        val = f(x)
+        diff = abs(val - f(c))
+        direction = "+" if sign > 0 else "-"
+        print(f"{x:>15.10f} {val:>20.15f} {diff:>20.2e}")
+
+print()
+if abs(f(c + 1e-10) - f(c)) < 1e-8 and abs(f(c - 1e-10) - f(c)) < 1e-8:
+    print("f appears continuous at c (numerically).")
+else:
+    print("f may be DISCONTINUOUS at c.")
+`}
+/>

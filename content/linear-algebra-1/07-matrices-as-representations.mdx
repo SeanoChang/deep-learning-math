@@ -1,0 +1,260 @@
+---
+title: "Matrices as Representations of Linear Maps"
+description: "Coordinate vectors, the matrix of a linear map relative to bases, and matrix multiplication as composition"
+order: 7
+prerequisites: ["06-linear-transformations"]
+---
+
+# Matrices as Representations of Linear Maps
+
+Having established that linear transformations are the primary objects, we now develop the machinery that connects them to matrices. The key insight is that a matrix is not a linear transformation -- it is a **representation** of a linear transformation relative to chosen bases. Different bases yield different matrices for the same map.
+
+## Coordinate Vectors
+
+<Callout type="definition" title="Coordinate Vector">
+  Let $V$ be a finite-dimensional vector space with ordered basis $\mathcal{B} = (v_1, v_2, \ldots, v_n)$. Every $v \in V$ has a unique representation
+  $$v = c_1 v_1 + c_2 v_2 + \cdots + c_n v_n.$$
+  The **coordinate vector** of $v$ relative to $\mathcal{B}$ is
+  $$[v]_{\mathcal{B}} = \begin{pmatrix} c_1 \\ c_2 \\ \vdots \\ c_n \end{pmatrix} \in F^n.$$
+</Callout>
+
+<Callout type="tip" title="Ordered Bases Matter">
+  The coordinate vector depends on the **ordering** of the basis. If $\mathcal{B} = (e_1, e_2)$ and $\mathcal{B}' = (e_2, e_1)$, then the vector $v = 3e_1 + 5e_2$ has $[v]_{\mathcal{B}} = (3, 5)^T$ but $[v]_{\mathcal{B}'} = (5, 3)^T$. From now on, "basis" always means "ordered basis."
+</Callout>
+
+**Example.** In $\mathcal{P}_2(\mathbb{R})$ with the standard basis $\mathcal{B} = (1, x, x^2)$, the polynomial $p(x) = 3 - 2x + 7x^2$ has coordinate vector:
+
+$$[p]_{\mathcal{B}} = \begin{pmatrix} 3 \\ -2 \\ 7 \end{pmatrix}.$$
+
+With the alternative basis $\mathcal{B}' = (1, x - 1, (x-1)^2)$, we need to rewrite $p$ in terms of this basis. Since $x = (x-1) + 1$ and $x^2 = (x-1)^2 + 2(x-1) + 1$:
+
+$$p(x) = 3 - 2[(x-1) + 1] + 7[(x-1)^2 + 2(x-1) + 1] = 8 + 12(x-1) + 7(x-1)^2$$
+
+so $[p]_{\mathcal{B}'} = (8, 12, 7)^T$. Same polynomial, different coordinates.
+
+## The Matrix of a Linear Transformation
+
+<Callout type="definition" title="Matrix Representation">
+  Let $T : V \to W$ be a linear transformation, $\mathcal{B} = (v_1, \ldots, v_n)$ a basis for $V$, and $\mathcal{C} = (w_1, \ldots, w_m)$ a basis for $W$. The **matrix of $T$ relative to $\mathcal{B}$ and $\mathcal{C}$** is the $m \times n$ matrix
+  $$[T]_{\mathcal{B}}^{\mathcal{C}} = \Big( [T(v_1)]_{\mathcal{C}} \;\; [T(v_2)]_{\mathcal{C}} \;\; \cdots \;\; [T(v_n)]_{\mathcal{C}} \Big)$$
+  whose $j$-th column is the coordinate vector of $T(v_j)$ with respect to $\mathcal{C}$.
+  When $V = W$ and $\mathcal{B} = \mathcal{C}$, we write $[T]_{\mathcal{B}}$.
+</Callout>
+
+The construction proceeds column by column: apply $T$ to each basis vector of the domain, then express the result in terms of the codomain basis.
+
+<Callout type="theorem" title="The Fundamental Relation">
+  With the notation above, for any $v \in V$:
+  $$[T(v)]_{\mathcal{C}} = [T]_{\mathcal{B}}^{\mathcal{C}} \cdot [v]_{\mathcal{B}}.$$
+  That is, the matrix representation converts the action of $T$ on abstract vectors into matrix-vector multiplication on coordinate vectors.
+</Callout>
+
+**Proof.** Write $v = c_1 v_1 + \cdots + c_n v_n$, so $[v]_{\mathcal{B}} = (c_1, \ldots, c_n)^T$. By linearity:
+
+$$T(v) = c_1 T(v_1) + c_2 T(v_2) + \cdots + c_n T(v_n).$$
+
+In coordinates relative to $\mathcal{C}$:
+
+$$[T(v)]_{\mathcal{C}} = c_1 [T(v_1)]_{\mathcal{C}} + c_2 [T(v_2)]_{\mathcal{C}} + \cdots + c_n [T(v_n)]_{\mathcal{C}}.$$
+
+The right side is exactly the matrix-vector product $[T]_{\mathcal{B}}^{\mathcal{C}} \cdot [v]_{\mathcal{B}}$. $\blacksquare$
+
+## Uniqueness of the Matrix Representation
+
+<Callout type="theorem" title="Unique Matrix Representation">
+  For fixed bases $\mathcal{B}$ of $V$ and $\mathcal{C}$ of $W$, the map $T \mapsto [T]_{\mathcal{B}}^{\mathcal{C}}$ is a bijection from $\mathcal{L}(V, W)$ to $M_{m \times n}(F)$. Moreover, this bijection is an isomorphism of vector spaces.
+</Callout>
+
+**Proof.** *Injective:* If $[T]_{\mathcal{B}}^{\mathcal{C}} = [S]_{\mathcal{B}}^{\mathcal{C}}$, then for each basis vector $v_j$, $[T(v_j)]_{\mathcal{C}} = [S(v_j)]_{\mathcal{C}}$, so $T(v_j) = S(v_j)$ (since coordinate vectors determine vectors uniquely). A linear map is determined by its action on a basis, so $T = S$.
+
+*Surjective:* Given any $m \times n$ matrix $A$, define $T$ by $T(v_j) = $ the vector in $W$ whose $\mathcal{C}$-coordinate vector is column $j$ of $A$. Extend by linearity. Then $[T]_{\mathcal{B}}^{\mathcal{C}} = A$.
+
+*Linearity:* $[T + S]_{\mathcal{B}}^{\mathcal{C}} = [T]_{\mathcal{B}}^{\mathcal{C}} + [S]_{\mathcal{B}}^{\mathcal{C}}$ and $[cT]_{\mathcal{B}}^{\mathcal{C}} = c[T]_{\mathcal{B}}^{\mathcal{C}}$ follow directly from the definition. $\blacksquare$
+
+This confirms that $\dim(\mathcal{L}(V, W)) = mn$, since $\dim(M_{m \times n}(F)) = mn$.
+
+## Constructing the Matrix: Worked Example
+
+**Example.** Let $T : \mathbb{R}^3 \to \mathbb{R}^2$ be defined by $T(x_1, x_2, x_3) = (x_1 + 2x_2, 3x_1 - x_3)$. Find $[T]_{\mathcal{B}}^{\mathcal{C}}$ for the standard bases $\mathcal{B} = (e_1, e_2, e_3)$ and $\mathcal{C} = (e_1, e_2)$.
+
+Compute column by column:
+
+$$T(e_1) = T(1,0,0) = (1, 3) = 1 \cdot e_1 + 3 \cdot e_2 \implies [T(e_1)]_{\mathcal{C}} = \begin{pmatrix} 1 \\ 3 \end{pmatrix}$$
+
+$$T(e_2) = T(0,1,0) = (2, 0) = 2 \cdot e_1 + 0 \cdot e_2 \implies [T(e_2)]_{\mathcal{C}} = \begin{pmatrix} 2 \\ 0 \end{pmatrix}$$
+
+$$T(e_3) = T(0,0,1) = (0, -1) = 0 \cdot e_1 + (-1) \cdot e_2 \implies [T(e_3)]_{\mathcal{C}} = \begin{pmatrix} 0 \\ -1 \end{pmatrix}$$
+
+Therefore:
+
+$$[T]_{\mathcal{B}}^{\mathcal{C}} = \begin{pmatrix} 1 & 2 & 0 \\ 3 & 0 & -1 \end{pmatrix}$$
+
+**Verification:** For $v = (1, -1, 2)$: $T(v) = (1 + 2(-1), 3(1) - 2) = (-1, 1)$. Matrix multiplication: $\begin{pmatrix} 1 & 2 & 0 \\ 3 & 0 & -1 \end{pmatrix} \begin{pmatrix} 1 \\ -1 \\ 2 \end{pmatrix} = \begin{pmatrix} -1 \\ 1 \end{pmatrix}$. Correct.
+
+## Matrix Multiplication as Composition
+
+<Callout type="definition" title="Composition of Linear Maps">
+  If $T : V \to W$ and $S : W \to U$ are linear transformations, their **composition** $S \circ T : V \to U$ is defined by $(S \circ T)(v) = S(T(v))$.
+</Callout>
+
+<Callout type="theorem" title="Composition Corresponds to Matrix Multiplication">
+  Let $T : V \to W$ and $S : W \to U$ be linear transformations. Let $\mathcal{B}$, $\mathcal{C}$, $\mathcal{D}$ be bases for $V$, $W$, $U$ respectively. Then:
+  $$[S \circ T]_{\mathcal{B}}^{\mathcal{D}} = [S]_{\mathcal{C}}^{\mathcal{D}} \cdot [T]_{\mathcal{B}}^{\mathcal{C}}.$$
+  That is, the matrix of the composition is the product of the matrices.
+</Callout>
+
+**Proof.** For any $v \in V$:
+
+$$[(S \circ T)(v)]_{\mathcal{D}} = [S(T(v))]_{\mathcal{D}} = [S]_{\mathcal{C}}^{\mathcal{D}} \cdot [T(v)]_{\mathcal{C}} = [S]_{\mathcal{C}}^{\mathcal{D}} \cdot [T]_{\mathcal{B}}^{\mathcal{C}} \cdot [v]_{\mathcal{B}}.$$
+
+But also $[(S \circ T)(v)]_{\mathcal{D}} = [S \circ T]_{\mathcal{B}}^{\mathcal{D}} \cdot [v]_{\mathcal{B}}$.
+
+Since this holds for every $v \in V$, and every vector in $F^n$ is $[v]_{\mathcal{B}}$ for some $v$, we conclude $[S \circ T]_{\mathcal{B}}^{\mathcal{D}} = [S]_{\mathcal{C}}^{\mathcal{D}} \cdot [T]_{\mathcal{B}}^{\mathcal{C}}$. $\blacksquare$
+
+<Callout type="tip" title="Why Matrix Multiplication Is Defined the Way It Is">
+  Matrix multiplication may seem like an arbitrary rule when first encountered. This theorem reveals its true meaning: matrix multiplication was *designed* to encode composition of linear maps. The "row times column" rule is a direct consequence of how coordinate vectors transform through successive linear maps.
+</Callout>
+
+## The Matrix Depends on the Bases
+
+This is a point that cannot be overemphasized: the **same** linear transformation yields **different** matrices under different bases.
+
+**Example.** Consider the rotation $R_\theta : \mathbb{R}^2 \to \mathbb{R}^2$ by angle $\theta = \pi/2$ (counterclockwise by 90 degrees). In the standard basis $\mathcal{E} = (e_1, e_2)$:
+
+$$R(e_1) = e_2, \quad R(e_2) = -e_1$$
+
+$$[R]_{\mathcal{E}} = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$$
+
+Now consider the basis $\mathcal{B} = (e_1 + e_2, e_1 - e_2)$. We compute:
+
+$$R(e_1 + e_2) = R(e_1) + R(e_2) = e_2 - e_1 = -(e_1 - e_2) = 0 \cdot (e_1 + e_2) + (-1)(e_1 - e_2)$$
+
+$$R(e_1 - e_2) = R(e_1) - R(e_2) = e_2 + e_1 = (e_1 + e_2) = 1 \cdot (e_1 + e_2) + 0 \cdot (e_1 - e_2)$$
+
+$$[R]_{\mathcal{B}} = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$$
+
+Different matrix, same rotation. The relationship between these two matrices (similarity) will be explored in the next lesson.
+
+## Invertible Matrices and Isomorphisms
+
+<Callout type="theorem" title="Invertible Linear Maps and Invertible Matrices">
+  Let $T : V \to W$ be a linear map with $\dim(V) = \dim(W) = n$, and let $\mathcal{B}$, $\mathcal{C}$ be bases for $V$, $W$. Then $T$ is an isomorphism if and only if $[T]_{\mathcal{B}}^{\mathcal{C}}$ is an invertible matrix. In that case:
+  $$[T^{-1}]_{\mathcal{C}}^{\mathcal{B}} = \left([T]_{\mathcal{B}}^{\mathcal{C}}\right)^{-1}.$$
+</Callout>
+
+**Proof.** If $T$ is an isomorphism, then $T^{-1} \circ T = \text{id}_V$. By the composition-to-multiplication theorem:
+
+$$[T^{-1}]_{\mathcal{C}}^{\mathcal{B}} \cdot [T]_{\mathcal{B}}^{\mathcal{C}} = [\text{id}_V]_{\mathcal{B}}^{\mathcal{B}} = I_n.$$
+
+Similarly $[T]_{\mathcal{B}}^{\mathcal{C}} \cdot [T^{-1}]_{\mathcal{C}}^{\mathcal{B}} = I_n$. So $[T]_{\mathcal{B}}^{\mathcal{C}}$ is invertible with the stated inverse.
+
+Conversely, if $A = [T]_{\mathcal{B}}^{\mathcal{C}}$ is invertible, then $A^{-1}$ represents some linear map $S : W \to V$ with $[S \circ T]_{\mathcal{B}} = A^{-1} A = I_n = [\text{id}_V]_{\mathcal{B}}$, so $S \circ T = \text{id}_V$, and similarly $T \circ S = \text{id}_W$. Thus $T$ is an isomorphism. $\blacksquare$
+
+## Exercises
+
+<MultipleChoice
+  question="Let $T : \mathbb{R}^2 \to \mathbb{R}^2$ be defined by $T(x,y) = (x + y, x - y)$. What is $[T]_\mathcal{E}$ with respect to the standard basis $\mathcal{E} = (e_1, e_2)$?"
+  options={[
+    "$\\begin{pmatrix} 1 & 1 \\\\\\\\ 1 & -1 \\end{pmatrix}$",
+    "$\\begin{pmatrix} 1 & 1 \\\\\\\\ -1 & 1 \\end{pmatrix}$",
+    "$\\begin{pmatrix} 1 & -1 \\\\\\\\ 1 & 1 \\end{pmatrix}$",
+    "$\\begin{pmatrix} 1 & 0 \\\\\\\\ 0 & -1 \\end{pmatrix}$"
+  ]}
+  correctIndex={0}
+  explanation="$T(e_1) = T(1,0) = (1,1)$ gives column 1. $T(e_2) = T(0,1) = (1,-1)$ gives column 2. So $[T]_\\mathcal{E} = \\begin{pmatrix} 1 & 1 \\\\ 1 & -1 \\end{pmatrix}$."
+/>
+
+<NumericInput
+  question="Let $S : \mathbb{R}^2 \to \mathbb{R}^2$ and $T : \mathbb{R}^2 \to \mathbb{R}^2$ have standard-basis matrices $A = \begin{pmatrix} 1 & 2 \\\\ 0 & 1 \end{pmatrix}$ and $B = \begin{pmatrix} 3 & 0 \\\\ 1 & -1 \end{pmatrix}$. What is the $(1,2)$ entry of the matrix of $S \circ T$?"
+  answer={-2}
+  tolerance={0}
+  explanation="The matrix of $S \\circ T$ is $AB = \\begin{pmatrix} 1 & 2 \\\\ 0 & 1 \\end{pmatrix}\\begin{pmatrix} 3 & 0 \\\\ 1 & -1 \\end{pmatrix} = \\begin{pmatrix} 5 & -2 \\\\ 1 & -1 \\end{pmatrix}$. The $(1,2)$ entry is $-2$."
+/>
+
+<Problem title="Matrix of Differentiation Relative to Standard Bases">
+  Let $D : \mathcal{P}_3(\mathbb{R}) \to \mathcal{P}_2(\mathbb{R})$ be the differentiation map. Using the standard bases $\mathcal{B} = (1, x, x^2, x^3)$ for $\mathcal{P}_3(\mathbb{R})$ and $\mathcal{C} = (1, x, x^2)$ for $\mathcal{P}_2(\mathbb{R})$, find $[D]_{\mathcal{B}}^{\mathcal{C}}$. Verify $[D(p)]_{\mathcal{C}} = [D]_{\mathcal{B}}^{\mathcal{C}} \cdot [p]_{\mathcal{B}}$ for $p(x) = 2 - x + 3x^3$.
+<Solution>
+  **Solution.** Compute column by column:
+  - $D(1) = 0 = 0 \cdot 1 + 0 \cdot x + 0 \cdot x^2 \implies [D(1)]_{\mathcal{C}} = (0, 0, 0)^T$
+  - $D(x) = 1 = 1 \cdot 1 + 0 \cdot x + 0 \cdot x^2 \implies [D(x)]_{\mathcal{C}} = (1, 0, 0)^T$
+  - $D(x^2) = 2x = 0 \cdot 1 + 2 \cdot x + 0 \cdot x^2 \implies [D(x^2)]_{\mathcal{C}} = (0, 2, 0)^T$
+  - $D(x^3) = 3x^2 = 0 \cdot 1 + 0 \cdot x + 3 \cdot x^2 \implies [D(x^3)]_{\mathcal{C}} = (0, 0, 3)^T$
+  $$[D]_{\mathcal{B}}^{\mathcal{C}} = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3 \end{pmatrix}.$$
+  **Verification:** $p(x) = 2 - x + 3x^3$, so $[p]_{\mathcal{B}} = (2, -1, 0, 3)^T$. Then:
+  $$[D]_{\mathcal{B}}^{\mathcal{C}} [p]_{\mathcal{B}} = \begin{pmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 3 \end{pmatrix} \begin{pmatrix} 2 \\ -1 \\ 0 \\ 3 \end{pmatrix} = \begin{pmatrix} -1 \\ 0 \\ 9 \end{pmatrix}.$$
+  This represents $-1 + 0 \cdot x + 9x^2 = -1 + 9x^2$. Indeed, $D(p) = p'(x) = -1 + 9x^2$. $\checkmark$
+</Solution>
+</Problem>
+
+<Problem title="Prove: Matrix Representation Is an Isomorphism">
+  Let $V$ and $W$ be finite-dimensional with $\dim(V) = n$, $\dim(W) = m$, and fix bases $\mathcal{B}$, $\mathcal{C}$. Prove that the map $\Phi : \mathcal{L}(V, W) \to M_{m \times n}(F)$ defined by $\Phi(T) = [T]_{\mathcal{B}}^{\mathcal{C}}$ preserves addition and scalar multiplication.
+<Solution>
+  **Proof.** Let $T, S \in \mathcal{L}(V, W)$ and $c \in F$.
+  *Addition:* For each basis vector $v_j \in \mathcal{B}$: $(T + S)(v_j) = T(v_j) + S(v_j)$. Taking coordinates in $\mathcal{C}$: $[(T + S)(v_j)]_{\mathcal{C}} = [T(v_j)]_{\mathcal{C}} + [S(v_j)]_{\mathcal{C}}$. Since the columns of $[T + S]_{\mathcal{B}}^{\mathcal{C}}$ are the coordinate vectors $[(T + S)(v_j)]_{\mathcal{C}}$, and the columns of $[T]_{\mathcal{B}}^{\mathcal{C}} + [S]_{\mathcal{B}}^{\mathcal{C}}$ are $[T(v_j)]_{\mathcal{C}} + [S(v_j)]_{\mathcal{C}}$, we get $\Phi(T + S) = \Phi(T) + \Phi(S)$.
+  *Scalar multiplication:* $(cT)(v_j) = c \cdot T(v_j)$, so $[(cT)(v_j)]_{\mathcal{C}} = c[T(v_j)]_{\mathcal{C}}$. This gives column $j$ of $[cT]_{\mathcal{B}}^{\mathcal{C}} = c \cdot$ column $j$ of $[T]_{\mathcal{B}}^{\mathcal{C}}$. Hence $\Phi(cT) = c\Phi(T)$.
+  Thus $\Phi$ is a linear map. Combined with the bijectivity established in the uniqueness theorem, $\Phi$ is an isomorphism. $\blacksquare$
+</Solution>
+</Problem>
+
+<PythonPlayground
+  title="Matrix Representations and Composition"
+  defaultCode={`import numpy as np
+
+# Define T: R^3 -> R^2 by T(x,y,z) = (x + 2y, 3x - z)
+# and S: R^2 -> R^2 by S(x,y) = (2x + y, x - y)
+
+A_T = np.array([[1, 2, 0],
+                [3, 0, -1]])  # Matrix of T (standard bases)
+
+A_S = np.array([[2, 1],
+                [1, -1]])     # Matrix of S (standard bases)
+
+print("Matrix of T (R^3 -> R^2):")
+print(A_T)
+print()
+print("Matrix of S (R^2 -> R^2):")
+print(A_S)
+print()
+
+# Composition S ∘ T: R^3 -> R^2
+A_comp = A_S @ A_T
+print("Matrix of S ∘ T = A_S * A_T:")
+print(A_comp)
+print()
+
+# Verify on a test vector
+v = np.array([1, -1, 2])
+Tv = A_T @ v                # T(v)
+STv_direct = A_S @ Tv       # S(T(v)) via two steps
+STv_composed = A_comp @ v   # (S ∘ T)(v) via composed matrix
+
+print(f"v = {v}")
+print(f"T(v) = {Tv}")
+print(f"S(T(v)) via two steps: {STv_direct}")
+print(f"(S ∘ T)(v) via composed matrix: {STv_composed}")
+print(f"Match: {np.allclose(STv_direct, STv_composed)}")
+print()
+
+# Demonstrate that the matrix depends on the basis
+# T: R^2 -> R^2 defined by T(x,y) = (x+y, x-y)
+# Standard basis representation
+A_std = np.array([[1, 1],
+                  [1, -1]])
+print("T(x,y) = (x+y, x-y)")
+print(f"Standard basis matrix:\\n{A_std}")
+print()
+
+# Alternative basis B = {(1,1), (1,-1)}
+# Change of basis matrix P (columns are basis vectors in standard coords)
+P = np.array([[1, 1],
+              [1, -1]])
+
+# [T]_B = P^{-1} @ A_std @ P
+P_inv = np.linalg.inv(P)
+A_B = P_inv @ A_std @ P
+print(f"Basis B = ((1,1), (1,-1))")
+print(f"[T]_B = P^(-1) A P =")
+print(A_B)
+print()
+print("Same linear map, different matrix!")`}
+/>

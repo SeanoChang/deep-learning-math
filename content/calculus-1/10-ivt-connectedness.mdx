@@ -1,0 +1,260 @@
+---
+title: "Intermediate Value Theorem and Connectedness"
+description: "The IVT, connected subsets of the reals, and existence theorems via continuity"
+order: 10
+prerequisites: ["09-continuous-functions-compact-sets"]
+---
+
+# Intermediate Value Theorem and Connectedness
+
+The Intermediate Value Theorem (IVT) is one of the most intuitive results in calculus: a continuous function that takes a negative value and a positive value must somewhere take the value zero. The rigorous proof, however, depends on the completeness of $\mathbb{R}$ in a fundamental way. We also connect IVT to the topological notion of connectedness.
+
+## The Intermediate Value Theorem
+
+<Callout type="theorem">
+**Theorem 10.1 (Intermediate Value Theorem).** Let $f : [a, b] \to \mathbb{R}$ be continuous. If $L$ is any value between $f(a)$ and $f(b)$ (i.e., $f(a) \leq L \leq f(b)$ or $f(b) \leq L \leq f(a)$), then there exists $c \in [a, b]$ such that $f(c) = L$.
+</Callout>
+
+*Proof.* Without loss of generality, assume $f(a) < L < f(b)$ (the cases $L = f(a)$ or $L = f(b)$ are trivial). Define
+
+$$S = \{x \in [a, b] : f(x) < L\}.$$
+
+The set $S$ is nonempty ($a \in S$) and bounded above (by $b$). Let $c = \sup S$. We claim $f(c) = L$.
+
+**Step 1: $f(c) \geq L$.** Since $c = \sup S$, there exists a sequence $(x_n)$ in $S$ with $x_n \to c$. Since $f(x_n) < L$ for all $n$ and $f$ is continuous at $c$, we get $f(c) = \lim f(x_n) \leq L$.
+
+**Step 2: $f(c) \leq L$.** If $f(c) > L$, then by continuity there exists $\delta > 0$ such that $f(x) > L$ for all $x \in (c - \delta, c + \delta) \cap [a, b]$. But $c = \sup S$, so there exists $x_0 \in S$ with $x_0 > c - \delta$. Then $x_0 \in (c - \delta, c + \delta)$, giving $f(x_0) > L$, contradicting $x_0 \in S$.
+
+Combining: $f(c) = L$. Since $f(a) < L$ implies $c > a$ and $f(b) > L$ implies $c < b$, we have $c \in (a, b)$. $\square$
+
+<Callout type="tip">
+**Key Insight.** The proof uses the completeness of $\mathbb{R}$ via the supremum property. The IVT is false over $\mathbb{Q}$: the function $f(x) = x^2 - 2$ satisfies $f(0) = -2 < 0$ and $f(2) = 2 > 0$, but there is no rational $c$ with $f(c) = 0$ (since $\sqrt{2} \notin \mathbb{Q}$).
+</Callout>
+
+### Visualizing the IVT
+
+<FunctionPlot
+  fn={"x * x * x - 3 * x + 1"}
+  title={"f(x) = x³ - 3x + 1 crosses y = 0 between any sign change"}
+  domain={[-3, 3]}
+  range={[-4, 4]}
+/>
+
+The function $f(x) = x^3 - 3x + 1$ satisfies $f(-2) = -1 < 0$ and $f(0) = 1 > 0$, so by the IVT there exists $c \in (-2, 0)$ with $f(c) = 0$. Similarly, $f(0) = 1 > 0$ and $f(2) = 3 > 0$ does not guarantee a root in $(0, 2)$, but $f(1) = -1 < 0$, so there are roots in $(0, 1)$ and $(1, 2)$.
+
+## Connected Sets
+
+<Callout type="definition">
+**Definition 10.2 (Separated Sets).** Two sets $A, B \subseteq \mathbb{R}$ are **separated** if $\overline{A} \cap B = \emptyset$ and $A \cap \overline{B} = \emptyset$.
+</Callout>
+
+<Callout type="definition">
+**Definition 10.3 (Connected Set).** A set $E \subseteq \mathbb{R}$ is **connected** if it cannot be written as the union of two nonempty separated sets. Equivalently, $E$ is connected if whenever $E = A \cup B$ with $A, B$ separated, then $A = \emptyset$ or $B = \emptyset$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 10.4.** A subset $E \subseteq \mathbb{R}$ is connected if and only if $E$ is an interval (including rays and $\mathbb{R}$ itself).
+</Callout>
+
+*Proof.*
+
+$(\Leftarrow)$ Suppose $E$ is an interval and $E = A \cup B$ with $A, B$ nonempty and separated. Choose $a \in A$ and $b \in B$ with $a < b$ (without loss of generality). Since $E$ is an interval, $[a, b] \subseteq E$.
+
+Let $c = \sup(A \cap [a, b])$. Since $A$ is nonempty and bounded above by $b$, this supremum exists. We have $a \leq c \leq b$.
+
+If $c \in B$: Since $c = \sup(A \cap [a,b])$, every neighborhood of $c$ meets $A$, so $c \in \overline{A}$. But $c \in B$ and $\overline{A} \cap B = \emptyset$--a contradiction.
+
+If $c \in A$: Since $c < b$ (because $b \in B$ and $\overline{A} \cap B = \emptyset$ means $b \notin \overline{A}$, but actually we need: since $A$ and $B$ are separated, $c \in A$ implies $c \notin \overline{B}$, so there exists $\delta > 0$ with $(c - \delta, c + \delta) \cap B = \emptyset$. Then for $x \in (c, c + \delta) \cap [a,b]$, we have $x \notin B$, so $x \in A$. But this contradicts $c = \sup(A \cap [a,b])$ if $c < b$.
+
+Both cases give contradictions, so $A$ and $B$ cannot both be nonempty.
+
+$(\Rightarrow)$ Suppose $E$ is not an interval. Then there exist $a, b \in E$ and $t \notin E$ with $a < t < b$. Set $A = E \cap (-\infty, t)$ and $B = E \cap (t, \infty)$. Both are nonempty ($a \in A$, $b \in B$), and $E = A \cup B$. We have $\overline{A} \subseteq (-\infty, t]$ and $B \subseteq (t, \infty)$, so $\overline{A} \cap B = \emptyset$. Similarly $A \cap \overline{B} = \emptyset$. So $E$ is disconnected. $\square$
+
+## Continuous Image of Connected Sets
+
+<Callout type="theorem">
+**Theorem 10.5.** Let $f : E \to \mathbb{R}$ be continuous and $E$ connected. Then $f(E)$ is connected.
+</Callout>
+
+*Proof.* Suppose $f(E) = A \cup B$ with $A, B$ nonempty and separated. Set $C = f^{-1}(A) \cap E$ and $D = f^{-1}(B) \cap E$. Then $E = C \cup D$ with $C, D$ nonempty.
+
+We claim $C$ and $D$ are separated. Suppose $x \in \overline{C} \cap D$. Then $x \in D$, so $f(x) \in B$. Since $x \in \overline{C}$, there exists $(x_n)$ in $C$ with $x_n \to x$. By continuity, $f(x_n) \to f(x)$. Since $f(x_n) \in A$ for all $n$, we get $f(x) \in \overline{A}$. So $f(x) \in \overline{A} \cap B = \emptyset$, a contradiction. Similarly $C \cap \overline{D} = \emptyset$.
+
+Thus $E = C \cup D$ is a separation of $E$, contradicting connectedness. $\square$
+
+<Callout type="info">
+**Corollary 10.6.** We proved in Theorem 9.6 that the continuous image of an interval is an interval. Theorem 10.5 now gives a deeper reason: intervals are exactly the connected subsets of $\mathbb{R}$, and continuous maps preserve connectedness. The IVT itself is a consequence: if $f(a) \leq L \leq f(b)$ and $f([a,b])$ is an interval containing $f(a)$ and $f(b)$, then $L \in f([a,b])$.
+</Callout>
+
+## Existence Theorems via IVT
+
+<Callout type="theorem">
+**Theorem 10.7 (Fixed Point Theorem).** Let $f : [0, 1] \to [0, 1]$ be continuous. Then $f$ has a fixed point: there exists $c \in [0, 1]$ with $f(c) = c$.
+</Callout>
+
+*Proof.* Define $g(x) = f(x) - x$. Then $g$ is continuous on $[0, 1]$, $g(0) = f(0) - 0 = f(0) \geq 0$, and $g(1) = f(1) - 1 \leq 0$ (since $f(1) \in [0, 1]$).
+
+If $g(0) = 0$, then $f(0) = 0$ and we are done. If $g(1) = 0$, then $f(1) = 1$. Otherwise $g(0) > 0 > g(1)$, and by the IVT there exists $c \in (0, 1)$ with $g(c) = 0$, i.e., $f(c) = c$. $\square$
+
+<Callout type="theorem">
+**Theorem 10.8 (Existence of $n$-th Roots).** For every $a > 0$ and $n \in \mathbb{N}$, there exists a unique $b > 0$ with $b^n = a$.
+</Callout>
+
+*Proof.* Consider $f(x) = x^n$ on $[0, M]$ where $M = \max(1, a)$. Then $f(0) = 0 \leq a$ and $f(M) = M^n \geq M \geq a$. By the IVT, there exists $b \in [0, M]$ with $b^n = a$. Since $a > 0$, we have $b > 0$. Uniqueness follows from the strict monotonicity of $x^n$ on $(0, \infty)$. $\square$
+
+## Exercises
+
+<Problem>
+**Exercise 10.1.** Prove that the equation $x^5 + 3x - 1 = 0$ has at least one real solution.
+
+*Hint:* Evaluate the function at suitable points and apply the IVT.
+</Problem>
+
+<Solution>
+*Proof.* Let $f(x) = x^5 + 3x - 1$. This is a polynomial, hence continuous on $\mathbb{R}$.
+
+We have $f(0) = 0 + 0 - 1 = -1 < 0$ and $f(1) = 1 + 3 - 1 = 3 > 0$.
+
+Since $f$ is continuous on $[0, 1]$, $f(0) < 0 < f(1)$, the IVT guarantees the existence of $c \in (0, 1)$ such that $f(c) = 0$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 10.2.** Prove that if $f : [0, 2] \to \mathbb{R}$ is continuous with $f(0) = f(2)$, then there exists $c \in [0, 1]$ with $f(c) = f(c + 1)$.
+
+*Hint:* Consider $g(x) = f(x) - f(x + 1)$ on $[0, 1]$.
+</Problem>
+
+<Solution>
+*Proof.* Define $g : [0, 1] \to \mathbb{R}$ by $g(x) = f(x) - f(x + 1)$. Then $g$ is continuous (as the difference of continuous functions).
+
+We have $g(0) = f(0) - f(1)$ and $g(1) = f(1) - f(2) = f(1) - f(0)$ (using $f(0) = f(2)$).
+
+Thus $g(0) + g(1) = [f(0) - f(1)] + [f(1) - f(0)] = 0$, so $g(0) = -g(1)$.
+
+If $g(0) = 0$, then $c = 0$ works. Otherwise, $g(0)$ and $g(1)$ have opposite signs, and by the IVT there exists $c \in (0, 1)$ with $g(c) = 0$, i.e., $f(c) = f(c + 1)$. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Which property of R is essential for the proof of the Intermediate Value Theorem?"}
+  options={[
+    "The Archimedean property",
+    "The well-ordering principle for N",
+    "The completeness (least upper bound) property",
+    "The density of the rationals"
+  ]}
+  correctIndex={2}
+  explanation={"The IVT proof constructs a set S and takes c = sup S, which requires the completeness of R (every nonempty bounded-above set has a supremum). The IVT fails in Q precisely because Q lacks completeness: x² - 2 = 0 has no rational solution despite a sign change."}
+/>
+
+<MultipleChoice
+  question={"Which of the following sets is connected?"}
+  options={[
+    "{0} ∪ {1} — two isolated points",
+    "[0, 1] ∪ [2, 3] — union of disjoint closed intervals",
+    "[0, 1) ∪ (1, 2] — missing one point",
+    "(0, 1) — an open interval"
+  ]}
+  correctIndex={3}
+  explanation={"By Theorem 10.4, connected subsets of R are exactly the intervals. (0,1) is an interval. The other options are not intervals: {0}∪{1} is missing everything between 0 and 1; [0,1]∪[2,3] is missing (1,2); and [0,1)∪(1,2] is missing 1."}
+/>
+
+<NumericInput
+  question={"The equation cos(x) = x has a solution in [0, 1]. Using the bisection method starting with [0, 1], after one step the interval is narrowed to [a, 0.5] or [0.5, b]. At x = 0.5, cos(0.5) - 0.5 ≈ 0.3776 > 0. What is the new right endpoint of the narrowed interval? (Answer: the endpoint that keeps the sign change.)"}
+  answer={1}
+  tolerance={0.01}
+  hint={"At x=0, cos(0)-0 = 1 > 0. At x=1, cos(1)-1 ≈ -0.46 < 0. At x=0.5, the value is positive. So the sign change is in [0.5, 1]."}
+/>
+
+<Problem>
+**Exercise 10.3 (Definition Drill).** Prove directly from the definition of connectedness that the interval $[0, 1]$ is connected. That is, show that if $[0,1] = A \cup B$ with $A$ and $B$ separated, then $A = \emptyset$ or $B = \emptyset$.
+
+*Hint:* Assume both are nonempty, pick $a \in A$ and $b \in B$ with $a < b$, and let $c = \sup(A \cap [a, b])$. Derive a contradiction by showing $c$ can be in neither $A$ nor $B$.
+</Problem>
+
+<Solution>
+*Proof.* Suppose for contradiction that $[0,1] = A \cup B$ where $A, B$ are nonempty and separated ($\overline{A} \cap B = \emptyset$ and $A \cap \overline{B} = \emptyset$).
+
+Choose $a \in A$ and $b \in B$. WLOG $a < b$ (otherwise swap labels). Let $c = \sup(A \cap [a, b])$. This supremum exists since $A \cap [a, b]$ is nonempty ($a \in A \cap [a,b]$) and bounded above by $b$.
+
+**Case 1: $c \in B$.** Since $c = \sup(A \cap [a,b])$, for every $\epsilon > 0$ there exists $x \in A \cap [a, b]$ with $x > c - \epsilon$. So every neighborhood of $c$ contains a point of $A$, meaning $c \in \overline{A}$. But $c \in B$, contradicting $\overline{A} \cap B = \emptyset$.
+
+**Case 2: $c \in A$.** Since $A \cap \overline{B} = \emptyset$ and $c \in A$, we have $c \notin \overline{B}$, so there exists $\delta > 0$ with $(c - \delta, c + \delta) \cap B = \emptyset$. Since $[0,1] = A \cup B$, any point of $[0,1]$ in $(c, c + \delta)$ must belong to $A$. If $c < b$, then $(c, \min(c + \delta, b)) \cap A \neq \emptyset$, contradicting $c = \sup(A \cap [a, b])$. If $c = b$, then $b \in A$, but $b \in B$, contradicting $A \cap B \subseteq A \cap \overline{B} = \emptyset$ (since $B \subseteq \overline{B}$).
+
+Both cases yield contradictions, so $A$ or $B$ must be empty. $\square$
+</Solution>
+
+<Problem>
+**Exercise 10.4 (Counterexample).** Give an example of a discontinuous function $f : [0, 1] \to \mathbb{R}$ for which the conclusion of the Intermediate Value Theorem fails. That is, find $f$ with $f(0) < 0 < f(1)$ but no $c \in [0,1]$ with $f(c) = 0$.
+
+*Hint:* Use a function with a jump discontinuity.
+</Problem>
+
+<Solution>
+*Answer.* Define
+
+$$f(x) = \begin{cases} -1 & \text{if } 0 \leq x \leq 1/2 \\ 1 & \text{if } 1/2 < x \leq 1. \end{cases}$$
+
+Then $f(0) = -1 < 0$ and $f(1) = 1 > 0$. However, $f(x) \in \{-1, 1\}$ for every $x \in [0,1]$, so there is no $c \in [0,1]$ with $f(c) = 0$.
+
+The IVT fails because $f$ is not continuous: at $x = 1/2$, we have $\lim_{x \to 1/2^+} f(x) = 1 \neq -1 = f(1/2)$. This demonstrates that the continuity hypothesis in the IVT is essential, not merely a technical convenience. $\square$
+</Solution>
+
+## The Bisection Method
+
+The IVT does more than prove existence--it provides a constructive algorithm for finding roots. The bisection method repeatedly halves an interval containing a sign change.
+
+<PythonPlayground
+  title={"Bisection Method — IVT in Action"}
+  defaultCode={`import math
+
+def f(x):
+    """Find a root of this function using the IVT."""
+    return math.cos(x) - x
+
+# Initial interval [a, b] with a sign change
+a, b = 0.0, 2.0
+assert f(a) * f(b) < 0, "Need f(a) and f(b) to have opposite signs!"
+
+print("Bisection Method for cos(x) = x")
+print(f"{'Step':>4} {'a':>12} {'b':>12} {'mid':>12} {'f(mid)':>15} {'width':>12}")
+print("-" * 69)
+
+tol = 1e-12
+for step in range(1, 50):
+    mid = (a + b) / 2
+    f_mid = f(mid)
+    width = b - a
+    print(f"{step:>4} {a:>12.9f} {b:>12.9f} {mid:>12.9f} {f_mid:>15.2e} {width:>12.2e}")
+
+    if abs(f_mid) < tol or width < tol:
+        print(f"\\nConverged after {step} steps!")
+        print(f"Root: x ≈ {mid:.15f}")
+        print(f"Verification: cos({mid:.15f}) = {math.cos(mid):.15f}")
+        print(f"|cos(x) - x| = {abs(f_mid):.2e}")
+        break
+
+    if f(a) * f_mid < 0:
+        b = mid
+    else:
+        a = mid
+
+print()
+print("Each step halves the interval width.")
+print("After n steps, the error is at most (b-a)/2^n.")
+print("This is a direct computational application of the IVT!")
+`}
+/>
+
+## Summary: The Three Pillars
+
+The theorems from Lessons 9 and 10 form the three pillars of continuous functions:
+
+<Callout type="info">
+**The Three Pillars of Continuity on Compact Sets:**
+
+1. **Extreme Value Theorem** (Lesson 9): A continuous function on a compact set attains its maximum and minimum.
+2. **Uniform Continuity** (Lesson 9, Heine-Cantor): A continuous function on a compact set is uniformly continuous.
+3. **Intermediate Value Theorem** (Lesson 10): A continuous function on an interval takes all intermediate values.
+
+The first two require compactness (closed and bounded domain). The third requires connectedness (the domain is an interval). Together, they form the foundation for the Riemann integral, the Mean Value Theorem, and much of the subsequent theory.
+</Callout>

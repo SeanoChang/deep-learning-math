@@ -1,0 +1,76 @@
+import { notFound } from "next/navigation";
+import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { getLessonContent, getAdjacentLessons, getTopicLessons } from "@/lib/content";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { TableOfContents } from "@/components/layout/toc";
+import { LessonNav } from "@/components/layout/lesson-nav";
+import { Callout } from "@/components/mdx/callout";
+import { FunctionPlot } from "@/components/math/function-plot";
+import { Problem, Solution } from "@/components/exercise/problem";
+import { MultipleChoice } from "@/components/exercise/multiple-choice";
+import { NumericInput } from "@/components/exercise/numeric-input";
+import { PythonPlayground } from "@/components/playground/python-editor";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+const mdxComponents = {
+  Callout,
+  FunctionPlot,
+  Problem,
+  Solution,
+  MultipleChoice,
+  NumericInput,
+  PythonPlayground,
+};
+
+export async function generateStaticParams() {
+  const lessons = getTopicLessons("linear-algebra-1");
+  return lessons.map((l) => ({ slug: l.slug }));
+}
+
+export default async function LinearAlgebraOneLessonPage({ params }: PageProps) {
+  const { slug } = await params;
+  const lesson = getLessonContent("linear-algebra-1", slug);
+
+  if (!lesson) {
+    notFound();
+  }
+
+  const { content } = await compileMDX({
+    source: lesson.content,
+    components: mdxComponents,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeKatex as never],
+      },
+    },
+  });
+
+  const adjacent = getAdjacentLessons("linear-algebra-1", slug);
+
+  return (
+    <div className="flex gap-10">
+      <article className="prose flex-1 min-w-0">
+        <Breadcrumb
+          items={[
+            { label: "Linear Algebra I", href: "/linear-algebra-1" },
+            { label: lesson.meta.title },
+          ]}
+        />
+        <h1>{lesson.meta.title}</h1>
+        {lesson.meta.description && (
+          <p className="text-lg text-muted-foreground -mt-2">{lesson.meta.description}</p>
+        )}
+        {content}
+        <LessonNav topicId="linear-algebra-1" prev={adjacent.prev} next={adjacent.next} />
+      </article>
+      <TableOfContents />
+    </div>
+  );
+}

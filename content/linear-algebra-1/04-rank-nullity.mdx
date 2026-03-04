@@ -1,0 +1,266 @@
+---
+title: "Rank, Nullity, and the Structure of Linear Systems"
+description: "Column space, null space, rank, nullity, the Rank-Nullity Theorem, and applications to existence and uniqueness"
+order: 4
+prerequisites: ["03-independence-basis-dimension"]
+---
+
+## Rank and Nullity: Formal Definitions
+
+Having developed the concepts of basis and dimension, we can now give precise measures of the "size" of the column space and null space.
+
+<Callout type="definition" title="Rank and Nullity">
+  Let $A$ be an $m \times n$ matrix.
+  - The **rank** of $A$ is $\text{rank}(A) = \dim(\text{Col}(A))$, the number of pivot columns of $A$.
+  - The **nullity** of $A$ is $\text{nullity}(A) = \dim(\text{Nul}(A))$, the number of free variables in $A\mathbf{x} = \mathbf{0}$.
+</Callout>
+
+<Callout type="tip" title="Rank from RREF">
+  To compute $\text{rank}(A)$: row reduce $A$ and count pivot columns. To compute $\text{nullity}(A)$: count non-pivot columns (free variables). Note that $\text{rank}(A) + \text{nullity}(A) = n$ (the number of columns). This is not a coincidence -- it is the Rank-Nullity Theorem.
+</Callout>
+
+## The Column Space Revisited
+
+<Callout type="theorem" title="Pivot Columns of A Form a Basis for Col(A)">
+  The pivot columns of $A$ (the original columns of $A$ corresponding to pivot positions in the RREF) form a basis for $\text{Col}(A)$.
+</Callout>
+
+**Proof.** Let $A = [\mathbf{a}_1 \; \cdots \; \mathbf{a}_n]$ and let $R$ be the RREF of $A$. Suppose the pivot columns are at positions $j_1 < j_2 < \cdots < j_r$.
+
+**Spanning:** Any column $\mathbf{a}_k$ of $A$ can be written as a linear combination of the pivot columns. This follows from the RREF: in $R$, column $k$ is a specific linear combination of the pivot columns (columns $j_1, \ldots, j_r$ of $R$ are $\mathbf{e}_1, \ldots, \mathbf{e}_r$). Since row operations preserve linear dependency relations among columns, the same combination expresses $\mathbf{a}_k$ in terms of $\mathbf{a}_{j_1}, \ldots, \mathbf{a}_{j_r}$. Hence $\text{Col}(A) = \text{Span}\{\mathbf{a}_{j_1}, \ldots, \mathbf{a}_{j_r}\}$.
+
+**Independence:** Suppose $c_1\mathbf{a}_{j_1} + \cdots + c_r\mathbf{a}_{j_r} = \mathbf{0}$. The same relation holds in $R$: $c_1\mathbf{e}_1 + \cdots + c_r\mathbf{e}_r = \mathbf{0}$, which immediately gives $c_1 = \cdots = c_r = 0$. $\blacksquare$
+
+<Callout type="tip" title="Warning: Use Original Columns, Not RREF Columns">
+  The pivot columns **of the original matrix $A$** form a basis for $\text{Col}(A)$. The columns of the RREF are generally different vectors and span a different subspace (unless $A$ happens to already be in RREF). The RREF tells you *which* columns to pick, but you pick them from $A$.
+</Callout>
+
+## The Null Space Revisited
+
+<Callout type="theorem" title="Null Space Is a Subspace">
+  For any $m \times n$ matrix $A$, $\text{Nul}(A)$ is a subspace of $\mathbb{R}^n$.
+</Callout>
+
+We proved this in Lesson 2. The new insight from Lesson 3 is that we can compute a basis for $\text{Nul}(A)$ explicitly.
+
+**Algorithm:** Row reduce $[A \mid \mathbf{0}]$ to RREF. Express each basic variable in terms of the free variables. Set one free variable to $1$ and the rest to $0$, cycling through each free variable. The resulting vectors form a basis for $\text{Nul}(A)$.
+
+### Example
+
+Let $A = \begin{pmatrix} 1 & 3 & 5 & 7 \\ 2 & 6 & 10 & 14 \\ 0 & 1 & 2 & 3 \end{pmatrix}$.
+
+Row reducing:
+
+$$\begin{pmatrix} 1 & 3 & 5 & 7 \\ 2 & 6 & 10 & 14 \\ 0 & 1 & 2 & 3 \end{pmatrix} \to \begin{pmatrix} 1 & 3 & 5 & 7 \\ 0 & 0 & 0 & 0 \\ 0 & 1 & 2 & 3 \end{pmatrix} \to \begin{pmatrix} 1 & 0 & -1 & -2 \\ 0 & 1 & 2 & 3 \\ 0 & 0 & 0 & 0 \end{pmatrix}$$
+
+Pivots in columns 1, 2. Free variables: $x_3, x_4$.
+- $x_1 = x_3 + 2x_4$
+- $x_2 = -2x_3 - 3x_4$
+
+Setting $(x_3, x_4) = (1, 0)$: $\mathbf{v}_1 = (1, -2, 1, 0)^T$.
+
+Setting $(x_3, x_4) = (0, 1)$: $\mathbf{v}_2 = (2, -3, 0, 1)^T$.
+
+Basis for $\text{Nul}(A)$: $\{\mathbf{v}_1, \mathbf{v}_2\}$. Nullity $= 2$.
+
+## The Rank-Nullity Theorem
+
+<Callout type="theorem" title="Rank-Nullity Theorem (Dimension Theorem)">
+  If $A$ is an $m \times n$ matrix, then
+  $$\text{rank}(A) + \text{nullity}(A) = n.$$
+  Equivalently, $\dim(\text{Col}(A)) + \dim(\text{Nul}(A)) = n$.
+</Callout>
+
+**Proof.** Let $r = \text{rank}(A)$, which is the number of pivot columns. The remaining $n - r$ columns are non-pivot columns, each corresponding to a free variable. By the null space algorithm, the standard basis for $\text{Nul}(A)$ has exactly $n - r$ vectors (one for each free variable). Therefore $\text{nullity}(A) = n - r$, and
+
+$$\text{rank}(A) + \text{nullity}(A) = r + (n - r) = n. \quad \blacksquare$$
+
+This theorem is one of the most important results in linear algebra. It says that the $n$ columns of $A$ are partitioned into two roles: some contribute to the column space (the rank counts them), and the rest contribute to the null space (the nullity counts them). The total is always $n$.
+
+<Problem title="Theorem Application: Using Rank-Nullity">
+  Let $A$ be a $5 \times 8$ matrix with $\text{nullity}(A) = 3$. Determine $\text{rank}(A)$, the number of pivot positions, and whether $A\mathbf{x} = \mathbf{b}$ is consistent for every $\mathbf{b} \in \mathbb{R}^5$.
+<Solution>
+  By the Rank-Nullity Theorem: $\text{rank}(A) + 3 = 8$, so $\text{rank}(A) = 5$.
+  The number of pivot positions equals $\text{rank}(A) = 5$. Since $A$ has $5$ rows and $5$ pivots, every row contains a pivot.
+  When every row has a pivot, $A\mathbf{x} = \mathbf{b}$ is consistent for every $\mathbf{b} \in \mathbb{R}^5$, because the augmented matrix $[A \mid \mathbf{b}]$ can never produce a row of the form $(0 \; 0 \; \cdots \; 0 \mid c)$ with $c \neq 0$.
+  So yes, $A\mathbf{x} = \mathbf{b}$ is consistent for every $\mathbf{b} \in \mathbb{R}^5$.
+</Solution>
+</Problem>
+
+## Applications to Linear Systems
+
+The Rank-Nullity Theorem provides a powerful framework for understanding when linear systems have solutions and when those solutions are unique.
+
+<Callout type="theorem" title="Consistency and Uniqueness via Rank">
+  Let $A$ be an $m \times n$ matrix with $\text{rank}(A) = r$.
+  1. **Consistency for all $\mathbf{b}$:** $A\mathbf{x} = \mathbf{b}$ is consistent for every $\mathbf{b} \in \mathbb{R}^m$ if and only if $r = m$ (every row has a pivot, i.e., $\text{Col}(A) = \mathbb{R}^m$).
+  2. **Unique solutions:** When $A\mathbf{x} = \mathbf{b}$ is consistent, the solution is unique if and only if $r = n$ (every column is a pivot column, i.e., $\text{Nul}(A) = \{\mathbf{0}\}$).
+  3. **Invertible case:** If $m = n$, both conditions hold simultaneously ($r = m = n$) if and only if $A$ is invertible.
+</Callout>
+
+**Proof.** (1) $A\mathbf{x} = \mathbf{b}$ is consistent for all $\mathbf{b}$ iff $\text{Col}(A) = \mathbb{R}^m$ iff $\dim(\text{Col}(A)) = m$ iff $r = m$.
+
+(2) The general solution is $\mathbf{x}_p + \text{Nul}(A)$. This is a single point iff $\text{Nul}(A) = \{\mathbf{0}\}$ iff $\text{nullity}(A) = 0$ iff $r = n$.
+
+(3) If $m = n$, then $r = m = n$ combines both conditions. Such a matrix has $n$ pivots in $n$ rows and $n$ columns, so the RREF is $I_n$. The matrix is invertible with $A^{-1}$ obtainable via row reducing $[A \mid I_n]$. $\blacksquare$
+
+<MultipleChoice
+  question="Let $A$ be a $4 \\times 6$ matrix with $\\text\{rank\}(A) = 4$. Which statement is true?"
+  options={[
+    "$A\\mathbf\{x\} = \\mathbf\{b\}$ has a unique solution for every $\\mathbf\{b\}$",
+    "$A\\mathbf\{x\} = \\mathbf\{b\}$ is consistent for every $\\mathbf\{b\}$, with infinitely many solutions",
+    "$A\\mathbf\{x\} = \\mathbf\{0\}$ has only the trivial solution",
+    "$\\text\{Nul\}(A) = \\mathbb\{R\}^6$"
+  ]}
+  correctIndex={1}
+  explanation="$\\text\{rank\}(A) = 4 = m$, so every row has a pivot. This means $\\text\{Col\}(A) = \\mathbb\{R\}^4$, so the system is consistent for every $\\mathbf\{b\}$. But $\\text\{nullity\}(A) = 6 - 4 = 2 > 0$, so solutions are never unique."
+/>
+
+## Row Space and the Full Picture
+
+<Callout type="definition" title="Row Space">
+  The **row space** of $A$ is the span of the rows of $A$, viewed as vectors in $\mathbb{R}^n$:
+  $$\text{Row}(A) = \text{Col}(A^T) \subseteq \mathbb{R}^n.$$
+</Callout>
+
+<Callout type="theorem" title="Rank Equals Row Rank">
+  $\dim(\text{Row}(A)) = \dim(\text{Col}(A)) = \text{rank}(A)$.
+</Callout>
+
+**Proof.** Row operations do not change the row space (each new row is a linear combination of the old rows, and the operation is reversible). In RREF, the nonzero rows are precisely the $r$ rows containing pivots. These rows are linearly independent (each has a leading $1$ in a position where all other rows have $0$). Hence $\dim(\text{Row}(A)) = r = \text{rank}(A)$.
+
+Since $\text{Row}(A) = \text{Col}(A^T)$, we also have $\text{rank}(A^T) = \text{rank}(A)$. Row rank equals column rank. $\blacksquare$
+
+This means there are four fundamental subspaces associated to an $m \times n$ matrix $A$ of rank $r$:
+
+| Subspace | Ambient Space | Dimension |
+|----------|--------------|-----------|
+| $\text{Col}(A)$ | $\mathbb{R}^m$ | $r$ |
+| $\text{Nul}(A)$ | $\mathbb{R}^n$ | $n - r$ |
+| $\text{Row}(A)$ | $\mathbb{R}^n$ | $r$ |
+| $\text{Nul}(A^T)$ (left null space) | $\mathbb{R}^m$ | $m - r$ |
+
+<NumericInput
+  question="Let $A$ be a $6 \\times 9$ matrix with a 4-dimensional null space. What is the dimension of $\\text\{Row\}(A)$?"
+  answer={5}
+  tolerance={0}
+  explanation="By Rank-Nullity: $\\text\{rank\}(A) = 9 - 4 = 5$. Since $\\dim(\\text\{Row\}(A)) = \\text\{rank\}(A)$, the row space has dimension 5."
+/>
+
+## Rank-Nullity in Action with NumPy
+
+<PythonPlayground
+  title="Rank-Nullity Theorem Verification"
+  defaultCode={`import numpy as np
+from numpy.linalg import matrix_rank
+
+# Create a matrix and verify rank-nullity
+A = np.array([
+    [1, 2, 3, 4, 5],
+    [2, 4, 7, 8, 11],
+    [3, 6, 10, 12, 16],
+    [1, 2, 4, 4, 6]
+], dtype=float)
+
+m, n = A.shape
+r = matrix_rank(A)
+nullity = n - r
+
+print(f"Matrix A ({m} x {n}):")
+print(A)
+print(f"\nRank: {r}")
+print(f"Nullity: {nullity}")
+print(f"Rank + Nullity = {r} + {nullity} = {r + nullity} = n = {n}  ✓")
+print()
+
+# Row reduce to find pivot columns and null space
+R = A.copy()
+# Forward elimination
+R[1] -= 2*R[0]
+R[2] -= 3*R[0]
+R[3] -= R[0]
+print("After forward elimination on col 1:")
+print(R)
+print()
+
+R[2] -= R[1]
+R[3] -= R[1]
+print("After forward elimination on col 3:")
+print(R)
+print()
+
+# Check rank of transpose (row rank = column rank)
+print(f"rank(A) = {matrix_rank(A)}")
+print(f"rank(A^T) = {matrix_rank(A.T)}")
+print(f"Row rank equals column rank: {matrix_rank(A) == matrix_rank(A.T)}")
+print()
+
+# The four fundamental subspaces
+print("=== Four Fundamental Subspaces ===")
+print(f"dim(Col(A))  = {r}         (lives in R^{m})")
+print(f"dim(Nul(A))  = {nullity}         (lives in R^{n})")
+print(f"dim(Row(A))  = {matrix_rank(A.T)}         (lives in R^{n})")
+left_nullity = m - r
+print(f"dim(Nul(A^T))= {left_nullity}         (lives in R^{m})")
+print(f"\nDimension checks:")
+print(f"  Col(A) + Nul(A^T) = {r} + {left_nullity} = {r + left_nullity} = m = {m}")
+print(f"  Row(A) + Nul(A)   = {r} + {nullity} = {r + nullity} = n = {n}")`}
+/>
+
+<Problem title="Counterexample: Rank Does Not Determine the Matrix">
+  Give two different $2 \times 3$ matrices $A$ and $B$ with $\text{rank}(A) = \text{rank}(B) = 1$ but $\text{Col}(A) \neq \text{Col}(B)$ and $\text{Nul}(A) \neq \text{Nul}(B)$.
+<Solution>
+  Let $A = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ and $B = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \end{pmatrix}$.
+  Both have rank 1.
+  $\text{Col}(A) = \text{Span}\{(1, 0)^T\}$ (the $x_1$-axis in $\mathbb{R}^2$).
+  $\text{Col}(B) = \text{Span}\{(1, 0)^T\}$... wait, that is the same. Let me adjust.
+  Let $A = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ and $B = \begin{pmatrix} 0 & 0 & 0 \\ 1 & 0 & 0 \end{pmatrix}$.
+  $\text{Col}(A) = \text{Span}\{(1, 0)^T\}$ and $\text{Col}(B) = \text{Span}\{(0, 1)^T\}$. These are different subspaces of $\mathbb{R}^2$.
+  $\text{Nul}(A) = \{(0, s, t)^T : s, t \in \mathbb{R}\}$ (free variables $x_2, x_3$).
+  $\text{Nul}(B) = \{(0, s, t)^T : s, t \in \mathbb{R}\}$ (same). Hmm, same null space.
+  Let me use $B = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ instead.
+  $\text{Col}(B) = \text{Span}\{(1, 0)^T\}$. Still the same column space as $A$ (just generated by a different column).
+  OK, let me try $A = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}$ and $B = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}$.
+  $\text{Col}(A) = \text{Span}\{(1, 0)^T\}$ and $\text{Col}(B) = \text{Span}\{(0, 1)^T\}$, so $\text{Col}(A) \neq \text{Col}(B)$.
+  $\text{Nul}(A) = \{(0, s, t)^T\}$ and $\text{Nul}(B) = \{(s, 0, t)^T\}$, so $\text{Nul}(A) \neq \text{Nul}(B)$.
+  Both have rank 1 and nullity 2, but the actual subspaces are different. This shows that rank/nullity are *dimensions* -- they capture size but not geometric position.
+</Solution>
+</Problem>
+
+<Problem title="Definition Drill: Reading Off Rank from RREF">
+  The RREF of a matrix $A$ is
+  $$\begin{pmatrix} 1 & 0 & -2 & 0 & 3 \\ 0 & 1 & 1 & 0 & -1 \\ 0 & 0 & 0 & 1 & 2 \\ 0 & 0 & 0 & 0 & 0 \end{pmatrix}.$$
+  State $\text{rank}(A)$, $\text{nullity}(A)$, identify pivot and free variables, and write a basis for $\text{Nul}(A)$.
+<Solution>
+  **Rank:** There are 3 pivots (in columns 1, 2, 4), so $\text{rank}(A) = 3$.
+  **Nullity:** $A$ has 5 columns, so $\text{nullity}(A) = 5 - 3 = 2$.
+  **Variables:** Basic variables are $x_1, x_2, x_4$ (pivot columns). Free variables are $x_3$ and $x_5$.
+  **Null space basis:** From the RREF:
+  - $x_1 = 2x_3 - 3x_5$
+  - $x_2 = -x_3 + x_5$
+  - $x_4 = -2x_5$
+  Setting $(x_3, x_5) = (1, 0)$: $\mathbf{v}_1 = (2, -1, 1, 0, 0)^T$.
+  Setting $(x_3, x_5) = (0, 1)$: $\mathbf{v}_2 = (-3, 1, 0, -2, 1)^T$.
+  Basis for $\text{Nul}(A)$: $\{\mathbf{v}_1, \mathbf{v}_2\}$.
+</Solution>
+</Problem>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+  Let $T : \mathbb{R}^n \to \mathbb{R}^m$ be defined by $T(\mathbf{x}) = A\mathbf{x}$ for a matrix $A$. Express $\text{Col}(A)$ as the image (range) of $T$ and $\text{Nul}(A)$ as the kernel of $T$. Prove from scratch that the kernel of any linear map is a subspace.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+  Let $A$ be an $n \times n$ matrix. Prove that the following are equivalent:
+  (i) $A$ is invertible.
+  (ii) $\text{rank}(A) = n$.
+  (iii) $\text{Nul}(A) = \{\mathbf{0}\}$.
+  (iv) The columns of $A$ form a basis for $\mathbb{R}^n$.
+  (v) $A\mathbf{x} = \mathbf{b}$ has a unique solution for every $\mathbf{b} \in \mathbb{R}^n$.
+  State clearly how the Rank-Nullity Theorem is used.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+  Give an example of a $3 \times 3$ matrix $A$ with $\text{rank}(A) = 2$ such that $\text{Col}(A) = \text{Row}(A)$ (as subsets of $\mathbb{R}^3$). Then give another rank-$2$ matrix $B$ where $\text{Col}(B) \neq \text{Row}(B)$.
+</Problem>

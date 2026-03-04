@@ -1,0 +1,238 @@
+---
+title: "Spectral Theorem: Real and Complex Cases"
+description: "Self-adjoint, skew-adjoint, and normal operators; orthogonal and unitary diagonalization; the Real and Complex Spectral Theorems"
+order: 11
+prerequisites: ["10-sylvesters-law"]
+---
+
+# The Spectral Theorem
+
+The Spectral Theorem is one of the crown jewels of linear algebra. It tells us exactly which operators can be diagonalized with respect to an orthonormal basis, and it provides the theoretical foundation for the Singular Value Decomposition, least squares, quantum mechanics, and spectral methods across applied mathematics.
+
+## Self-Adjoint Operators
+
+Throughout this lesson, $V$ denotes a finite-dimensional inner product space over $\mathbb{F}$, where $\mathbb{F} = \mathbb{R}$ or $\mathbb{F} = \mathbb{C}$.
+
+<Callout type="definition" title="Adjoint of an Operator">
+  Let $T : V \to V$ be a linear operator on a finite-dimensional inner product space. The **adjoint** of $T$, denoted $T^*$, is the unique operator satisfying
+  $$\langle Tv, w \rangle = \langle v, T^* w \rangle \quad \text{for all } v, w \in V.$$
+  In matrix form with respect to an orthonormal basis: if $T$ has matrix $A$, then $T^*$ has matrix $\bar{A}^T = A^*$ (conjugate transpose).
+</Callout>
+
+<Callout type="definition" title="Self-Adjoint (Hermitian/Symmetric) Operator">
+  An operator $T \in \mathcal{L}(V)$ is **self-adjoint** if $T = T^*$, i.e.,
+  $$\langle Tv, w \rangle = \langle v, Tw \rangle \quad \text{for all } v, w \in V.$$
+  When $\mathbb{F} = \mathbb{R}$, the matrix of $T$ in an orthonormal basis is **symmetric** ($A = A^T$). When $\mathbb{F} = \mathbb{C}$, it is **Hermitian** ($A = A^*$).
+</Callout>
+
+<Callout type="definition" title="Normal Operator">
+  An operator $T \in \mathcal{L}(V)$ is **normal** if it commutes with its adjoint:
+  $$TT^* = T^*T.$$
+  Every self-adjoint operator is normal, but the converse is false. Skew-adjoint ($T^* = -T$) and unitary ($T^*T = I$) operators are also normal.
+</Callout>
+
+## Eigenvalues of Self-Adjoint Operators Are Real
+
+<Callout type="theorem" title="Real Eigenvalues">
+  Let $T$ be a self-adjoint operator on $V$ (over $\mathbb{R}$ or $\mathbb{C}$). Then every eigenvalue of $T$ is real.
+</Callout>
+
+**Proof.** Let $\lambda$ be an eigenvalue of $T$ with eigenvector $v \neq 0$. Then:
+
+$$\lambda \langle v, v \rangle = \langle \lambda v, v \rangle = \langle Tv, v \rangle = \langle v, T^*v \rangle = \langle v, Tv \rangle = \langle v, \lambda v \rangle = \bar{\lambda} \langle v, v \rangle.$$
+
+Since $v \neq 0$, we have $\langle v, v \rangle > 0$. Dividing both sides gives $\lambda = \bar{\lambda}$, so $\lambda \in \mathbb{R}$. $\blacksquare$
+
+<Callout type="tip" title="Why This Matters">
+  This result is what makes self-adjoint operators so well-behaved: we never encounter complex eigenvalues when working with symmetric real matrices or Hermitian complex matrices. In quantum mechanics, this corresponds to the fact that observable quantities (represented by Hermitian operators) always yield real measurement values.
+</Callout>
+
+## Orthogonality of Eigenvectors
+
+<Callout type="theorem" title="Eigenvectors for Distinct Eigenvalues Are Orthogonal">
+  Let $T$ be a self-adjoint operator. If $Tv = \lambda v$ and $Tw = \mu w$ with $\lambda \neq \mu$, then $\langle v, w \rangle = 0$.
+</Callout>
+
+**Proof.** Compute:
+
+$$\lambda \langle v, w \rangle = \langle Tv, w \rangle = \langle v, T^*w \rangle = \langle v, Tw \rangle = \mu \langle v, w \rangle,$$
+
+where the last equality uses the fact that $\mu$ is real (so $\bar{\mu} = \mu$). Thus $(\lambda - \mu)\langle v, w \rangle = 0$. Since $\lambda \neq \mu$, we conclude $\langle v, w \rangle = 0$. $\blacksquare$
+
+This is a remarkably clean result: we do not need to apply Gram-Schmidt. The eigenvectors of a self-adjoint operator come pre-packaged as orthogonal.
+
+## The Real Spectral Theorem
+
+<Callout type="theorem" title="Real Spectral Theorem">
+  Let $V$ be a finite-dimensional **real** inner product space and $T \in \mathcal{L}(V)$ self-adjoint. Then there exists an orthonormal basis of $V$ consisting of eigenvectors of $T$.
+  Equivalently: every real symmetric matrix $A$ is **orthogonally diagonalizable**, i.e., there exists an orthogonal matrix $Q$ (with $Q^T Q = I$) such that
+  $$A = Q \Lambda Q^T$$
+  where $\Lambda = \operatorname{diag}(\lambda_1, \ldots, \lambda_n)$ with all $\lambda_i \in \mathbb{R}$.
+</Callout>
+
+**Proof (by induction on $\dim V$).**
+
+*Base case:* $\dim V = 1$. Any operator on a one-dimensional space is multiplication by a scalar, so the single basis vector is an eigenvector.
+
+*Inductive step:* Assume the theorem holds for all real inner product spaces of dimension less than $n$, and let $\dim V = n$.
+
+**Step 1 (Existence of a real eigenvalue).** The characteristic polynomial $p(\lambda) = \det(A - \lambda I)$ has degree $n$ with real coefficients. Over $\mathbb{C}$, it has a root $\lambda_0$. But we proved that every eigenvalue of a self-adjoint operator is real, so $\lambda_0 \in \mathbb{R}$.
+
+**Step 2 (Invariance of the orthogonal complement).** Let $v_1$ be a unit eigenvector for $\lambda_0$. Define $W = \operatorname{span}(v_1)^{\perp}$. We claim $T(W) \subseteq W$. For any $w \in W$:
+
+$$\langle Tw, v_1 \rangle = \langle w, T^*v_1 \rangle = \langle w, Tv_1 \rangle = \langle w, \lambda_0 v_1 \rangle = \lambda_0 \langle w, v_1 \rangle = 0.$$
+
+So $Tw \in W$.
+
+**Step 3 (Apply induction).** The restriction $T|_W : W \to W$ is self-adjoint on the $(n-1)$-dimensional inner product space $W$. By the inductive hypothesis, $W$ has an orthonormal basis $\{v_2, \ldots, v_n\}$ of eigenvectors of $T|_W$. Then $\{v_1, v_2, \ldots, v_n\}$ is an orthonormal basis of $V$ consisting of eigenvectors of $T$. $\blacksquare$
+
+<Callout type="tip" title="The Architecture of the Proof">
+  The proof rests on three pillars:
+  1. **Eigenvalues are real** -- guarantees we have real eigenvalues to work with.
+  2. **Orthogonal complement is invariant** -- the self-adjoint condition is essential here; a general operator does not preserve $W$.
+  3. **Induction** -- reduces dimension by 1 each step.
+  The invariance of $W$ is the heart of the argument. Without self-adjointness, Step 2 fails completely.
+</Callout>
+
+## The Complex Spectral Theorem
+
+Over $\mathbb{C}$, the class of unitarily diagonalizable operators is strictly larger: it consists of all normal operators.
+
+<Callout type="theorem" title="Complex Spectral Theorem">
+  Let $V$ be a finite-dimensional **complex** inner product space and $T \in \mathcal{L}(V)$. Then $T$ is unitarily diagonalizable (i.e., there exists an orthonormal basis of eigenvectors) **if and only if** $T$ is normal ($TT^* = T^*T$).
+  In matrix form: a complex matrix $A$ is unitarily diagonalizable ($A = U\Lambda U^*$ with $U^*U = I$) if and only if $AA^* = A^*A$.
+</Callout>
+
+**Proof sketch ($\Leftarrow$).** Suppose $T$ is normal.
+
+**Key lemma:** If $T$ is normal, then $\|Tv\| = \|T^*v\|$ for all $v$, which implies $\ker T = \ker T^*$.
+
+*Proof of lemma:* $\|Tv\|^2 = \langle Tv, Tv \rangle = \langle T^*Tv, v \rangle = \langle TT^*v, v \rangle = \langle T^*v, T^*v \rangle = \|T^*v\|^2$.
+
+**Step 1.** Over $\mathbb{C}$, $T$ has at least one eigenvalue $\lambda$ (fundamental theorem of algebra). Let $v_1$ be a unit eigenvector.
+
+**Step 2.** $W = \operatorname{span}(v_1)^{\perp}$ is $T$-invariant. For $w \in W$:
+
+$$\langle Tw, v_1 \rangle = \langle w, T^*v_1 \rangle = \langle w, \bar{\lambda} v_1 \rangle = \lambda \langle w, v_1 \rangle = 0,$$
+
+where $T^*v_1 = \bar{\lambda}v_1$ because $(T - \lambda I)v_1 = 0$ implies $(T^* - \bar{\lambda}I)v_1 = 0$ by normality.
+
+**Step 3.** $T|_W$ is normal (verify: $(T|_W)(T|_W)^* = (T|_W)^*(T|_W)$). Induction gives an orthonormal eigenbasis of $W$. Combining with $v_1$ yields the result. $\blacksquare$
+
+## Skew-Adjoint and Unitary Operators
+
+<Callout type="definition" title="Skew-Adjoint Operator">
+  $T$ is **skew-adjoint** (or **anti-Hermitian**) if $T^* = -T$. Equivalently, $\langle Tv, w \rangle = -\langle v, Tw \rangle$ for all $v, w$.
+  The eigenvalues of a skew-adjoint operator are purely imaginary (or zero).
+</Callout>
+
+**Proof that eigenvalues are purely imaginary.** If $Tv = \lambda v$ with $v \neq 0$:
+
+$$\lambda \langle v, v \rangle = \langle Tv, v \rangle = -\langle v, Tv \rangle = -\bar{\lambda}\langle v, v \rangle.$$
+
+So $\lambda = -\bar{\lambda}$, which means $\operatorname{Re}(\lambda) = 0$. $\blacksquare$
+
+<Callout type="definition" title="Unitary / Orthogonal Operator">
+  $T$ is **unitary** (over $\mathbb{C}$) or **orthogonal** (over $\mathbb{R}$) if $T^*T = TT^* = I$, i.e., $T^* = T^{-1}$.
+  The eigenvalues of a unitary operator have absolute value 1, i.e., $|\lambda| = 1$.
+</Callout>
+
+## Orthonormal Eigenbasis: The Spectral Decomposition
+
+Given the Spectral Theorem, if $T$ is self-adjoint with eigenvalues $\lambda_1, \ldots, \lambda_k$ (distinct) and corresponding eigenspaces $E_{\lambda_1}, \ldots, E_{\lambda_k}$, then:
+
+$$V = E_{\lambda_1} \oplus E_{\lambda_2} \oplus \cdots \oplus E_{\lambda_k}$$
+
+and these eigenspaces are mutually orthogonal. The operator can be written as:
+
+$$T = \lambda_1 P_1 + \lambda_2 P_2 + \cdots + \lambda_k P_k$$
+
+where $P_i$ is the orthogonal projection onto $E_{\lambda_i}$. This is the **spectral decomposition** of $T$.
+
+---
+
+## Exercises
+
+<Problem title="Prove: Eigenvalues of a Skew-Adjoint Operator">
+  Let $T$ be an operator on a complex inner product space with $T^* = -T$. Prove that every eigenvalue of $T$ is purely imaginary (i.e., its real part is zero).
+<Solution>
+  **Proof.** Suppose $Tv = \lambda v$ for some $v \neq 0$. Then:
+  $$\lambda \langle v, v \rangle = \langle Tv, v \rangle = \langle v, T^*v \rangle = \langle v, -Tv \rangle = -\bar{\lambda}\langle v, v \rangle.$$
+  Since $\langle v, v \rangle > 0$, we divide to obtain $\lambda = -\bar{\lambda}$. Writing $\lambda = a + bi$:
+  $$a + bi = -(a - bi) = -a + bi.$$
+  Comparing real parts: $a = -a$, so $a = 0$. Therefore $\lambda = bi$ is purely imaginary. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Orthogonal Complement Invariance">
+  Let $A$ be a real symmetric matrix with eigenvector $v$ for eigenvalue $\lambda$. Show that if $w \perp v$, then $Aw \perp v$. Explain why this is the crux of the Real Spectral Theorem's inductive proof.
+<Solution>
+  **Proof.** We compute:
+  $$\langle Aw, v \rangle = \langle w, A^T v \rangle = \langle w, Av \rangle = \langle w, \lambda v \rangle = \lambda \langle w, v \rangle = 0,$$
+  since $A = A^T$ (symmetric) and $w \perp v$. Therefore $Aw \perp v$.
+  This is the crux of the inductive proof because it shows that $W = \{v\}^{\perp}$ is an $A$-invariant subspace. The restriction $A|_W$ is still symmetric (since $A$ is), and $\dim W = n - 1$. By induction, $W$ has an orthonormal eigenbasis. Combined with $v/\|v\|$, this gives an orthonormal eigenbasis for $\mathbb{R}^n$. Without invariance of $W$, the induction cannot proceed. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which of the following operators is guaranteed to be unitarily diagonalizable over $\mathbb{C}$?"
+  options={[
+    "Any invertible operator",
+    "Any normal operator ($TT^* = T^*T$)",
+    "Any operator with distinct eigenvalues",
+    "Any upper triangular operator"
+  ]}
+  correctIndex={1}
+  explanation="The Complex Spectral Theorem states that an operator on a complex inner product space is unitarily diagonalizable if and only if it is normal. The other conditions are either insufficient or unrelated to unitary diagonalizability."
+/>
+
+<NumericInput
+  question="The real symmetric matrix $A = \begin{pmatrix} 2 & 1 \\\\ 1 & 2 \end{pmatrix}$ has eigenvalues $\lambda_1 < \lambda_2$. What is $\lambda_1 + \lambda_2$?"
+  answer={4}
+  tolerance={0.01}
+  explanation="The trace $\text{tr}(A) = 2 + 2 = 4$ equals the sum of eigenvalues. (In fact $\lambda_1 = 1$ and $\lambda_2 = 3$.)"
+/>
+
+<PythonPlayground
+  title="Spectral Theorem Verification"
+  initialCode={`import numpy as np
+np.set_printoptions(precision=4, suppress=True)
+
+# Create a random real symmetric matrix
+n = 4
+B = np.random.randn(n, n)
+A = (B + B.T) / 2  # Symmetrize
+print("Symmetric matrix A:")
+print(A)
+print()
+
+# Eigendecomposition
+eigenvalues, Q = np.linalg.eigh(A)
+print("Eigenvalues (all real):", eigenvalues)
+print()
+
+# Verify Q is orthogonal
+print("Q^T Q (should be I):")
+print(Q.T @ Q)
+print()
+
+# Verify A = Q Lambda Q^T
+Lambda = np.diag(eigenvalues)
+A_reconstructed = Q @ Lambda @ Q.T
+print("Reconstruction error ||A - Q Lambda Q^T||:")
+print(np.linalg.norm(A - A_reconstructed))
+print()
+
+# Spectral decomposition: A = sum lambda_i * P_i
+print("Spectral decomposition check:")
+A_spectral = sum(eigenvalues[i] * np.outer(Q[:, i], Q[:, i]) for i in range(n))
+print("||A - sum(lambda_i * P_i)||:", np.linalg.norm(A - A_spectral))
+
+# Now try a normal (non-Hermitian) complex matrix
+print("\\n--- Complex Spectral Theorem ---")
+C = np.random.randn(3, 3) + 1j * np.random.randn(3, 3)
+C_normal = (C + C.conj().T) / 2  # Hermitian (a special normal)
+evals, U = np.linalg.eigh(C_normal)
+print("Hermitian eigenvalues (all real):", evals)
+print("||U*U - I||:", np.linalg.norm(U.conj().T @ U - np.eye(3)))`}
+/>

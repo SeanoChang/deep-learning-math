@@ -1,0 +1,293 @@
+---
+title: "Ratio/Root/Alternating; Absolute vs Conditional Convergence"
+description: "Advanced convergence tests and the critical distinction between absolute and conditional convergence"
+order: 11
+prerequisites: ["10-comparison-convergence-tests"]
+---
+
+# Ratio, Root, and Alternating Series Tests
+
+Having established the comparison tests, we now develop three powerful convergence tests that handle a broader class of series. More importantly, we confront the subtle distinction between absolute and conditional convergence -- a distinction that reveals how fragile some infinite sums truly are.
+
+## The Ratio Test
+
+The idea is simple: if consecutive terms eventually shrink by a fixed ratio less than 1, the series is eventually dominated by a geometric series.
+
+<Callout type="theorem">
+**Theorem 11.1 (Ratio Test).** Let $\sum a_n$ be a series with $a_n \neq 0$ for all sufficiently large $n$. Define
+
+$$L = \lim_{n \to \infty} \left| \frac{a_{n+1}}{a_n} \right|$$
+
+if the limit exists (or equals $+\infty$). Then:
+
+1. If $L < 1$, the series $\sum a_n$ converges absolutely.
+2. If $L > 1$ (including $L = +\infty$), the series $\sum a_n$ diverges.
+3. If $L = 1$, the test is inconclusive.
+</Callout>
+
+*Proof of (1).* Suppose $L < 1$. Choose $r$ with $L < r < 1$. Since $|a_{n+1}/a_n| \to L$, there exists $N$ such that $|a_{n+1}/a_n| < r$ for all $n \geq N$. Then for $n \geq N$:
+
+$$|a_{n+1}| < r|a_n| < r^2|a_{n-1}| < \cdots < r^{n+1-N}|a_N|.$$
+
+Thus for $k \geq 0$, $|a_{N+k}| < |a_N| \cdot r^k$. Since $\sum_{k=0}^{\infty} |a_N| r^k = |a_N| / (1 - r) < \infty$ (a convergent geometric series with ratio $r < 1$), the comparison test gives $\sum |a_n| < \infty$.
+
+*Proof of (2).* If $L > 1$, then $|a_{n+1}| > |a_n|$ for all sufficiently large $n$, so $|a_n| \not\to 0$, hence $a_n \not\to 0$ and the series diverges by the divergence test.
+
+*Proof of (3).* Both $\sum 1/n$ (diverges) and $\sum 1/n^2$ (converges) have $L = 1$. $\square$
+
+<Callout type="tip">
+**When to use the Ratio Test.** The ratio test excels when terms involve factorials, exponentials, or products. For purely polynomial terms like $1/n^p$, it always yields $L = 1$ and is useless -- use the $p$-test or comparison instead.
+</Callout>
+
+## The Root Test
+
+<Callout type="theorem">
+**Theorem 11.2 (Root Test / Cauchy's Test).** Let $\sum a_n$ be a series and define
+
+$$L = \limsup_{n \to \infty} |a_n|^{1/n}.$$
+
+Then:
+
+1. If $L < 1$, the series converges absolutely.
+2. If $L > 1$, the series diverges.
+3. If $L = 1$, the test is inconclusive.
+</Callout>
+
+*Proof of (1).* If $L < 1$, choose $r$ with $L < r < 1$. By definition of $\limsup$, there exists $N$ such that $|a_n|^{1/n} < r$ for all $n \geq N$. Thus $|a_n| < r^n$ for $n \geq N$, and $\sum r^n$ converges since $r < 1$. By comparison, $\sum |a_n|$ converges. $\square$
+
+<Callout type="info">
+**Remark.** The root test is at least as powerful as the ratio test: whenever the ratio test gives a conclusive answer, so does the root test (with the same conclusion). The converse is false. This is because $\liminf |a_{n+1}/a_n| \leq \liminf |a_n|^{1/n} \leq \limsup |a_n|^{1/n} \leq \limsup |a_{n+1}/a_n|$.
+</Callout>
+
+## The Alternating Series Test
+
+<Callout type="theorem">
+**Theorem 11.3 (Leibniz Alternating Series Test).** Let $(b_n)$ be a sequence of positive real numbers such that:
+
+1. $(b_n)$ is (eventually) decreasing: $b_{n+1} \leq b_n$ for all sufficiently large $n$,
+2. $b_n \to 0$.
+
+Then the alternating series $\sum_{n=1}^{\infty} (-1)^{n+1} b_n = b_1 - b_2 + b_3 - b_4 + \cdots$ converges.
+</Callout>
+
+*Proof.* Consider the partial sums $S_n = \sum_{k=1}^{n} (-1)^{k+1} b_k$. We show the even partial sums increase and the odd partial sums decrease:
+
+$$S_{2n+2} = S_{2n} + (b_{2n+1} - b_{2n+2}) \geq S_{2n}$$
+
+since $b_{2n+1} \geq b_{2n+2}$. Similarly, $S_{2n+1} = S_{2n-1} - (b_{2n} - b_{2n+1}) \leq S_{2n-1}$. Also, $S_{2n} = S_{2n+1} - b_{2n+1} \leq S_{2n+1}$, so every even partial sum is below every odd partial sum.
+
+The even partial sums form a bounded increasing sequence, so $S_{2n} \to S$ for some $S$. Then $S_{2n+1} = S_{2n} + b_{2n+1} \to S + 0 = S$. Since both subsequences converge to $S$, we have $S_n \to S$. $\square$
+
+<FunctionPlot
+  fn={"Math.pow(-1, Math.floor(x)+1) / x"}
+  title={"Terms of the alternating harmonic series (-1)^(n+1)/n"}
+  domain={[0.5, 25]}
+  range={[-1.2, 1.2]}
+/>
+
+## Absolute vs Conditional Convergence
+
+This is one of the most important distinctions in analysis.
+
+<Callout type="definition">
+**Definition 11.4.** A series $\sum a_n$ converges **absolutely** if $\sum |a_n|$ converges. It converges **conditionally** if $\sum a_n$ converges but $\sum |a_n|$ diverges.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 11.5.** If $\sum a_n$ converges absolutely, then $\sum a_n$ converges. That is, absolute convergence implies convergence.
+</Callout>
+
+*Proof.* Define $a_n^+ = \max(a_n, 0)$ and $a_n^- = \max(-a_n, 0)$, so that $a_n = a_n^+ - a_n^-$ and $|a_n| = a_n^+ + a_n^-$. Since $0 \leq a_n^+ \leq |a_n|$ and $0 \leq a_n^- \leq |a_n|$, the comparison test gives that $\sum a_n^+$ and $\sum a_n^-$ both converge. By the algebra of series, $\sum a_n = \sum a_n^+ - \sum a_n^-$ converges. $\square$
+
+<Callout type="warning">
+**The converse is false!** The alternating harmonic series $\sum (-1)^{n+1}/n$ converges (by the AST) but not absolutely (since $\sum 1/n$ diverges). This is the prototypical conditionally convergent series.
+</Callout>
+
+## Rearrangement and the Riemann Rearrangement Theorem
+
+Here is why the distinction matters profoundly.
+
+<Callout type="theorem">
+**Theorem 11.6 (Riemann Rearrangement Theorem).** Let $\sum a_n$ be a conditionally convergent series. Then for any $L \in \mathbb{R}$ (or $L = \pm \infty$), there exists a rearrangement of the series that converges to $L$.
+</Callout>
+
+<Callout type="info">
+**Remark.** The proof idea is remarkable: since $\sum a_n^+$ and $\sum a_n^-$ both diverge (while $a_n^+ \to 0$ and $a_n^- \to 0$), we can "steer" partial sums to any target by alternately adding positive terms until we overshoot, then negative terms until we undershoot.
+</Callout>
+
+In contrast, absolutely convergent series are robust:
+
+<Callout type="theorem">
+**Theorem 11.7.** If $\sum a_n$ converges absolutely to $S$, then every rearrangement of $\sum a_n$ also converges to $S$.
+</Callout>
+
+This theorem justifies why absolute convergence is the "safe" form of convergence: the sum is independent of the order of summation.
+
+## Exercises
+
+<Problem>
+**Exercise 11.1.** Prove the Ratio Test (part 1) in detail: if $\lim_{n \to \infty} |a_{n+1}/a_n| = L < 1$, then $\sum a_n$ converges absolutely. Fill in every step, explicitly identifying where the comparison test and geometric series formula are used.
+</Problem>
+
+<Solution>
+*Proof.* Let $L < 1$ and choose $r$ such that $L < r < 1$ (possible since $L < 1$). Since $|a_{n+1}/a_n| \to L$, there exists $N \in \mathbb{N}$ such that
+
+$$\left|\frac{a_{n+1}}{a_n}\right| < r \quad \text{for all } n \geq N.$$
+
+We claim $|a_{N+k}| \leq |a_N| \cdot r^k$ for all $k \geq 0$. By induction: the base case $k = 0$ is trivial. If $|a_{N+k}| \leq |a_N| r^k$, then
+
+$$|a_{N+k+1}| = \left|\frac{a_{N+k+1}}{a_{N+k}}\right| \cdot |a_{N+k}| < r \cdot |a_N| r^k = |a_N| r^{k+1}.$$
+
+Now $\sum_{k=0}^{\infty} |a_N| r^k = \frac{|a_N|}{1 - r} < \infty$ is a convergent geometric series (since $0 < r < 1$). By the comparison test, $\sum_{n=N}^{\infty} |a_n|$ converges. Adding finitely many terms $|a_1| + \cdots + |a_{N-1}|$ preserves convergence, so $\sum_{n=1}^{\infty} |a_n|$ converges. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Which of the following series converges conditionally (but not absolutely)?"}
+  options={[
+    "The sum of 1/n^2",
+    "The sum of (-1)^n / n",
+    "The sum of (-1)^n / n^2",
+    "The sum of 1/n"
+  ]}
+  correctIndex={1}
+  explanation={"The series sum((-1)^n/n) converges by the Alternating Series Test (since 1/n decreases to 0), but sum(1/n) diverges, so the convergence is conditional. The series sum((-1)^n/n^2) converges absolutely since sum(1/n^2) converges. The series sum(1/n) and sum(1/n^2) are not alternating."}
+/>
+
+<NumericInput
+  question={"Apply the ratio test to the series sum(n! / n^n). Compute the limit L = lim |a_{n+1}/a_n| to 4 decimal places. (Hint: use (n/(n+1))^n -> 1/e.)"}
+  answer={0.3679}
+  tolerance={0.01}
+  hint={"We have a_{n+1}/a_n = (n+1)!/(n+1)^(n+1) * n^n/n! = n^n/(n+1)^n = (n/(n+1))^n -> 1/e approximately 0.3679."}
+/>
+
+<Problem>
+**Exercise 11.2.** Prove that the alternating series $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ converges conditionally. Specifically: (a) show it converges using the AST, and (b) show it does not converge absolutely.
+</Problem>
+
+<Solution>
+*Proof.* (a) Let $b_n = 1/n$. Then $b_n > 0$, $b_{n+1} = 1/(n+1) < 1/n = b_n$ (decreasing), and $b_n \to 0$. By the Leibniz AST, $\sum (-1)^{n+1}/n$ converges.
+
+(b) The absolute value series is $\sum |(-1)^{n+1}/n| = \sum 1/n$, the harmonic series, which diverges (by the $p$-test with $p = 1$ or by comparison with the integral $\int_1^\infty 1/x\, dx = \infty$).
+
+Since the series converges but not absolutely, it converges conditionally. $\square$
+</Solution>
+
+<Problem>
+**Exercise 11.3 (Counterexample).** Demonstrate the Riemann Rearrangement Theorem concretely. The alternating harmonic series $\sum_{n=1}^{\infty} (-1)^{n+1}/n = \ln 2 \approx 0.6931$. Construct a specific rearrangement that converges to $3\ln 2 / 2 \approx 1.0397$ by using the pattern: take two positive terms, then one negative term, repeating.
+
+Specifically, consider the rearrangement:
+
+$$1 + \frac{1}{3} - \frac{1}{2} + \frac{1}{5} + \frac{1}{7} - \frac{1}{4} + \frac{1}{9} + \frac{1}{11} - \frac{1}{6} + \cdots$$
+
+Prove that the partial sums of this rearrangement converge to $\frac{3}{2}\ln 2$.
+
+*Hint:* Group the terms in blocks of three: $(a_{2k+1} + a_{2k+3} - a_{2k+2})$ and relate the partial sums of the rearrangement to the original partial sums.
+</Problem>
+
+<Solution>
+*Proof.* Let $H_n = \sum_{k=1}^n 1/k$ denote the $n$-th harmonic number. The partial sum of the original alternating harmonic series is $S_n = \sum_{k=1}^n (-1)^{k+1}/k$.
+
+Consider the rearranged partial sum after $3m$ terms (taking $m$ groups of "two positive, one negative"):
+
+$$R_{3m} = \sum_{j=0}^{m-1}\left(\frac{1}{2j+1} + \frac{1}{2j+3} - \frac{1}{2(j+1)}\right).$$
+
+The positive terms used are $1, 1/3, 1/5, \ldots, 1/(2m-1)$, and the negative terms are $1/2, 1/4, \ldots, 1/(2m)$. We can rewrite:
+
+$$R_{3m} = \sum_{k=1}^{2m} \frac{1}{2k-1} \text{ (first } 2m \text{ odd reciprocals}) - \sum_{k=1}^{m} \frac{1}{2k} \text{ (first } m \text{ even reciprocals)}.$$
+
+Wait -- let's be more careful. After $m$ groups, we've used odd terms $1/(2k-1)$ for $k = 1, \ldots, 2m$ and even terms $1/(2k)$ for $k = 1, \ldots, m$... Actually, let's track directly.
+
+Group $j$ (for $j = 0, 1, \ldots, m-1$) contributes odd terms $\frac{1}{2(2j)+1}$ and $\frac{1}{2(2j+1)+1}$ minus $\frac{1}{2(j+1)}$. After $m$ groups, we have used the first $2m$ positive (odd) terms: $1, 1/3, 1/5, \ldots, 1/(4m-1)$, and the first $m$ negative terms: $1/2, 1/4, \ldots, 1/(2m)$.
+
+$$R_{3m} = \sum_{k=1}^{2m} \frac{1}{2k-1} - \sum_{k=1}^{m} \frac{1}{2k}.$$
+
+Now $\sum_{k=1}^{2m} \frac{1}{2k-1} = H_{4m} - \frac{1}{2}H_{2m}$ (since odd reciprocals $= H_{4m}$ minus even reciprocals up to $4m$, and even reciprocals up to $4m$ $= \frac{1}{2}H_{2m}$). And $\sum_{k=1}^{m}\frac{1}{2k} = \frac{1}{2}H_m$.
+
+So $R_{3m} = H_{4m} - \frac{1}{2}H_{2m} - \frac{1}{2}H_m$.
+
+Using $H_n = \ln n + \gamma + o(1)$ (where $\gamma$ is the Euler-Mascheroni constant):
+
+$$R_{3m} = (\ln 4m + \gamma) - \frac{1}{2}(\ln 2m + \gamma) - \frac{1}{2}(\ln m + \gamma) + o(1)$$
+$$= \ln 4m - \frac{1}{2}\ln 2m - \frac{1}{2}\ln m + o(1)$$
+$$= \ln 4m - \frac{1}{2}\ln(2m^2) + o(1) = \ln\frac{4m}{\sqrt{2m^2}} + o(1) = \ln\frac{4m}{m\sqrt{2}} + o(1) = \ln\frac{4}{\sqrt{2}} + o(1) = \ln(2\sqrt{2}) + o(1).$$
+
+We have $\ln(2\sqrt{2}) = \ln 2 + \frac{1}{2}\ln 2 = \frac{3}{2}\ln 2$.
+
+Therefore $R_{3m} \to \frac{3}{2}\ln 2 \approx 1.0397$, which is strictly larger than $\ln 2$. The same terms, in a different order, converge to a different sum. This is the Riemann Rearrangement Theorem in action. $\square$
+</Solution>
+
+## Exploring Rearrangements
+
+The following playground demonstrates the Riemann Rearrangement Theorem: by reordering the alternating harmonic series, we can make it converge to any target.
+
+<PythonPlayground
+  title={"Rearranging the Alternating Harmonic Series"}
+  defaultCode={`# The alternating harmonic series sum((-1)^(n+1)/n) converges to ln(2).
+# But a rearrangement can converge to ANY value!
+# Strategy: add positive terms until we exceed target, then
+# negative terms until we go below, and repeat.
+
+import math
+
+target = 1.5  # Try changing this! Any real number works.
+num_terms = 5000
+
+# Generate positive terms: 1, 1/3, 1/5, 1/7, ...
+# Generate negative terms: -1/2, -1/4, -1/6, -1/8, ...
+pos = iter(1/(2*k-1) for k in range(1, num_terms+1))
+neg = iter(-1/(2*k) for k in range(1, num_terms+1))
+
+partial_sum = 0.0
+terms_used = 0
+sums = []
+
+p = next(pos)
+n = next(neg)
+
+for _ in range(num_terms):
+    if partial_sum < target:
+        partial_sum += p
+        try:
+            p = next(pos)
+        except StopIteration:
+            break
+    else:
+        partial_sum += n
+        try:
+            n = next(neg)
+        except StopIteration:
+            break
+    terms_used += 1
+    sums.append(partial_sum)
+
+print(f"Target value: {target}")
+print(f"Standard sum (ln 2): {math.log(2):.10f}")
+print(f"Rearranged sum after {terms_used} terms: {partial_sum:.10f}")
+print(f"Error: {abs(partial_sum - target):.2e}")
+print()
+print("Last 10 partial sums:")
+for s in sums[-10:]:
+    print(f"  {s:.10f}")
+print()
+print("The rearranged series is converging to the target,")
+print("NOT to ln(2). This is the Riemann Rearrangement Theorem!")
+`}
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Prove that ratio/root tests are inconclusive when the limit equals $1$ by giving one convergent and one divergent family with the same test limit.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Determine convergence type (absolute/conditional/divergent) for
+$\sum_{n=1}^{\infty}(-1)^n\frac{n!}{n^n}$
+and
+$\sum_{n=2}^{\infty}(-1)^n\frac{1}{n\ln n}$.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Construct a conditionally convergent series and show that a rearrangement changes its sum.
+You do not need full Riemann theorem machinery; a concrete block rearrangement argument is enough.
+</Problem>

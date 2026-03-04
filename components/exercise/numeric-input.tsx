@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { renderInlineKatex } from "@/lib/katex-render";
 
 interface NumericInputProps {
-  question: string;
+  question?: unknown;
   answer: number;
   tolerance?: number;
   units?: string;
-  hint?: string;
+  hint?: unknown;
 }
 
 type Status = "idle" | "correct" | "incorrect";
@@ -195,7 +195,7 @@ export function NumericInput({
 
         {/* Hint on incorrect */}
         <AnimatePresence initial={false}>
-          {status === "incorrect" && hint && (
+          {status === "incorrect" && hintHtml && (
             <motion.div
               key="hint"
               initial={{ height: 0, opacity: 0 }}
@@ -211,7 +211,7 @@ export function NumericInput({
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Hint
                 </p>
-                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: hintHtml! }} />
+                <p className="text-sm leading-relaxed text-foreground/90" dangerouslySetInnerHTML={{ __html: hintHtml }} />
               </div>
             </motion.div>
           )}

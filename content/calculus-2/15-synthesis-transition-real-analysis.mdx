@@ -1,0 +1,339 @@
+---
+title: "Synthesis, Capstone Proofs, and Transition to Real Analysis"
+description: "Consolidating the semester's themes and previewing the path to real analysis"
+order: 15
+prerequisites: ["14-interchanging-limits-integrals-mtest"]
+---
+
+# Synthesis and Transition to Real Analysis
+
+This final lecture introduces no new content. Instead, we step back to see the architecture of what we have built. The goal is to understand the unifying theme of the entire two-semester sequence and to see how it naturally evolves into real analysis.
+
+## The Unifying Theme: Controlling Approximation
+
+Every major result this semester rests on a single idea: **controlling the error of an approximation and showing it can be made arbitrarily small**. The mechanisms differ, but the pattern is the same.
+
+<Callout type="info">
+**The Pattern.** In every setting, we:
+
+1. **Approximate** an ideal object by a finitary one.
+2. **Bound the error** of approximation.
+3. **Show the bound goes to zero** as the approximation refines.
+
+The differences lie in what we approximate, what "finitary" means, and where the error lives.
+</Callout>
+
+### Integration: Control by Partitions
+
+The Riemann integral is defined by approximating the area under $f$ with upper and lower sums over partitions $P$:
+
+$$L(f, P) \leq \int_a^b f \leq U(f, P).$$
+
+The function is integrable when $U(f, P) - L(f, P) < \varepsilon$ for a sufficiently fine partition. Continuity on a compact interval guarantees this via uniform continuity.
+
+### Series: Control by Tails
+
+A series $\sum a_n$ converges when the tail $\sum_{n=N}^{\infty} a_n$ can be made arbitrarily small. Absolute convergence provides the strongest control: $\sum_{n=N}^{\infty} |a_n| < \varepsilon$. Conditional convergence is more delicate -- the tail is small due to cancellation.
+
+### Uniform Convergence: Control by Tails, Uniformly in $x$
+
+A sequence $f_n \to f$ converges uniformly when $\sup_{x \in A} |f_n(x) - f(x)| < \varepsilon$ for $n \geq N$. The error is small at every point simultaneously. This is what allows us to interchange limits with other operations (integration, continuity).
+
+### Power Series: Locally Uniform Analytic Machinery
+
+Power series combine all the above: within the radius of convergence, they converge uniformly on compact subsets, can be integrated and differentiated term-by-term, and represent smooth (indeed, analytic) functions.
+
+## Capstone Proof 1: Continuous on $[a,b]$ Implies Integrable
+
+<Callout type="theorem">
+**Theorem (Restated).** If $f : [a, b] \to \mathbb{R}$ is continuous, then $f$ is Riemann integrable on $[a, b]$.
+</Callout>
+
+*Proof reconstruction.* The key ingredients are:
+
+**Step 1 (Uniform continuity).** Since $[a,b]$ is compact and $f$ is continuous, $f$ is uniformly continuous: for every $\varepsilon > 0$, there exists $\delta > 0$ such that $|x - y| < \delta$ implies $|f(x) - f(y)| < \varepsilon / (b - a)$.
+
+**Step 2 (Partition control).** Choose a partition $P$ with mesh $\|P\| < \delta$. On each subinterval $[x_{i-1}, x_i]$ of width $\Delta x_i < \delta$:
+
+$$M_i - m_i = \sup_{[x_{i-1}, x_i]} f - \inf_{[x_{i-1}, x_i]} f \leq \frac{\varepsilon}{b - a}$$
+
+where the last inequality uses uniform continuity (any two points in the subinterval are within $\delta$).
+
+**Step 3 (Error bound).**
+
+$$U(f, P) - L(f, P) = \sum_{i=1}^{n} (M_i - m_i) \Delta x_i \leq \frac{\varepsilon}{b - a} \sum_{i=1}^{n} \Delta x_i = \frac{\varepsilon}{b - a} \cdot (b - a) = \varepsilon.$$
+
+Since $U(f, P) - L(f, P) < \varepsilon$ for all $\varepsilon > 0$, $f$ is Riemann integrable. $\square$
+
+<Callout type="tip">
+**Dissect the proof.** Notice how the argument threads together three results:
+- **Compactness** of $[a,b]$ (topology),
+- **Uniform continuity** (from compactness + continuity),
+- **Riemann integrability criterion** ($U - L < \varepsilon$).
+
+Each concept from this course plays a role. Nothing is wasted.
+</Callout>
+
+## Capstone Proof 2: The Fundamental Theorem of Calculus (Part I)
+
+<Callout type="theorem">
+**Theorem (FTC I, Restated).** Let $f : [a, b] \to \mathbb{R}$ be continuous. Define $F(x) = \int_a^x f(t)\, dt$. Then $F$ is differentiable on $(a, b)$ and $F'(x) = f(x)$ for all $x \in (a, b)$.
+</Callout>
+
+*Proof reconstruction.*
+
+Fix $x \in (a, b)$. We must show $\lim_{h \to 0} \frac{F(x+h) - F(x)}{h} = f(x)$.
+
+**Step 1 (Express the difference quotient).**
+
+$$\frac{F(x+h) - F(x)}{h} = \frac{1}{h} \int_x^{x+h} f(t)\, dt.$$
+
+**Step 2 (Rewrite $f(x)$ as an integral).**
+
+$$f(x) = \frac{1}{h} \int_x^{x+h} f(x)\, dt.$$
+
+**Step 3 (Estimate the error).**
+
+$$\left|\frac{F(x+h) - F(x)}{h} - f(x)\right| = \left|\frac{1}{h} \int_x^{x+h} [f(t) - f(x)]\, dt\right| \leq \frac{1}{|h|} \int_x^{x+h} |f(t) - f(x)|\, dt.$$
+
+Since $f$ is continuous at $x$: given $\varepsilon > 0$, choose $\delta > 0$ with $|t - x| < \delta \implies |f(t) - f(x)| < \varepsilon$. For $|h| < \delta$, each $t$ in $[x, x+h]$ satisfies $|t - x| \leq |h| < \delta$, so $|f(t) - f(x)| < \varepsilon$. Therefore:
+
+$$\left|\frac{F(x+h) - F(x)}{h} - f(x)\right| \leq \frac{1}{|h|} \cdot \varepsilon \cdot |h| = \varepsilon.$$
+
+Since $\varepsilon$ was arbitrary, $F'(x) = f(x)$. $\square$
+
+## Capstone Proof 3: Uniform Limit Preserves Continuity
+
+<Callout type="theorem">
+**Theorem (Restated).** If $f_n \to f$ uniformly on $A$ and each $f_n$ is continuous, then $f$ is continuous on $A$.
+</Callout>
+
+*Proof reconstruction.* Fix $c \in A$ and $\varepsilon > 0$.
+
+1. **(Uniform convergence)** Choose $N$ with $|f_N(x) - f(x)| < \varepsilon/3$ for all $x \in A$.
+2. **(Continuity of $f_N$)** Choose $\delta > 0$ with $|f_N(x) - f_N(c)| < \varepsilon/3$ when $|x - c| < \delta$.
+3. **(Triangle inequality)** For $|x - c| < \delta$:
+
+$$|f(x) - f(c)| \leq |f(x) - f_N(x)| + |f_N(x) - f_N(c)| + |f_N(c) - f(c)| < 3 \cdot \frac{\varepsilon}{3} = \varepsilon. \quad \square$$
+
+## The Transition to Real Analysis
+
+<Callout type="info">
+**What comes next.** Every definition, theorem, and proof in this course has been rigorous. So what changes in Real Analysis I? Three things:
+
+1. **Generalized settings.** We replace $\mathbb{R}$ with metric spaces, then topological spaces. The $\varepsilon$-$\delta$ definitions generalize to open balls, then open sets.
+
+2. **Lebesgue measure and integration.** The Riemann integral, controlled by partitions, is replaced by the Lebesgue integral, controlled by measurable sets. This handles more functions and gives more powerful convergence theorems (Monotone Convergence, Dominated Convergence).
+
+3. **Deeper structural results.** The Baire Category Theorem, Banach Fixed-Point Theorem, Arzel\`a-Ascoli Theorem, Stone-Weierstrass Theorem -- these are the "big machines" that require the full framework.
+</Callout>
+
+### A Preview: From Riemann to Lebesgue
+
+The Riemann integral partitions the **domain** $[a, b]$ into subintervals. The Lebesgue integral partitions the **range** of $f$ and measures the preimage of each piece. This seemingly small change has profound consequences:
+
+- The characteristic function $\mathbf{1}_{\mathbb{Q} \cap [0,1]}$ (Dirichlet's function) is not Riemann integrable, but it is Lebesgue integrable (with integral 0, since $\mathbb{Q}$ has measure zero).
+- The Dominated Convergence Theorem replaces uniform convergence with a weaker (and more flexible) hypothesis: domination by a single integrable function.
+
+### A Preview: From Sequences to Metric Spaces
+
+Our definitions of convergence, continuity, and compactness all used the absolute value $|x - y|$. In a metric space, we replace this with a general distance function $d(x, y)$, and all the $\varepsilon$-$\delta$ arguments carry over with minimal change.
+
+## Exercises
+
+<Problem>
+**Exercise 15.1 (Capstone Reconstruction).** Without referring to notes, reconstruct the proof that a continuous function on $[a,b]$ is Riemann integrable. State clearly each result you invoke (uniform continuity, etc.) and where it comes from in the course.
+</Problem>
+
+<Solution>
+*Proof.* Let $f : [a,b] \to \mathbb{R}$ be continuous.
+
+**Claim:** $f$ is Riemann integrable on $[a,b]$.
+
+**Step 1.** Since $[a,b]$ is a closed, bounded subset of $\mathbb{R}$, it is compact (Heine-Borel theorem, Week 8). Since $f$ is continuous on the compact set $[a,b]$, $f$ is uniformly continuous (theorem from Week 7/8):
+
+$$\forall \varepsilon > 0,\; \exists \delta > 0,\; \forall x, y \in [a,b],\; |x - y| < \delta \implies |f(x) - f(y)| < \frac{\varepsilon}{b - a}.$$
+
+**Step 2.** Choose a partition $P = \{a = x_0 < x_1 < \cdots < x_n = b\}$ with mesh $\|P\| = \max_i \Delta x_i < \delta$. For each subinterval $[x_{i-1}, x_i]$: since the subinterval has length $< \delta$, any two points in it are within $\delta$, so by uniform continuity:
+
+$$M_i - m_i := \sup_{[x_{i-1}, x_i]} f - \inf_{[x_{i-1}, x_i]} f \leq \frac{\varepsilon}{b-a}.$$
+
+(The sup and inf are attained by the Extreme Value Theorem, since $f$ is continuous on the compact interval $[x_{i-1}, x_i]$.)
+
+**Step 3.** The oscillation sum:
+
+$$U(f,P) - L(f,P) = \sum_{i=1}^n (M_i - m_i)\Delta x_i \leq \frac{\varepsilon}{b-a} \sum_{i=1}^n \Delta x_i = \frac{\varepsilon}{b-a} \cdot (b-a) = \varepsilon.$$
+
+By the Riemann integrability criterion (a function is integrable iff for every $\varepsilon > 0$ there exists a partition with $U - L < \varepsilon$), $f$ is Riemann integrable. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Which of the following best describes the unifying theme of this two-semester calculus sequence?"}
+  options={[
+    "Memorizing formulas for derivatives and integrals",
+    "Controlling approximation errors and showing they can be made arbitrarily small",
+    "Learning to compute limits using L'Hopital's rule",
+    "Classifying functions as continuous, differentiable, or integrable"
+  ]}
+  correctIndex={1}
+  explanation={"The entire course is built around the epsilon-delta paradigm: approximate an ideal object (integral, infinite sum, limit function) by a finite one, bound the error, and show the bound goes to zero. This pattern appears in the definition of limits, continuity, integrability, series convergence, and uniform convergence. It is the unifying architecture of analysis."}
+/>
+
+<NumericInput
+  question={"In the proof that continuous implies integrable, if f is continuous on [0,1] and we need U(f,P) - L(f,P) < 0.01, we use uniform continuity with epsilon/(b-a). What is epsilon/(b-a) in this case?"}
+  answer={0.01}
+  tolerance={0.001}
+  hint={"Here [a,b] = [0,1], so b - a = 1. Thus epsilon/(b-a) = 0.01/1 = 0.01."}
+/>
+
+<Problem>
+**Exercise 15.2.** Explain, in your own words, why each of the following results requires its specific hypothesis, and give a counterexample when the hypothesis is dropped:
+
+(a) "Continuous on $[a,b]$ implies integrable" requires **compactness** (closed and bounded interval).
+
+(b) "Uniform limit of continuous functions is continuous" requires **uniform** convergence (not just pointwise).
+
+(c) "Absolutely convergent series can be rearranged" requires **absolute** convergence (not conditional).
+</Problem>
+
+<Solution>
+**(a)** Compactness is needed to ensure uniform continuity (which controls $M_i - m_i$ on subintervals). Without compactness:
+- Open interval: $f(x) = 1/x$ is continuous on $(0, 1]$ but $\int_0^1 1/x\, dx = \infty$ (improper integral diverges), showing the Riemann integral may not exist on non-compact domains.
+- Unbounded interval: $f(x) = 1$ is continuous on $[0, \infty)$ but $\int_0^\infty 1\, dx$ diverges.
+
+**(b)** Pointwise convergence does not preserve continuity. Counterexample: $f_n(x) = x^n$ on $[0,1]$. Each $f_n$ is continuous, $f_n \to f$ pointwise where $f(x) = 0$ for $x < 1$ and $f(1) = 1$. The limit $f$ is discontinuous at $x = 1$. Uniform convergence is needed because the $\varepsilon/3$ proof requires a single $N$ that works at all points simultaneously.
+
+**(c)** The Riemann Rearrangement Theorem shows that conditionally convergent series can be rearranged to converge to any real number (or to diverge). Counterexample: the alternating harmonic series $\sum (-1)^{n+1}/n = \ln 2$, but a rearrangement can make it converge to (say) $1.5$. Absolute convergence guarantees rearrangement invariance because both the positive and negative parts converge separately, so reordering cannot change the sum. $\square$
+</Solution>
+
+<Problem>
+**Exercise 15.3 (Counterexample Synthesis).** For each of the following major theorems from this course, state the key hypothesis and give a specific counterexample showing the conclusion fails without it. Your counterexamples should be explicit and your reasoning rigorous.
+
+(a) **Continuous on $[a,b] \Rightarrow$ integrable** — What fails if the domain is not compact?
+
+(b) **$\varepsilon$-partition criterion** — Give a bounded function on $[0,1]$ for which no partition achieves $U - L < 1$.
+
+(c) **FTC I: $F'(c) = f(c)$ when $f$ is continuous at $c$** — What fails if $f$ is discontinuous at $c$?
+
+(d) **Absolute convergence $\Rightarrow$ rearrangement invariance** — What fails for conditional convergence?
+
+(e) **Uniform limit of continuous functions is continuous** — What fails for pointwise convergence?
+</Problem>
+
+<Solution>
+**(a)** Without compactness: $f(x) = 1/x$ on $(0, 1]$ is continuous but $\int_0^1 1/x\,dx$ diverges (the improper integral $\lim_{\varepsilon \to 0^+} \int_\varepsilon^1 1/x\,dx = \lim_{\varepsilon \to 0^+}(-\ln \varepsilon) = \infty$). On a non-compact domain, a continuous function may be unbounded or have area that escapes to infinity.
+
+**(b)** The Dirichlet function $D(x) = \mathbf{1}_{\mathbb{Q}}(x)$ on $[0, 1]$ is bounded (values in $\{0, 1\}$). For every partition $P$, $U(D, P) = 1$ and $L(D, P) = 0$ (rationals and irrationals dense in every subinterval), so $U - L = 1$ for all $P$. No partition achieves $U - L < 1$.
+
+**(c)** The Heaviside step function $f(x) = 0$ for $x \leq 0$, $f(x) = 1$ for $x > 0$: $F(x) = \int_{-1}^x f(t)\,dt = \max(x, 0)$. At $c = 0$, $f$ is discontinuous. The left derivative of $F$ at $0$ is $0$ and the right derivative is $1$, so $F'(0)$ does not exist.
+
+**(d)** The alternating harmonic series $\sum (-1)^{n+1}/n = \ln 2$, but the rearrangement $1 + 1/3 - 1/2 + 1/5 + 1/7 - 1/4 + \cdots$ converges to $\frac{3}{2}\ln 2 \neq \ln 2$ (Riemann Rearrangement Theorem). The sum depends on the order of summation because the positive parts $\sum 1/(2n-1) = \infty$ and negative parts $\sum 1/(2n) = \infty$ both diverge.
+
+**(e)** $f_n(x) = x^n$ on $[0, 1]$: each $f_n$ is continuous, $f_n \to f$ pointwise where $f(x) = 0$ for $x < 1$ and $f(1) = 1$. The limit $f$ is discontinuous at $x = 1$. The convergence is not uniform ($\sup|f_n - f| \geq (1-1/n)^n \to 1/e \not\to 0$), which is why the continuity-preservation theorem does not apply. $\square$
+</Solution>
+
+## Comprehensive Numerical Exploration
+
+<PythonPlayground
+  title={"Synthesis: Integration, Series, and Function Approximation"}
+  defaultCode={`import math
+
+print("=" * 60)
+print("SYNTHESIS: Three Pillars of Analysis in Action")
+print("=" * 60)
+
+# === PILLAR 1: Integration as Control by Partitions ===
+print()
+print("PILLAR 1: Riemann Integration")
+print("-" * 40)
+
+def f(x):
+    return math.sin(x)
+
+a, b = 0, math.pi
+exact = 2.0  # integral of sin(x) from 0 to pi
+
+print(f"integral of sin(x) from 0 to pi (exact = {exact})")
+print(f"{'n (partitions)':>16} {'Riemann sum':>14} {'Error':>12}")
+for n in [5, 10, 50, 100, 500, 1000]:
+    dx = (b - a) / n
+    riemann = sum(f(a + (i + 0.5) * dx) * dx for i in range(n))
+    error = abs(riemann - exact)
+    print(f"{n:>16} {riemann:>14.10f} {error:>12.2e}")
+
+# === PILLAR 2: Series as Control by Tails ===
+print()
+print("PILLAR 2: Series Convergence")
+print("-" * 40)
+
+# Compute pi^2/6 via sum(1/n^2)
+target = math.pi**2 / 6
+print(f"sum(1/n^2) = pi^2/6 = {target:.10f}")
+print(f"{'N (terms)':>16} {'Partial sum':>14} {'Tail bound':>12}")
+for N in [10, 100, 1000, 10000, 100000]:
+    partial = sum(1.0/n**2 for n in range(1, N+1))
+    # Tail bounded by integral: sum_{n>N} 1/n^2 < integral_N^inf 1/x^2 = 1/N
+    tail_bound = 1.0 / N
+    print(f"{N:>16} {partial:>14.10f} {tail_bound:>12.2e}")
+
+# === PILLAR 3: Uniform Convergence and Power Series ===
+print()
+print("PILLAR 3: Power Series Approximation")
+print("-" * 40)
+
+# Approximate e^x by partial sums of its Taylor series
+print("e^x via sum(x^n/n!): uniform convergence on compact sets")
+print()
+x_vals = [0.5, 1.0, 2.0]
+for x in x_vals:
+    exact_val = math.exp(x)
+    print(f"  x = {x}: e^x = {exact_val:.10f}")
+    print(f"  {'N':>6} {'S_N(x)':>16} {'|error|':>12} {'M-test bound':>14}")
+    for N in [3, 5, 10, 15, 20]:
+        partial = sum(x**n / math.factorial(n) for n in range(N+1))
+        error = abs(partial - exact_val)
+        # M-test bound: |x|^(N+1)/(N+1)! * 1/(1-|x|/(N+2))
+        # Simplified: just show the next term
+        next_term = abs(x)**(N+1) / math.factorial(N+1)
+        print(f"  {N:>6} {partial:>16.10f} {error:>12.2e} {next_term:>14.2e}")
+    print()
+
+# === TYING IT TOGETHER ===
+print("=" * 60)
+print("KEY INSIGHT: Every result follows the same pattern:")
+print()
+print("  1. APPROXIMATE by something finite")
+print("     (partition, partial sum, partial sum of functions)")
+print()
+print("  2. BOUND the error")
+print("     (U-L < eps, tail < eps, sup-norm < eps)")
+print()
+print("  3. SHOW the bound -> 0")
+print("     (finer partition, more terms, larger N)")
+print()
+print("This is the architecture of analysis.")
+print("Real Analysis I generalizes these ideas to")
+print("metric spaces, Lebesgue measure, and beyond.")
+`}
+/>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Capstone Reconstruction (No Solution)">
+Reconstruct, from memory, one complete theorem chain:
+compactness -> uniform continuity -> Riemann integrability,
+with all intermediate definitions and quantifier-level statements.
+</Problem>
+
+<Problem title="Dependency Graph Task (No Solution)">
+Draw a dependency DAG for the semester's core theorems (FTC I/II, comparison tests, M-test,
+uniform-limit continuity). Then write a short proof that the DAG is acyclic.
+</Problem>
+
+<Problem title="Counterexample Portfolio (No Solution)">
+Provide three counterexamples, each killing one missing hypothesis:
+1) pointwise without uniform for limit-integral interchange,
+2) term-test converse failure,
+3) continuity on noncompact domain without uniform continuity.
+For each, explicitly state the failed theorem and failed hypothesis.
+</Problem>

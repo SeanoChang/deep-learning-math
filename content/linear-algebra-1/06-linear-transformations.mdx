@@ -1,0 +1,302 @@
+---
+title: "Linear Transformations as the Primary Objects"
+description: "Definition of linear transformations, kernel and image, injectivity, surjectivity, and isomorphisms"
+order: 6
+prerequisites: ["05-abstract-vector-spaces"]
+---
+
+# Linear Transformations as the Primary Objects
+
+Linear algebra is not fundamentally about matrices. It is about **linear transformations** -- the structure-preserving maps between vector spaces. Matrices are merely a convenient notation for representing these maps once bases are chosen. In this lesson we develop the theory of linear transformations from the definition, study their kernel and image, and classify them by injectivity and surjectivity.
+
+## Definition and First Examples
+
+<Callout type="definition" title="Linear Transformation">
+  Let $V$ and $W$ be vector spaces over a field $F$. A function $T : V \to W$ is a **linear transformation** (or **linear map**) if for all $u, v \in V$ and all $c \in F$:
+  1. **Additivity:** $T(u + v) = T(u) + T(v)$
+  2. **Homogeneity:** $T(cv) = cT(v)$
+  Equivalently, $T$ is linear if and only if $T(cu + v) = cT(u) + T(v)$ for all $u, v \in V$ and $c \in F$.
+</Callout>
+
+<Callout type="tip" title="Checking Linearity">
+  To verify that a map $T$ is linear, it suffices to check the single condition $T(\alpha u + \beta v) = \alpha T(u) + \beta T(v)$ for all $u, v \in V$ and $\alpha, \beta \in F$. This combines both axioms into one. Alternatively, check additivity and homogeneity separately -- whichever is more convenient.
+</Callout>
+
+Let us examine several fundamental examples that illustrate the breadth of the concept.
+
+**Example 1 (Zero map).** For any vector spaces $V$ and $W$, define $T_0 : V \to W$ by $T_0(v) = 0_W$ for all $v \in V$. Then $T_0(\alpha u + \beta v) = 0_W = \alpha \cdot 0_W + \beta \cdot 0_W = \alpha T_0(u) + \beta T_0(v)$, so $T_0$ is linear.
+
+**Example 2 (Identity map).** Define $\text{id}_V : V \to V$ by $\text{id}_V(v) = v$. Then $\text{id}_V(\alpha u + \beta v) = \alpha u + \beta v = \alpha \, \text{id}_V(u) + \beta \, \text{id}_V(v)$.
+
+**Example 3 (Differentiation).** Let $V = \mathcal{P}_n(\mathbb{R})$, the space of polynomials of degree at most $n$, and $W = \mathcal{P}_{n-1}(\mathbb{R})$. Define $D : V \to W$ by $D(p) = p'$. For any polynomials $p, q$ and scalar $c$:
+
+$$D(cp + q) = (cp + q)' = cp' + q' = cD(p) + D(q).$$
+
+So differentiation is a linear transformation.
+
+**Example 4 (Projection).** Let $V = \mathbb{R}^3$ and define $\pi : \mathbb{R}^3 \to \mathbb{R}^2$ by $\pi(x_1, x_2, x_3) = (x_1, x_2)$. Then:
+
+$$\pi(\alpha(x_1,x_2,x_3) + \beta(y_1,y_2,y_3)) = \pi(\alpha x_1 + \beta y_1, \alpha x_2 + \beta y_2, \alpha x_3 + \beta y_3) = (\alpha x_1 + \beta y_1, \alpha x_2 + \beta y_2)$$
+
+which equals $\alpha(x_1, x_2) + \beta(y_1, y_2) = \alpha \pi(x_1,x_2,x_3) + \beta \pi(y_1,y_2,y_3)$.
+
+**Non-example.** The map $f : \mathbb{R} \to \mathbb{R}$ defined by $f(x) = x + 1$ is **not** linear because $f(0) = 1 \neq 0$. Every linear map must send $0$ to $0$ (see the proposition below).
+
+## Basic Properties
+
+<Callout type="theorem" title="Linear Maps Preserve Zero and Negatives">
+  Let $T : V \to W$ be linear. Then:
+  1. $T(0_V) = 0_W$
+  2. $T(-v) = -T(v)$ for all $v \in V$
+  3. $T(c_1 v_1 + c_2 v_2 + \cdots + c_k v_k) = c_1 T(v_1) + c_2 T(v_2) + \cdots + c_k T(v_k)$
+</Callout>
+
+**Proof.** (1) $T(0_V) = T(0 \cdot 0_V) = 0 \cdot T(0_V) = 0_W$.
+
+(2) $T(-v) = T((-1)v) = (-1)T(v) = -T(v)$.
+
+(3) Induction on $k$ using additivity and homogeneity. The base case $k = 1$ is homogeneity. If the result holds for $k - 1$ vectors, then:
+
+$$T\left(\sum_{i=1}^k c_i v_i\right) = T\left(c_k v_k + \sum_{i=1}^{k-1} c_i v_i\right) = T(c_k v_k) + T\left(\sum_{i=1}^{k-1} c_i v_i\right) = c_k T(v_k) + \sum_{i=1}^{k-1} c_i T(v_i).$$
+
+$\blacksquare$
+
+Property (3) is crucial: a linear transformation is **completely determined by its action on a basis**. If $\{v_1, \ldots, v_n\}$ is a basis for $V$ and we know $T(v_1), \ldots, T(v_n)$, then for any $v = c_1 v_1 + \cdots + c_n v_n$:
+
+$$T(v) = c_1 T(v_1) + \cdots + c_n T(v_n).$$
+
+<Callout type="theorem" title="A Linear Map Is Determined by Its Action on a Basis">
+  Let $\{v_1, \ldots, v_n\}$ be a basis for $V$, and let $w_1, \ldots, w_n$ be any vectors in $W$ (not necessarily distinct, not necessarily a basis). Then there exists a **unique** linear transformation $T : V \to W$ such that $T(v_i) = w_i$ for $i = 1, \ldots, n$.
+</Callout>
+
+**Proof.** *Existence.* Every $v \in V$ has a unique representation $v = c_1 v_1 + \cdots + c_n v_n$. Define $T(v) = c_1 w_1 + \cdots + c_n w_n$. One checks that $T$ is linear: if $v = \sum c_i v_i$ and $u = \sum d_i v_i$, then $\alpha v + u = \sum (\alpha c_i + d_i) v_i$, so $T(\alpha v + u) = \sum (\alpha c_i + d_i) w_i = \alpha \sum c_i w_i + \sum d_i w_i = \alpha T(v) + T(u)$. Moreover $T(v_i) = w_i$ by construction.
+
+*Uniqueness.* If $S : V \to W$ is another linear map with $S(v_i) = w_i$, then for any $v = \sum c_i v_i$: $S(v) = \sum c_i S(v_i) = \sum c_i w_i = T(v)$. So $S = T$. $\blacksquare$
+
+## Kernel and Image
+
+<Callout type="definition" title="Kernel (Null Space)">
+  The **kernel** (or **null space**) of a linear transformation $T : V \to W$ is
+  $$\ker(T) = \{v \in V : T(v) = 0_W\}.$$
+</Callout>
+
+<Callout type="definition" title="Image (Range)">
+  The **image** (or **range**) of $T : V \to W$ is
+  $$\text{im}(T) = \{T(v) : v \in V\} = \{w \in W : w = T(v) \text{ for some } v \in V\}.$$
+</Callout>
+
+<Callout type="theorem" title="Kernel and Image Are Subspaces">
+  Let $T : V \to W$ be a linear transformation. Then:
+  1. $\ker(T)$ is a subspace of $V$.
+  2. $\text{im}(T)$ is a subspace of $W$.
+</Callout>
+
+**Proof.** (1) We verify the subspace criteria.
+- *Non-empty:* $T(0_V) = 0_W$, so $0_V \in \ker(T)$.
+- *Closed under addition:* If $u, v \in \ker(T)$, then $T(u + v) = T(u) + T(v) = 0_W + 0_W = 0_W$, so $u + v \in \ker(T)$.
+- *Closed under scalar multiplication:* If $v \in \ker(T)$ and $c \in F$, then $T(cv) = cT(v) = c \cdot 0_W = 0_W$, so $cv \in \ker(T)$.
+
+(2) Similarly:
+- *Non-empty:* $T(0_V) = 0_W \in \text{im}(T)$.
+- *Closed under addition:* If $w_1, w_2 \in \text{im}(T)$, then $w_1 = T(v_1)$ and $w_2 = T(v_2)$ for some $v_1, v_2 \in V$. Then $w_1 + w_2 = T(v_1) + T(v_2) = T(v_1 + v_2) \in \text{im}(T)$.
+- *Closed under scalar multiplication:* If $w = T(v) \in \text{im}(T)$ and $c \in F$, then $cw = cT(v) = T(cv) \in \text{im}(T)$.
+
+$\blacksquare$
+
+**Example.** For the differentiation map $D : \mathcal{P}_3(\mathbb{R}) \to \mathcal{P}_2(\mathbb{R})$:
+- $\ker(D) = \{p \in \mathcal{P}_3(\mathbb{R}) : p' = 0\}$ = the constant polynomials, a 1-dimensional subspace.
+- $\text{im}(D) = \mathcal{P}_2(\mathbb{R})$, since every polynomial of degree $\leq 2$ is the derivative of some polynomial of degree $\leq 3$.
+
+## Injectivity, Surjectivity, and the Kernel
+
+<Callout type="definition" title="Injective, Surjective, Bijective">
+  A linear transformation $T : V \to W$ is:
+  - **Injective** (one-to-one) if $T(u) = T(v)$ implies $u = v$.
+  - **Surjective** (onto) if $\text{im}(T) = W$.
+  - **Bijective** if it is both injective and surjective.
+</Callout>
+
+The following theorem provides the fundamental test for injectivity of linear maps.
+
+<Callout type="theorem" title="Injectivity Is Equivalent to Trivial Kernel">
+  A linear transformation $T : V \to W$ is injective if and only if $\ker(T) = \{0_V\}$.
+</Callout>
+
+**Proof.** ($\Rightarrow$) Suppose $T$ is injective. We always have $T(0_V) = 0_W$. If $v \in \ker(T)$, then $T(v) = 0_W = T(0_V)$, so by injectivity $v = 0_V$. Thus $\ker(T) = \{0_V\}$.
+
+($\Leftarrow$) Suppose $\ker(T) = \{0_V\}$. If $T(u) = T(v)$, then $T(u) - T(v) = 0_W$, so $T(u - v) = 0_W$ by linearity, meaning $u - v \in \ker(T) = \{0_V\}$. Thus $u - v = 0_V$, i.e., $u = v$. So $T$ is injective. $\blacksquare$
+
+<Callout type="tip" title="Why This Matters">
+  For general functions, proving injectivity requires checking all pairs. For linear maps, you only need to check that the kernel is trivial -- a dramatically simpler task. This is one of the great structural advantages of linearity.
+</Callout>
+
+## The Rank-Nullity Theorem
+
+<Callout type="definition" title="Rank and Nullity">
+  For a linear transformation $T : V \to W$:
+  - The **nullity** of $T$ is $\text{nullity}(T) = \dim(\ker(T))$.
+  - The **rank** of $T$ is $\text{rank}(T) = \dim(\text{im}(T))$.
+</Callout>
+
+<Callout type="theorem" title="Rank-Nullity Theorem (Dimension Theorem)">
+  Let $V$ be a finite-dimensional vector space and $T : V \to W$ a linear transformation. Then:
+  $$\dim(V) = \text{rank}(T) + \text{nullity}(T).$$
+  That is, $\dim(V) = \dim(\text{im}(T)) + \dim(\ker(T))$.
+</Callout>
+
+**Proof.** Let $n = \dim(V)$ and $k = \text{nullity}(T)$. Let $\{u_1, \ldots, u_k\}$ be a basis for $\ker(T)$. Extend this to a basis $\{u_1, \ldots, u_k, v_1, \ldots, v_{n-k}\}$ for $V$. We claim $\{T(v_1), \ldots, T(v_{n-k})\}$ is a basis for $\text{im}(T)$.
+
+*Spanning:* Let $w \in \text{im}(T)$, so $w = T(v)$ for some $v = a_1 u_1 + \cdots + a_k u_k + b_1 v_1 + \cdots + b_{n-k} v_{n-k}$. Then:
+
+$$w = T(v) = a_1 T(u_1) + \cdots + a_k T(u_k) + b_1 T(v_1) + \cdots + b_{n-k} T(v_{n-k}) = b_1 T(v_1) + \cdots + b_{n-k} T(v_{n-k})$$
+
+since $T(u_i) = 0$ for each $i$.
+
+*Linear independence:* Suppose $c_1 T(v_1) + \cdots + c_{n-k} T(v_{n-k}) = 0$. Then $T(c_1 v_1 + \cdots + c_{n-k} v_{n-k}) = 0$, so $c_1 v_1 + \cdots + c_{n-k} v_{n-k} \in \ker(T)$. Hence:
+
+$$c_1 v_1 + \cdots + c_{n-k} v_{n-k} = d_1 u_1 + \cdots + d_k u_k$$
+
+for some scalars $d_i$. This gives $d_1 u_1 + \cdots + d_k u_k - c_1 v_1 - \cdots - c_{n-k} v_{n-k} = 0$. Since $\{u_1, \ldots, u_k, v_1, \ldots, v_{n-k}\}$ is a basis (linearly independent), all coefficients are zero. In particular $c_1 = \cdots = c_{n-k} = 0$.
+
+Thus $\text{rank}(T) = n - k = \dim(V) - \text{nullity}(T)$. $\blacksquare$
+
+## Isomorphisms
+
+<Callout type="definition" title="Isomorphism">
+  A linear transformation $T : V \to W$ that is bijective is called an **isomorphism**. If such a $T$ exists, we say $V$ and $W$ are **isomorphic** and write $V \cong W$.
+</Callout>
+
+<Callout type="theorem" title="In Equal Finite Dimensions: Injective iff Surjective iff Bijective">
+  Let $V$ and $W$ be finite-dimensional vector spaces with $\dim(V) = \dim(W) = n$, and let $T : V \to W$ be linear. The following are equivalent:
+  1. $T$ is injective.
+  2. $T$ is surjective.
+  3. $T$ is bijective (an isomorphism).
+</Callout>
+
+**Proof.** By the rank-nullity theorem, $n = \text{rank}(T) + \text{nullity}(T)$.
+
+$(1) \Rightarrow (2)$: If $T$ is injective, then $\ker(T) = \{0\}$, so $\text{nullity}(T) = 0$. Hence $\text{rank}(T) = n = \dim(W)$. Since $\text{im}(T) \subseteq W$ and $\dim(\text{im}(T)) = \dim(W)$, we get $\text{im}(T) = W$, so $T$ is surjective.
+
+$(2) \Rightarrow (1)$: If $T$ is surjective, then $\text{im}(T) = W$, so $\text{rank}(T) = n$. By rank-nullity, $\text{nullity}(T) = 0$, so $\ker(T) = \{0\}$, and $T$ is injective.
+
+$(1) \wedge (2) \Leftrightarrow (3)$: By definition. $\blacksquare$
+
+<Callout type="tip" title="This Fails in Infinite Dimensions">
+  The equivalence of injectivity and surjectivity relies on finite-dimensionality. The right-shift operator $T : \ell^2 \to \ell^2$ defined by $T(x_1, x_2, \ldots) = (0, x_1, x_2, \ldots)$ is injective but not surjective. The left-shift $S(x_1, x_2, \ldots) = (x_2, x_3, \ldots)$ is surjective but not injective.
+</Callout>
+
+## The Space of Linear Transformations
+
+<Callout type="definition" title="L(V, W)">
+  The set of all linear transformations from $V$ to $W$ is denoted $\mathcal{L}(V, W)$. With pointwise addition $(T + S)(v) = T(v) + S(v)$ and scalar multiplication $(cT)(v) = c \cdot T(v)$, the set $\mathcal{L}(V, W)$ is itself a vector space.
+</Callout>
+
+When $\dim(V) = n$ and $\dim(W) = m$, each $T \in \mathcal{L}(V, W)$ is determined by its values on a basis of $V$ (which are $n$ vectors in $W$, each requiring $m$ coordinates), so $\dim(\mathcal{L}(V, W)) = mn$.
+
+## Exercises
+
+<MultipleChoice
+  question="Which of the following maps $T : \mathbb{R}^2 \to \mathbb{R}^2$ is a linear transformation?"
+  options={[
+    "$T(x,y) = (x + 1, y)$",
+    "$T(x,y) = (xy, 0)$",
+    "$T(x,y) = (2x - y, x + 3y)$",
+    "$T(x,y) = (x^2, y^2)$"
+  ]}
+  correctIndex={2}
+  explanation="Option C defines $T(x,y) = (2x - y, x + 3y)$. Check: $T(\\alpha(x_1,y_1) + (x_2,y_2)) = (2(\\alpha x_1 + x_2) - (\\alpha y_1 + y_2), (\\alpha x_1 + x_2) + 3(\\alpha y_1 + y_2)) = \\alpha(2x_1 - y_1, x_1 + 3y_1) + (2x_2 - y_2, x_2 + 3y_2) = \\alpha T(x_1,y_1) + T(x_2,y_2)$. The others fail: A has $T(0) \\neq 0$, B and D involve products/squares of coordinates."
+/>
+
+<NumericInput
+  question="Let $T : \mathbb{R}^4 \to \mathbb{R}^3$ be a linear transformation with $\text{rank}(T) = 2$. What is the nullity of $T$?"
+  answer={2}
+  tolerance={0}
+  explanation="By the rank-nullity theorem, $\dim(\mathbb{R}^4) = \text{rank}(T) + \text{nullity}(T)$, so $4 = 2 + \text{nullity}(T)$, giving $\text{nullity}(T) = 2$."
+/>
+
+<Problem title="Prove: Differentiation is Surjective but Not Injective">
+  Consider the differentiation map $D : \mathcal{P}_3(\mathbb{R}) \to \mathcal{P}_2(\mathbb{R})$ defined by $D(p) = p'$. Prove that $D$ is surjective but not injective. Identify $\ker(D)$ explicitly and verify the rank-nullity theorem.
+<Solution>
+  **Proof.**
+  *Not injective:* The constant polynomial $p(x) = 5$ satisfies $D(p) = 0$, so $p \in \ker(D)$ but $p \neq 0$. Thus $\ker(D) \neq \{0\}$, so $D$ is not injective.
+  *Kernel:* $\ker(D) = \{p \in \mathcal{P}_3(\mathbb{R}) : p' = 0\}$ = the constant polynomials $= \text{span}\{1\}$. So $\text{nullity}(D) = 1$.
+  *Surjective:* Let $q(x) = ax^2 + bx + c \in \mathcal{P}_2(\mathbb{R})$. Define $p(x) = \frac{a}{3}x^3 + \frac{b}{2}x^2 + cx$. Then $p \in \mathcal{P}_3(\mathbb{R})$ and $D(p) = p' = ax^2 + bx + c = q$. Since every element of $\mathcal{P}_2(\mathbb{R})$ is in the image, $D$ is surjective.
+  *Rank-nullity check:* $\dim(\mathcal{P}_3(\mathbb{R})) = 4$, $\text{rank}(D) = \dim(\mathcal{P}_2(\mathbb{R})) = 3$, $\text{nullity}(D) = 1$. Indeed $4 = 3 + 1$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Counterexample: Injective Does Not Imply Surjective in General">
+  Give an example of a linear transformation $T : \mathbb{R}^2 \to \mathbb{R}^3$ that is injective but not surjective. Prove both properties. Why does this not contradict the theorem that injective $\Leftrightarrow$ surjective?
+<Solution>
+  **Solution.** Define $T : \mathbb{R}^2 \to \mathbb{R}^3$ by $T(x, y) = (x, y, 0)$.
+  *Injective:* If $T(x, y) = (0, 0, 0)$, then $(x, y, 0) = (0, 0, 0)$, so $x = y = 0$. Thus $\ker(T) = \{(0,0)\}$, and $T$ is injective.
+  *Not surjective:* The vector $(0, 0, 1) \in \mathbb{R}^3$ is not in $\text{im}(T)$, since $T(x, y) = (x, y, 0)$ always has third component $0$.
+  *No contradiction:* The theorem requires $\dim(V) = \dim(W)$. Here $\dim(\mathbb{R}^2) = 2 \neq 3 = \dim(\mathbb{R}^3)$. The equivalence of injectivity and surjectivity holds only when domain and codomain have equal (finite) dimension. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $T : V \to W$ be a linear transformation between finite-dimensional spaces with $\dim(V) = 5$ and $\dim(W) = 3$. Which statement is necessarily true?"
+  options={[
+    "$T$ must be injective",
+    "$T$ cannot be surjective",
+    "$\\text{nullity}(T) \\geq 2$",
+    "$\\text{rank}(T) = 5$"
+  ]}
+  correctIndex={2}
+  explanation="By rank-nullity, $5 = \\text{rank}(T) + \\text{nullity}(T)$. Since $\\text{im}(T) \\subseteq W$ and $\\dim(W) = 3$, we have $\\text{rank}(T) \\leq 3$. Thus $\\text{nullity}(T) = 5 - \\text{rank}(T) \\geq 5 - 3 = 2$. In particular $\\ker(T) \\neq \\{0\\}$, so $T$ cannot be injective. $T$ can be surjective (rank 3 is achievable), so B is false."
+/>
+
+<PythonPlayground
+  title="Exploring Linear Transformations with NumPy"
+  defaultCode={`import numpy as np
+
+# Define a linear transformation T: R^3 -> R^2
+# T(x, y, z) = (2x - y + z, x + 3y - 2z)
+A = np.array([[2, -1, 1],
+              [1,  3, -2]])
+
+print("Matrix representing T:")
+print(A)
+print(f"Shape: {A.shape} (maps R^3 -> R^2)")
+print()
+
+# Compute the kernel (null space)
+# We find vectors v such that A @ v = 0
+from numpy.linalg import svd
+U, S, Vt = svd(A)
+# Null space = rows of Vt corresponding to zero singular values
+null_mask = np.abs(S) < 1e-10
+# For a 2x3 matrix with rank 2, null space is 1-dimensional
+# It's the last row of Vt (since S has only 2 entries for a 2x3 matrix)
+null_space = Vt[len(S):]  # rows beyond the number of singular values
+print("Kernel (null space) basis:")
+print(null_space)
+print(f"Nullity = {null_space.shape[0]}")
+print()
+
+# Verify rank-nullity theorem
+rank = np.linalg.matrix_rank(A)
+nullity = 3 - rank  # dim(domain) - rank
+print(f"Rank = {rank}")
+print(f"Nullity = {nullity}")
+print(f"Rank + Nullity = {rank + nullity} = dim(R^3) = 3  ✓")
+print()
+
+# Test injectivity: kernel is nontrivial since nullity > 0
+if nullity == 0:
+    print("T is injective (trivial kernel)")
+else:
+    print(f"T is NOT injective (nullity = {nullity} > 0)")
+    # Show a nonzero kernel vector
+    v = null_space[0]
+    print(f"  Kernel vector: {v}")
+    print(f"  T(v) = {A @ v}  (should be ~zero)")
+print()
+
+# Check surjectivity: rank = dim(codomain)?
+if rank == A.shape[0]:
+    print(f"T is surjective (rank {rank} = dim(R^{A.shape[0]}))")
+else:
+    print(f"T is NOT surjective (rank {rank} < dim(R^{A.shape[0]}))")`}
+/>

@@ -1,0 +1,219 @@
+---
+title: "Sequences and the Formal Definition of Limit"
+description: "The epsilon-N definition of convergence, limit uniqueness, and algebra of limits"
+order: 3
+prerequisites: ["02-completeness-archimedean-density"]
+---
+
+## Sequences as Functions
+
+<Callout type="definition" title="Sequence">
+A **sequence** of real numbers is a function $a : \mathbb{N} \to \mathbb{R}$. We write $a_n$ for $a(n)$ and denote the sequence by $(a_n)_{n=1}^{\infty}$ or simply $(a_n)$.
+</Callout>
+
+Sequences are the fundamental objects through which we study limits. Before defining convergence, observe that a sequence is not a set -- the ordering and repetition matter. The sequence $(1, 1, 1, \ldots)$ and the set $\{1\}$ are different objects.
+
+## The $\epsilon$-$N$ Definition of Convergence
+
+<Callout type="definition" title="Convergence of a Sequence">
+A sequence $(a_n)$ **converges** to $L \in \mathbb{R}$ if: for every $\epsilon > 0$, there exists $N \in \mathbb{N}$ such that for all $n \geq N$,
+
+$$|a_n - L| < \epsilon.$$
+
+We write $\lim_{n \to \infty} a_n = L$ or $a_n \to L$.
+
+A sequence that does not converge is called **divergent**.
+</Callout>
+
+<Callout type="tip" title="Reading the Definition">
+Parse the quantifiers carefully:
+
+$$\forall \epsilon > 0,\; \exists N \in \mathbb{N},\; \forall n \geq N,\; |a_n - L| < \epsilon.$$
+
+The $\epsilon$ is given to you (by an adversary, if you like). Your job is to produce $N$ (which typically depends on $\epsilon$) such that the tail of the sequence past index $N$ lies within the $\epsilon$-band $(L - \epsilon, L + \epsilon)$.
+</Callout>
+
+The following plot illustrates convergence: the sequence $a_n = 1/n$ approaches $L = 0$. For any $\epsilon$-band around $0$, all terms eventually enter and stay inside.
+
+<FunctionPlot
+  fn="1/x"
+  title="The sequence a_n = 1/n converging to 0"
+  domain={[0.5, 20]}
+  range={[-0.5, 2.5]}
+/>
+
+## Proving Convergence from the Definition
+
+<Problem title="Prove: 1/n converges to 0">
+Prove from the $\epsilon$-$N$ definition that $\lim_{n \to \infty} 1/n = 0$.
+
+<Solution>
+**Proof.** Let $\epsilon > 0$ be given. By the Archimedean property, there exists $N \in \mathbb{N}$ with $N > 1/\epsilon$ (equivalently, $1/N < \epsilon$).
+
+For all $n \geq N$:
+
+$$|a_n - 0| = \left|\frac{1}{n}\right| = \frac{1}{n} \leq \frac{1}{N} < \epsilon.$$
+
+Since $\epsilon > 0$ was arbitrary, $1/n \to 0$. $\blacksquare$
+</Solution>
+</Problem>
+
+## Uniqueness of Limits
+
+<Callout type="theorem" title="Uniqueness of Limits">
+If $a_n \to L$ and $a_n \to M$, then $L = M$. That is, the limit of a convergent sequence is unique.
+</Callout>
+
+**Proof.** Suppose $a_n \to L$ and $a_n \to M$. Let $\epsilon > 0$. By convergence to $L$, there exists $N_1$ such that $|a_n - L| < \epsilon/2$ for all $n \geq N_1$. By convergence to $M$, there exists $N_2$ such that $|a_n - M| < \epsilon/2$ for all $n \geq N_2$.
+
+Let $N = \max(N_1, N_2)$. For $n \geq N$:
+
+$$|L - M| = |L - a_n + a_n - M| \leq |a_n - L| + |a_n - M| < \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon.$$
+
+Since $|L - M| < \epsilon$ for every $\epsilon > 0$, and $|L - M| \geq 0$, we conclude $|L - M| = 0$, so $L = M$. $\blacksquare$
+
+<Callout type="info" title="The Key Trick">
+The argument "$|L - M| < \epsilon$ for every $\epsilon > 0$ implies $L = M$" is used throughout analysis. It works because if $|L - M| > 0$, we could take $\epsilon = |L - M|/2$ to get a contradiction.
+</Callout>
+
+## Algebra of Limits
+
+<Callout type="theorem" title="Limit Laws">
+Let $a_n \to L$ and $b_n \to M$. Then:
+
+1. **Sum:** $a_n + b_n \to L + M$
+2. **Scalar multiple:** $ca_n \to cL$ for any $c \in \mathbb{R}$
+3. **Product:** $a_n b_n \to LM$
+4. **Quotient:** $a_n / b_n \to L/M$, provided $M \neq 0$ and $b_n \neq 0$ for all $n$
+</Callout>
+
+**Proof of the Sum Law.** Let $\epsilon > 0$. Since $a_n \to L$, there exists $N_1$ with $|a_n - L| < \epsilon/2$ for $n \geq N_1$. Since $b_n \to M$, there exists $N_2$ with $|b_n - M| < \epsilon/2$ for $n \geq N_2$.
+
+Set $N = \max(N_1, N_2)$. For $n \geq N$:
+
+$$|(a_n + b_n) - (L + M)| = |(a_n - L) + (b_n - M)| \leq |a_n - L| + |b_n - M| < \frac{\epsilon}{2} + \frac{\epsilon}{2} = \epsilon.$$
+
+Hence $a_n + b_n \to L + M$. $\blacksquare$
+
+## Boundedness of Convergent Sequences
+
+<Callout type="theorem" title="Convergent Implies Bounded">
+If $(a_n)$ converges, then $(a_n)$ is bounded: there exists $M > 0$ with $|a_n| \leq M$ for all $n$.
+</Callout>
+
+**Proof.** Suppose $a_n \to L$. Taking $\epsilon = 1$, there exists $N$ with $|a_n - L| < 1$ for all $n \geq N$. By the triangle inequality, for $n \geq N$:
+
+$$|a_n| = |a_n - L + L| \leq |a_n - L| + |L| < 1 + |L|.$$
+
+The finitely many terms $a_1, a_2, \ldots, a_{N-1}$ are each bounded by their own absolute values. Set
+
+$$M = \max(|a_1|, |a_2|, \ldots, |a_{N-1}|, 1 + |L|).$$
+
+Then $|a_n| \leq M$ for all $n \in \mathbb{N}$. $\blacksquare$
+
+<Callout type="warning" title="The Converse is False">
+Bounded does NOT imply convergent. The sequence $a_n = (-1)^n$ is bounded ($|a_n| \leq 1$ for all $n$) but divergent, since it oscillates between $-1$ and $1$ without settling.
+</Callout>
+
+## The Squeeze Theorem
+
+<Callout type="theorem" title="Squeeze Theorem (for Sequences)">
+Let $(a_n)$, $(b_n)$, $(c_n)$ be sequences with $a_n \leq b_n \leq c_n$ for all $n \geq n_0$. If $a_n \to L$ and $c_n \to L$, then $b_n \to L$.
+</Callout>
+
+**Proof.** Let $\epsilon > 0$. Choose $N_1 \geq n_0$ with $|a_n - L| < \epsilon$ for $n \geq N_1$, and $N_2 \geq n_0$ with $|c_n - L| < \epsilon$ for $n \geq N_2$. Set $N = \max(N_1, N_2)$.
+
+For $n \geq N$: $L - \epsilon < a_n \leq b_n \leq c_n < L + \epsilon$, so $|b_n - L| < \epsilon$. $\blacksquare$
+
+<MultipleChoice
+  question="In the proof that a convergent sequence is bounded, why do we handle the first $N-1$ terms separately?"
+  options={[
+    "Because the first $N-1$ terms might not satisfy $|a_n - L| < 1$",
+    "Because the first $N-1$ terms are always larger than the rest",
+    "Because the definition of convergence only applies for $n \\geq 1$",
+    "Because finitely many terms cannot affect the limit"
+  ]}
+  correctIndex={0}
+  explanation="The $\\epsilon$-$N$ definition only guarantees $|a_n - L| < 1$ for $n \\geq N$. The finitely many terms before index $N$ could be arbitrarily large. We handle them by taking the maximum of their absolute values."
+/>
+
+<NumericInput
+  question="Consider $a_n = (3n^2 + 1)/(n^2 + 5)$. Using the algebra of limits (divide numerator and denominator by $n^2$), what is $\\lim_{n \\to \\infty} a_n$?"
+  answer={3}
+  tolerance={0.01}
+  hint="Divide top and bottom by $n^2$: $a_n = (3 + 1/n^2)/(1 + 5/n^2) \\to 3/1 = 3$."
+/>
+
+## Exploring Convergence Numerically
+
+<PythonPlayground
+  title="Numerical Exploration: Convergence of Sequences"
+  defaultCode={`import math
+
+# Define several sequences and explore their convergence
+sequences = {
+    "1/n":          lambda n: 1/n,
+    "1/n^2":        lambda n: 1/n**2,
+    "(-1)^n / n":   lambda n: (-1)**n / n,
+    "(3n^2+1)/(n^2+5)": lambda n: (3*n**2 + 1) / (n**2 + 5),
+    "sin(n)/n":     lambda n: math.sin(n) / n,
+}
+
+for name, seq in sequences.items():
+    terms = [seq(n) for n in range(1, 1001)]
+    last_10 = terms[-10:]
+    print(f"Sequence: {name}")
+    print(f"  a_1000 = {terms[-1]:.8f}")
+    print(f"  Last 10 terms range: [{min(last_10):.8f}, {max(last_10):.8f}]")
+    print()
+
+# Demonstrate the epsilon-N game for a_n = 1/n
+print("=" * 50)
+print("The epsilon-N game for a_n = 1/n, L = 0:")
+print()
+for eps in [1, 0.1, 0.01, 0.001, 0.0001]:
+    N = math.ceil(1/eps) + 1
+    # Verify: |a_N - 0| < eps
+    val = 1/N
+    print(f"  eps = {eps:<8} => N = {N:<6} => |a_N| = {val:.6f} < {eps}")`}
+/>
+
+<Problem title="Prove: Squeeze Theorem Application">
+Use the squeeze theorem to prove that $\lim_{n \to \infty} \frac{\sin(n)}{n} = 0$.
+
+<Solution>
+**Proof.** For all $n \geq 1$, we have $-1 \leq \sin(n) \leq 1$. Dividing by $n > 0$:
+
+$$\frac{-1}{n} \leq \frac{\sin(n)}{n} \leq \frac{1}{n}.$$
+
+We have shown that $1/n \to 0$, and by the scalar multiple law, $-1/n \to 0$. By the squeeze theorem, $\frac{\sin(n)}{n} \to 0$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem>
+**Exercise 3.3 (Counterexample).** Give an example of a bounded sequence that does not converge. Prove that your sequence is bounded and that it diverges.
+
+*Hint:* Consider $a_n = (-1)^n$. To prove divergence, use the fact that subsequences must converge to the same limit.
+</Problem>
+
+<Solution>
+*Answer.* Let $a_n = (-1)^n$.
+
+**Bounded:** For all $n$, $|a_n| = |(-1)^n| = 1 \leq 1$, so the sequence is bounded.
+
+**Divergent:** Suppose for contradiction that $a_n \to L$ for some $L \in \mathbb{R}$. Then every subsequence converges to $L$. The even subsequence $a_{2k} = 1 \to 1$, so $L = 1$. The odd subsequence $a_{2k-1} = -1 \to -1$, so $L = -1$. Since $1 \neq -1$, we have a contradiction.
+
+Therefore $((-1)^n)$ is bounded but divergent. This shows that the converse of "convergent implies bounded" is false. $\square$
+</Solution>
+
+<MultipleChoice
+  question="Which of the following sequences is convergent?"
+  options={[
+    "$a_n = (-1)^n$",
+    "$a_n = n$",
+    "$a_n = (-1)^n / n$",
+    "$a_n = \\sin(n\\pi/2)$"
+  ]}
+  correctIndex={2}
+  explanation="By the squeeze theorem, $|(-1)^n/n| = 1/n \\to 0$, so $(-1)^n/n \\to 0$. The sequence $(-1)^n$ oscillates and does not converge. The sequence $n$ diverges to infinity. The sequence $\\sin(n\\pi/2)$ cycles through $1, 0, -1, 0, \\ldots$ and does not converge."
+/>

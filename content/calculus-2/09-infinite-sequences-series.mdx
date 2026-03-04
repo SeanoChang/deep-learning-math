@@ -1,0 +1,271 @@
+---
+title: "Infinite Sequences and Series: Formal Convergence"
+description: "Series as limits of partial sums, the Cauchy criterion, and the divergence test"
+order: 9
+prerequisites: ["08-numerical-integration-error"]
+---
+
+# Infinite Sequences and Series
+
+We now begin the study of infinite series, one of the most powerful and subtle topics in analysis. An infinite series is not a "sum of infinitely many terms" in any literal sense -- it is a *limit* of finite partial sums. The central question is: when does this limit exist?
+
+## Definition and Basic Examples
+
+<Callout type="definition">
+**Definition 9.1 (Infinite Series).** Let $(a_n)_{n=1}^{\infty}$ be a sequence of real numbers. The **infinite series** $\sum_{n=1}^{\infty} a_n$ is defined as
+
+$$\sum_{n=1}^{\infty} a_n = \lim_{N \to \infty} S_N, \qquad \text{where } S_N = \sum_{n=1}^N a_n$$
+
+is the $N$-th **partial sum**. If this limit exists (as a finite real number), we say the series **converges** and the limit is called its **sum**. Otherwise the series **diverges**.
+</Callout>
+
+<Callout type="info">
+**Remark.** A series $\sum a_n$ is simply a sequence $(S_N)$ in disguise. All of our previous results about sequence convergence -- uniqueness, algebra of limits, Cauchy criterion, monotone convergence -- apply directly to partial sum sequences.
+</Callout>
+
+### The Geometric Series
+
+<Callout type="theorem">
+**Theorem 9.2 (Geometric Series).** For $r \in \mathbb{R}$,
+
+$$\sum_{n=0}^{\infty} r^n = \begin{cases} \dfrac{1}{1-r} & \text{if } |r| < 1, \\[6pt] \text{diverges} & \text{if } |r| \geq 1. \end{cases}$$
+
+*Proof.* The partial sum has the closed form $S_N = \sum_{n=0}^{N} r^n = \frac{1 - r^{N+1}}{1 - r}$ for $r \neq 1$.
+
+If $|r| < 1$, then $|r^{N+1}| = |r|^{N+1} \to 0$, so $S_N \to \frac{1}{1-r}$.
+
+If $|r| > 1$, then $|r^{N+1}| \to \infty$, so $(S_N)$ diverges.
+
+If $r = 1$, $S_N = N + 1 \to \infty$. If $r = -1$, $S_N$ alternates between $1$ and $0$, so it diverges. $\blacksquare$
+</Callout>
+
+<FunctionPlot
+  fn={"(1 - Math.pow(0.5, Math.floor(x) + 1)) / (1 - 0.5)"}
+  title={"Partial sums of the geometric series with r = 1/2, converging to 2"}
+  domain={[0, 15]}
+  range={[0, 2.5]}
+/>
+
+### The Harmonic Series
+
+<Callout type="theorem">
+**Theorem 9.3 (Divergence of the Harmonic Series).** The series $\sum_{n=1}^{\infty} \frac{1}{n}$ diverges.
+
+*Proof (Oresme's grouping argument).* Group the terms:
+
+$$\frac{1}{1} + \frac{1}{2} + \underbrace{\frac{1}{3} + \frac{1}{4}}_{\geq 1/2} + \underbrace{\frac{1}{5} + \frac{1}{6} + \frac{1}{7} + \frac{1}{8}}_{\geq 1/2} + \underbrace{\frac{1}{9} + \cdots + \frac{1}{16}}_{\geq 1/2} + \cdots$$
+
+The group from $\frac{1}{2^{k-1}+1}$ to $\frac{1}{2^k}$ contains $2^{k-1}$ terms, each $\geq \frac{1}{2^k}$, so the group sum $\geq \frac{2^{k-1}}{2^k} = \frac{1}{2}$. Since there are infinitely many such groups, $S_N \to \infty$. $\blacksquare$
+</Callout>
+
+## The Cauchy Criterion for Series
+
+<Callout type="theorem">
+**Theorem 9.4 (Cauchy Criterion for Series).** The series $\sum_{n=1}^{\infty} a_n$ converges if and only if for every $\varepsilon > 0$ there exists $N \in \mathbb{N}$ such that for all $m > n \geq N$:
+
+$$\left|\sum_{k=n+1}^{m} a_k\right| < \varepsilon.$$
+</Callout>
+
+*Proof.* The series converges if and only if the partial sum sequence $(S_N)$ converges. By the Cauchy criterion for sequences, this holds if and only if for every $\varepsilon > 0$ there exists $N$ such that $|S_m - S_n| < \varepsilon$ for all $m > n \geq N$. But
+
+$$S_m - S_n = \sum_{k=n+1}^m a_k. \quad \blacksquare$$
+
+## The Divergence Test
+
+<Callout type="theorem">
+**Theorem 9.5 (Divergence Test / Term Test).** If $\sum_{n=1}^{\infty} a_n$ converges, then $a_n \to 0$.
+
+Equivalently (contrapositive): if $a_n \not\to 0$, then $\sum a_n$ diverges.
+</Callout>
+
+*Proof.* Suppose $\sum a_n$ converges. For $n \geq 1$, $a_n = S_n - S_{n-1}$. Since $(S_n)$ converges to some $S$, we have $a_n = S_n - S_{n-1} \to S - S = 0$. $\blacksquare$
+
+<Callout type="warning">
+**The converse is false!** The harmonic series $\sum 1/n$ has $a_n = 1/n \to 0$ but diverges. The condition $a_n \to 0$ is **necessary** but **not sufficient** for convergence. This is one of the most common errors in working with series.
+</Callout>
+
+## Linearity and Tail Equivalence
+
+<Callout type="theorem">
+**Theorem 9.6 (Linearity of Convergent Series).** If $\sum a_n$ and $\sum b_n$ converge, then for any $\alpha, \beta \in \mathbb{R}$:
+
+$$\sum_{n=1}^{\infty} (\alpha a_n + \beta b_n) = \alpha \sum_{n=1}^{\infty} a_n + \beta \sum_{n=1}^{\infty} b_n.$$
+</Callout>
+
+*Proof.* This follows immediately from the algebra of limits applied to partial sums:
+
+$$\sum_{n=1}^N (\alpha a_n + \beta b_n) = \alpha \sum_{n=1}^N a_n + \beta \sum_{n=1}^N b_n \to \alpha \sum a_n + \beta \sum b_n. \quad \blacksquare$$
+
+<Callout type="theorem">
+**Theorem 9.7 (Tail Equivalence).** The convergence of $\sum_{n=1}^{\infty} a_n$ depends only on the "tail" of the series: $\sum_{n=1}^{\infty} a_n$ converges if and only if $\sum_{n=K}^{\infty} a_n$ converges for any (equivalently, every) $K \geq 1$.
+
+*Proof.* $\sum_{n=1}^{\infty} a_n = \sum_{n=1}^{K-1} a_n + \sum_{n=K}^{\infty} a_n$. The finite sum $\sum_{n=1}^{K-1}a_n$ is just a constant, and adding a constant does not affect convergence. $\blacksquare$
+</Callout>
+
+## Positive-Term Series and Monotone Partial Sums
+
+<Callout type="theorem">
+**Theorem 9.8 (Positive-Term Series Criterion).** If $a_n \geq 0$ for all $n$, then $\sum a_n$ converges if and only if the partial sums $(S_N)$ are bounded above.
+
+*Proof.* Since $a_n \geq 0$, the partial sum sequence is nondecreasing: $S_{N+1} = S_N + a_{N+1} \geq S_N$. By the Monotone Convergence Theorem, a nondecreasing sequence converges if and only if it is bounded above. $\blacksquare$
+</Callout>
+
+This is the foundation for all comparison-based convergence tests (next lesson).
+
+## Telescoping Series
+
+A special but instructive class of series:
+
+$$\sum_{n=1}^{\infty} \left(\frac{1}{n} - \frac{1}{n+1}\right) = \lim_{N \to \infty} \left(1 - \frac{1}{N+1}\right) = 1.$$
+
+The partial sums collapse: $S_N = 1 - \frac{1}{N+1}$.
+
+## Exercises
+
+<Problem>
+**Exercise 9.1.** Prove the Cauchy Criterion for Series (Theorem 9.4) in full detail, starting from the Cauchy criterion for sequences. State explicitly why the Cauchy criterion for sequences applies (i.e., why completeness of $\mathbb{R}$ is essential).
+</Problem>
+
+<Solution>
+*Proof.* The series $\sum_{n=1}^{\infty} a_n$ converges if and only if the sequence of partial sums $(S_N)_{N=1}^{\infty}$ converges.
+
+By the **Cauchy criterion for sequences** (which relies on the completeness of $\mathbb{R}$: every Cauchy sequence in $\mathbb{R}$ converges), $(S_N)$ converges if and only if $(S_N)$ is a Cauchy sequence, i.e., for every $\varepsilon > 0$ there exists $M \in \mathbb{N}$ such that for all $m > n \geq M$:
+
+$$|S_m - S_n| < \varepsilon.$$
+
+Now $S_m - S_n = \sum_{k=1}^m a_k - \sum_{k=1}^n a_k = \sum_{k=n+1}^m a_k$.
+
+So the condition becomes: for every $\varepsilon > 0$ there exists $M$ such that for all $m > n \geq M$:
+
+$$\left|\sum_{k=n+1}^m a_k\right| < \varepsilon.$$
+
+**Why completeness is essential:** In an incomplete ordered field (e.g., $\mathbb{Q}$), a Cauchy sequence need not converge. The series $\sum_{n=0}^{\infty} \frac{1}{n!}$ has rational partial sums forming a Cauchy sequence, but the limit $e \notin \mathbb{Q}$. The Cauchy criterion for convergence (not just for being Cauchy) requires completeness. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question={"Which of the following statements is correct?"}
+  options={[
+    "If a_n -> 0 then the series sum(a_n) converges",
+    "If the series sum(a_n) converges then a_n -> 0",
+    "If a_n does not converge to 0 then the series might still converge",
+    "The divergence test is both necessary and sufficient for convergence"
+  ]}
+  correctIndex={1}
+  explanation={"The divergence test states: convergence of the series IMPLIES a_n -> 0. The converse fails (harmonic series). So a_n -> 0 is necessary but not sufficient, making option (b) the only correct statement."}
+/>
+
+<NumericInput
+  question={"Compute the exact sum of the geometric series: sum from n=0 to infinity of (2/3)^n. Give your answer as a decimal."}
+  answer={3}
+  tolerance={0.01}
+  hint={"Use the geometric series formula 1/(1-r) with r = 2/3."}
+/>
+
+<Problem>
+**Exercise 9.2.** Show that the series $\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$ converges and find its sum by using partial fractions and telescoping.
+</Problem>
+
+<Solution>
+By partial fractions: $\frac{1}{n(n+1)} = \frac{1}{n} - \frac{1}{n+1}$.
+
+The partial sum telescopes:
+
+$$S_N = \sum_{n=1}^N \left(\frac{1}{n} - \frac{1}{n+1}\right) = \left(1 - \frac{1}{2}\right) + \left(\frac{1}{2} - \frac{1}{3}\right) + \cdots + \left(\frac{1}{N} - \frac{1}{N+1}\right) = 1 - \frac{1}{N+1}.$$
+
+Therefore $\sum_{n=1}^{\infty} \frac{1}{n(n+1)} = \lim_{N \to \infty} \left(1 - \frac{1}{N+1}\right) = 1$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 9.3 (Counterexample).** The divergence test says: if $\sum a_n$ converges, then $a_n \to 0$. The converse is false. Prove that the harmonic series $\sum_{n=1}^{\infty} \frac{1}{n}$ diverges, even though $1/n \to 0$.
+
+Give **two** proofs: (a) Oresme's grouping argument, and (b) a proof using the Cauchy criterion, showing the partial sums are not Cauchy by exhibiting $S_{2n} - S_n \geq 1/2$ for all $n$.
+
+*Hint:* For (b), note $S_{2n} - S_n = \frac{1}{n+1} + \frac{1}{n+2} + \cdots + \frac{1}{2n}$.
+</Problem>
+
+<Solution>
+*Proof (a) — Oresme's grouping.* Group the terms of $\sum 1/n$ as follows:
+
+$$1 + \frac{1}{2} + \left(\frac{1}{3} + \frac{1}{4}\right) + \left(\frac{1}{5} + \frac{1}{6} + \frac{1}{7} + \frac{1}{8}\right) + \cdots$$
+
+The group from $\frac{1}{2^{k-1}+1}$ to $\frac{1}{2^k}$ has $2^{k-1}$ terms, each $\geq \frac{1}{2^k}$. So the group sum $\geq \frac{2^{k-1}}{2^k} = \frac{1}{2}$. There are infinitely many such groups, so $S_N \geq 1 + \frac{1}{2} \cdot k \to \infty$.
+
+*Proof (b) — Failure of Cauchy criterion.* Suppose for contradiction that $(S_N)$ is Cauchy. Then for $\varepsilon = 1/2$, there should exist $M$ such that $|S_m - S_n| < 1/2$ for all $m > n \geq M$.
+
+But for any $n \geq 1$, take $m = 2n$:
+
+$$S_{2n} - S_n = \sum_{k=n+1}^{2n} \frac{1}{k} \geq \sum_{k=n+1}^{2n} \frac{1}{2n} = \frac{n}{2n} = \frac{1}{2}.$$
+
+So $|S_{2n} - S_n| \geq 1/2$ for all $n$, contradicting the Cauchy property. Hence $(S_N)$ does not converge, and $\sum 1/n$ diverges.
+
+**Moral:** The condition $a_n \to 0$ is necessary for convergence (by the divergence test) but far from sufficient. The harmonic series is the canonical counterexample. $\square$
+</Solution>
+
+## Numerical Exploration
+
+<PythonPlayground
+  title={"Partial Sums: Harmonic vs Geometric Series"}
+  defaultCode={`import math
+
+# --- Harmonic series partial sums (divergent) ---
+print("=== Harmonic Series: sum of 1/n (diverges) ===")
+S = 0.0
+for N in [10, 100, 1000, 10000, 100000]:
+    while len(str(N)) and S == S:  # dummy to reset
+        S_val = sum(1.0/n for n in range(1, N+1))
+        print(f"  S_{N:>6} = {S_val:.6f}")
+        break
+
+print()
+
+# --- Geometric series partial sums (convergent) ---
+print("=== Geometric Series: sum of (1/2)^n (converges to 2) ===")
+for N in [5, 10, 20, 30, 50]:
+    S_val = sum(0.5**n for n in range(N+1))
+    print(f"  S_{N:>2} = {S_val:.15f}")
+print(f"  Limit  = {1/(1-0.5):.15f}")
+
+print()
+
+# --- Telescoping series: 1/(n(n+1)) ---
+print("=== Telescoping: sum of 1/(n(n+1)) (converges to 1) ===")
+for N in [10, 100, 1000, 10000]:
+    S_val = sum(1.0/(n*(n+1)) for n in range(1, N+1))
+    print(f"  S_{N:>5} = {S_val:.10f}")
+
+print()
+
+# --- Rate comparison ---
+print("=== Convergence rate comparison ===")
+print("Harmonic partial sums grow like ln(n):")
+for N in [100, 1000, 10000]:
+    S_val = sum(1.0/n for n in range(1, N+1))
+    print(f"  S_{N}: {S_val:.4f},  ln({N}): {math.log(N):.4f},  "
+          f"ratio: {S_val/math.log(N):.4f}")
+print("  (ratio approaches the Euler-Mascheroni constant ~ 0.5772)")
+`}
+/>
+
+<Callout type="tip">
+The playground shows that the harmonic partial sums grow like $\ln n$ -- extremely slowly. It takes over $10^{43}$ terms for the harmonic series to exceed $100$. This extreme slowness is why the divergence of the harmonic series was not obvious to early mathematicians.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Write a complete proof of the divergence test:
+if $\sum a_n$ converges then $a_n\to0$.
+Then state and prove the logically equivalent contrapositive.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Analyze
+$\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^2}$
+by reducing it to a tail estimate problem for partial sums.
+Give an explicit bound on the remainder after $N$ terms.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Provide a convergent-seeming sequence $(a_n)$ with $a_n\to0$ such that $\sum a_n$ diverges.
+Then explain, in one paragraph, why the term test cannot be reversed.
+</Problem>

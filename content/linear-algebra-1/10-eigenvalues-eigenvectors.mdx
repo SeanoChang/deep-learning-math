@@ -1,0 +1,278 @@
+---
+title: "Eigenvalues and Eigenvectors"
+description: "Eigenvalues, eigenvectors, the characteristic polynomial, eigenspaces, and independence of eigenvectors"
+order: 10
+prerequisites: ["09-determinants"]
+---
+
+# Eigenvalues and Eigenvectors
+
+One of the central goals of linear algebra is to understand a linear operator $T : V \to V$ by finding directions that $T$ merely scales. Along such "eigen-directions," the complicated action of $T$ reduces to simple scalar multiplication. This idea leads to diagonalization and is foundational for applications throughout mathematics, physics, and machine learning.
+
+## Definitions
+
+<Callout type="definition" title="Eigenvalue and Eigenvector">
+  Let $V$ be a vector space over a field $F$ and let $T : V \to V$ be a linear operator. A scalar $\lambda \in F$ is an **eigenvalue** of $T$ if there exists a **nonzero** vector $v \in V$ such that
+  $$T(v) = \lambda v.$$
+  Any such nonzero $v$ is called an **eigenvector** of $T$ corresponding to $\lambda$.
+</Callout>
+
+<Callout type="tip" title="Why Nonzero?">
+  We require $v \neq 0$ because $T(0) = \lambda \cdot 0 = 0$ for every $\lambda$ -- the zero vector would make every scalar an "eigenvalue," which would be useless. The eigenvalue equation $T(v) = \lambda v$ is only informative when $v \neq 0$.
+</Callout>
+
+For a matrix $A \in M_{n \times n}(F)$, we say $\lambda$ is an eigenvalue of $A$ if there exists a nonzero $v \in F^n$ with $Av = \lambda v$, or equivalently $(A - \lambda I)v = 0$ with $v \neq 0$.
+
+**Example 1.** Let $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$. Check: $A \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 3 \\ 0 \end{pmatrix} = 3\begin{pmatrix} 1 \\ 0 \end{pmatrix}$, so $\lambda_1 = 3$ is an eigenvalue with eigenvector $(1, 0)^T$. Also, $A\begin{pmatrix} -1 \\ 1 \end{pmatrix} = \begin{pmatrix} -2 \\ 2 \end{pmatrix} = 2\begin{pmatrix} -1 \\ 1 \end{pmatrix}$, so $\lambda_2 = 2$ with eigenvector $(-1, 1)^T$.
+
+**Example 2 (Differentiation).** Let $D : C^\infty(\mathbb{R}) \to C^\infty(\mathbb{R})$ be the differentiation operator. Then $D(e^{\lambda x}) = \lambda e^{\lambda x}$ for any $\lambda \in \mathbb{R}$. So **every** real number is an eigenvalue of $D$, with $e^{\lambda x}$ as the corresponding eigenvector. This is an infinite-dimensional phenomenon.
+
+**Example 3 (Rotation).** Rotation by $90°$ in $\mathbb{R}^2$ has **no real eigenvalues**: no nonzero vector in $\mathbb{R}^2$ is mapped to a scalar multiple of itself by a quarter-turn. Over $\mathbb{C}$, the eigenvalues are $i$ and $-i$.
+
+## Eigenspaces
+
+<Callout type="definition" title="Eigenspace">
+  The **eigenspace** of $T$ (or $A$) corresponding to eigenvalue $\lambda$ is
+  $$E_\lambda = \ker(T - \lambda I) = \{v \in V : T(v) = \lambda v\}.$$
+  Note that $E_\lambda$ includes the zero vector, even though $0$ is not an eigenvector.
+</Callout>
+
+<Callout type="theorem" title="Eigenspaces Are Subspaces">
+  For each eigenvalue $\lambda$ of $T$, the eigenspace $E_\lambda$ is a subspace of $V$.
+</Callout>
+
+**Proof.** $E_\lambda = \ker(T - \lambda I)$. Since $T - \lambda I$ is a linear map (as the sum of linear maps $T$ and $-\lambda I$), its kernel is a subspace by the kernel-is-subspace theorem from the previous lessons. Explicitly:
+
+- $T(0) = 0 = \lambda \cdot 0$, so $0 \in E_\lambda$.
+- If $u, v \in E_\lambda$, then $T(u + v) = T(u) + T(v) = \lambda u + \lambda v = \lambda(u + v)$, so $u + v \in E_\lambda$.
+- If $v \in E_\lambda$ and $c \in F$, then $T(cv) = cT(v) = c\lambda v = \lambda(cv)$, so $cv \in E_\lambda$.
+
+$\blacksquare$
+
+The dimension of $E_\lambda$ is called the **geometric multiplicity** of $\lambda$.
+
+## The Characteristic Polynomial
+
+<Callout type="definition" title="Characteristic Polynomial">
+  The **characteristic polynomial** of an $n \times n$ matrix $A$ is
+  $$p_A(\lambda) = \det(A - \lambda I).$$
+  This is a polynomial of degree $n$ in $\lambda$.
+</Callout>
+
+<Callout type="theorem" title="Eigenvalues Are Roots of the Characteristic Polynomial">
+  $\lambda_0$ is an eigenvalue of $A$ if and only if $p_A(\lambda_0) = 0$.
+</Callout>
+
+**Proof.** $\lambda_0$ is an eigenvalue $\Leftrightarrow$ there exists a nonzero $v$ with $(A - \lambda_0 I)v = 0$ $\Leftrightarrow$ $\ker(A - \lambda_0 I) \neq \{0\}$ $\Leftrightarrow$ $A - \lambda_0 I$ is not invertible $\Leftrightarrow$ $\det(A - \lambda_0 I) = 0$ $\Leftrightarrow$ $p_A(\lambda_0) = 0$. $\blacksquare$
+
+<Callout type="tip" title="Convention Warning">
+  Some texts define the characteristic polynomial as $\det(\lambda I - A)$ instead of $\det(A - \lambda I)$. These differ by a factor of $(-1)^n$ and have the same roots. The convention $\det(\lambda I - A)$ makes the leading coefficient 1 (monic polynomial), which is sometimes more convenient.
+</Callout>
+
+**Example.** For $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$:
+
+$$p_A(\lambda) = \det\begin{pmatrix} 4 - \lambda & 2 \\ 1 & 3 - \lambda \end{pmatrix} = (4 - \lambda)(3 - \lambda) - 2 = \lambda^2 - 7\lambda + 10 = (\lambda - 5)(\lambda - 2).$$
+
+The eigenvalues are $\lambda = 5$ and $\lambda = 2$.
+
+For $\lambda = 5$: $(A - 5I)v = 0$ gives $\begin{pmatrix} -1 & 2 \\ 1 & -2 \end{pmatrix}v = 0$, so $v_1 = 2v_2$. Eigenvector: $(2, 1)^T$. Eigenspace: $E_5 = \text{span}\{(2, 1)^T\}$.
+
+For $\lambda = 2$: $(A - 2I)v = 0$ gives $\begin{pmatrix} 2 & 2 \\ 1 & 1 \end{pmatrix}v = 0$, so $v_1 = -v_2$. Eigenvector: $(-1, 1)^T$. Eigenspace: $E_2 = \text{span}\{(-1, 1)^T\}$.
+
+## Algebraic vs. Geometric Multiplicity
+
+<Callout type="definition" title="Algebraic Multiplicity">
+  The **algebraic multiplicity** of an eigenvalue $\lambda$ is its multiplicity as a root of the characteristic polynomial $p_A(\lambda)$.
+</Callout>
+
+For example, if $p_A(\lambda) = (\lambda - 3)^2(\lambda - 1)$, then $\lambda = 3$ has algebraic multiplicity 2 and $\lambda = 1$ has algebraic multiplicity 1.
+
+The relationship between geometric and algebraic multiplicity is:
+
+$$1 \leq \text{geometric multiplicity of } \lambda \leq \text{algebraic multiplicity of } \lambda.$$
+
+This inequality is crucial for diagonalization theory (which we will study later).
+
+## Independence of Eigenvectors
+
+<Callout type="theorem" title="Eigenvectors for Distinct Eigenvalues Are Linearly Independent">
+  Let $T : V \to V$ be a linear operator. If $v_1, v_2, \ldots, v_k$ are eigenvectors corresponding to **distinct** eigenvalues $\lambda_1, \lambda_2, \ldots, \lambda_k$, then $\{v_1, \ldots, v_k\}$ is linearly independent.
+</Callout>
+
+**Proof.** By strong induction on $k$.
+
+*Base case ($k = 1$):* A single eigenvector is nonzero by definition, hence linearly independent.
+
+*Inductive step:* Assume the result for any $k - 1$ eigenvectors with distinct eigenvalues. Suppose
+
+$$c_1 v_1 + c_2 v_2 + \cdots + c_k v_k = 0. \quad (*)$$
+
+Apply $T$ to both sides:
+
+$$c_1 \lambda_1 v_1 + c_2 \lambda_2 v_2 + \cdots + c_k \lambda_k v_k = 0. \quad (**)$$
+
+Now compute $(**) - \lambda_k \cdot (*)$:
+
+$$c_1(\lambda_1 - \lambda_k) v_1 + c_2(\lambda_2 - \lambda_k) v_2 + \cdots + c_{k-1}(\lambda_{k-1} - \lambda_k) v_{k-1} = 0.$$
+
+By the inductive hypothesis, $\{v_1, \ldots, v_{k-1}\}$ is linearly independent (they are eigenvectors for the distinct eigenvalues $\lambda_1, \ldots, \lambda_{k-1}$). So:
+
+$$c_i(\lambda_i - \lambda_k) = 0 \quad \text{for } i = 1, \ldots, k-1.$$
+
+Since the eigenvalues are distinct, $\lambda_i - \lambda_k \neq 0$ for $i \neq k$. Therefore $c_1 = c_2 = \cdots = c_{k-1} = 0$.
+
+Substituting back into $(*)$: $c_k v_k = 0$. Since $v_k \neq 0$ (eigenvector), $c_k = 0$.
+
+All $c_i = 0$, so $\{v_1, \ldots, v_k\}$ is linearly independent. $\blacksquare$
+
+<Callout type="tip" title="A Key Corollary">
+  An $n \times n$ matrix with $n$ distinct eigenvalues has $n$ linearly independent eigenvectors. As we will see in later lessons, this means such a matrix is **diagonalizable**: there exists a basis of eigenvectors in which the matrix representation is diagonal.
+</Callout>
+
+## Computing Eigenvalues: Summary of the Algorithm
+
+Given an $n \times n$ matrix $A$:
+
+1. **Form** the characteristic polynomial: $p(\lambda) = \det(A - \lambda I)$.
+2. **Find the roots** of $p(\lambda) = 0$. These are the eigenvalues.
+3. **For each eigenvalue** $\lambda_i$, solve $(A - \lambda_i I)v = 0$ to find the eigenspace $E_{\lambda_i}$.
+4. **Check multiplicities:** Verify that geometric multiplicity $\leq$ algebraic multiplicity for each eigenvalue.
+
+## The Trace and Determinant as Eigenvalue Functions
+
+<Callout type="theorem" title="Trace and Determinant from Eigenvalues">
+  Let $A$ be an $n \times n$ matrix with eigenvalues $\lambda_1, \ldots, \lambda_n$ (counted with algebraic multiplicity, over the algebraic closure of $F$). Then:
+  $$\text{tr}(A) = \lambda_1 + \lambda_2 + \cdots + \lambda_n$$
+  $$\det(A) = \lambda_1 \lambda_2 \cdots \lambda_n$$
+</Callout>
+
+**Proof sketch.** The characteristic polynomial is $p(\lambda) = \det(\lambda I - A) = \lambda^n - \text{tr}(A)\lambda^{n-1} + \cdots + (-1)^n \det(A)$. By the relationship between roots and coefficients of a polynomial (Vieta's formulas), the sum of roots is $\text{tr}(A)$ and the product of roots is $(-1)^n \cdot (-1)^n \det(A) = \det(A)$. $\blacksquare$
+
+## Exercises
+
+<MultipleChoice
+  question="Let $A$ be a $3 \\times 3$ matrix with eigenvalues $1, 2, 3$. What is $\\det(A)$?"
+  options={[
+    "$0$",
+    "$6$",
+    "$-6$",
+    "Cannot be determined without knowing $A$"
+  ]}
+  correctIndex={1}
+  explanation="The determinant equals the product of eigenvalues: $\\det(A) = 1 \\cdot 2 \\cdot 3 = 6$."
+/>
+
+<NumericInput
+  question="Find the sum of the eigenvalues of $A = \begin{pmatrix} 5 & 3 \\\\ -1 & 2 \end{pmatrix}$. (Hint: use the trace.)"
+  answer={7}
+  tolerance={0}
+  explanation="The sum of eigenvalues equals the trace: $\\text{tr}(A) = 5 + 2 = 7$."
+/>
+
+<Problem title="Find All Eigenvalues and Eigenspaces">
+  Let $A = \begin{pmatrix} 1 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 1 \end{pmatrix}$. Find all eigenvalues of $A$, determine the algebraic and geometric multiplicity of each, and find a basis for each eigenspace.
+<Solution>
+  **Solution.** Since $A$ is upper triangular, the eigenvalues are the diagonal entries: $\lambda_1 = 1$ (appears twice) and $\lambda_2 = 2$ (appears once).
+  **Algebraic multiplicities:** $\text{am}(1) = 2$, $\text{am}(2) = 1$.
+  **Eigenspace for $\lambda = 1$:**
+  $$(A - I)v = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{pmatrix}v = 0.$$
+  Row reduction gives $v_2 = 0$, with $v_1$ and $v_3$ free. So $E_1 = \text{span}\{(1, 0, 0)^T, (0, 0, 1)^T\}$.
+  Geometric multiplicity: $\text{gm}(1) = 2 = \text{am}(1)$.
+  **Eigenspace for $\lambda = 2$:**
+  $$(A - 2I)v = \begin{pmatrix} -1 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & -1 \end{pmatrix}v = 0.$$
+  Row reduction gives $v_1 = v_2$, $v_3 = 0$. So $E_2 = \text{span}\{(1, 1, 0)^T\}$.
+  Geometric multiplicity: $\text{gm}(2) = 1 = \text{am}(2)$.
+  Since the total geometric multiplicity $2 + 1 = 3 = n$, the matrix $A$ is diagonalizable.
+</Solution>
+</Problem>
+
+<Problem title="Prove: Zero Is an Eigenvalue iff the Matrix Is Singular">
+  Prove that $\lambda = 0$ is an eigenvalue of $A$ if and only if $A$ is not invertible.
+<Solution>
+  **Proof.**
+  ($\Rightarrow$) Suppose $\lambda = 0$ is an eigenvalue. Then there exists $v \neq 0$ with $Av = 0v = 0$. So $v \in \ker(A)$ with $v \neq 0$, meaning $\ker(A) \neq \{0\}$, so $A$ is not injective and therefore not invertible.
+  ($\Leftarrow$) Suppose $A$ is not invertible. Then $\ker(A) \neq \{0\}$, so there exists $v \neq 0$ with $Av = 0 = 0 \cdot v$. Thus $v$ is an eigenvector with eigenvalue $\lambda = 0$.
+  Alternatively: $0$ is an eigenvalue $\Leftrightarrow$ $\det(A - 0 \cdot I) = 0$ $\Leftrightarrow$ $\det(A) = 0$ $\Leftrightarrow$ $A$ is not invertible. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $A$ be a $4 \\times 4$ matrix whose characteristic polynomial is $p(\\lambda) = (\\lambda - 3)^2(\\lambda + 1)^2$. Which statement is always true?"
+  options={[
+    "$A$ is diagonalizable",
+    "$A$ has exactly 2 distinct eigenvalues",
+    "$\\text{tr}(A) = 4$",
+    "$\\det(A) = -9$"
+  ]}
+  correctIndex={2}
+  explanation="The eigenvalues are $3$ (algebraic mult. 2) and $-1$ (algebraic mult. 2). The trace is the sum: $3 + 3 + (-1) + (-1) = 4$. The determinant is the product: $3 \\cdot 3 \\cdot (-1) \\cdot (-1) = 9$. Diagonalizability depends on geometric multiplicities, so A is not guaranteed. B is true (2 distinct eigenvalues), but C is also always true. Since both B and C appear correct, note that the trace formula $\\text{tr}(A) = 3 + 3 + (-1) + (-1) = 4$ is unconditionally true."
+/>
+
+<PythonPlayground
+  title="Eigenvalue Computation with NumPy"
+  defaultCode={`import numpy as np
+
+# Example 1: A 3x3 matrix with distinct eigenvalues
+A = np.array([[4, 2, 0],
+              [1, 3, 0],
+              [0, 0, 5]])
+
+eigenvalues, eigenvectors = np.linalg.eig(A)
+print("Matrix A:")
+print(A)
+print(f"Eigenvalues: {eigenvalues}")
+print(f"Sum of eigenvalues = {sum(eigenvalues):.4f}, Trace = {np.trace(A)}")
+print(f"Product of eigenvalues = {np.prod(eigenvalues):.4f}, Det = {np.linalg.det(A):.4f}")
+print()
+
+# Verify: Av = lambda*v for each eigenpair
+for i in range(len(eigenvalues)):
+    lam = eigenvalues[i]
+    v = eigenvectors[:, i]
+    Av = A @ v
+    lam_v = lam * v
+    print(f"lambda_{i+1} = {lam:.4f}")
+    print(f"  v = {v}")
+    print(f"  Av = {Av}")
+    print(f"  lambda*v = {lam_v}")
+    print(f"  Match: {np.allclose(Av, lam_v)}")
+print()
+
+# Example 2: Eigenspaces and geometric multiplicity
+B = np.array([[1, 1, 0],
+              [0, 2, 0],
+              [0, 0, 1]])
+print("Matrix B:")
+print(B)
+evals, evecs = np.linalg.eig(B)
+print(f"Eigenvalues: {evals}")
+print()
+
+# Compute eigenspaces via null space of (B - lambda*I)
+for lam in [1.0, 2.0]:
+    M = B - lam * np.eye(3)
+    # Find null space via SVD
+    U, S, Vt = np.linalg.svd(M)
+    null_mask = S < 1e-10
+    null_vectors = Vt[np.sum(~null_mask):]
+    gm = null_vectors.shape[0]
+    print(f"Eigenspace for lambda = {lam:.0f}:")
+    print(f"  Basis vectors: {null_vectors}")
+    print(f"  Geometric multiplicity = {gm}")
+print()
+
+# Example 3: Characteristic polynomial coefficients
+# For a 2x2 matrix: p(lambda) = lambda^2 - tr(A)*lambda + det(A)
+C = np.array([[5, 3],
+              [-1, 2]])
+tr = np.trace(C)
+det = np.linalg.det(C)
+print(f"Matrix C = {C.tolist()}")
+print(f"Characteristic polynomial: lambda^2 - {tr:.0f}*lambda + {det:.0f}")
+# Solve quadratic
+discriminant = tr**2 - 4*det
+lam1 = (tr + np.sqrt(discriminant)) / 2
+lam2 = (tr - np.sqrt(discriminant)) / 2
+print(f"Eigenvalues from quadratic formula: {lam1:.4f}, {lam2:.4f}")
+print(f"Eigenvalues from numpy: {np.linalg.eigvals(C)}")`}
+/>

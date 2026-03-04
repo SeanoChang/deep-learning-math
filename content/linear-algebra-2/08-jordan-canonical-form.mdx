@@ -1,0 +1,331 @@
+---
+title: "Jordan Canonical Form"
+description: "Existence and uniqueness of the Jordan canonical form, computing JCF, and reading the minimal and characteristic polynomials from Jordan blocks"
+order: 8
+prerequisites: ["07-generalized-eigenvectors-jordan-structure"]
+---
+
+# Jordan Canonical Form
+
+The Jordan Canonical Form (JCF) is the ultimate structural theorem for linear operators over
+algebraically closed fields. It says that every such operator, no matter how complicated, is similar
+to a block diagonal matrix built from Jordan blocks. The JCF simultaneously encodes the eigenvalues,
+their multiplicities, the structure of the generalized eigenspaces, and -- crucially -- the minimal
+polynomial. In this lesson we prove existence, uniqueness, explain how to compute JCF, and show how
+to read off the characteristic and minimal polynomials from the block structure.
+
+## Statement of the Jordan Canonical Form
+
+<Callout type="theorem" title="Jordan Canonical Form (Existence)">
+  Let $V$ be a finite-dimensional vector space over an algebraically closed field $\mathbb{F}$, and let
+  $T \colon V \to V$ be a linear operator. Then there exists an ordered basis $\mathcal{B}$ of $V$ such
+  that the matrix $[T]_\mathcal{B}$ is a **block diagonal** matrix
+  $$J = \begin{pmatrix} J_{k_1}(\lambda_1) & & \\ & J_{k_2}(\lambda_2) & \\ & & \ddots & \\ & & & J_{k_r}(\lambda_r) \end{pmatrix}$$
+  where each $J_{k_i}(\lambda_i)$ is a Jordan block. The blocks may share the same eigenvalue.
+  The matrix $J$ is called the **Jordan canonical form** (or **Jordan normal form**) of $T$.
+</Callout>
+
+## The Nilpotent Case: Foundation of JCF
+
+The key insight is that the JCF reduces to understanding nilpotent operators. If $T$ has eigenvalues
+$\lambda_1, \ldots, \lambda_s$ (distinct), then $V = G_{\lambda_1} \oplus \cdots \oplus G_{\lambda_s}$,
+and on each generalized eigenspace $G_{\lambda_i}$, the operator $N_i = (T - \lambda_i I)|_{G_{\lambda_i}}$
+is nilpotent. Finding the Jordan form of $T$ reduces to finding the Jordan form of each $N_i$.
+
+<Callout type="theorem" title="Jordan Form for Nilpotent Operators">
+  Let $N \colon W \to W$ be a nilpotent operator on a finite-dimensional vector space $W$. Then there
+  exists a basis of $W$ in which $[N]$ is a block diagonal matrix of nilpotent Jordan blocks:
+  $$[N] = \begin{pmatrix} J_{p_1}(0) & & \\ & J_{p_2}(0) & \\ & & \ddots & \\ & & & J_{p_m}(0) \end{pmatrix}$$
+  where $p_1 \geq p_2 \geq \cdots \geq p_m \geq 1$ and $p_1 + p_2 + \cdots + p_m = \dim W$.
+</Callout>
+
+**Proof.** By induction on $\dim W$.
+
+*Base case ($\dim W = 1$):* $N = 0$, and the Jordan form is $(0)$, a single $1 \times 1$ block.
+
+*Inductive step:* Let $\dim W = n$ and assume the result for all spaces of smaller dimension.
+
+If $N = 0$, then $[N]$ is the zero matrix, which is block diagonal with $n$ blocks of size $1 \times 1$.
+
+If $N \neq 0$, consider $U = \operatorname{im}(N)$. Since $N$ is nilpotent and nonzero,
+$\{0\} \subsetneq U \subsetneq W$ (strict because $N \neq 0$ and $N^k = 0$ implies $U \neq W$).
+Moreover, $U$ is $N$-invariant: $N(U) = N(N(W)) = N^2(W) \subseteq N(W) = U$.
+
+By the inductive hypothesis, $N|_U$ has a Jordan form on $U$. The Jordan chains on $U$ can be extended
+to Jordan chains on $W$ by prepending vectors from $W \setminus U$. Specifically, for each Jordan chain
+$(v_p, \ldots, v_1)$ on $U$ (where $v_1$ is an eigenvector, i.e., $Nv_1 = 0$), we can find $w \in W$
+with $Nw = v_p$ (by choosing appropriately from the preimage). Extending all chains this way and
+supplementing with any remaining kernel vectors gives a complete Jordan chain decomposition of $W$.
+
+The details are somewhat intricate but the conclusion is that $W$ decomposes into a direct sum of
+cyclic subspaces, each spanned by a single Jordan chain. $\blacksquare$
+
+## Assembling the Full Jordan Form
+
+<Callout type="theorem" title="Full Jordan Canonical Form">
+  Let $T \colon V \to V$ be a linear operator over an algebraically closed field with distinct eigenvalues
+  $\lambda_1, \ldots, \lambda_s$. Then:
+  1. $V = G_{\lambda_1} \oplus \cdots \oplus G_{\lambda_s}$ (generalized eigenspace decomposition).
+  2. On each $G_{\lambda_i}$, the operator $T$ acts as $\lambda_i I + N_i$ where $N_i$ is nilpotent.
+  3. Apply the nilpotent JCF to each $N_i$ to get Jordan blocks $J_{p_{i,1}}(0), \ldots, J_{p_{i,m_i}}(0)$.
+  4. The Jordan form of $T$ is the block diagonal matrix with blocks $J_{p_{i,j}}(\lambda_i)$ for all $i, j$.
+  *Proof.* Steps (1) and (2) were established in the previous lesson. Step (3) uses the nilpotent Jordan
+  form theorem. For step (4), note that if a basis of $G_{\lambda_i}$ makes $N_i$ block diagonal with
+  blocks $J_{p_{i,j}}(0)$, then the matrix of $T|_{G_{\lambda_i}} = \lambda_i I + N_i$ in the same basis
+  is block diagonal with blocks $\lambda_i I_{p_{i,j}} + J_{p_{i,j}}(0) = J_{p_{i,j}}(\lambda_i)$.
+  Concatenating the bases of all generalized eigenspaces gives the full Jordan form. $\blacksquare$
+</Callout>
+
+## Uniqueness of the Jordan Form
+
+<Callout type="theorem" title="Uniqueness of Jordan Canonical Form">
+  The Jordan canonical form is unique up to permutation of the Jordan blocks. That is, the eigenvalues,
+  the number of blocks for each eigenvalue, and the size of each block are uniquely determined by $T$.
+  *Proof.* The key is that the block structure is determined by the sequence of kernel dimensions.
+  For each eigenvalue $\lambda_i$, define
+  $$r_j = \dim \ker(T - \lambda_i I)^j, \quad j = 0, 1, 2, \ldots$$
+  This is a nondecreasing sequence starting at $r_0 = 0$ and stabilizing at $r_\infty = \dim G_{\lambda_i} = \operatorname{am}(\lambda_i)$.
+  **Claim:** The number of Jordan blocks of size $\geq j$ for eigenvalue $\lambda_i$ equals $r_j - r_{j-1}$.
+  *Proof of claim:* In a single Jordan block $J_p(0)$, we have $\dim \ker N^j = \min(j, p)$. So the
+  jump $\dim \ker N^j - \dim \ker N^{j-1}$ equals 1 if $j \leq p$ and 0 if $j > p$. For a direct sum
+  of blocks, the jumps are additive, so the jump at step $j$ counts the number of blocks of size $\geq j$.
+  Since the jumps $r_j - r_{j-1}$ are determined by $T$ alone (independent of the choice of basis),
+  the number of blocks of each size is uniquely determined. $\blacksquare$
+</Callout>
+
+<Callout type="tip" title="The Jump Sequence">
+  Let $d_j = r_j - r_{j-1}$ be the "jump" at step $j$. Then:
+  - $d_1 = \dim \ker(T - \lambda I) = \operatorname{gm}(\lambda)$ = total number of Jordan blocks for $\lambda$.
+  - $d_j$ is nonincreasing: $d_1 \geq d_2 \geq d_3 \geq \cdots$
+  - The number of blocks of size exactly $j$ is $d_j - d_{j+1}$.
+  - $d_1 + d_2 + \cdots = \operatorname{am}(\lambda)$.
+</Callout>
+
+## Reading $\chi_T$ and $m_T$ from the Jordan Form
+
+<Callout type="theorem" title="Characteristic and Minimal Polynomial from JCF">
+  Let $T$ have Jordan form with blocks $J_{p_{i,1}}(\lambda_i), \ldots, J_{p_{i,m_i}}(\lambda_i)$ for
+  each distinct eigenvalue $\lambda_i$, where $p_{i,1} \geq p_{i,2} \geq \cdots$.
+  1. **Characteristic polynomial:**
+   $$\chi_T(\lambda) = \prod_{i=1}^{s} (\lambda_i - \lambda)^{a_i}$$
+   where $a_i = p_{i,1} + p_{i,2} + \cdots + p_{i,m_i} = \operatorname{am}(\lambda_i) = \dim G_{\lambda_i}$.
+  2. **Minimal polynomial:**
+   $$m_T(\lambda) = \prod_{i=1}^{s} (\lambda - \lambda_i)^{p_{i,1}}$$
+   where $p_{i,1}$ is the **size of the largest Jordan block** for $\lambda_i$.
+  *Proof.* (1) The characteristic polynomial of a block diagonal matrix is the product of the characteristic
+  polynomials of the blocks: $\chi_{J_p(\lambda_i)}(\mu) = (\lambda_i - \mu)^p$.
+  (2) The minimal polynomial of a block diagonal matrix is the LCM of the minimal polynomials of the blocks.
+  The minimal polynomial of $J_p(\lambda_i)$ is $(\lambda - \lambda_i)^p$. The LCM of
+  $(\lambda - \lambda_i)^{p_{i,1}}, \ldots, (\lambda - \lambda_i)^{p_{i,m_i}}$ is
+  $(\lambda - \lambda_i)^{p_{i,1}}$ (the largest power). Taking the product over distinct eigenvalues
+  gives the result. $\blacksquare$
+</Callout>
+
+## Computing the Jordan Canonical Form: Algorithm
+
+Given an $n \times n$ matrix $A$ over $\mathbb{C}$:
+
+**Step 1.** Find all eigenvalues $\lambda_1, \ldots, \lambda_s$ and their algebraic multiplicities $a_1, \ldots, a_s$.
+
+**Step 2.** For each eigenvalue $\lambda_i$, compute the kernel dimensions:
+$$r_j^{(i)} = \dim \ker(A - \lambda_i I)^j, \quad j = 1, 2, \ldots$$
+until the sequence stabilizes at $a_i$.
+
+**Step 3.** From the jumps $d_j^{(i)} = r_j^{(i)} - r_{j-1}^{(i)}$, determine the block sizes:
+the number of blocks of size $\geq j$ is $d_j^{(i)}$, so the number of blocks of size exactly $j$ is
+$d_j^{(i)} - d_{j+1}^{(i)}$.
+
+**Step 4.** Write down the Jordan form.
+
+**Step 5.** (Optional) To find the change-of-basis matrix $P$, construct Jordan chains for each block.
+
+**Worked Example.** Let
+
+$$A = \begin{pmatrix} 5 & 4 & 2 & 1 \\ 0 & 1 & -1 & -1 \\ -1 & -1 & 3 & 0 \\ 1 & 1 & -1 & 2 \end{pmatrix}.$$
+
+The characteristic polynomial (computed by expanding or using software) is $\chi_A(\lambda) = (\lambda - 1)(\lambda - 2)(\lambda - 4)^2$.
+
+Eigenvalues: $\lambda_1 = 1$ (am = 1), $\lambda_2 = 2$ (am = 1), $\lambda_3 = 4$ (am = 2).
+
+For $\lambda_3 = 4$: $\dim \ker(A - 4I) = ?$ -- this determines whether we get two $1 \times 1$ blocks
+(diagonalizable case) or one $2 \times 2$ block. The JCF is either
+$\operatorname{diag}(1, 2, 4, 4)$ or $\operatorname{diag}(1, 2, J_2(4))$.
+
+<PythonPlayground
+  title="Computing the Jordan Canonical Form"
+  defaultCode={`import numpy as np
+from scipy.linalg import jordan_normal_form
+
+# Example 1: a defective matrix
+A = np.array([[5, 4, 2, 1],
+              [0, 1, -1, -1],
+              [-1, -1, 3, 0],
+              [1, 1, -1, 2]], dtype=float)
+
+print("A =")
+print(A)
+print()
+
+# Eigenvalues
+eigenvalues = np.linalg.eigvals(A)
+print("Eigenvalues:", np.sort(np.round(eigenvalues, 6)))
+print()
+
+# For eigenvalue 4: check geometric multiplicity
+lam = 4.0
+N = A - lam * np.eye(4)
+r1 = 4 - np.linalg.matrix_rank(N, tol=1e-10)
+N2 = N @ N
+r2 = 4 - np.linalg.matrix_rank(N2, tol=1e-10)
+print(f"For lambda = {lam}:")
+print(f"  dim ker(A - 4I)   = {r1}")
+print(f"  dim ker(A - 4I)^2 = {r2}")
+if r1 == 2:
+    print("  => Two 1x1 blocks: diagonalizable at this eigenvalue")
+elif r1 == 1:
+    print("  => One 2x2 Jordan block J_2(4)")
+print()
+
+# Example 2: A 3x3 nilpotent matrix and its Jordan form
+print("=== Nilpotent example ===")
+N = np.array([[0, 1, 1],
+              [0, 0, 1],
+              [0, 0, 0]], dtype=float)
+print("N =")
+print(N)
+
+# Kernel dimensions
+for k in range(1, 4):
+    Nk = np.linalg.matrix_power(N, k)
+    nullity = 3 - np.linalg.matrix_rank(Nk, tol=1e-10)
+    print(f"  dim ker(N^{k}) = {nullity}")
+
+print("Jumps: d1=1, d2=1, d3=1 => one block of size 3")
+print("JCF = J_3(0)")
+print()
+
+# Example 3: Determine JCF from kernel dimensions
+print("=== Determine block structure from kernel dims ===")
+M = np.array([[0, 1, 0, 0, 0],
+              [0, 0, 0, 0, 0],
+              [0, 0, 0, 1, 0],
+              [0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0]], dtype=float)
+print("M (nilpotent, 5x5) =")
+print(M)
+for k in range(1, 6):
+    Mk = np.linalg.matrix_power(M, k)
+    nullity = 5 - np.linalg.matrix_rank(Mk, tol=1e-10)
+    print(f"  dim ker(M^{k}) = {nullity}")
+print("Jumps: 3, 2, 0, 0, 0")
+print("Blocks of size >= 1: 3, size >= 2: 2, size >= 3: 0")
+print("=> 1 block of size 1 (3-2=1), 2 blocks of size 2 (2-0=2)")
+print("JCF = diag(J_2(0), J_2(0), J_1(0))")
+`}
+/>
+
+## Reading the Minimal Polynomial: Examples
+
+**Example 1.** JCF = $\operatorname{diag}(J_3(2), J_1(2), J_2(5))$.
+- $\chi_T(\lambda) = (2 - \lambda)^4 (5 - \lambda)^2$ (sum of block sizes for each eigenvalue).
+- $m_T(\lambda) = (\lambda - 2)^3 (\lambda - 5)^2$ (largest block size for each eigenvalue).
+
+**Example 2.** JCF = $\operatorname{diag}(J_2(1), J_2(1), J_1(1))$.
+- $\chi_T(\lambda) = (1 - \lambda)^5$.
+- $m_T(\lambda) = (\lambda - 1)^2$ (largest block is $2 \times 2$).
+- Note: $m_T \neq \chi_T$ here; the minimal polynomial can be a proper divisor of the characteristic polynomial.
+
+**Example 3.** JCF = $\operatorname{diag}(J_3(0))$ (a single $3 \times 3$ nilpotent block).
+- $\chi_T(\lambda) = (-\lambda)^3$.
+- $m_T(\lambda) = \lambda^3$.
+- Here $m_T = \pm\chi_T$; this happens when there is exactly one block per eigenvalue.
+
+<Callout type="theorem" title="Cayley-Hamilton from JCF">
+  The Cayley-Hamilton theorem ($\chi_T(T) = 0$) follows easily from the JCF. Since $m_T$ divides $\chi_T$,
+  and $m_T(T) = 0$ by definition, we get $\chi_T(T) = 0$.
+  In fact, the JCF gives a more refined statement: for each Jordan block $J_p(\lambda)$,
+  $(\lambda I - J_p(\lambda))^p = 0$, which is obvious since $J_p(\lambda) - \lambda I = N_p$ is nilpotent
+  with index $p$.
+</Callout>
+
+## Exercises
+
+<Problem title="Determine the JCF from kernel dimensions">
+  Let $T \colon \mathbb{C}^6 \to \mathbb{C}^6$ have the single eigenvalue $\lambda = 0$ (i.e., $T$
+  is nilpotent) with the following kernel dimensions:
+  | $j$ | $\dim \ker T^j$ |
+  |-----|-----------------|
+  | 0   | 0               |
+  | 1   | 2               |
+  | 2   | 4               |
+  | 3   | 5               |
+  | 4   | 6               |
+  Determine the Jordan canonical form of $T$.
+<Solution>
+  Compute the jumps: $d_1 = 2, d_2 = 2, d_3 = 1, d_4 = 1$.
+  The number of blocks of size $\geq j$:
+  - $\geq 1$: $d_1 = 2$ blocks
+  - $\geq 2$: $d_2 = 2$ blocks
+  - $\geq 3$: $d_3 = 1$ block
+  - $\geq 4$: $d_4 = 1$ block
+  The number of blocks of size exactly $j$:
+  - Size 1: $d_1 - d_2 = 0$
+  - Size 2: $d_2 - d_3 = 1$
+  - Size 3: $d_3 - d_4 = 0$
+  - Size 4: $d_4 - d_5 = 1$ (where $d_5 = 0$ since $\dim \ker T^4 = 6 = \dim V$)
+  So there is one block of size 4 and one block of size 2. The JCF is
+  $$J = \begin{pmatrix} J_4(0) & \\ & J_2(0) \end{pmatrix}.$$
+  Verification: total size = $4 + 2 = 6$. Number of blocks = 2 = $d_1$. $\square$
+</Solution>
+</Problem>
+
+<Problem title="Compute JCF and change-of-basis matrix">
+  Let $A = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix}$.
+  (a) Find the Jordan canonical form of $A$.
+  (b) Find an invertible matrix $P$ such that $P^{-1}AP = J$.
+  (c) Use the JCF to compute $A^{100}$.
+<Solution>
+  **(a)** The matrix $A$ is upper triangular with eigenvalues $\lambda_1 = 2$ (am = 2) and $\lambda_2 = 3$ (am = 1).
+  For $\lambda_1 = 2$: $A - 2I = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}$, so $\dim \ker(A - 2I) = 1$ (geometric multiplicity 1). Since $\operatorname{gm}(2) = 1 < 2 = \operatorname{am}(2)$, there is one $2 \times 2$ Jordan block.
+  For $\lambda_2 = 3$: algebraic and geometric multiplicity both 1, giving a $1 \times 1$ block.
+  $$J = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{pmatrix} = A.$$
+  The matrix $A$ is already in Jordan form! So $P = I$.
+  **(b)** $P = I_3$.
+  **(c)** Using $J^k = P^{-1}A^k P = A^k$ (since $P = I$), we compute $J^{100}$ block by block.
+  For the $2 \times 2$ Jordan block: $J_2(2)^{100} = \begin{pmatrix} 2^{100} & 100 \cdot 2^{99} \\ 0 & 2^{100} \end{pmatrix}$
+  (using the formula $J_k(\lambda)^m = \sum_{j=0}^{k-1} \binom{m}{j} \lambda^{m-j} N_k^j$).
+  For the $1 \times 1$ block: $(3)^{100} = 3^{100}$.
+  $$A^{100} = \begin{pmatrix} 2^{100} & 100 \cdot 2^{99} & 0 \\ 0 & 2^{100} & 0 \\ 0 & 0 & 3^{100} \end{pmatrix}. \quad \square$$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="A $5 \times 5$ matrix $A$ has Jordan form $\operatorname{diag}(J_2(3), J_2(3), J_1(3))$. What is the minimal polynomial of $A$?"
+  options={[
+    "$m_A(\\lambda) = (\\lambda - 3)^5$",
+    "$m_A(\\lambda) = (\\lambda - 3)^2$",
+    "$m_A(\\lambda) = (\\lambda - 3)^3$",
+    "$m_A(\\lambda) = (\\lambda - 3)$"
+  ]}
+  correctIndex={1}
+  explanation="The minimal polynomial takes the largest block size for each eigenvalue. The largest block for eigenvalue 3 is $2 \\times 2$, so $m_A(\\lambda) = (\\lambda - 3)^2$."
+/>
+
+<NumericInput
+  question="A $7 \times 7$ matrix has Jordan form with blocks $J_3(1), J_2(1), J_1(2), J_1(2)$. What is the degree of the minimal polynomial $m_A(\lambda)$?"
+  answer={4}
+  tolerance={0}
+  explanation="$m_A(\\lambda) = (\\lambda - 1)^3 (\\lambda - 2)^1$. The largest block for eigenvalue 1 has size 3, and the largest block for eigenvalue 2 has size 1. The degree is $3 + 1 = 4$."
+/>
+
+<MultipleChoice
+  question="Let $A$ and $B$ be $n \\times n$ complex matrices with the same Jordan canonical form. Which of the following must be true?"
+  options={[
+    "$A = B$",
+    "$A$ and $B$ are similar (there exists invertible $P$ with $B = P^{-1}AP$)",
+    "$A$ and $B$ have the same eigenvectors",
+    "$A$ and $B$ commute ($AB = BA$)"
+  ]}
+  correctIndex={1}
+  explanation="Two matrices are similar if and only if they have the same Jordan canonical form (up to block ordering). Having the same JCF does not imply they are equal, have the same eigenvectors, or commute."
+/>

@@ -1,0 +1,313 @@
+---
+title: "Abstract Vector Spaces"
+description: "General vector spaces over a field, polynomial and matrix spaces, function spaces, subspace characterizations, and bases in abstract settings"
+order: 5
+prerequisites: ["04-rank-nullity"]
+---
+
+## Why Abstract?
+
+Everything we have done so far takes place in $\mathbb{R}^n$. But many mathematical objects behave exactly like vectors: polynomials can be added and scaled, matrices can be added and scaled, functions can be added and scaled. Rather than reprove every theorem for each new setting, we axiomatize the common structure and prove results once for all.
+
+## The Axioms of a Vector Space
+
+<Callout type="definition" title="Vector Space over a Field">
+  Let $F$ be a **field** (such as $\mathbb{R}$, $\mathbb{C}$, or $\mathbb{Q}$). A **vector space** over $F$ is a set $V$ together with two operations:
+  - **Vector addition:** $V \times V \to V$, denoted $(\mathbf{u}, \mathbf{v}) \mapsto \mathbf{u} + \mathbf{v}$.
+  - **Scalar multiplication:** $F \times V \to V$, denoted $(c, \mathbf{v}) \mapsto c\mathbf{v}$.
+  satisfying the following **eight axioms** for all $\mathbf{u}, \mathbf{v}, \mathbf{w} \in V$ and all $c, d \in F$:
+  1. $\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}$ (commutativity of addition)
+  2. $(\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})$ (associativity of addition)
+  3. There exists $\mathbf{0} \in V$ such that $\mathbf{v} + \mathbf{0} = \mathbf{v}$ for all $\mathbf{v}$ (additive identity)
+  4. For each $\mathbf{v} \in V$, there exists $-\mathbf{v} \in V$ with $\mathbf{v} + (-\mathbf{v}) = \mathbf{0}$ (additive inverse)
+  5. $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$ (distributivity over vector addition)
+  6. $(c + d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}$ (distributivity over scalar addition)
+  7. $c(d\mathbf{v}) = (cd)\mathbf{v}$ (compatibility of scalar multiplication)
+  8. $1\mathbf{v} = \mathbf{v}$ (identity element of scalar multiplication)
+  Elements of $V$ are called **vectors** and elements of $F$ are called **scalars**.
+</Callout>
+
+<Callout type="tip" title="Consequences of the Axioms">
+  From these eight axioms, one can derive:
+  - The zero vector $\mathbf{0}$ is unique.
+  - Additive inverses are unique: $-\mathbf{v}$ is the only vector with $\mathbf{v} + (-\mathbf{v}) = \mathbf{0}$.
+  - $0\mathbf{v} = \mathbf{0}$ for all $\mathbf{v} \in V$.
+  - $c\mathbf{0} = \mathbf{0}$ for all $c \in F$.
+  - $(-1)\mathbf{v} = -\mathbf{v}$ for all $\mathbf{v} \in V$.
+  - If $c\mathbf{v} = \mathbf{0}$, then $c = 0$ or $\mathbf{v} = \mathbf{0}$.
+  Each of these deserves a short proof from the axioms. We verify the first two below.
+</Callout>
+
+<Callout type="theorem" title="Uniqueness of the Zero Vector">
+  The zero vector in a vector space is unique.
+</Callout>
+
+**Proof.** Suppose $\mathbf{0}$ and $\mathbf{0}'$ are both additive identities. Then
+
+$$\mathbf{0}' = \mathbf{0}' + \mathbf{0} = \mathbf{0} + \mathbf{0}' = \mathbf{0},$$
+
+where the first equality uses that $\mathbf{0}$ is an identity, and the second uses commutativity and that $\mathbf{0}'$ is an identity. $\blacksquare$
+
+<Callout type="theorem" title="$0\mathbf{v} = \mathbf{0}$">
+  For any vector $\mathbf{v}$ in a vector space, $0\mathbf{v} = \mathbf{0}$.
+</Callout>
+
+**Proof.** We have $0\mathbf{v} = (0 + 0)\mathbf{v} = 0\mathbf{v} + 0\mathbf{v}$ by Axiom 6. Adding $-(0\mathbf{v})$ to both sides:
+
+$$\mathbf{0} = 0\mathbf{v} + (-(0\mathbf{v})) = (0\mathbf{v} + 0\mathbf{v}) + (-(0\mathbf{v})) = 0\mathbf{v} + (0\mathbf{v} + (-(0\mathbf{v}))) = 0\mathbf{v} + \mathbf{0} = 0\mathbf{v}.$$
+
+Hence $0\mathbf{v} = \mathbf{0}$. $\blacksquare$
+
+## The Standard Examples
+
+### Example 1: $\mathbb{R}^n$
+
+The space $\mathbb{R}^n$ with component-wise addition and scalar multiplication is a vector space over $\mathbb{R}$. This is the prototypical example and the one we have studied in Lessons 1--4.
+
+### Example 2: $\mathcal{P}_n(\mathbb{R})$ -- Polynomials of Degree $\leq n$
+
+<Callout type="definition" title="Polynomial Space">
+  For $n \geq 0$, the set
+  $$\mathcal{P}_n(\mathbb{R}) = \{a_0 + a_1 t + a_2 t^2 + \cdots + a_n t^n : a_0, \ldots, a_n \in \mathbb{R}\}$$
+  of all polynomials with real coefficients of degree at most $n$, together with the usual polynomial addition and scalar multiplication, is a vector space over $\mathbb{R}$.
+  The **zero vector** is the zero polynomial $\mathbf{0}(t) = 0$.
+</Callout>
+
+**Verification:** We must check all eight axioms. The key point is that adding two polynomials of degree $\leq n$ gives a polynomial of degree $\leq n$ (the set is closed under addition), and scaling a polynomial of degree $\leq n$ gives a polynomial of degree $\leq n$ (closed under scalar multiplication). The eight axioms follow from the corresponding properties of real numbers.
+
+<Callout type="tip" title="Degree $\\leq n$, Not Degree $= n$">
+  The set of polynomials of degree *exactly* $n$ is NOT a vector space: it is not closed under addition (e.g., $(t^2 + t) + (-t^2) = t$ has degree $1$, not $2$). Always use "degree at most $n$."
+</Callout>
+
+### Example 3: $M_{m \times n}(\mathbb{R})$ -- The Space of Matrices
+
+<Callout type="definition" title="Matrix Space">
+  The set $M_{m \times n}(\mathbb{R})$ of all $m \times n$ real matrices, with the usual matrix addition and scalar multiplication, is a vector space over $\mathbb{R}$.
+  The zero vector is the $m \times n$ zero matrix.
+</Callout>
+
+### Example 4: Function Spaces
+
+<Callout type="definition" title="Function Space">
+  Let $S$ be a nonempty set. The set
+  $$\mathcal{F}(S, \mathbb{R}) = \{f : S \to \mathbb{R}\}$$
+  of all real-valued functions on $S$, with pointwise addition $(f + g)(x) = f(x) + g(x)$ and pointwise scalar multiplication $(cf)(x) = c \cdot f(x)$, is a vector space over $\mathbb{R}$.
+  The zero vector is the zero function $\mathbf{0}(x) = 0$ for all $x \in S$.
+</Callout>
+
+Important sub-examples:
+- $C[a, b]$: the continuous functions on $[a, b]$.
+- $C^{\infty}(\mathbb{R})$: the infinitely differentiable functions on $\mathbb{R}$.
+
+These are subspaces of $\mathcal{F}(\mathbb{R}, \mathbb{R})$ (once we verify closure, which follows from the fact that sums and scalar multiples of continuous/smooth functions are continuous/smooth).
+
+<MultipleChoice
+  question="Which of the following is NOT a vector space under the usual operations?"
+  options={[
+    "The set of all $2 \\times 2$ symmetric matrices",
+    "The set of all polynomials of degree exactly 3",
+    "The set of all continuous functions $f : [0,1] \\to \\mathbb\{R\}$",
+    "The set $\\{(x, y, z) \\in \\mathbb\{R\}^3 : x + y + z = 0\\}$"
+  ]}
+  correctIndex={1}
+  explanation="Polynomials of degree exactly 3 do not form a vector space: the sum $(t^3 + 1) + (-t^3 + 1) = 2$ has degree 0, not 3, so the set is not closed under addition. All others are vector spaces (subspaces of a known vector space)."
+/>
+
+## Subspaces in Abstract Settings
+
+<Callout type="definition" title="Subspace of a Vector Space">
+  Let $V$ be a vector space over $F$. A subset $W \subseteq V$ is a **subspace** of $V$ if $W$ is itself a vector space under the operations inherited from $V$.
+</Callout>
+
+<Callout type="theorem" title="Subspace Characterization (Abstract Version)">
+  A nonempty subset $W$ of a vector space $V$ is a subspace if and only if:
+  1. For all $\mathbf{u}, \mathbf{v} \in W$: $\mathbf{u} + \mathbf{v} \in W$.
+  2. For all $c \in F$ and $\mathbf{v} \in W$: $c\mathbf{v} \in W$.
+  Equivalently (combining 1 and 2): $W$ is a subspace if and only if $W \neq \emptyset$ and for all $\mathbf{u}, \mathbf{v} \in W$ and all $c, d \in F$: $c\mathbf{u} + d\mathbf{v} \in W$.
+</Callout>
+
+**Proof.** The same argument as in $\mathbb{R}^n$ works verbatim. Closure under the two operations ensures all eight axioms are inherited. The zero vector belongs to $W$ because $W$ is nonempty and $\mathbf{0} = 0\mathbf{v} \in W$ for any $\mathbf{v} \in W$. Additive inverses exist because $-\mathbf{v} = (-1)\mathbf{v} \in W$. The remaining axioms (commutativity, associativity, etc.) are inherited from $V$ since they hold for all vectors in $V$ and hence for all vectors in $W \subseteq V$. $\blacksquare$
+
+### Subspace Examples in $\mathcal{P}_n(\mathbb{R})$
+
+<Problem title="Theorem Application: Subspace of Polynomials">
+  Let $W = \{p \in \mathcal{P}_3(\mathbb{R}) : p(1) = 0\}$. Prove that $W$ is a subspace of $\mathcal{P}_3(\mathbb{R})$.
+<Solution>
+  **Nonempty:** The zero polynomial $\mathbf{0}(t) = 0$ satisfies $\mathbf{0}(1) = 0$, so $\mathbf{0} \in W$.
+  **Closed under addition:** Let $p, q \in W$. Then $p(1) = 0$ and $q(1) = 0$. So $(p + q)(1) = p(1) + q(1) = 0 + 0 = 0$, and $p + q \in W$.
+  **Closed under scalar multiplication:** Let $p \in W$ and $c \in \mathbb{R}$. Then $(cp)(1) = c \cdot p(1) = c \cdot 0 = 0$, so $cp \in W$.
+  Therefore $W$ is a subspace of $\mathcal{P}_3(\mathbb{R})$. $\blacksquare$
+</Solution>
+</Problem>
+
+## Bases in Abstract Vector Spaces
+
+The definitions of linear independence, span, basis, and dimension carry over verbatim to any vector space.
+
+<Callout type="definition" title="Basis (General)">
+  A **basis** for a vector space $V$ is a linearly independent set that spans $V$. The **dimension** of $V$ is the number of vectors in any basis (which is well-defined by the invariance theorem from Lesson 3).
+</Callout>
+
+### Basis for $\mathcal{P}_n(\mathbb{R})$
+
+<Callout type="theorem" title="Standard Basis for $\\mathcal{P}_n(\\mathbb{R})$">
+  The set $\{1, t, t^2, \ldots, t^n\}$ is a basis for $\mathcal{P}_n(\mathbb{R})$. Hence $\dim(\mathcal{P}_n(\mathbb{R})) = n + 1$.
+</Callout>
+
+**Proof.**
+
+**Spanning:** Every polynomial $p(t) = a_0 + a_1 t + \cdots + a_n t^n$ is by definition a linear combination of $1, t, \ldots, t^n$.
+
+**Independence:** Suppose $a_0 \cdot 1 + a_1 \cdot t + \cdots + a_n \cdot t^n = 0$ (the zero polynomial, meaning this equation holds for all $t \in \mathbb{R}$). A polynomial of degree $\leq n$ with infinitely many roots must be the zero polynomial, so $a_0 = a_1 = \cdots = a_n = 0$. (Alternatively, evaluate at $t = 0$ to get $a_0 = 0$, differentiate and evaluate at $t = 0$ to get $a_1 = 0$, and so on.)
+
+Hence $\{1, t, t^2, \ldots, t^n\}$ is a basis, and $\dim(\mathcal{P}_n(\mathbb{R})) = n + 1$. $\blacksquare$
+
+### Basis for $M_{m \times n}(\mathbb{R})$
+
+<Callout type="theorem" title="Standard Basis for $M_{m \\times n}(\\mathbb{R})$">
+  Let $E_{ij}$ be the $m \times n$ matrix with a $1$ in position $(i, j)$ and $0$s elsewhere. Then $\{E_{ij} : 1 \leq i \leq m,\; 1 \leq j \leq n\}$ is a basis for $M_{m \times n}(\mathbb{R})$. Hence $\dim(M_{m \times n}(\mathbb{R})) = mn$.
+</Callout>
+
+**Proof.**
+
+**Spanning:** Any matrix $A = (a_{ij})$ can be written as $A = \sum_{i,j} a_{ij} E_{ij}$.
+
+**Independence:** If $\sum_{i,j} c_{ij} E_{ij} = 0$ (the zero matrix), then examining the $(i,j)$ entry gives $c_{ij} = 0$ for all $i, j$.
+
+Hence $\dim(M_{m \times n}(\mathbb{R})) = mn$. $\blacksquare$
+
+<NumericInput
+  question="What is $\\dim(\\mathcal\{P\}_4(\\mathbb\{R\}))$?"
+  answer={5}
+  tolerance={0}
+  explanation="The standard basis $\\{1, t, t^2, t^3, t^4\\}$ has $4 + 1 = 5$ elements."
+/>
+
+<NumericInput
+  question="What is $\\dim(M_{3 \\times 4}(\\mathbb\{R\}))$?"
+  answer={12}
+  tolerance={0}
+  explanation="The standard basis has $3 \\times 4 = 12$ elements (one matrix $E_{ij}$ for each entry position)."
+/>
+
+## Isomorphism: Abstract Spaces Are "the Same" as $\mathbb{R}^n$
+
+A key insight: every finite-dimensional vector space of dimension $n$ over $\mathbb{R}$ is "essentially the same" as $\mathbb{R}^n$. The coordinate map $\mathbf{v} \mapsto [\mathbf{v}]_{\mathcal{B}}$ provides the identification.
+
+<Callout type="theorem" title="Coordinate Isomorphism">
+  Let $V$ be a vector space with basis $\mathcal{B} = \{\mathbf{b}_1, \ldots, \mathbf{b}_n\}$. The coordinate map $\phi : V \to \mathbb{R}^n$ defined by $\phi(\mathbf{v}) = [\mathbf{v}]_{\mathcal{B}}$ is a bijection that preserves addition and scalar multiplication:
+  $$\phi(\mathbf{u} + \mathbf{v}) = \phi(\mathbf{u}) + \phi(\mathbf{v}), \qquad \phi(c\mathbf{v}) = c\,\phi(\mathbf{v}).$$
+  Such a map is called a **(vector space) isomorphism**.
+</Callout>
+
+**Proof.** Write $\mathbf{u} = \sum a_i \mathbf{b}_i$ and $\mathbf{v} = \sum c_i \mathbf{b}_i$. Then $\mathbf{u} + \mathbf{v} = \sum (a_i + c_i)\mathbf{b}_i$, so
+
+$$\phi(\mathbf{u} + \mathbf{v}) = (a_1 + c_1, \ldots, a_n + c_n)^T = \phi(\mathbf{u}) + \phi(\mathbf{v}).$$
+
+Similarly for scalar multiplication. Bijectivity follows from uniqueness of coordinate representations (independence) and the fact that every $\mathbf{c} \in \mathbb{R}^n$ gives a vector $\sum c_i \mathbf{b}_i \in V$ (spanning). $\blacksquare$
+
+This means: any theorem proved in $\mathbb{R}^n$ about vector spaces, subspaces, bases, and dimension automatically holds in $\mathcal{P}_n(\mathbb{R})$, $M_{m \times n}(\mathbb{R})$, and any other finite-dimensional space. The coordinate map translates between the abstract and concrete worlds.
+
+## Exploring Abstract Spaces Computationally
+
+<PythonPlayground
+  title="Polynomial and Matrix Spaces via Coordinates"
+  defaultCode={`import numpy as np
+
+# === Polynomials as coordinate vectors ===
+# P_2(R) has basis {1, t, t^2}, so dim = 3
+# p(t) = 2 + 3t - t^2  <->  [2, 3, -1]^T
+# q(t) = 1 - t + 4t^2   <->  [1, -1, 4]^T
+
+p_coords = np.array([2, 3, -1])
+q_coords = np.array([1, -1, 4])
+
+print("=== P_2(R): Polynomials of degree <= 2 ===")
+print(f"p(t) = 2 + 3t - t^2     coords: {p_coords}")
+print(f"q(t) = 1 - t + 4t^2     coords: {q_coords}")
+print(f"p + q = 3 + 2t + 3t^2   coords: {p_coords + q_coords}")
+print(f"3p = 6 + 9t - 3t^2      coords: {3 * p_coords}")
+print()
+
+# Check if {1+t, t+t^2, 1+t^2} is a basis for P_2
+# Coords: [1,1,0], [0,1,1], [1,0,1]
+B = np.array([[1, 0, 1],
+              [1, 1, 0],
+              [0, 1, 1]], dtype=float)
+
+print("Candidate basis for P_2: {1+t, t+t^2, 1+t^2}")
+print(f"Coordinate matrix:\\n{B}")
+print(f"Determinant: {np.linalg.det(B):.1f}")
+print(f"Is a basis (det != 0)? {abs(np.linalg.det(B)) > 1e-10}")
+print()
+
+# === M_{2x2}(R): 2x2 matrices ===
+# dim = 4, standard basis: E11, E12, E21, E22
+print("=== M_{2x2}(R): 2x2 matrices ===")
+print(f"Dimension: {2*2} = 4")
+
+# Is the set of symmetric 2x2 matrices a subspace?
+# Symmetric: a b; b d  <->  coords [a, b, b, d]
+# Parametrize: a*E11 + b*(E12+E21) + d*E22
+# This is 3-dimensional
+print("\\nSymmetric 2x2 matrices: a subspace of dim 3")
+print("Basis: E11, E12+E21, E22")
+print("  E11 = [[1,0],[0,0]]")
+print("  E12+E21 = [[0,1],[1,0]]")
+print("  E22 = [[0,0],[0,1]]")
+print()
+
+# Verify: upper triangular 2x2 matrices
+# a b; 0 d  <->  [a, b, 0, d] -- 3-dimensional
+print("Upper triangular 2x2 matrices: a subspace of dim 3")
+print("Basis: E11, E12, E22")
+
+# What about invertible 2x2 matrices?
+print("\\nInvertible 2x2 matrices: NOT a subspace!")
+print("  I + (-I) = 0, which is not invertible")`}
+/>
+
+<Problem title="Counterexample: Verifying Axioms Can Fail">
+  Define addition on $\mathbb{R}^2$ by $(x_1, y_1) \oplus (x_2, y_2) = (x_1 + x_2, 0)$ and scalar multiplication by $c \odot (x, y) = (cx, 0)$. Show that this is NOT a vector space by identifying which axiom fails.
+<Solution>
+  Consider Axiom 3: existence of an additive identity. We need a vector $\mathbf{0} = (a, b)$ such that $(x, y) \oplus (a, b) = (x, y)$ for all $(x, y) \in \mathbb{R}^2$.
+  But $(x, y) \oplus (a, b) = (x + a, 0)$. For this to equal $(x, y)$, we need $y = 0$ for all $y$. This is impossible when $y \neq 0$.
+  Alternatively, consider Axiom 8: $1 \odot (x, y) = (1 \cdot x, 0) = (x, 0)$, which does NOT equal $(x, y)$ when $y \neq 0$.
+  Either axiom failure suffices. Axiom 8 is violated: the identity scalar $1$ does not act as the identity. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which of the following is a subspace of $C[0,1]$ (continuous functions on $[0,1]$)?"
+  options={[
+    "$\\{f \\in C[0,1] : f(0) = 1\\}$",
+    "$\\{f \\in C[0,1] : f(0) = 0 \\text\{ and \} f(1) = 0\\}$",
+    "$\\{f \\in C[0,1] : f(x) > 0 \\text\{ for all \} x\\}$",
+    "$\\{f \\in C[0,1] : \\int_0^1 f(x)\\,dx = 1\\}$"
+  ]}
+  correctIndex={1}
+  explanation="Option (a) fails: the zero function has $f(0) = 0 \\neq 1$. Option (c) fails: it does not contain the zero function. Option (d) fails: the zero function has integral $0 \\neq 1$. Option (b) is a subspace: the zero function satisfies both conditions, and if $f(0) = g(0) = 0$ and $f(1) = g(1) = 0$, then $(f+g)(0) = 0$, $(f+g)(1) = 0$, and $(cf)(0) = 0$, $(cf)(1) = 0$."
+/>
+
+## Infinite-Dimensional Spaces (A Glimpse)
+
+Not all vector spaces are finite-dimensional. Let $\mathcal{P}(\mathbb{R}) = \bigcup_{n=0}^{\infty} \mathcal{P}_n(\mathbb{R})$ be the space of all polynomials (of any degree). The set $\{1, t, t^2, t^3, \ldots\}$ is linearly independent (no finite nontrivial combination equals zero), and it spans $\mathcal{P}(\mathbb{R})$. Since every basis must be infinite, $\mathcal{P}(\mathbb{R})$ is infinite-dimensional.
+
+Similarly, $C[0,1]$ is infinite-dimensional: the set $\{1, t, t^2, \ldots\}$ is an independent subset, so the dimension is at least countably infinite. (In fact, $C[0,1]$ has uncountable dimension.)
+
+The theory of infinite-dimensional spaces requires additional tools (topology, completeness, Hilbert/Banach spaces) that go beyond this course.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+  Verify all eight vector space axioms for $\mathcal{P}_2(\mathbb{R})$. Be explicit: for each axiom, state what needs to be checked and verify it using the definitions of polynomial addition and scalar multiplication.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+  Let $W = \{A \in M_{2 \times 2}(\mathbb{R}) : \text{tr}(A) = 0\}$, where $\text{tr}(A) = a_{11} + a_{22}$ is the trace. Prove $W$ is a subspace of $M_{2 \times 2}(\mathbb{R})$, find a basis for $W$, and determine $\dim(W)$.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+  Let $V = \{(x, y) \in \mathbb{R}^2 : x, y > 0\}$ with "addition" $\oplus$ defined by $(x_1, y_1) \oplus (x_2, y_2) = (x_1 x_2, y_1 y_2)$ and "scalar multiplication" $\odot$ defined by $c \odot (x, y) = (x^c, y^c)$. Show that $V$ is a vector space over $\mathbb{R}$ under these operations. Identify the zero vector and the additive inverse of $(x, y)$. Find a basis for $V$.
+  *Hint:* The coordinate map $\phi(x, y) = (\ln x, \ln y)$ may help.
+</Problem>

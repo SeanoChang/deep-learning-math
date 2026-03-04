@@ -1,0 +1,236 @@
+---
+title: "Continuous Functions on Compact Sets"
+description: "The Extreme Value Theorem, uniform continuity, and the power of compactness"
+order: 9
+prerequisites: ["08-topology-real-line-compactness"]
+---
+
+# Continuous Functions on Compact Sets
+
+Compactness transforms qualitative properties into quantitative ones. In this lesson, we prove three of the most important theorems in analysis: the continuous image of a compact set is compact, the Extreme Value Theorem, and the Heine-Cantor theorem on uniform continuity.
+
+## Continuous Image of Compact Sets
+
+<Callout type="theorem">
+**Theorem 9.1.** Let $f : K \to \mathbb{R}$ be continuous and let $K$ be compact. Then $f(K)$ is compact.
+</Callout>
+
+*Proof.* Let $\{V_\alpha\}_{\alpha \in I}$ be an open cover of $f(K)$. For each $\alpha$, the preimage $f^{-1}(V_\alpha)$ is open in $K$ (by the topological characterization of continuity, Theorem 7.6). The collection $\{f^{-1}(V_\alpha)\}_{\alpha \in I}$ is an open cover of $K$.
+
+Since $K$ is compact, there exists a finite subcover $\{f^{-1}(V_{\alpha_1}), \ldots, f^{-1}(V_{\alpha_n})\}$. Then
+
+$$f(K) \subseteq f\left(\bigcup_{k=1}^n f^{-1}(V_{\alpha_k})\right) \subseteq \bigcup_{k=1}^n V_{\alpha_k},$$
+
+so $\{V_{\alpha_1}, \ldots, V_{\alpha_n}\}$ is a finite subcover of $f(K)$. $\square$
+
+<Callout type="info">
+**Corollary.** If $f : K \to \mathbb{R}$ is continuous and $K$ is compact, then $f(K)$ is closed and bounded (by Heine-Borel applied to $f(K)$).
+</Callout>
+
+## The Extreme Value Theorem
+
+<Callout type="theorem">
+**Theorem 9.2 (Extreme Value Theorem).** Let $K \subseteq \mathbb{R}$ be compact and nonempty, and let $f : K \to \mathbb{R}$ be continuous. Then $f$ attains its maximum and minimum on $K$: there exist $x_{\min}, x_{\max} \in K$ such that
+
+$$f(x_{\min}) \leq f(x) \leq f(x_{\max}) \quad \text{for all } x \in K.$$
+</Callout>
+
+*Proof.* By Theorem 9.1, $f(K)$ is compact, hence closed and bounded. Since $f(K)$ is bounded and nonempty, $s = \sup f(K)$ exists and is finite. Since $f(K)$ is closed and $s$ is a limit point of $f(K)$ (or an element of $f(K)$ if $f(K)$ is finite), we have $s \in f(K)$. Thus there exists $x_{\max} \in K$ with $f(x_{\max}) = s = \sup f(K)$.
+
+Similarly, $\inf f(K) \in f(K)$, so there exists $x_{\min} \in K$ with $f(x_{\min}) = \inf f(K)$. $\square$
+
+<Callout type="warning">
+**Warning.** The EVT fails without compactness. The function $f(x) = x$ on $(0, 1)$ is continuous and bounded but attains neither its supremum nor its infimum. The function $f(x) = x$ on $[0, \infty)$ is continuous on a closed set but has no maximum.
+</Callout>
+
+### Visualizing the EVT
+
+<FunctionPlot
+  fn={"Math.sin(x) + 0.5 * Math.cos(2*x)"}
+  title={"f(x) = sin(x) + 0.5cos(2x) on [-π, π] — achieves max and min"}
+  domain={[-3.5, 3.5]}
+  range={[-2, 2]}
+/>
+
+## Uniform Continuity
+
+<Callout type="definition">
+**Definition 9.3 (Uniform Continuity).** A function $f : A \to \mathbb{R}$ is **uniformly continuous on $A$** if for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+
+$$|f(x) - f(y)| < \varepsilon \quad \text{whenever} \quad |x - y| < \delta \text{ and } x, y \in A.$$
+</Callout>
+
+<Callout type="tip">
+**Key Distinction.** In ordinary (pointwise) continuity, $\delta$ may depend on both $\varepsilon$ and the point $c$. In uniform continuity, $\delta$ depends only on $\varepsilon$ and works simultaneously for all pairs of points. The quantifier order changes:
+
+- **Continuous:** $\forall c \in A, \forall \varepsilon > 0, \exists \delta > 0, \ldots$
+- **Uniformly continuous:** $\forall \varepsilon > 0, \exists \delta > 0, \forall x, y \in A, \ldots$
+</Callout>
+
+<Callout type="theorem">
+**Proposition 9.4.** If $f$ is uniformly continuous on $A$, then $f$ is continuous on $A$. The converse is false in general.
+</Callout>
+
+*Example showing the converse fails.* The function $f(x) = x^2$ is continuous on $\mathbb{R}$ but not uniformly continuous. Given $\varepsilon = 1$, for any $\delta > 0$, take $x = 1/\delta$ and $y = 1/\delta + \delta/2$. Then $|x - y| = \delta/2 < \delta$, but
+
+$$|f(x) - f(y)| = |x^2 - y^2| = |x + y| \cdot |x - y| = \left(\frac{2}{\delta} + \frac{\delta}{2}\right) \cdot \frac{\delta}{2} = 1 + \frac{\delta^2}{4} > 1 = \varepsilon.$$
+
+## The Heine-Cantor Theorem
+
+<Callout type="theorem">
+**Theorem 9.5 (Heine-Cantor).** If $K$ is compact and $f : K \to \mathbb{R}$ is continuous, then $f$ is uniformly continuous on $K$.
+</Callout>
+
+*Proof.* Suppose for contradiction that $f$ is not uniformly continuous. Then there exists $\varepsilon_0 > 0$ such that for every $\delta > 0$, there exist $x, y \in K$ with $|x - y| < \delta$ but $|f(x) - f(y)| \geq \varepsilon_0$.
+
+Taking $\delta = 1/n$, we obtain sequences $(x_n), (y_n)$ in $K$ with $|x_n - y_n| < 1/n$ and $|f(x_n) - f(y_n)| \geq \varepsilon_0$ for all $n$.
+
+Since $K$ is compact (hence sequentially compact by Bolzano-Weierstrass applied within $K$), there exists a subsequence $(x_{n_k})$ with $x_{n_k} \to x_0 \in K$. Since $|y_{n_k} - x_{n_k}| < 1/n_k \to 0$, we also have $y_{n_k} \to x_0$.
+
+By continuity of $f$ at $x_0$: $f(x_{n_k}) \to f(x_0)$ and $f(y_{n_k}) \to f(x_0)$. Thus
+
+$$|f(x_{n_k}) - f(y_{n_k})| \to |f(x_0) - f(x_0)| = 0,$$
+
+contradicting $|f(x_{n_k}) - f(y_{n_k})| \geq \varepsilon_0 > 0$ for all $k$. $\square$
+
+<Callout type="info">
+**Remark.** The Heine-Cantor theorem is why we can, for instance, uniformly approximate continuous functions on $[a, b]$ by polynomials (Weierstrass approximation) or by step functions (Riemann integrability). Compactness of the domain is essential.
+</Callout>
+
+## Continuous Image of an Interval Is an Interval
+
+Compactness is not the only structure preserved by continuous maps. Connected sets — in $\mathbb{R}$, exactly the intervals — are preserved too.
+
+<Callout type="theorem">
+**Theorem 9.6.** Let $f : I \to \mathbb{R}$ be continuous and $I$ an interval. Then $f(I)$ is an interval.
+</Callout>
+
+*Proof.* Let $y_1, y_2 \in f(I)$ with $y_1 < y_2$, and let $L$ satisfy $y_1 < L < y_2$. Choose $a, b \in I$ with $f(a) = y_1$ and $f(b) = y_2$. Without loss of generality assume $a < b$ (the case $a > b$ is symmetric; $a = b$ is impossible since $y_1 \neq y_2$).
+
+Since $f$ is continuous on $[a,b] \subseteq I$ and $f(a) = y_1 < L < y_2 = f(b)$, the Intermediate Value Theorem (which we will prove in Lesson 10) gives $c \in (a, b)$ with $f(c) = L$. Thus $L \in f(I)$.
+
+Since every value between any two elements of $f(I)$ belongs to $f(I)$, $f(I)$ is an interval. $\square$
+
+<Callout type="info">
+**Corollary 9.7.** If $K = [a, b]$ is a compact interval and $f : K \to \mathbb{R}$ is continuous, then $f(K)$ is a closed bounded interval $[m, M]$ where $m = \min f$ and $M = \max f$ (the extrema exist by the EVT).
+
+This combines compactness (Theorem 9.1 gives $f(K)$ closed and bounded) with the interval property (Theorem 9.6 gives $f(K)$ is an interval). A closed, bounded interval is exactly $[m, M]$.
+</Callout>
+
+## Exercises
+
+<Problem>
+**Exercise 9.1.** Prove the Extreme Value Theorem using sequences directly (without appealing to Theorem 9.1).
+
+*Hint:* Let $s = \sup\{f(x) : x \in K\}$. Construct a sequence $(x_n)$ in $K$ with $f(x_n) \to s$, then use compactness to extract a convergent subsequence.
+</Problem>
+
+<Solution>
+*Proof.* Let $s = \sup f(K)$. For each $n \in \mathbb{N}$, since $s - 1/n$ is not an upper bound of $f(K)$, there exists $x_n \in K$ with $f(x_n) > s - 1/n$. Combined with $f(x_n) \leq s$, we get $f(x_n) \to s$.
+
+Since $K$ is compact, it is bounded, so $(x_n)$ is bounded. By the Bolzano-Weierstrass theorem, there exists a convergent subsequence $x_{n_k} \to x_0$. Since $K$ is closed (compact implies closed), $x_0 \in K$.
+
+By continuity of $f$: $f(x_{n_k}) \to f(x_0)$. But $f(x_{n_k}) \to s$ (as a subsequence of a convergent sequence). By uniqueness of limits, $f(x_0) = s = \sup f(K)$.
+
+Thus $f(x_0) \geq f(x)$ for all $x \in K$, so $f$ attains its maximum at $x_0$. The argument for the minimum is analogous using $\inf$. $\square$
+</Solution>
+
+<Problem>
+**Exercise 9.2.** Show that $f(x) = \frac{1}{x}$ is continuous but not uniformly continuous on $(0, 1)$. Then explain why this does not contradict the Heine-Cantor theorem.
+</Problem>
+
+<Solution>
+*Proof.* **Continuity:** For $c \in (0,1)$ and $\varepsilon > 0$, we have $|1/x - 1/c| = |x - c|/(|xc|)$. If $|x - c| < c/2$, then $x > c/2$, so $|1/x - 1/c| < |x-c| \cdot 2/c^2$. Choose $\delta = \min(c/2, \varepsilon c^2/2)$.
+
+**Not uniformly continuous:** Let $\varepsilon = 1$. For any $\delta > 0$, choose $n$ large enough that $1/n < \delta$ and $n > 2$. Set $x = 1/n$ and $y = 1/(n+1)$. Then $|x - y| = 1/(n(n+1)) < 1/n < \delta$, but $|f(x) - f(y)| = |n - (n+1)| = 1 \geq \varepsilon$.
+
+**No contradiction:** The domain $(0,1)$ is open, hence not compact (it is bounded but not closed). The Heine-Cantor theorem requires a compact domain. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"What is the essential difference between pointwise continuity and uniform continuity?"}
+  options={[
+    "Uniform continuity requires f to be differentiable",
+    "In uniform continuity, δ depends on ε but not on the particular point",
+    "Uniform continuity only applies to bounded functions",
+    "Pointwise continuity is stronger than uniform continuity"
+  ]}
+  correctIndex={1}
+  explanation={"In pointwise continuity, δ can depend on both ε and the point c. In uniform continuity, a single δ works for ALL pairs of points simultaneously. This is strictly stronger than pointwise continuity: every uniformly continuous function is continuous, but not conversely (e.g., x² on R)."}
+/>
+
+<NumericInput
+  question={"The function f(x) = x² - 4x + 5 is continuous on [0, 5]. By the EVT, it attains a minimum value on this interval. What is that minimum value?"}
+  answer={1}
+  tolerance={0.01}
+  hint={"Complete the square: x² - 4x + 5 = (x - 2)² + 1. The minimum of (x-2)² on [0,5] is 0, achieved at x = 2."}
+/>
+
+<Problem>
+**Exercise 9.3 (Counterexample).** Give an example of a continuous function on an open interval that is bounded but attains neither its supremum nor its infimum. Prove all claims. Explain precisely why the Extreme Value Theorem does not apply.
+
+*Hint:* Consider $f(x) = x$ on $(0, 1)$.
+</Problem>
+
+<Solution>
+*Answer.* Let $f(x) = x$ on $(0, 1)$.
+
+**Continuous:** The identity function is continuous everywhere, hence on $(0,1)$.
+
+**Bounded:** For $x \in (0,1)$, $0 < f(x) < 1$, so $f$ is bounded with $\inf f((0,1)) = 0$ and $\sup f((0,1)) = 1$.
+
+**Supremum not attained:** If $f(x_0) = 1$ for some $x_0 \in (0,1)$, then $x_0 = 1$, but $1 \notin (0,1)$. So $\sup f((0,1)) = 1$ is not achieved.
+
+**Infimum not attained:** If $f(x_0) = 0$ for some $x_0 \in (0,1)$, then $x_0 = 0$, but $0 \notin (0,1)$. So $\inf f((0,1)) = 0$ is not achieved.
+
+**Why EVT fails:** The Extreme Value Theorem requires the domain to be compact. The interval $(0,1)$ is bounded but not closed, hence not compact by Heine-Borel. This is the hypothesis that fails. The EVT guarantees that $f$ attains its maximum and minimum on $[0,1]$ (which is compact), and indeed $f(0) = 0$ and $f(1) = 1$ are attained on the closed interval. $\square$
+</Solution>
+
+## Finding Extrema Numerically
+
+<PythonPlayground
+  title={"Finding Extrema on Compact Intervals (EVT in Action)"}
+  defaultCode={`import math
+
+def f(x):
+    """A continuous function on [a, b]."""
+    return math.sin(x) + 0.5 * math.cos(2 * x)
+
+a, b = -math.pi, math.pi
+N = 10000  # number of sample points
+
+# Brute-force search for max and min
+x_values = [a + (b - a) * i / N for i in range(N + 1)]
+f_values = [(x, f(x)) for x in x_values]
+
+x_max, f_max = max(f_values, key=lambda p: p[1])
+x_min, f_min = min(f_values, key=lambda p: p[1])
+
+print(f"Domain: [{a:.4f}, {b:.4f}]")
+print(f"Number of sample points: {N + 1}")
+print()
+print(f"Maximum: f({x_max:.6f}) = {f_max:.10f}")
+print(f"Minimum: f({x_min:.6f}) = {f_min:.10f}")
+print()
+print("By the Extreme Value Theorem, these extrema are")
+print("GUARANTEED to exist since f is continuous and [a,b] is compact.")
+print()
+
+# Verify uniform continuity numerically
+# For each epsilon, find the smallest delta that works
+print("Verifying uniform continuity (Heine-Cantor):")
+for eps in [0.1, 0.01, 0.001]:
+    max_diff = 0
+    worst_delta = float('inf')
+    for i in range(len(x_values)):
+        for j in range(i+1, min(i+50, len(x_values))):
+            x1, x2 = x_values[i], x_values[j]
+            if abs(f(x1) - f(x2)) >= eps:
+                delta_needed = abs(x1 - x2)
+                worst_delta = min(worst_delta, delta_needed)
+    if worst_delta == float('inf'):
+        print(f"  ε = {eps}: δ can be anything (f varies < ε everywhere)")
+    else:
+        print(f"  ε = {eps}: need δ ≤ {worst_delta:.6f}")
+`}
+/>

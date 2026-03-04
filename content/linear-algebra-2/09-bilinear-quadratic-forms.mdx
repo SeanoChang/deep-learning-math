@@ -1,0 +1,269 @@
+---
+title: "Bilinear Forms and Quadratic Forms"
+description: "Bilinear forms, symmetric bilinear forms, matrix representations, quadratic forms, and congruence of matrices"
+order: 9
+prerequisites: ["08-jordan-canonical-form"]
+---
+
+# Bilinear Forms and Quadratic Forms
+
+We now shift from spectral theory to the study of bilinear and quadratic forms, a subject that
+connects linear algebra to geometry, optimization, and physics. A bilinear form is a function of two
+vector arguments that is linear in each, generalizing the dot product. Quadratic forms -- obtained by
+evaluating a bilinear form on a single vector "twice" -- arise in optimization (Hessians), differential
+geometry (metric tensors), and the classification of conic sections. The key algebraic operation is no
+longer similarity ($P^{-1}AP$) but **congruence** ($P^T A P$), a distinction we develop carefully.
+
+## Bilinear Forms
+
+<Callout type="definition" title="Bilinear Form">
+  Let $V$ be a vector space over a field $\mathbb{F}$. A **bilinear form** on $V$ is a function
+  $B \colon V \times V \to \mathbb{F}$ that is linear in each argument:
+  1. $B(\alpha u + \beta v, w) = \alpha B(u, w) + \beta B(v, w)$ for all $u, v, w \in V$, $\alpha, \beta \in \mathbb{F}$.
+  2. $B(u, \alpha v + \beta w) = \alpha B(u, v) + \beta B(u, w)$ for all $u, v, w \in V$, $\alpha, \beta \in \mathbb{F}$.
+</Callout>
+
+**Examples.**
+
+1. **Standard inner product on $\mathbb{R}^n$:** $B(x, y) = x^T y = \sum_{i=1}^n x_i y_i$. This is the prototypical bilinear form.
+
+2. **Weighted inner product:** For a positive definite matrix $A$, $B(x, y) = x^T A y$.
+
+3. **The Lorentz form:** On $\mathbb{R}^4$, $B(x, y) = x_1 y_1 + x_2 y_2 + x_3 y_3 - x_4 y_4$. This is the metric of special relativity and is **not** positive definite.
+
+4. **A skew-symmetric form:** $B(x, y) = x_1 y_2 - x_2 y_1$ on $\mathbb{R}^2$. This satisfies $B(x, y) = -B(y, x)$.
+
+## Symmetric Bilinear Forms
+
+<Callout type="definition" title="Symmetric Bilinear Form">
+  A bilinear form $B$ is **symmetric** if $B(u, v) = B(v, u)$ for all $u, v \in V$.
+</Callout>
+
+Symmetric bilinear forms are the ones most relevant to quadratic forms and inner product spaces.
+The standard dot product and the Lorentz form are symmetric; the skew-symmetric form in example 4 is not.
+
+## Matrix Representation of Bilinear Forms
+
+<Callout type="definition" title="Matrix of a Bilinear Form">
+  Let $\mathcal{B} = \{v_1, \ldots, v_n\}$ be a basis of $V$. The **matrix of $B$ with respect to
+  $\mathcal{B}$** is the $n \times n$ matrix $[B]_\mathcal{B}$ with entries
+  $$([B]_\mathcal{B})_{ij} = B(v_i, v_j).$$
+  If $u = \sum_i x_i v_i$ and $w = \sum_j y_j v_j$, then by bilinearity:
+  $$B(u, w) = \sum_{i,j} x_i y_j B(v_i, v_j) = x^T [B]_\mathcal{B} \, y$$
+  where $x = (x_1, \ldots, x_n)^T$ and $y = (y_1, \ldots, y_n)^T$ are the coordinate vectors.
+</Callout>
+
+<Callout type="theorem" title="Symmetric Form Has Symmetric Matrix">
+  A bilinear form $B$ is symmetric if and only if its matrix $[B]_\mathcal{B}$ is a symmetric matrix
+  (i.e., $[B]_\mathcal{B}^T = [B]_\mathcal{B}$) for every basis $\mathcal{B}$.
+  *Proof.* $([B]_\mathcal{B})_{ij} = B(v_i, v_j)$ and $([B]_\mathcal{B})_{ji} = B(v_j, v_i)$.
+  These are equal for all $i, j$ if and only if $B(v_i, v_j) = B(v_j, v_i)$ for all basis vectors,
+  which by bilinearity is equivalent to $B(u, w) = B(w, u)$ for all $u, w \in V$. $\blacksquare$
+</Callout>
+
+## Change of Basis: Congruence
+
+<Callout type="theorem" title="Change of Basis for Bilinear Forms">
+  Let $B$ be a bilinear form on $V$, and let $\mathcal{B}$ and $\mathcal{B}'$ be two bases with
+  change-of-basis matrix $P$ (so that $v_j' = \sum_i P_{ij} v_i$, i.e., new basis vectors as linear
+  combinations of old ones). Then:
+  $$[B]_{\mathcal{B}'} = P^T [B]_\mathcal{B} \, P.$$
+  *Proof.* If $u$ has coordinates $x'$ in $\mathcal{B}'$ and $x = Px'$ in $\mathcal{B}$, and similarly
+  $w$ has coordinates $y'$ in $\mathcal{B}'$ and $y = Py'$ in $\mathcal{B}$, then:
+  $$B(u, w) = x^T [B]_\mathcal{B} \, y = (Px')^T [B]_\mathcal{B} (Py') = (x')^T (P^T [B]_\mathcal{B} \, P) y'.$$
+  Comparing with $B(u, w) = (x')^T [B]_{\mathcal{B}'} y'$ gives $[B]_{\mathcal{B}'} = P^T [B]_\mathcal{B} P$. $\blacksquare$
+</Callout>
+
+<Callout type="definition" title="Congruence of Matrices">
+  Two matrices $A, A' \in M_n(\mathbb{F})$ are **congruent** if there exists an invertible matrix $P$
+  such that $A' = P^T A P$. We write $A \sim_c A'$.
+  Congruence is an equivalence relation on $M_n(\mathbb{F})$.
+</Callout>
+
+<Callout type="tip" title="Congruence vs. Similarity">
+  **Similarity:** $A' = P^{-1}AP$. Captures when two matrices represent the same *linear operator* in
+  different bases.
+  **Congruence:** $A' = P^T AP$. Captures when two matrices represent the same *bilinear form* in
+  different bases.
+  These are different relations. For example, $\begin{pmatrix} 1 & 0 \\ 0 & 4 \end{pmatrix}$ and
+  $\begin{pmatrix} 4 & 0 \\ 0 & 1 \end{pmatrix}$ are similar (same eigenvalues) and also congruent
+  (swap the basis vectors). But $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ and
+  $\begin{pmatrix} 2 & 0 \\ 0 & -2 \end{pmatrix}$ are congruent (scale basis by $\sqrt{2}$) but
+  **not similar** (different eigenvalues). Conversely, two matrices can be similar but not congruent.
+</Callout>
+
+## Quadratic Forms
+
+<Callout type="definition" title="Quadratic Form">
+  Let $B$ be a symmetric bilinear form on $V$. The **quadratic form** associated to $B$ is the function
+  $Q \colon V \to \mathbb{F}$ defined by
+  $$Q(v) = B(v, v).$$
+  If $A = [B]_\mathcal{B}$ is the matrix of $B$ and $x$ is the coordinate vector of $v$, then
+  $$Q(v) = x^T A x = \sum_{i,j} A_{ij} x_i x_j.$$
+</Callout>
+
+**Examples.**
+
+1. For $A = I_n$: $Q(x) = x_1^2 + x_2^2 + \cdots + x_n^2$ (sum of squares).
+
+2. For $A = \begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}$: $Q(x) = 2x_1^2 + 2x_1 x_2 + 3x_2^2$.
+
+3. For $A = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$: $Q(x) = x_1^2 - x_2^2$ (indefinite form).
+
+## Recovering the Bilinear Form from the Quadratic Form
+
+<Callout type="theorem" title="Polarization Identity">
+  If $\operatorname{char}(\mathbb{F}) \neq 2$, a symmetric bilinear form $B$ is uniquely determined by
+  its quadratic form $Q$. Specifically:
+  $$B(u, v) = \frac{1}{2}[Q(u + v) - Q(u) - Q(v)].$$
+  *Proof.* Compute:
+  $$Q(u + v) = B(u + v, u + v) = B(u,u) + B(u,v) + B(v,u) + B(v,v) = Q(u) + 2B(u,v) + Q(v)$$
+  where we used symmetry $B(u,v) = B(v,u)$. Solving for $B(u,v)$:
+  $$B(u,v) = \frac{Q(u+v) - Q(u) - Q(v)}{2}. \quad \blacksquare$$
+</Callout>
+
+<Callout type="tip" title="Why char(F) != 2 Matters">
+  If $\operatorname{char}(\mathbb{F}) = 2$, then $2 = 0$ in $\mathbb{F}$, and the polarization identity
+  breaks down. Over $\mathbb{F}_2$, different symmetric bilinear forms can produce the same quadratic form.
+  For our purposes (fields $\mathbb{R}$ or $\mathbb{C}$), this issue never arises.
+</Callout>
+
+## Diagonalization of Quadratic Forms
+
+<Callout type="theorem" title="Diagonalization of Real Quadratic Forms">
+  Let $Q(x) = x^T A x$ be a quadratic form on $\mathbb{R}^n$ with $A$ symmetric. Then there exists
+  an invertible matrix $P$ such that
+  $$Q = y_1^2 d_1 + y_2^2 d_2 + \cdots + y_n^2 d_n$$
+  where $y = P^{-1}x$ and $d_1, \ldots, d_n \in \mathbb{R}$. Equivalently, $P^T A P$ is diagonal.
+  *Proof.* Since $A$ is real and symmetric, the spectral theorem guarantees an orthogonal matrix $Q$
+  such that $Q^T A Q = D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n)$ where $\lambda_i$ are
+  the eigenvalues. Taking $P = Q$, we get $P^T A P = D$, and in the coordinates $y = Q^T x$:
+  $$Q(x) = x^T A x = (Qy)^T A (Qy) = y^T (Q^T A Q) y = y^T D y = \sum_i \lambda_i y_i^2. \quad \blacksquare$$
+  Alternatively, diagonalization can be achieved by **completing the square**, which does not require the
+  spectral theorem and works over any field of characteristic $\neq 2$.
+</Callout>
+
+**Example (Completing the square).** Diagonalize $Q(x_1, x_2) = 2x_1^2 + 4x_1 x_2 + 3x_2^2$.
+
+Write $Q = 2(x_1^2 + 2x_1 x_2) + 3x_2^2 = 2(x_1 + x_2)^2 - 2x_2^2 + 3x_2^2 = 2(x_1 + x_2)^2 + x_2^2$.
+
+Setting $y_1 = x_1 + x_2$, $y_2 = x_2$, we get $Q = 2y_1^2 + y_2^2$. The change of variables
+matrix is $P = \begin{pmatrix} 1 & -1 \\ 0 & 1 \end{pmatrix}$ (where $x = Py$), and
+
+$$P^T \begin{pmatrix} 2 & 2 \\ 2 & 3 \end{pmatrix} P = \begin{pmatrix} 2 & 0 \\ 0 & 1 \end{pmatrix}.$$
+
+<PythonPlayground
+  title="Bilinear forms, quadratic forms, and diagonalization"
+  defaultCode={`import numpy as np
+
+# Define a symmetric matrix (bilinear form)
+A = np.array([[2, 2],
+              [2, 3]], dtype=float)
+
+print("Symmetric matrix A =")
+print(A)
+print(f"A is symmetric: {np.allclose(A, A.T)}")
+print()
+
+# Quadratic form: Q(x) = x^T A x
+x = np.array([1, 2], dtype=float)
+Q_val = x @ A @ x
+print(f"Q({x}) = x^T A x = {Q_val}")
+print(f"Expanded: 2(1)^2 + 2(1)(2) + 2(2)(1) + 3(2)^2 = 2 + 4 + 4 + 12 = {2+4+4+12}")
+print()
+
+# Diagonalize via eigendecomposition (spectral theorem)
+eigenvalues, P = np.linalg.eigh(A)  # eigh for symmetric matrices
+print(f"Eigenvalues: {eigenvalues}")
+print(f"Orthogonal P (eigenvectors):")
+print(np.round(P, 6))
+print(f"P^T A P (should be diagonal):")
+print(np.round(P.T @ A @ P, 10))
+print()
+
+# Diagonalize via completing the square
+# Q = 2x1^2 + 4x1*x2 + 3x2^2 = 2(x1+x2)^2 + x2^2
+P_complete = np.array([[1, -1],
+                        [0,  1]], dtype=float)
+D_complete = P_complete.T @ A @ P_complete
+print("Completing the square:")
+print(f"P =\\n{P_complete}")
+print(f"P^T A P =\\n{D_complete}")
+print()
+
+# Congruence vs similarity example
+B1 = np.diag([1.0, -1.0])
+B2 = np.diag([2.0, -2.0])
+P_cong = np.diag([np.sqrt(2), np.sqrt(2)])
+print("Congruence example:")
+print(f"B1 = diag(1, -1), B2 = diag(2, -2)")
+print(f"P = diag(sqrt(2), sqrt(2))")
+print(f"P^T B1 P = {np.round(P_cong.T @ B1 @ P_cong, 10)}")
+print("B1 and B2 are congruent but NOT similar (different eigenvalues)")
+print(f"Eigenvalues of B1: {np.linalg.eigvals(B1)}")
+print(f"Eigenvalues of B2: {np.linalg.eigvals(B2)}")
+`}
+/>
+
+## Exercises
+
+<Problem title="Prove: the matrix of a symmetric bilinear form is symmetric">
+  Let $B \colon V \times V \to \mathbb{R}$ be a bilinear form with matrix $A = [B]_\mathcal{B}$ for
+  some basis $\mathcal{B}$. Prove that $B$ is symmetric if and only if $A$ is symmetric.
+<Solution>
+  **Proof.** Let $\mathcal{B} = \{v_1, \ldots, v_n\}$.
+  ($\Rightarrow$) Assume $B$ is symmetric. Then $A_{ij} = B(v_i, v_j) = B(v_j, v_i) = A_{ji}$ for all
+  $i, j$. So $A^T = A$.
+  ($\Leftarrow$) Assume $A^T = A$. For arbitrary $u = \sum_i x_i v_i$ and $w = \sum_j y_j v_j$:
+  $$B(u, w) = x^T A y \quad \text{and} \quad B(w, u) = y^T A x = (y^T A x)^T = x^T A^T y = x^T A y$$
+  where the last step uses $A = A^T$. So $B(u, w) = B(w, u)$ for all $u, w$, and $B$ is symmetric. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Diagonalize a quadratic form by completing the square">
+  Diagonalize the quadratic form $Q(x_1, x_2, x_3) = x_1^2 + 4x_1 x_2 + 2x_1 x_3 + 5x_2^2 + 4x_2 x_3 + 2x_3^2$
+  by completing the square. Find the diagonal form and the change-of-variables matrix.
+<Solution>
+  The symmetric matrix is $A = \begin{pmatrix} 1 & 2 & 1 \\ 2 & 5 & 2 \\ 1 & 2 & 2 \end{pmatrix}$.
+  **Step 1.** Group terms containing $x_1$:
+  $$Q = (x_1^2 + 4x_1 x_2 + 2x_1 x_3) + 5x_2^2 + 4x_2 x_3 + 2x_3^2$$
+  $$= (x_1 + 2x_2 + x_3)^2 - 4x_2^2 - x_3^2 - 4x_2 x_3 + 5x_2^2 + 4x_2 x_3 + 2x_3^2$$
+  $$= (x_1 + 2x_2 + x_3)^2 + x_2^2 + x_3^2.$$
+  Let $y_1 = x_1 + 2x_2 + x_3$, $y_2 = x_2$, $y_3 = x_3$. Then $Q = y_1^2 + y_2^2 + y_3^2$.
+  The change of variables $x = Py$ with $P = \begin{pmatrix} 1 & -2 & -1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{pmatrix}$
+  gives $P^T A P = I_3$.
+  **Verification:** The eigenvalues of $A$ are all positive (the form is positive definite), consistent
+  with the diagonal form $y_1^2 + y_2^2 + y_3^2$ having all positive coefficients. $\square$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $A = \begin{pmatrix} 1 & 0 \\\\ 0 & -1 \end{pmatrix}$ and $B = \begin{pmatrix} 4 & 0 \\\\ 0 & -9 \end{pmatrix}$. Are $A$ and $B$ congruent?"
+  options={[
+    "Yes, because they have the same eigenvalues",
+    "Yes, because $P^T A P = B$ for $P = \\operatorname{diag}(2, 3)$",
+    "No, because they have different eigenvalues",
+    "No, because they have different determinants"
+  ]}
+  correctIndex={1}
+  explanation="Take $P = \\operatorname{diag}(2, 3)$. Then $P^T A P = \\begin{pmatrix} 4 & 0 \\\\ 0 & -9 \\end{pmatrix} = B$. Congruence does not require the same eigenvalues; it requires the same signature (same number of positive and negative diagonal entries after diagonalization). Both $A$ and $B$ have one positive and one negative entry."
+/>
+
+<NumericInput
+  question="The quadratic form $Q(x, y) = 3x^2 + 2xy + 3y^2$ has symmetric matrix $A = \begin{pmatrix} 3 & 1 \\\\ 1 & 3 \end{pmatrix}$. What is $\det(A)$? (This determines whether the form is definite.)"
+  answer={8}
+  tolerance={0}
+  explanation="$\\det(A) = 3 \\cdot 3 - 1 \\cdot 1 = 9 - 1 = 8$. Since $A_{11} = 3 > 0$ and $\\det(A) = 8 > 0$, the form is positive definite (by Sylvester's criterion, which we will prove in the next lesson)."
+/>
+
+<MultipleChoice
+  question="Which of the following transformations on matrices preserves the associated bilinear form (i.e., represents a change of basis for bilinear forms)?"
+  options={[
+    "Similarity: $A \\mapsto P^{-1}AP$",
+    "Congruence: $A \\mapsto P^TAP$",
+    "Transpose: $A \\mapsto A^T$",
+    "Scaling: $A \\mapsto cA$ for $c \\neq 0$"
+  ]}
+  correctIndex={1}
+  explanation="A change of basis for a bilinear form transforms the matrix by congruence: $[B]_{\\mathcal{B}'} = P^T [B]_{\\mathcal{B}} P$. Similarity is for linear operators. Transpose and scaling do not correspond to change of basis."
+/>

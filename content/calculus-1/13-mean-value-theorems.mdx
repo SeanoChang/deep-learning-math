@@ -1,0 +1,294 @@
+---
+title: "Mean Value Theorems"
+description: "Fermat's theorem, Rolle's theorem, and the Mean Value Theorem — the structural center of differential calculus"
+order: 13
+prerequisites: ["12-algebra-of-derivatives"]
+---
+
+# Mean Value Theorems
+
+The Mean Value Theorem (MVT) is the single most important theorem in differential calculus. It connects
+the *local* information given by the derivative to *global* behavior of the function over an interval.
+We build toward it through Fermat's theorem on local extrema and Rolle's theorem, each of which is
+essential in its own right.
+
+## Local Extrema and Fermat's Theorem
+
+<Callout type="definition">
+**Definition (Local extremum).** A function $f$ has a **local maximum** at $c$ if there exists $\delta > 0$
+such that $f(x) \leq f(c)$ for all $x \in (c - \delta, c + \delta) \cap \text{dom}(f)$.
+
+Similarly, $f$ has a **local minimum** at $c$ if $f(x) \geq f(c)$ for all $x$ in some neighborhood of $c$.
+
+A **local extremum** is either a local maximum or a local minimum.
+</Callout>
+
+<Callout type="theorem">
+**Theorem (Fermat).** If $f$ has a local extremum at an interior point $c$ of its domain, and $f$ is
+differentiable at $c$, then $f'(c) = 0$.
+
+*Proof.* Suppose $f$ has a local maximum at $c$ (the minimum case is analogous). There exists $\delta > 0$
+such that $f(x) \leq f(c)$ for all $x \in (c-\delta, c+\delta)$.
+
+For $0 < h < \delta$:
+$$\frac{f(c+h) - f(c)}{h} \leq 0$$
+since $f(c+h) - f(c) \leq 0$ and $h > 0$. Taking the limit as $h \to 0^+$:
+$$f'(c) = \lim_{h \to 0^+} \frac{f(c+h)-f(c)}{h} \leq 0.$$
+
+For $-\delta < h < 0$:
+$$\frac{f(c+h) - f(c)}{h} \geq 0$$
+since $f(c+h) - f(c) \leq 0$ and $h < 0$. Taking the limit as $h \to 0^-$:
+$$f'(c) = \lim_{h \to 0^-} \frac{f(c+h)-f(c)}{h} \geq 0.$$
+
+Since $f'(c) \leq 0$ and $f'(c) \geq 0$, we conclude $f'(c) = 0$. $\blacksquare$
+</Callout>
+
+<Callout type="warning">
+**Caution.** Fermat's theorem does NOT say that $f'(c) = 0$ implies $c$ is a local extremum. The function
+$f(x) = x^3$ has $f'(0) = 0$ but $0$ is not a local extremum. Also, Fermat's theorem does not apply at
+endpoints or at points where $f$ is not differentiable.
+</Callout>
+
+## Rolle's Theorem
+
+<Callout type="theorem">
+**Theorem (Rolle).** Let $f \colon [a,b] \to \mathbb{R}$ be continuous on $[a,b]$ and differentiable on
+$(a,b)$, with $f(a) = f(b)$. Then there exists $c \in (a,b)$ such that $f'(c) = 0$.
+
+*Proof.* By the Extreme Value Theorem (from our earlier study of compactness and continuity), $f$ attains
+its maximum value $M$ and minimum value $m$ on $[a,b]$.
+
+**Case 1:** $M = m$. Then $f$ is constant on $[a,b]$, so $f'(c) = 0$ for every $c \in (a,b)$.
+
+**Case 2:** $M > m$. Since $f(a) = f(b)$, at least one of the extreme values is attained at an interior
+point $c \in (a,b)$. (If both $M$ and $m$ were attained only at the endpoints, then $f(a) = M$ and $f(b) = m$
+or vice versa, contradicting $f(a) = f(b)$ since $M \neq m$.)
+
+At this interior extremum $c$, $f$ is differentiable by hypothesis, so Fermat's theorem gives $f'(c) = 0$. $\blacksquare$
+</Callout>
+
+<Callout type="info">
+**Geometric interpretation.** Rolle's theorem says: if a differentiable curve starts and ends at the same
+height, then somewhere in between the tangent line must be horizontal.
+</Callout>
+
+## The Mean Value Theorem
+
+<Callout type="theorem">
+**Theorem (Mean Value Theorem).** Let $f \colon [a,b] \to \mathbb{R}$ be continuous on $[a,b]$ and
+differentiable on $(a,b)$. Then there exists $c \in (a,b)$ such that
+
+$$f'(c) = \frac{f(b) - f(a)}{b - a}.$$
+
+*Proof.* The idea is to reduce to Rolle's theorem by subtracting the secant line. Define
+
+$$g(x) = f(x) - \left[f(a) + \frac{f(b)-f(a)}{b-a}(x-a)\right].$$
+
+Then $g$ is continuous on $[a,b]$ and differentiable on $(a,b)$ (as $f$ minus an affine function). Moreover:
+
+$$g(a) = f(a) - f(a) = 0$$
+$$g(b) = f(b) - \left[f(a) + \frac{f(b)-f(a)}{b-a}(b-a)\right] = f(b) - f(b) = 0.$$
+
+So $g(a) = g(b) = 0$. By Rolle's theorem, there exists $c \in (a,b)$ with $g'(c) = 0$.
+
+$$g'(c) = f'(c) - \frac{f(b)-f(a)}{b-a} = 0 \implies f'(c) = \frac{f(b)-f(a)}{b-a}. \quad \blacksquare$$
+</Callout>
+
+### Visualizing the Mean Value Theorem
+
+The MVT guarantees a point where the tangent line is parallel to the secant line through the endpoints.
+
+<FunctionPlot
+  fn="x*x*x - 3*x + 1"
+  title="f(x) = x^3 - 3x + 1 on [-2, 2]: the MVT guarantees a parallel tangent"
+  domain={[-2.5, 2.5]}
+  range={[-4, 6]}
+/>
+
+<Callout type="tip">
+In the plot above, the secant line through $(-2, f(-2))$ and $(2, f(2))$ has slope $\frac{f(2)-f(-2)}{4} = \frac{3-(-1)}{4} = 1$.
+The MVT guarantees some $c \in (-2,2)$ with $f'(c) = 3c^2 - 3 = 1$, giving $c = \pm\frac{2}{\sqrt{3}}$.
+</Callout>
+
+## First Consequences: Monotonicity
+
+<Callout type="theorem">
+**Corollary (Zero derivative implies constant).** If $f$ is continuous on $[a,b]$ and $f'(x) = 0$ for all
+$x \in (a,b)$, then $f$ is constant on $[a,b]$.
+
+*Proof.* For any $x_1, x_2 \in [a,b]$ with $x_1 < x_2$, the MVT gives $c \in (x_1, x_2)$ with
+
+$$f(x_2) - f(x_1) = f'(c)(x_2 - x_1) = 0.$$
+
+So $f(x_1) = f(x_2)$ for all pairs, hence $f$ is constant. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Corollary (Monotonicity criterion).** If $f$ is continuous on $[a,b]$ and $f'(x) > 0$ for all $x \in (a,b)$,
+then $f$ is strictly increasing on $[a,b]$.
+
+*Proof.* Let $x_1 < x_2$ in $[a,b]$. By the MVT, $f(x_2) - f(x_1) = f'(c)(x_2 - x_1)$ for some
+$c \in (x_1,x_2)$. Since $f'(c) > 0$ and $x_2 - x_1 > 0$, we get $f(x_2) > f(x_1)$. $\blacksquare$
+</Callout>
+
+## Cauchy's Mean Value Theorem
+
+<Callout type="theorem">
+**Theorem (Cauchy Mean Value Theorem).** Let $f, g \colon [a,b] \to \mathbb{R}$ be continuous on $[a,b]$
+and differentiable on $(a,b)$, with $g'(x) \neq 0$ for all $x \in (a,b)$. Then there exists $c \in (a,b)$ with
+
+$$\frac{f'(c)}{g'(c)} = \frac{f(b) - f(a)}{g(b) - g(a)}.$$
+
+*Proof.* Note $g(b) \neq g(a)$ (otherwise Rolle's theorem would give some $c$ with $g'(c) = 0$, contradiction).
+Define
+
+$$h(x) = f(x) - f(a) - \frac{f(b)-f(a)}{g(b)-g(a)}[g(x) - g(a)].$$
+
+Then $h(a) = 0$ and $h(b) = 0$. By Rolle's theorem, there exists $c \in (a,b)$ with $h'(c) = 0$:
+
+$$f'(c) - \frac{f(b)-f(a)}{g(b)-g(a)} \cdot g'(c) = 0.$$
+
+Since $g'(c) \neq 0$, dividing gives the result. $\blacksquare$
+</Callout>
+
+<Callout type="info">
+The Cauchy MVT generalizes the ordinary MVT (take $g(x) = x$). It is the key tool in proving
+L'Hopital's rule, which we will see in the next lesson.
+</Callout>
+
+## Exercises
+
+<Problem>
+**Exercise 1.** Prove Rolle's theorem directly from the Extreme Value Theorem and Fermat's theorem.
+Your proof should clearly state where each hypothesis (continuity on $[a,b]$, differentiability on $(a,b)$,
+$f(a) = f(b)$) is used.
+</Problem>
+
+<Solution>
+**Hypotheses used:**
+
+1. **Continuity on $[a,b]$** -- invokes the Extreme Value Theorem: $f$ attains its maximum $M$ and minimum $m$ on $[a,b]$.
+
+2. **$f(a) = f(b)$** -- if $M = m$, $f$ is constant and any $c$ works. If $M > m$, then at least one extreme value
+   is attained at an interior point $c \in (a,b)$. (If both were attained only at endpoints, the equal-endpoint
+   condition forces $M = m$, a contradiction.)
+
+3. **Differentiability on $(a,b)$** -- at the interior extremum $c$, $f$ is differentiable, so Fermat's theorem
+   applies and yields $f'(c) = 0$. $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Which hypothesis is NOT required for the Mean Value Theorem?"
+  options={[
+    "f is continuous on [a,b]",
+    "f is differentiable on (a,b)",
+    "f(a) = f(b)",
+    "a < b (the interval is nonempty)"
+  ]}
+  correctIndex={2}
+  explanation="The condition f(a) = f(b) is required for Rolle's theorem but NOT for the MVT. The MVT only requires continuity on [a,b] and differentiability on (a,b)."
+/>
+
+<NumericInput
+  question="For $f(x) = x^3 - 3x$ on $[0, 2]$, the MVT guarantees $f'(c) = \frac{f(2)-f(0)}{2-0}$. Find $c$ (take the value in $(0,2)$). Round to 3 decimal places."
+  answer={1.155}
+  tolerance={0.01}
+  hint="f(2) = 2, f(0) = 0, so f'(c) = 1. Solve 3c^2 - 3 = 1, i.e., c^2 = 4/3, c = 2/sqrt(3)."
+/>
+
+<Problem>
+**Exercise 2.** Use the Mean Value Theorem to prove that $|\sin(x) - \sin(y)| \leq |x - y|$ for all $x, y \in \mathbb{R}$.
+</Problem>
+
+<Solution>
+If $x = y$ the inequality is trivial. Otherwise, WLOG $x < y$. The function $\sin$ is continuous on $[x,y]$
+and differentiable on $(x,y)$. By the MVT, there exists $c \in (x,y)$ with
+
+$$\sin(y) - \sin(x) = \cos(c)(y - x).$$
+
+Taking absolute values:
+
+$$|\sin(y) - \sin(x)| = |\cos(c)| \cdot |y - x| \leq 1 \cdot |y - x| = |y - x|.$$
+
+This shows $\sin$ is **Lipschitz continuous** with Lipschitz constant $1$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 3 (Definition Drill).** Prove directly from Fermat's theorem and the definition of local extremum that if $f(x) = -(x - 3)^2 + 5$ (defined on $\mathbb{R}$), then $f'(3) = 0$. Verify by identifying $x = 3$ as a local maximum from the definition.
+
+*Hint:* First show $x = 3$ is a local maximum by showing $f(x) \leq f(3)$ for all $x$ near $3$, then apply Fermat's theorem.
+</Problem>
+
+<Solution>
+*Proof.* **$x = 3$ is a local maximum:** For any $x \in \mathbb{R}$,
+
+$$f(x) = -(x-3)^2 + 5 \leq 0 + 5 = 5 = f(3)$$
+
+since $-(x-3)^2 \leq 0$. In particular, $f(x) \leq f(3)$ for all $x \in (3 - \delta, 3 + \delta)$ for any $\delta > 0$. So $3$ is a local maximum (in fact, a global maximum).
+
+**$f$ is differentiable at $3$:** $f'(x) = -2(x - 3)$, so $f'(3) = 0$. (Alternatively, from the limit definition: $\frac{f(3+h) - f(3)}{h} = \frac{-h^2}{h} = -h \to 0$.)
+
+**By Fermat's theorem:** Since $f$ has a local maximum at the interior point $3$ and $f$ is differentiable at $3$, Fermat's theorem guarantees $f'(3) = 0$, which is consistent with our direct computation. $\square$
+</Solution>
+
+<Problem>
+**Exercise 4 (Counterexample).** Give an example of a differentiable function $f$ with $f'(c) = 0$ at some point $c$ where $f$ has neither a local maximum nor a local minimum. Prove all claims.
+
+*Hint:* Consider $f(x) = x^3$ at $c = 0$.
+</Problem>
+
+<Solution>
+*Answer.* Let $f(x) = x^3$ and $c = 0$.
+
+**$f'(0) = 0$:** We compute $f'(x) = 3x^2$, so $f'(0) = 0$.
+
+**$f$ has no local extremum at $0$:** Suppose $0$ were a local maximum. Then there exists $\delta > 0$ with $f(x) \leq f(0) = 0$ for all $x \in (-\delta, \delta)$. But $f(\delta/2) = (\delta/2)^3 > 0 = f(0)$, a contradiction.
+
+Suppose $0$ were a local minimum. Then $f(x) \geq f(0) = 0$ for all $x \in (-\delta, \delta)$. But $f(-\delta/2) = -(\delta/2)^3 < 0 = f(0)$, a contradiction.
+
+Therefore $f$ has a critical point at $0$ (i.e., $f'(0) = 0$) but no local extremum there. The converse of Fermat's theorem is false: $f'(c) = 0$ does NOT imply $c$ is a local extremum. $\square$
+</Solution>
+
+## Finding the MVT Point Numerically
+
+<PythonPlayground
+  title="Finding the c guaranteed by the Mean Value Theorem"
+  defaultCode={`import numpy as np
+
+def f(x):
+    return x**3 - 3*x + 1
+
+def f_prime(x):
+    return 3*x**2 - 3
+
+a, b = -2.0, 2.0
+
+# MVT slope
+mvt_slope = (f(b) - f(a)) / (b - a)
+print(f"f(a) = {f(a)}, f(b) = {f(b)}")
+print(f"MVT slope = (f(b)-f(a))/(b-a) = {mvt_slope}")
+print()
+
+# Find c where f'(c) = mvt_slope using bisection
+# f'(x) = 3x^2 - 3, so we solve 3c^2 - 3 = mvt_slope
+# i.e., c^2 = (mvt_slope + 3)/3
+target = mvt_slope
+c_squared = (target + 3) / 3
+c_values = [np.sqrt(c_squared), -np.sqrt(c_squared)]
+
+print("Solutions to f'(c) = MVT slope:")
+for c in c_values:
+    if a < c < b:
+        print(f"  c = {c:.6f}, f'(c) = {f_prime(c):.6f}, MVT slope = {mvt_slope:.6f}")
+
+# Also find it numerically by scanning
+print("\\nNumerical scan for c values:")
+xs = np.linspace(a + 0.001, b - 0.001, 10000)
+for i in range(len(xs) - 1):
+    if (f_prime(xs[i]) - mvt_slope) * (f_prime(xs[i+1]) - mvt_slope) < 0:
+        # Linear interpolation for zero
+        t = (mvt_slope - f_prime(xs[i])) / (f_prime(xs[i+1]) - f_prime(xs[i]))
+        c_approx = xs[i] + t * (xs[i+1] - xs[i])
+        print(f"  c ~ {c_approx:.6f}, f'(c) ~ {f_prime(c_approx):.6f}")
+`}
+/>

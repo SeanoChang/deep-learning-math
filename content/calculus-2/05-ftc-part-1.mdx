@@ -1,0 +1,296 @@
+---
+title: "The Fundamental Theorem of Calculus, Part I"
+description: "The integral function F(x), its continuity, and differentiability — linking integration to differentiation"
+order: 5
+prerequisites: ["04-algebra-order-integral"]
+---
+
+# The Fundamental Theorem of Calculus, Part I
+
+The Fundamental Theorem of Calculus is one of the great achievements of mathematics. It connects
+the two central operations of calculus -- differentiation and integration -- which were developed
+independently. Part I says that integration followed by differentiation recovers the original function:
+if $f$ is continuous, then the "area function" $F(x) = \int_a^x f(t) \, dt$ is differentiable with $F'(x) = f(x)$.
+
+## The Integral Function
+
+<Callout type="definition" title="The Integral Function">
+Let $f \colon [a, b] \to \mathbb{R}$ be integrable. The **integral function** (or **accumulation function**) of $f$ is
+
+$$F(x) = \int_a^x f(t) \, dt, \qquad x \in [a, b].$$
+
+Note: $F(a) = 0$ and $F(b) = \int_a^b f$.
+</Callout>
+
+<Callout type="info" title="Geometric Interpretation">
+$F(x)$ measures the signed area under the graph of $f$ from $a$ to $x$. As $x$ increases, $F(x)$ accumulates more area. Where $f > 0$, $F$ is increasing; where $f < 0$, $F$ is decreasing. Where $f = 0$, $F$ has a horizontal tangent.
+</Callout>
+
+<FunctionPlot
+  fn="x*x"
+  title="f(t) = t^2 — its integral function F(x) = x^3/3 accumulates area"
+  domain={[0, 3]}
+  range={[-1, 10]}
+/>
+
+## Continuity of the Integral Function
+
+Before proving differentiability, we establish a weaker but important property: the integral function is always continuous, even when $f$ is merely integrable (not necessarily continuous).
+
+<Callout type="theorem" title="Continuity of the Integral Function">
+If $f \colon [a, b] \to \mathbb{R}$ is integrable (hence bounded), then $F(x) = \int_a^x f(t) \, dt$ is continuous on $[a, b]$.
+</Callout>
+
+**Proof.** Since $f$ is integrable on $[a, b]$, it is bounded: there exists $M > 0$ with $|f(t)| \leq M$ for all $t \in [a, b]$.
+
+Let $x, y \in [a, b]$ with $x < y$. By additivity of the integral:
+
+$$F(y) - F(x) = \int_a^y f - \int_a^x f = \int_x^y f.$$
+
+By the integral bound theorem and $-M \leq f(t) \leq M$:
+
+$$|F(y) - F(x)| = \left|\int_x^y f\right| \leq \int_x^y |f| \leq M(y - x) = M|y - x|.$$
+
+Given $\epsilon > 0$, choose $\delta = \epsilon / M$. Then $|y - x| < \delta$ implies $|F(y) - F(x)| \leq M \cdot \delta = \epsilon$.
+
+In fact, $F$ is **Lipschitz continuous** with Lipschitz constant $M$, which is stronger than mere continuity. $\blacksquare$
+
+<Callout type="tip" title="Lipschitz Is Stronger Than Continuous">
+We proved $|F(y) - F(x)| \leq M|y - x|$ -- the function $F$ cannot change faster than rate $M$. Lipschitz continuity implies uniform continuity, which implies continuity. The bound $M$ on $f$ directly controls how fast the accumulated area can change.
+</Callout>
+
+## The Fundamental Theorem of Calculus, Part I
+
+<Callout type="theorem" title="FTC Part I">
+Let $f \colon [a, b] \to \mathbb{R}$ be integrable, and suppose $f$ is continuous at a point $c \in (a, b)$. Then the integral function $F(x) = \int_a^x f(t) \, dt$ is differentiable at $c$ and
+
+$$F'(c) = f(c).$$
+
+In particular, if $f$ is continuous on all of $[a, b]$, then $F$ is differentiable on $(a, b)$ and $F' = f$ on $(a, b)$.
+</Callout>
+
+**Proof.** We must show
+
+$$\lim_{h \to 0} \frac{F(c + h) - F(c)}{h} = f(c).$$
+
+By additivity, $F(c + h) - F(c) = \int_c^{c+h} f(t) \, dt$. (We take $h > 0$; the case $h < 0$ is analogous.) Therefore
+
+$$\frac{F(c+h) - F(c)}{h} = \frac{1}{h} \int_c^{c+h} f(t) \, dt.$$
+
+Since $\int_c^{c+h} f(c) \, dt = f(c) \cdot h$, we can write
+
+$$\frac{F(c+h) - F(c)}{h} - f(c) = \frac{1}{h} \int_c^{c+h} (f(t) - f(c)) \, dt.$$
+
+Now we use continuity of $f$ at $c$. Let $\epsilon > 0$. Choose $\delta > 0$ such that $|t - c| < \delta \implies |f(t) - f(c)| < \epsilon$. For $0 < h < \delta$ and $t \in [c, c+h]$, we have $|t - c| \leq h < \delta$, so $|f(t) - f(c)| < \epsilon$. Therefore
+
+$$\left|\frac{F(c+h) - F(c)}{h} - f(c)\right| = \frac{1}{h} \left|\int_c^{c+h} (f(t) - f(c)) \, dt\right| \leq \frac{1}{h} \int_c^{c+h} |f(t) - f(c)| \, dt < \frac{1}{h} \cdot \epsilon \cdot h = \epsilon.$$
+
+Since this holds for all $0 < h < \delta$, and the argument for $h < 0$ is symmetric, we conclude
+
+$$\lim_{h \to 0} \frac{F(c+h) - F(c)}{h} = f(c). \quad \blacksquare$$
+
+<Callout type="warning" title="Continuity of $f$ Is Essential">
+The hypothesis that $f$ is continuous at $c$ cannot be dropped. If $f$ has a jump discontinuity at $c$, the integral function $F$ is still continuous at $c$ (we proved this above), but $F$ need not be differentiable there. For example, if $f$ is the Heaviside step function, $F$ has a corner at the jump point.
+</Callout>
+
+## Alternative Proof via Squeeze by Local Extrema
+
+Here is the classical "squeeze" version of the proof, which is equivalent but perhaps more intuitive.
+
+**Proof (Squeeze version).** Let $h > 0$ (the case $h < 0$ is analogous). Since $f$ is continuous at $c$ and $[c, c+h]$ is compact, $f$ attains its minimum and maximum on $[c, c+h]$:
+
+$$m_h = \min_{t \in [c, c+h]} f(t), \qquad M_h = \max_{t \in [c, c+h]} f(t).$$
+
+By the integral bound:
+
+$$m_h \cdot h \leq \int_c^{c+h} f(t) \, dt \leq M_h \cdot h.$$
+
+Dividing by $h > 0$:
+
+$$m_h \leq \frac{F(c+h) - F(c)}{h} \leq M_h.$$
+
+As $h \to 0^+$, the points where $f$ attains $m_h$ and $M_h$ are squeezed toward $c$. Since $f$ is continuous at $c$, both $m_h \to f(c)$ and $M_h \to f(c)$. By the Squeeze Theorem:
+
+$$\lim_{h \to 0^+} \frac{F(c+h) - F(c)}{h} = f(c). \quad \blacksquare$$
+
+## Applications and Consequences
+
+<Callout type="theorem" title="Existence of Antiderivatives">
+If $f \colon [a, b] \to \mathbb{R}$ is continuous, then $f$ has an antiderivative, namely $F(x) = \int_a^x f(t) \, dt$.
+</Callout>
+
+This is a pure existence result: it guarantees that every continuous function has an antiderivative. It does not tell us how to find a closed-form expression for it. Many integrable functions (like $e^{-x^2}$) have antiderivatives that cannot be expressed in terms of elementary functions.
+
+<Callout type="info" title="What FTC I Does NOT Say">
+FTC Part I does NOT say that $\int_a^b f = G(b) - G(a)$ for an antiderivative $G$. That is the content of **FTC Part II** (the Evaluation Theorem), which we will prove in the next lesson. Part I is about differentiating integrals; Part II is about evaluating them.
+</Callout>
+
+## Exercises
+
+<Problem title="Prove FTC Part I">
+Let $f \colon [a, b] \to \mathbb{R}$ be integrable and continuous at $c \in (a, b)$. Define $F(x) = \int_a^x f(t) \, dt$. Prove that $F'(c) = f(c)$. Your proof should clearly indicate where continuity of $f$ at $c$ is used.
+
+<Solution>
+**Proof.** We show $\lim_{h \to 0} \frac{F(c+h) - F(c)}{h} = f(c)$.
+
+By additivity of the integral, $F(c+h) - F(c) = \int_c^{c+h} f(t) \, dt$. We write
+
+$$\frac{F(c+h) - F(c)}{h} - f(c) = \frac{1}{h}\int_c^{c+h} f(t) \, dt - f(c) = \frac{1}{h}\int_c^{c+h}(f(t) - f(c)) \, dt$$
+
+using the fact that $\frac{1}{h}\int_c^{c+h} f(c) \, dt = f(c)$.
+
+**Here we use continuity of $f$ at $c$:** Given $\epsilon > 0$, choose $\delta > 0$ so that $|t - c| < \delta \implies |f(t) - f(c)| < \epsilon$. For $0 < |h| < \delta$, every $t$ between $c$ and $c + h$ satisfies $|t - c| \leq |h| < \delta$, so $|f(t) - f(c)| < \epsilon$. Thus
+
+$$\left|\frac{F(c+h) - F(c)}{h} - f(c)\right| \leq \frac{1}{|h|}\int_{\min(c, c+h)}^{\max(c, c+h)} |f(t) - f(c)| \, dt < \frac{1}{|h|} \cdot \epsilon \cdot |h| = \epsilon.$$
+
+Since $\epsilon > 0$ was arbitrary, $F'(c) = f(c)$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which hypothesis on $f$ is needed for FTC Part I to guarantee $F'(c) = f(c)$?"
+  options={[
+    "$f$ is differentiable at $c$",
+    "$f$ is continuous at $c$",
+    "$f$ is monotone near $c$",
+    "$f$ is bounded on $[a, b]$ (no continuity needed)"
+  ]}
+  correctIndex={1}
+  explanation="FTC Part I requires that $f$ be integrable on $[a,b]$ (to define $F$) and continuous at $c$ (to take the limit in the difference quotient). Boundedness alone is not sufficient -- the integral function of a bounded function is continuous but may fail to be differentiable at points of discontinuity of $f$."
+/>
+
+<NumericInput
+  question="Let $F(x) = \int_0^x \cos(t^2) \, dt$. What is $F'(\sqrt{\pi/2})$? (Use FTC I directly.)"
+  answer={0}
+  tolerance={0.01}
+  hint="By FTC I, $F'(x) = \\cos(x^2)$. At $x = \\sqrt{\\pi/2}$: $F'(\\sqrt{\\pi/2}) = \\cos(\\pi/2) = 0$."
+/>
+
+<MultipleChoice
+  question="Let $F(x) = \\int_0^x f(t) \\, dt$ where $f$ is integrable on $[0, 2]$. Which statement is always true?"
+  options={[
+    "$F$ is differentiable on $(0, 2)$",
+    "$F$ is continuous on $[0, 2]$",
+    "$F$ is monotone on $[0, 2]$",
+    "$F$ is bounded but may be discontinuous"
+  ]}
+  correctIndex={1}
+  explanation="We proved that the integral function of any integrable (hence bounded) function is Lipschitz continuous, and therefore continuous. Differentiability requires $f$ to be continuous, and monotonicity requires $f$ to have constant sign -- neither is guaranteed for a general integrable $f$."
+/>
+
+<Problem>
+**Exercise 5.3 (Counterexample).** Show that FTC Part I fails without the continuity hypothesis. Define $f \colon [0, 2] \to \mathbb{R}$ by
+
+$$f(x) = \begin{cases} 0 & \text{if } 0 \leq x \leq 1, \\ 1 & \text{if } 1 < x \leq 2. \end{cases}$$
+
+This is the Heaviside step function (shifted to $x = 1$). Show that $f$ is integrable, compute $F(x) = \int_0^x f(t)\,dt$ explicitly, and prove that $F$ is **not differentiable** at $x = 1$. Conclude that continuity of $f$ at $c$ is essential for $F'(c) = f(c)$.
+
+*Hint:* Show the left and right derivatives of $F$ at $x = 1$ differ.
+</Problem>
+
+<Solution>
+*Proof.* **Integrability.** The function $f$ is monotone (nondecreasing) on $[0, 2]$, so it is Riemann integrable by the monotone integrability theorem.
+
+**Computing $F$.** For $0 \leq x \leq 1$: $F(x) = \int_0^x 0\,dt = 0$.
+
+For $1 < x \leq 2$: $F(x) = \int_0^1 0\,dt + \int_1^x 1\,dt = 0 + (x - 1) = x - 1$.
+
+So $F(x) = \begin{cases} 0 & 0 \leq x \leq 1, \\ x - 1 & 1 < x \leq 2. \end{cases}$
+
+Note $F$ is continuous at $x = 1$ (both sides give $0$), consistent with our theorem that the integral function is always continuous.
+
+**Non-differentiability at $x = 1$.** The left derivative:
+
+$$\lim_{h \to 0^-} \frac{F(1+h) - F(1)}{h} = \lim_{h \to 0^-} \frac{0 - 0}{h} = 0.$$
+
+The right derivative:
+
+$$\lim_{h \to 0^+} \frac{F(1+h) - F(1)}{h} = \lim_{h \to 0^+} \frac{(1+h-1) - 0}{h} = \lim_{h \to 0^+} \frac{h}{h} = 1.$$
+
+Since the left and right derivatives differ ($0 \neq 1$), $F$ is not differentiable at $x = 1$. The graph of $F$ has a "corner" at this point.
+
+**Conclusion.** At $x = 1$, $f$ is discontinuous (jump from $0$ to $1$), and $F'(1)$ does not exist. FTC I guarantees $F'(c) = f(c)$ only at points where $f$ is continuous. The jump discontinuity of $f$ produces a corner in $F$, breaking differentiability. $\square$
+</Solution>
+
+## Numerical Verification: $F'(x) = f(x)$
+
+<PythonPlayground
+  title="Comparing F'(x) with f(x) numerically"
+  defaultCode={`import numpy as np
+
+# Define f and compute F(x) = int_0^x f(t) dt numerically
+def f(t):
+    return np.cos(t**2)
+
+def F_numerical(x, n=10000):
+    """Compute integral from 0 to x using the trapezoidal rule."""
+    if abs(x) < 1e-15:
+        return 0.0
+    t = np.linspace(0, x, n + 1)
+    y = f(t)
+    return np.trapz(y, t)
+
+# Compute F'(x) numerically using central differences
+def F_prime_numerical(x, h=1e-6):
+    return (F_numerical(x + h) - F_numerical(x - h)) / (2 * h)
+
+# Compare F'(x) with f(x) at several points
+print("FTC Part I verification: F(x) = int_0^x cos(t^2) dt")
+print(f"{'x':>8} | {'f(x)':>12} | {'F_num(x)':>12} | {'F_num(x)':>12} | {'|F_num - f|':>12}")
+print(f"{'':>8} | {'':>12} | {'(numerical)':>12} | {'(approx)':>12} | {'':>12}")
+print("-" * 68)
+
+for x in np.linspace(0.1, 2.5, 10):
+    fx = f(x)
+    Fx = F_numerical(x)
+    Fpx = F_prime_numerical(x)
+    err = abs(Fpx - fx)
+    print(f"{x:8.4f} | {fx:12.6f} | {Fx:12.6f} | {Fpx:12.6f} | {err:12.2e}")
+
+print()
+print("The numerical derivative of F matches f(x) to high precision!")
+print("This is FTC Part I in action: d/dx [int_0^x f(t) dt] = f(x).")
+print()
+
+# Show F is continuous even when f has a jump discontinuity
+print("--- Example: f with a jump discontinuity ---")
+def f_jump(t):
+    return np.where(t < 1, 0.0, 1.0)
+
+def F_jump(x, n=10000):
+    if abs(x) < 1e-15:
+        return 0.0
+    t = np.linspace(0, x, n + 1)
+    y = f_jump(t)
+    return np.trapz(y, t)
+
+print("F(x) = int_0^x step(t) dt near the jump at t=1:")
+for x in [0.9, 0.95, 0.99, 1.0, 1.01, 1.05, 1.1]:
+    print(f"  F({x:.2f}) = {F_jump(x):.6f}")
+print("F is continuous at x=1 even though f has a jump there!")`}
+/>
+
+<Callout type="tip" title="Key Takeaway">
+FTC Part I tells us that integration is, in a precise sense, the inverse of differentiation: if we integrate $f$ and then differentiate, we recover $f$ (at points of continuity). The converse direction -- evaluating an integral by finding an antiderivative -- is the subject of FTC Part II.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Definition Drill (No Solution)">
+Let $f$ be bounded and Riemann integrable on $[a,b]$, and define $F(x)=\int_a^x f(t)dt$.
+Prove directly that $F$ is Lipschitz with constant $\sup_{[a,b]}|f|$.
+</Problem>
+
+<Problem title="Theorem Application (No Solution)">
+Assume $f$ is continuous on $[a,b]$ and define $F(x)=\int_a^x f(t)dt$.
+Give a full epsilon proof that
+$\displaystyle \lim_{h\to0}\frac{F(c+h)-F(c)}{h}=f(c)$
+for each $c\in(a,b)$.
+</Problem>
+
+<Problem title="Counterexample Stress Test (No Solution)">
+Define
+$f(x)=\mathbf{1}_{[0,\infty)}(x)$ on $[-1,1]$ and $F(x)=\int_{-1}^x f(t)dt$.
+Show $F$ is continuous but not differentiable at $0$, despite $f$ being integrable.
+Identify the missing hypothesis needed for FTC I at a point.
+</Problem>

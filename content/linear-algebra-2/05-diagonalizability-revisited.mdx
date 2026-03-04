@@ -1,0 +1,342 @@
+---
+title: "Diagonalizability Revisited: The Minimal Polynomial Criterion"
+description: "Diagonalizability via the minimal polynomial, algebraic vs geometric multiplicity revisited, primary decomposition theorem, and projection operators as polynomials in T"
+order: 5
+prerequisites: ["04-cayley-hamilton"]
+---
+
+# Diagonalizability Revisited: The Minimal Polynomial Criterion
+
+In a first course, diagonalizability is characterized by the condition $\operatorname{gm}(\lambda) = \operatorname{am}(\lambda)$
+for every eigenvalue. This requires computing each eigenspace individually. The minimal polynomial
+gives a cleaner, more powerful criterion: $T$ is diagonalizable if and only if $m_T$ splits into
+*distinct* linear factors. This leads to the primary decomposition theorem, which decomposes $V$
+into $T$-invariant subspaces using only the minimal polynomial, and reveals that the associated
+projection operators are themselves polynomials in $T$.
+
+## The Minimal Polynomial Criterion
+
+<Callout type="theorem" title="Diagonalizability via the Minimal Polynomial">
+  Let $T \colon V \to V$ be a linear operator on a finite-dimensional vector space $V$ over $\mathbb{F}$.
+  Then $T$ is diagonalizable if and only if the minimal polynomial $m_T$ splits into distinct linear factors:
+  $$m_T(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2) \cdots (\lambda - \lambda_k)$$
+  where $\lambda_1, \ldots, \lambda_k$ are distinct elements of $\mathbb{F}$.
+  Equivalently, $T$ is diagonalizable if and only if $m_T$ has no repeated roots.
+</Callout>
+
+**Proof ($\Rightarrow$).** Suppose $T$ is diagonalizable. Then there is a basis $\{v_1, \ldots, v_n\}$ of
+eigenvectors with $Tv_j = \lambda_{\sigma(j)} v_j$ where $\lambda_1, \ldots, \lambda_k$ are the distinct eigenvalues.
+
+Let $q(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2) \cdots (\lambda - \lambda_k)$. For each eigenvector $v_j$:
+
+$$q(T)v_j = (T - \lambda_1 I) \cdots (T - \lambda_k I) v_j.$$
+
+Since $v_j$ is an eigenvector for some $\lambda_i$, the factor $(T - \lambda_i I)$ sends $v_j$ to $0$, making the
+entire product $0$. So $q(T)v_j = 0$ for every basis vector, hence $q(T) = 0$.
+
+Since $q$ is a monic annihilating polynomial with distinct linear factors and $m_T$ divides $q$ (by the
+divisibility property of $m_T$), the polynomial $m_T$ also has only distinct linear factors (a divisor
+of a squarefree polynomial is squarefree).
+
+**Proof ($\Leftarrow$).** Suppose $m_T(\lambda) = (\lambda - \lambda_1) \cdots (\lambda - \lambda_k)$ with distinct $\lambda_i$.
+We will prove this implies $V = E_{\lambda_1} \oplus \cdots \oplus E_{\lambda_k}$ using the primary decomposition
+theorem (proved below). Since each $E_{\lambda_i}$ consists of eigenvectors (plus $0$), a basis formed by
+combining bases of the eigenspaces is an eigenbasis. $\blacksquare$
+
+<Callout type="tip" title="Why This Criterion Is Superior">
+  The old criterion requires computing $\operatorname{gm}(\lambda)$ for every eigenvalue (solving $n$ linear systems).
+  The minimal polynomial criterion only requires factoring a single polynomial and checking for repeated
+  roots. Moreover, it reveals the *reason* diagonalization fails: a repeated factor $(\lambda - \lambda_i)^{b_i}$
+  with $b_i \geq 2$ means the operator has "nilpotent behavior" near $\lambda_i$ that cannot be eliminated
+  by a change of basis.
+</Callout>
+
+## Algebraic vs. Geometric Multiplicity Revisited
+
+The minimal polynomial connects these two notions precisely.
+
+<Callout type="definition" title="Multiplicities Revisited">
+  For an eigenvalue $\lambda_i$ of $T$:
+  - **Algebraic multiplicity** $a_i = \operatorname{am}(\lambda_i)$: the exponent of $(\lambda - \lambda_i)$ in $p_T(\lambda)$.
+  - **Geometric multiplicity** $g_i = \operatorname{gm}(\lambda_i) = \dim \ker(T - \lambda_i I)$: the dimension of the eigenspace.
+  - **Index** $b_i$: the exponent of $(\lambda - \lambda_i)$ in $m_T(\lambda)$. This equals the size of the largest Jordan block for $\lambda_i$.
+  The key inequalities are: $1 \leq g_i \leq a_i$ and $1 \leq b_i \leq a_i$.
+  Diagonalizability at $\lambda_i$ means $b_i = 1$, which is equivalent to $g_i = a_i$.
+</Callout>
+
+**Why $b_i = 1 \Leftrightarrow g_i = a_i$:** If $b_i = 1$, then $(T - \lambda_i I)$ restricted to the
+generalized eigenspace $\ker(T - \lambda_i I)^{a_i}$ is zero, meaning the entire generalized eigenspace
+equals the eigenspace. So $g_i = a_i$. Conversely, if $g_i = a_i$, then $\ker(T - \lambda_i I)$ already
+has full dimension within the generalized eigenspace, so $(T - \lambda_i I)$ kills the entire generalized
+eigenspace, meaning one application suffices: $b_i = 1$.
+
+## The Primary Decomposition Theorem
+
+This is the structural heart of the lesson. It says that whenever the minimal polynomial factors into
+coprime pieces, the space decomposes accordingly.
+
+<Callout type="theorem" title="Primary Decomposition Theorem">
+  Let $T \colon V \to V$ be a linear operator with minimal polynomial
+  $$m_T(\lambda) = p_1(\lambda)^{b_1} p_2(\lambda)^{b_2} \cdots p_k(\lambda)^{b_k}$$
+  where $p_1, \ldots, p_k$ are distinct monic irreducible polynomials over $\mathbb{F}$. Then:
+  $$V = \ker p_1(T)^{b_1} \oplus \ker p_2(T)^{b_2} \oplus \cdots \oplus \ker p_k(T)^{b_k}.$$
+  Each summand $V_i = \ker p_i(T)^{b_i}$ is $T$-invariant, and the minimal polynomial of $T|_{V_i}$ is $p_i(\lambda)^{b_i}$.
+</Callout>
+
+**Proof.** We prove this in steps.
+
+**Step 1: The summands are $T$-invariant.** If $v \in \ker p_i(T)^{b_i}$, then
+$p_i(T)^{b_i}(Tv) = T(p_i(T)^{b_i} v) = T(0) = 0$ (since $T$ commutes with $p_i(T)^{b_i}$). So $Tv \in \ker p_i(T)^{b_i}$.
+
+**Step 2: Coprimality gives the direct sum.** Define $q_i(\lambda) = m_T(\lambda) / p_i(\lambda)^{b_i}$ for each $i$.
+The polynomials $q_1, \ldots, q_k$ are pairwise coprime (since the $p_j$ are distinct irreducibles, removing
+$p_i^{b_i}$ from $m_T$ leaves a polynomial coprime to $p_i^{b_i}$).
+
+By Bezout's identity (for polynomials), there exist polynomials $r_1, \ldots, r_k$ such that
+
+$$r_1(\lambda) q_1(\lambda) + r_2(\lambda) q_2(\lambda) + \cdots + r_k(\lambda) q_k(\lambda) = 1.$$
+
+Evaluating at $T$:
+
+$$r_1(T) q_1(T) + r_2(T) q_2(T) + \cdots + r_k(T) q_k(T) = I. \tag{$*$}$$
+
+**Step 3: Spanning.** For any $v \in V$, apply $(*)$:
+
+$$v = r_1(T)q_1(T)v + r_2(T)q_2(T)v + \cdots + r_k(T)q_k(T)v.$$
+
+We claim each $r_i(T)q_i(T)v \in \ker p_i(T)^{b_i}$. Indeed:
+
+$$p_i(T)^{b_i} \cdot r_i(T) q_i(T) v = r_i(T) \cdot p_i(T)^{b_i} q_i(T) \cdot v = r_i(T) \cdot m_T(T) \cdot v = 0.$$
+
+So $V = V_1 + V_2 + \cdots + V_k$.
+
+**Step 4: Directness.** Suppose $v \in V_i \cap (V_1 + \cdots + V_{i-1} + V_{i+1} + \cdots + V_k)$. Then
+$v \in \ker p_i(T)^{b_i}$ and $v = \sum_{j \neq i} v_j$ with $v_j \in \ker p_j(T)^{b_j}$. Applying $q_i(T)$
+to $v$: since $q_i = \prod_{j \neq i} p_j^{b_j}$, we have $q_i(T) v_j = 0$ for all $j \neq i$ (because
+$p_j(T)^{b_j} v_j = 0$ and $p_j^{b_j} \mid q_i$). So $q_i(T)v = 0$. But also $p_i(T)^{b_i} v = 0$, and
+$\gcd(q_i, p_i^{b_i}) = 1$, so by Bezout there exist $s, t$ with $s \cdot q_i + t \cdot p_i^{b_i} = 1$.
+Then $v = s(T)q_i(T)v + t(T)p_i(T)^{b_i}v = 0 + 0 = 0$. $\blacksquare$
+
+## Projection Operators
+
+<Callout type="definition" title="Projection Operator">
+  A linear operator $\pi \colon V \to V$ is a **projection** (or **idempotent**) if $\pi^2 = \pi$.
+</Callout>
+
+<Callout type="theorem" title="Projections from Primary Decomposition Are Polynomials in T">
+  In the primary decomposition $V = V_1 \oplus \cdots \oplus V_k$, define $\pi_i \colon V \to V$ as the
+  projection onto $V_i$ along $\bigoplus_{j \neq i} V_j$. That is, if $v = v_1 + \cdots + v_k$ with
+  $v_j \in V_j$, then $\pi_i(v) = v_i$. Then:
+  1. Each $\pi_i$ is a projection: $\pi_i^2 = \pi_i$.
+  2. $\pi_i \pi_j = 0$ for $i \neq j$.
+  3. $\pi_1 + \pi_2 + \cdots + \pi_k = I$.
+  4. Each $\pi_i$ is a polynomial in $T$: $\pi_i = r_i(T) q_i(T)$ where $r_i, q_i$ are from the Bezout identity.
+</Callout>
+
+**Proof.** Properties (1)-(3) follow from the direct sum decomposition: each vector has a unique
+decomposition, and the projections extract the components.
+
+For (4): from the proof of the primary decomposition, $\pi_i = r_i(T) q_i(T)$. This is a polynomial
+in $T$, hence commutes with $T$ and with every other polynomial in $T$. $\blacksquare$
+
+<Callout type="tip" title="Why Projections as Polynomials in T Matters">
+  The fact that $\pi_i \in \mathbb{F}[T]$ means the decomposition is *intrinsic to the operator*. We do
+  not need to choose a basis or solve any linear systems to define the projections -- they are determined
+  algebraically by $T$ alone. In applications:
+  - Computing $\pi_i v$ for a specific vector $v$ requires only matrix-vector multiplications.
+  - The projections commute with $T$ and with each other automatically.
+  - For numerical stability, this approach avoids computing eigenvectors entirely.
+</Callout>
+
+## Application: Diagonalizability from the Minimal Polynomial
+
+Let us complete the proof of the minimal polynomial criterion using primary decomposition.
+
+If $m_T(\lambda) = (\lambda - \lambda_1)(\lambda - \lambda_2) \cdots (\lambda - \lambda_k)$ (distinct linear factors),
+then by primary decomposition:
+
+$$V = \ker(T - \lambda_1 I) \oplus \ker(T - \lambda_2 I) \oplus \cdots \oplus \ker(T - \lambda_k I) = E_{\lambda_1} \oplus E_{\lambda_2} \oplus \cdots \oplus E_{\lambda_k}.$$
+
+The direct sum of eigenspaces is all of $V$, so $T$ is diagonalizable. This completes the $(\Leftarrow)$
+direction.
+
+**Example.** Let $T$ have minimal polynomial $m_T(\lambda) = (\lambda - 1)(\lambda - 3)$.
+
+- $V = \ker(T - I) \oplus \ker(T - 3I) = E_1 \oplus E_3$.
+- The projections: since $q_1(\lambda) = \lambda - 3$ and $q_2(\lambda) = \lambda - 1$, and we need
+  $r_1(\lambda - 3) + r_2(\lambda - 1) = 1$. Taking $r_1 = -1/2, r_2 = 1/2$:
+  $\pi_1 = -\frac{1}{2}(T - 3I) = \frac{1}{2}(3I - T)$ and $\pi_2 = \frac{1}{2}(T - I)$.
+
+Check: $\pi_1 + \pi_2 = \frac{1}{2}(3I - T) + \frac{1}{2}(T - I) = \frac{1}{2}(2I) = I$. $\checkmark$
+
+And $T = \lambda_1 \pi_1 + \lambda_2 \pi_2 = 1 \cdot \frac{1}{2}(3I - T) + 3 \cdot \frac{1}{2}(T - I) = \frac{3}{2}I - \frac{1}{2}T + \frac{3}{2}T - \frac{3}{2}I = T$. $\checkmark$
+
+<PythonPlayground
+  title="Primary decomposition and projection operators"
+  initialCode={`import numpy as np
+
+# Matrix with two distinct eigenvalues => diagonalizable
+# m_T(x) = (x - 2)(x - 5)
+A = np.array([
+    [2, 0, 0, 0],
+    [0, 5, 0, 0],
+    [0, 0, 2, 0],
+    [0, 0, 0, 5]
+], dtype=float)
+
+# Scramble with a change of basis
+np.random.seed(123)
+P = np.random.randn(4, 4)
+B = P @ A @ np.linalg.inv(P)
+
+print("B (similar to diag(2,5,2,5)):")
+print(np.round(B, 4))
+
+eigenvalues = [2.0, 5.0]
+n = 4
+I4 = np.eye(n)
+
+# Primary decomposition projections:
+# m_T(x) = (x-2)(x-5), so:
+# q1 = x - 5, q2 = x - 2
+# Bezout: r1*(x-5) + r2*(x-2) = 1
+# r1*(-3) + r2*(0) for x=2 => -3*r1 = 1 => r1 = -1/3
+# r1*(0) + r2*(3) for x=5 => 3*r2 = 1 => r2 = 1/3
+# pi_1 = r1(T)*q1(T) = (-1/3)*(B - 5I)
+# pi_2 = r2(T)*q2(T) = (1/3)*(B - 2I)
+
+pi1 = (-1/3) * (B - 5*I4)
+pi2 = (1/3) * (B - 2*I4)
+
+print(f"\nProjection pi_1 (onto E_2):")
+print(np.round(pi1, 6))
+print(f"\nProjection pi_2 (onto E_5):")
+print(np.round(pi2, 6))
+
+# Verify properties
+print(f"\npi_1 + pi_2 = I? {np.allclose(pi1 + pi2, I4)}")
+print(f"pi_1^2 = pi_1? {np.allclose(pi1 @ pi1, pi1)}")
+print(f"pi_2^2 = pi_2? {np.allclose(pi2 @ pi2, pi2)}")
+print(f"pi_1 @ pi_2 = 0? {np.allclose(pi1 @ pi2, np.zeros((n,n)))}")
+
+# Verify spectral decomposition: B = 2*pi1 + 5*pi2
+B_reconstructed = 2*pi1 + 5*pi2
+print(f"\nB = 2*pi_1 + 5*pi_2? {np.allclose(B, B_reconstructed)}")
+
+# Check ranks (= dimensions of eigenspaces)
+print(f"\nrank(pi_1) = {np.linalg.matrix_rank(pi1)} (dim E_2)")
+print(f"rank(pi_2) = {np.linalg.matrix_rank(pi2)} (dim E_5)")
+
+# Verify: columns of pi_1 span E_2
+print(f"\n(B - 2I) @ pi_1 = 0? {np.allclose((B - 2*I4) @ pi1, np.zeros((n,n)))}")
+print(f"(B - 5I) @ pi_2 = 0? {np.allclose((B - 5*I4) @ pi2, np.zeros((n,n)))}")
+`}
+/>
+
+## Exercises
+
+<Problem title="Applying the minimal polynomial criterion">
+  For each of the following, determine whether the matrix is diagonalizable using the minimal polynomial criterion.
+  (a) $A = \begin{pmatrix} 3 & 0 \\ 0 & 3 \end{pmatrix}$
+  (b) $B = \begin{pmatrix} 3 & 1 \\ 0 & 3 \end{pmatrix}$
+  (c) $C = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 1 \end{pmatrix}$
+  (d) $D = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ over $\mathbb{R}$ and over $\mathbb{C}$.
+</Problem>
+
+<Solution>
+  **(a)** $A = 3I$, so $(A - 3I) = 0$. The minimal polynomial is $m_A(\lambda) = \lambda - 3$, which has only distinct linear factors. **Diagonalizable** (it is already diagonal).
+  **(b)** $(B - 3I) = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix} \neq 0$, but $(B - 3I)^2 = 0$. So $m_B(\lambda) = (\lambda - 3)^2$, which has a repeated root. **Not diagonalizable.**
+  **(c)** $p_C(\lambda) = (\lambda - 1)^2(\lambda - 2)$. Check: $(C - I)(C - 2I) = \begin{pmatrix} 0 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} -1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & -1 \end{pmatrix} = 0$. So $m_C(\lambda) = (\lambda - 1)(\lambda - 2)$, which has distinct linear factors. **Diagonalizable.**
+  **(d)** Over $\mathbb{R}$: $p_D(\lambda) = \lambda^2 + 1$, which is irreducible over $\mathbb{R}$. The minimal polynomial is $m_D(\lambda) = \lambda^2 + 1$, which does not split into linear factors over $\mathbb{R}$. **Not diagonalizable over $\mathbb{R}$.**
+  Over $\mathbb{C}$: $m_D(\lambda) = \lambda^2 + 1 = (\lambda - i)(\lambda + i)$, which has distinct linear factors. **Diagonalizable over $\mathbb{C}$.** $\blacksquare$
+</Solution>
+
+<Problem title="Proving the primary decomposition for two factors">
+  Let $T \colon V \to V$ have minimal polynomial $m_T(\lambda) = (\lambda - \alpha)(\lambda - \beta)$ with $\alpha \neq \beta$.
+  (a) Prove that $V = \ker(T - \alpha I) \oplus \ker(T - \beta I)$.
+  (b) Explicitly construct the projection operators $\pi_\alpha$ and $\pi_\beta$ as polynomials in $T$.
+  (c) Verify that $T = \alpha \pi_\alpha + \beta \pi_\beta$ (the spectral decomposition).
+  (d) If $\alpha = 0$ and $\beta = 1$, what familiar type of operator is $T$?
+</Problem>
+
+<Solution>
+  **(a)** Let $U = \ker(T - \alpha I)$ and $W = \ker(T - \beta I)$.
+  *$U \cap W = \{0\}$:* If $v \in U \cap W$, then $Tv = \alpha v$ and $Tv = \beta v$, so $\alpha v = \beta v$, hence $(\alpha - \beta)v = 0$. Since $\alpha \neq \beta$, $v = 0$.
+  *$U + W = V$:* Since $m_T(\lambda) = (\lambda - \alpha)(\lambda - \beta)$, we have $(T - \alpha I)(T - \beta I) = 0$. For any $v \in V$:
+  $$v = \frac{1}{\alpha - \beta}(T - \beta I)v + \frac{1}{\beta - \alpha}(T - \alpha I)v.$$
+  The first term is in $U$: $(T - \alpha I) \cdot \frac{1}{\alpha - \beta}(T - \beta I)v = \frac{1}{\alpha - \beta}(T - \alpha I)(T - \beta I)v = 0$.
+  The second term is in $W$: $(T - \beta I) \cdot \frac{1}{\beta - \alpha}(T - \alpha I)v = \frac{1}{\beta - \alpha}(T - \beta I)(T - \alpha I)v = 0$.
+  (Commutativity of polynomials in $T$ is used.) So $V = U + W$, and with $U \cap W = \{0\}$, we get $V = U \oplus W$. $\blacksquare$
+  **(b)** From the decomposition in (a):
+  $$\pi_\alpha = \frac{1}{\alpha - \beta}(T - \beta I), \quad \pi_\beta = \frac{1}{\beta - \alpha}(T - \alpha I).$$
+  Both are polynomials in $T$ (linear polynomials).
+  **(c)**
+  $$\alpha \pi_\alpha + \beta \pi_\beta = \frac{\alpha}{\alpha - \beta}(T - \beta I) + \frac{\beta}{\beta - \alpha}(T - \alpha I)$$
+  $$= \frac{\alpha T - \alpha\beta I}{\alpha - \beta} + \frac{\beta T - \alpha\beta I}{\beta - \alpha} = \frac{\alpha T - \alpha\beta I - \beta T + \alpha\beta I}{\alpha - \beta} = \frac{(\alpha - \beta)T}{\alpha - \beta} = T. \; \checkmark$$
+  **(d)** If $\alpha = 0, \beta = 1$: $m_T(\lambda) = \lambda(\lambda - 1) = \lambda^2 - \lambda$, so $T^2 - T = 0$, i.e., $T^2 = T$. This is a **projection** (idempotent operator). The decomposition $V = \ker T \oplus \ker(T - I)$ splits $V$ into the null space of $T$ and the range of $T$ (fixed subspace). $\blacksquare$
+</Solution>
+
+<MultipleChoice
+  question="Let $T$ be a linear operator on $\mathbb{C}^6$ with minimal polynomial $m_T(\lambda) = (\lambda - 1)^2(\lambda + 2)$. What can we conclude?"
+  options={[
+    "$T$ is diagonalizable",
+    "$T$ is not diagonalizable, and $\\dim E_1 < \\operatorname{am}(1)$",
+    "The primary decomposition gives $\\mathbb{C}^6 = \\ker(T-I)^2 \\oplus \\ker(T+2I)$",
+    "The characteristic polynomial must be $(\\lambda - 1)^2(\\lambda + 2)$"
+  ]}
+  correctIndex={2}
+  explanation="The primary decomposition applies to any factorization of $m_T$ into coprime factors. Here $m_T(\\lambda) = (\\lambda-1)^2(\\lambda+2)$, so $V = \\ker(T-I)^2 \\oplus \\ker(T+2I)$. The factor $(\\lambda-1)^2$ has a repeated root, so $T$ is NOT diagonalizable (ruling out A). Option B is correct about non-diagonalizability but incorrectly states it as the 'best' answer. Option D is wrong because $p_T$ could be $(\\lambda-1)^4(\\lambda+2)^2$, for instance (as long as $m_T \\mid p_T$)."
+/>
+
+<NumericInput
+  question="Let $T \colon \mathbb{C}^5 \to \mathbb{C}^5$ have characteristic polynomial $p_T(\lambda) = (\lambda - 3)^3(\lambda - 7)^2$ and minimal polynomial $m_T(\lambda) = (\lambda - 3)(\lambda - 7)$. What is the geometric multiplicity of eigenvalue $3$?"
+  answer={3}
+  tolerance={0}
+  explanation="Since $m_T$ has only distinct linear factors, $T$ is diagonalizable. For diagonalizable operators, $\\operatorname{gm}(\\lambda) = \\operatorname{am}(\\lambda)$ for every eigenvalue. So $\\operatorname{gm}(3) = \\operatorname{am}(3) = 3$."
+/>
+
+<Problem title="Computing projections explicitly">
+  Let $T \colon \mathbb{R}^3 \to \mathbb{R}^3$ have matrix
+  $$A = \begin{pmatrix} 4 & -1 & -1 \\ 0 & 2 & 0 \\ 1 & -1 & 2 \end{pmatrix}.$$
+  (a) Compute the characteristic polynomial $p_A(\lambda)$.
+  (b) Determine the minimal polynomial $m_A(\lambda)$ by testing candidates.
+  (c) Use the primary decomposition to write $\mathbb{R}^3 = V_1 \oplus V_2$ and compute the projection operators as polynomials in $A$.
+</Problem>
+
+<Solution>
+  **(a)** Expanding $\det(A - \lambda I)$:
+  $$\det\begin{pmatrix} 4-\lambda & -1 & -1 \\ 0 & 2-\lambda & 0 \\ 1 & -1 & 2-\lambda \end{pmatrix} = (2-\lambda)\det\begin{pmatrix} 4-\lambda & -1 \\ 1 & 2-\lambda \end{pmatrix}$$
+  $$= (2-\lambda)[(4-\lambda)(2-\lambda) + 1] = (2-\lambda)[\lambda^2 - 6\lambda + 9] = (2-\lambda)(\lambda - 3)^2.$$
+  So $p_A(\lambda) = -({\lambda - 2})(\lambda - 3)^2$ (with appropriate sign convention), eigenvalues $2$ and $3$.
+  **(b)** Test $m_A(\lambda) = (\lambda - 2)(\lambda - 3)$:
+  $(A - 2I)(A - 3I) = \begin{pmatrix} 2 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & -1 & 0 \end{pmatrix}\begin{pmatrix} 1 & -1 & -1 \\ 0 & -1 & 0 \\ 1 & -1 & -1 \end{pmatrix} = \begin{pmatrix} 2+0-1 & -2+1+1 & -2+0+1 \\ 0 & 0 & 0 \\ 1+0+0 & -1+1+0 & -1+0+0 \end{pmatrix} = \begin{pmatrix} 1 & 0 & -1 \\ 0 & 0 & 0 \\ 1 & 0 & -1 \end{pmatrix}$.
+  This is not zero, so $(\lambda-2)(\lambda-3)$ does not annihilate $A$. Therefore $m_A(\lambda) = (\lambda - 2)(\lambda - 3)^2$.
+  Since $m_A$ has a repeated factor, $A$ is **not** diagonalizable.
+  **(c)** $m_A(\lambda) = (\lambda - 2)(\lambda - 3)^2$. The primary decomposition gives:
+  $$\mathbb{R}^3 = \ker(A - 2I) \oplus \ker(A - 3I)^2.$$
+  To find projections, we need $r_1(\lambda)(\lambda - 3)^2 + r_2(\lambda)(\lambda - 2) = 1$.
+  Set $\lambda = 2$: $r_1(2)(2-3)^2 = r_1(2) = 1$, so $r_1$ is constant $= 1$.
+  Set $\lambda = 3$: $r_2(3)(3-2) = r_2(3) = 1$, so $r_2(3) = 1$.
+  We can take $r_1(\lambda) = 1$ and solve: $(\lambda - 3)^2 + r_2(\lambda)(\lambda - 2) = 1$, giving $r_2(\lambda) = \frac{1 - (\lambda-3)^2}{\lambda - 2}$. At $\lambda$ near $2$: $1 - 1 = 0$... let us be more careful.
+  Actually, expanding: $(\lambda-3)^2 = \lambda^2 - 6\lambda + 9$. We need $1 - (\lambda^2 - 6\lambda + 9) = -\lambda^2 + 6\lambda - 8 = -(\lambda-2)(\lambda-4)$. So $r_2(\lambda) = -(\lambda - 4) = 4 - \lambda$.
+  Check: $1 \cdot (\lambda-3)^2 + (4-\lambda)(\lambda-2) = \lambda^2 - 6\lambda + 9 + 4\lambda - 8 - \lambda^2 + 2\lambda = 1$. $\checkmark$
+  Therefore:
+  $$\pi_1 = (A - 3I)^2, \quad \pi_2 = (4I - A)(A - 2I).$$
+  These are the projections onto $\ker(A-2I)$ and $\ker(A-3I)^2$ respectively, expressed as polynomials in $A$. $\blacksquare$
+</Solution>
+
+<Problem title="Counterexample: same eigenvalues, different diagonalizability">
+  Give an example of two $3 \times 3$ matrices $A$ and $B$ over $\mathbb{C}$ such that:
+  - $A$ and $B$ have the same characteristic polynomial
+  - $A$ is diagonalizable but $B$ is not
+  - Explain the difference in terms of their minimal polynomials
+</Problem>
+
+<Solution>
+  Take $A = \begin{pmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{pmatrix}$ and $B = \begin{pmatrix} 2 & 1 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 5 \end{pmatrix}$.
+  Both have characteristic polynomial $p(\lambda) = (\lambda - 2)^2(\lambda - 5)$.
+  For $A$: $m_A(\lambda) = (\lambda - 2)(\lambda - 5)$ (distinct linear factors, since $A - 2I$ already has rank 1, killing the full eigenspace). So $A$ is diagonalizable.
+  For $B$: $(B - 2I) = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 3 \end{pmatrix} \neq 0$, and $(B-2I)(B-5I) = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 3 \end{pmatrix}\begin{pmatrix} -3 & 1 & 0 \\ 0 & -3 & 0 \\ 0 & 0 & 0 \end{pmatrix} = \begin{pmatrix} 0 & -3 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \neq 0$.
+  So $m_B(\lambda) = (\lambda - 2)^2(\lambda - 5)$ (repeated factor). $B$ is NOT diagonalizable.
+  The difference: $m_A$ is squarefree but $m_B$ is not. The extra factor of $(\lambda - 2)$ in $m_B$ reflects the Jordan block $\begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$ -- there is nilpotent structure at eigenvalue $2$ that prevents diagonalization. $\blacksquare$
+</Solution>

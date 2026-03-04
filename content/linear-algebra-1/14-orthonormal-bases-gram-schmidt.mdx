@@ -1,0 +1,309 @@
+---
+title: "Orthonormal Bases, Gram-Schmidt, and Projections"
+description: "Orthonormal sets, the Gram-Schmidt process, orthogonal projection, and the least squares normal equations"
+order: 14
+prerequisites: ["13-inner-products-orthogonality"]
+---
+
+# Orthonormal Bases, Gram-Schmidt, and Projections
+
+In the previous lesson we introduced inner products and orthogonality. Now we build the computational
+machinery: Gram-Schmidt orthogonalization produces orthonormal bases from arbitrary ones, orthogonal
+projections decompose vectors optimally, and the normal equations solve the ubiquitous least squares
+problem. These tools appear throughout applied mathematics, statistics, signal processing, and machine learning.
+
+## Orthonormal Sets and Bases
+
+<Callout type="definition">
+  **Definition (Orthonormal set).** A set $\{e_1, \ldots, e_k\}$ in an inner product space $V$ is
+  **orthonormal** if
+  $$\langle e_i, e_j \rangle = \delta_{ij} = \begin{cases} 1 & \text{if } i = j \\ 0 & \text{if } i \neq j. \end{cases}$$
+  An orthonormal set that is also a basis for $V$ is an **orthonormal basis** (ONB).
+</Callout>
+
+<Callout type="theorem">
+  **Proposition (Coordinates in an ONB).** If $\{e_1, \ldots, e_n\}$ is an orthonormal basis for $V$,
+  then every $v \in V$ can be written as
+  $$v = \sum_{i=1}^n \langle v, e_i \rangle e_i.$$
+  The coefficients are simply $c_i = \langle v, e_i \rangle$.
+  *Proof.* Since $\{e_1, \ldots, e_n\}$ is a basis, write $v = \sum c_i e_i$. Take the inner product with $e_j$:
+  $$\langle v, e_j \rangle = \sum_{i=1}^n c_i \langle e_i, e_j \rangle = \sum_{i=1}^n c_i \delta_{ij} = c_j. \quad \blacksquare$$
+</Callout>
+
+<Callout type="tip">
+  **Why orthonormal bases are superior.** In a general basis, finding coordinates requires solving a linear
+  system. In an orthonormal basis, the coordinates are given by inner products -- no matrix inversion needed.
+  This is why ONBs are preferred in applications: Fourier series, wavelet decompositions, PCA, and QR
+  factorization all rely on orthonormality.
+</Callout>
+
+## Parseval's Identity and Bessel's Inequality
+
+<Callout type="theorem">
+  **Theorem (Parseval's identity).** If $\{e_1, \ldots, e_n\}$ is an orthonormal basis for $V$, then for all $v \in V$:
+  $$\|v\|^2 = \sum_{i=1}^n |\langle v, e_i \rangle|^2.$$
+  *Proof.* $\|v\|^2 = \langle v, v \rangle = \left\langle \sum_i \langle v, e_i \rangle e_i, \sum_j \langle v, e_j \rangle e_j \right\rangle = \sum_{i,j} \langle v, e_i \rangle \overline{\langle v, e_j \rangle} \langle e_i, e_j \rangle = \sum_i |\langle v, e_i \rangle|^2$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Bessel's inequality).** If $\{e_1, \ldots, e_k\}$ is an orthonormal set (not necessarily a basis)
+  in $V$, then for all $v \in V$:
+  $$\sum_{i=1}^k |\langle v, e_i \rangle|^2 \leq \|v\|^2.$$
+  Equality holds if and only if $v \in \operatorname{span}\{e_1, \ldots, e_k\}$.
+  *Proof.* Define $w = v - \sum_{i=1}^k \langle v, e_i \rangle e_i$. Then $w \perp e_j$ for each $j$ (as
+  verified in the orthogonal complement proof). By the Pythagorean theorem:
+  $$\|v\|^2 = \left\|\sum_{i=1}^k \langle v, e_i \rangle e_i\right\|^2 + \|w\|^2 = \sum_{i=1}^k |\langle v, e_i \rangle|^2 + \|w\|^2 \geq \sum_{i=1}^k |\langle v, e_i \rangle|^2.$$
+  Equality holds iff $w = 0$ iff $v = \sum \langle v, e_i \rangle e_i \in \operatorname{span}\{e_1, \ldots, e_k\}$. $\blacksquare$
+</Callout>
+
+## The Gram-Schmidt Process
+
+<Callout type="theorem">
+  **Theorem (Gram-Schmidt orthogonalization).** Let $\{v_1, \ldots, v_k\}$ be a linearly independent set
+  in an inner product space $V$. There exists an orthonormal set $\{e_1, \ldots, e_k\}$ such that
+  $$\operatorname{span}\{e_1, \ldots, e_j\} = \operatorname{span}\{v_1, \ldots, v_j\} \quad \text{for each } j = 1, \ldots, k.$$
+  The process is constructive:
+  **Step 1.** $\tilde{e}_1 = v_1$, then $e_1 = \frac{\tilde{e}_1}{\|\tilde{e}_1\|}$.
+  **Step $j$ (for $j = 2, \ldots, k$).** Subtract the projection of $v_j$ onto the previously constructed
+  orthonormal vectors:
+  $$\tilde{e}_j = v_j - \sum_{i=1}^{j-1} \langle v_j, e_i \rangle e_i, \qquad e_j = \frac{\tilde{e}_j}{\|\tilde{e}_j\|}.$$
+  *Proof.* By induction on $j$. The key facts at each step:
+  1. $\tilde{e}_j \neq 0$ because $v_j \notin \operatorname{span}\{v_1, \ldots, v_{j-1}\}$ (linear independence),
+   and $\operatorname{span}\{v_1, \ldots, v_{j-1}\} = \operatorname{span}\{e_1, \ldots, e_{j-1}\}$ by induction.
+  2. $\tilde{e}_j \perp e_i$ for $i < j$: $\langle \tilde{e}_j, e_i \rangle = \langle v_j, e_i \rangle - \langle v_j, e_i \rangle = 0$.
+  3. $\operatorname{span}\{e_1, \ldots, e_j\} = \operatorname{span}\{v_1, \ldots, v_j\}$: since $e_j$ is a
+   linear combination of $v_j$ and $e_1, \ldots, e_{j-1}$ (which by induction are in $\operatorname{span}\{v_1, \ldots, v_{j-1}\}$),
+   we have $e_j \in \operatorname{span}\{v_1, \ldots, v_j\}$. Conversely, $v_j = \tilde{e}_j + \sum \langle v_j, e_i \rangle e_i \in \operatorname{span}\{e_1, \ldots, e_j\}$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+  **Corollary (Existence of ONB).** Every finite-dimensional inner product space has an orthonormal basis.
+  *Proof.* Start with any basis (which exists since $V$ is finite-dimensional). Apply Gram-Schmidt. $\blacksquare$
+</Callout>
+
+## Orthogonal Projection
+
+<Callout type="definition">
+  **Definition (Orthogonal projection).** Let $U$ be a subspace of an inner product space $V$ with
+  $V = U \oplus U^\perp$. The **orthogonal projection** of $v$ onto $U$ is the unique $\hat{v} \in U$
+  such that $v - \hat{v} \in U^\perp$. We write $\hat{v} = \operatorname{proj}_U(v)$.
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Projection formula).** If $\{e_1, \ldots, e_k\}$ is an orthonormal basis for $U$, then
+  $$\operatorname{proj}_U(v) = \sum_{i=1}^k \langle v, e_i \rangle e_i.$$
+  *Proof.* Let $\hat{v} = \sum_{i=1}^k \langle v, e_i \rangle e_i \in U$. Then for any $e_j$ ($j \leq k$):
+  $$\langle v - \hat{v}, e_j \rangle = \langle v, e_j \rangle - \sum_{i=1}^k \langle v, e_i \rangle \langle e_i, e_j \rangle = \langle v, e_j \rangle - \langle v, e_j \rangle = 0.$$
+  So $v - \hat{v} \perp e_j$ for all $j$, hence $v - \hat{v} \perp U$. Since the decomposition $V = U \oplus U^\perp$
+  is unique, $\hat{v} = \operatorname{proj}_U(v)$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+  **Theorem (Best approximation / closest point).** The orthogonal projection $\hat{v} = \operatorname{proj}_U(v)$
+  is the unique closest point to $v$ in $U$:
+  $$\|v - \hat{v}\| < \|v - u\| \quad \text{for all } u \in U, \; u \neq \hat{v}.$$
+  *Proof.* For any $u \in U$, write $v - u = (v - \hat{v}) + (\hat{v} - u)$. Since $v - \hat{v} \in U^\perp$
+  and $\hat{v} - u \in U$, these are orthogonal. By the Pythagorean theorem:
+  $$\|v - u\|^2 = \|v - \hat{v}\|^2 + \|\hat{v} - u\|^2 \geq \|v - \hat{v}\|^2$$
+  with equality iff $\hat{v} = u$. $\blacksquare$
+</Callout>
+
+## Least Squares and the Normal Equations
+
+The least squares problem is the most important application of orthogonal projection. Given an
+$m \times n$ matrix $A$ (with $m > n$, typically) and $b \in \mathbb{R}^m$, the system $Ax = b$ is
+generally inconsistent. The least squares solution minimizes $\|Ax - b\|^2$.
+
+<Callout type="theorem">
+  **Theorem (Normal equations).** The vector $\hat{x} \in \mathbb{R}^n$ minimizes $\|Ax - b\|^2$ if and
+  only if
+  $$A^T A \hat{x} = A^T b.$$
+  If $A$ has linearly independent columns (i.e., $\operatorname{rank}(A) = n$), then $A^T A$ is invertible and
+  the unique solution is $\hat{x} = (A^T A)^{-1} A^T b$.
+  *Proof.* The vector $Ax$ lies in $\operatorname{Col}(A)$ for any $x$. We want the $Ax$ closest to $b$,
+  which is $\hat{b} = \operatorname{proj}_{\operatorname{Col}(A)}(b)$. By the projection theorem, $b - A\hat{x} \perp \operatorname{Col}(A)$, meaning
+  $$\langle A^T_j, b - A\hat{x} \rangle = 0 \quad \text{for each column } A_j \text{ of } A.$$
+  In matrix form: $A^T(b - A\hat{x}) = 0$, i.e., $A^T A \hat{x} = A^T b$.
+  If $A$ has linearly independent columns, then $A^T A$ is a positive definite $n \times n$ matrix (for $x \neq 0$:
+  $x^T A^T A x = \|Ax\|^2 > 0$ since $Ax \neq 0$ by injectivity). Hence $A^T A$ is invertible. $\blacksquare$
+</Callout>
+
+<Callout type="tip">
+  **Connection to the QR factorization.** If we apply Gram-Schmidt to the columns of $A$, we get
+  $A = QR$ where $Q$ has orthonormal columns and $R$ is upper triangular. Then $A^T A = R^T Q^T Q R = R^T R$,
+  and the normal equations become $R^T R \hat{x} = R^T Q^T b$, simplifying to $R\hat{x} = Q^T b$.
+  This is more numerically stable than forming $A^T A$ directly.
+</Callout>
+
+## The QR Factorization
+
+<Callout type="theorem">
+  **Theorem (QR factorization).** Let $A$ be an $m \times n$ matrix with linearly independent columns.
+  Then $A = QR$ where $Q$ is $m \times n$ with orthonormal columns and $R$ is $n \times n$ upper triangular
+  with positive diagonal entries. This factorization is unique.
+  *Proof.* Apply Gram-Schmidt to the columns $a_1, \ldots, a_n$ of $A$ to obtain orthonormal vectors
+  $q_1, \ldots, q_n$. Since $\operatorname{span}\{q_1, \ldots, q_j\} = \operatorname{span}\{a_1, \ldots, a_j\}$,
+  each $a_j$ is a linear combination of $q_1, \ldots, q_j$:
+  $$a_j = \langle a_j, q_1 \rangle q_1 + \langle a_j, q_2 \rangle q_2 + \cdots + \langle a_j, q_j \rangle q_j.$$
+  In matrix form: $A = QR$ where $Q = [q_1 \cdots q_n]$ and $R_{ij} = \langle a_j, q_i \rangle$ for $i \leq j$,
+  $R_{ij} = 0$ for $i > j$. The diagonal entry $R_{jj} = \langle a_j, q_j \rangle = \|\tilde{e}_j\| > 0$
+  (since $\tilde{e}_j \neq 0$ by linear independence). $\blacksquare$
+</Callout>
+
+<PythonPlayground
+  title="Gram-Schmidt, QR factorization, and least squares"
+  defaultCode={`import numpy as np
+
+# Gram-Schmidt from scratch
+def gram_schmidt(V):
+    """Apply Gram-Schmidt to columns of V. Returns Q (orthonormal columns)."""
+    n = V.shape[1]
+    Q = np.zeros_like(V, dtype=float)
+    for j in range(n):
+        q = V[:, j].astype(float).copy()
+        for i in range(j):
+            q -= np.dot(V[:, j], Q[:, i]) * Q[:, i]
+        Q[:, j] = q / np.linalg.norm(q)
+    return Q
+
+# Example: Gram-Schmidt on 3 vectors in R^4
+V = np.array([[1, 1, 0],
+              [1, 0, 1],
+              [0, 1, 1],
+              [1, 1, 1]], dtype=float)
+print("Original vectors (columns):")
+print(V)
+
+Q = gram_schmidt(V)
+print("\\nOrthonormal vectors (columns):")
+print(np.round(Q, 6))
+
+print("\\nVerification Q^T Q (should be identity):")
+print(np.round(Q.T @ Q, 10))
+
+# QR factorization
+print("\\n=== QR Factorization ===")
+A = np.array([[1, 1], [1, 2], [1, 3]], dtype=float)
+print(f"A =\\n{A}")
+
+Q_qr, R_qr = np.linalg.qr(A)
+print(f"\\nQ =\\n{np.round(Q_qr, 6)}")
+print(f"\\nR =\\n{np.round(R_qr, 6)}")
+print(f"\\nQ @ R =\\n{np.round(Q_qr @ R_qr, 10)}")
+
+# Least squares: fit a line y = c0 + c1*x to data
+print("\\n=== Least Squares ===")
+x_data = np.array([0, 1, 2, 3, 4], dtype=float)
+y_data = np.array([1.1, 2.9, 5.2, 6.8, 9.1], dtype=float)
+A_ls = np.column_stack([np.ones_like(x_data), x_data])
+print(f"Design matrix A:\\n{A_ls}")
+
+# Method 1: Normal equations
+ATA = A_ls.T @ A_ls
+ATb = A_ls.T @ y_data
+x_hat = np.linalg.solve(ATA, ATb)
+print(f"\\nNormal equations: A^T A x = A^T b")
+print(f"Solution: c0 = {x_hat[0]:.4f}, c1 = {x_hat[1]:.4f}")
+print(f"Best fit line: y = {x_hat[0]:.4f} + {x_hat[1]:.4f} x")
+
+# Method 2: QR
+Q_ls, R_ls = np.linalg.qr(A_ls)
+x_hat_qr = np.linalg.solve(R_ls, Q_ls.T @ y_data)
+print(f"\\nQR method solution: c0 = {x_hat_qr[0]:.4f}, c1 = {x_hat_qr[1]:.4f}")
+
+residual = np.linalg.norm(A_ls @ x_hat - y_data)
+print(f"Residual ||Ax - b|| = {residual:.4f}")
+`}
+/>
+
+## Exercises
+
+<Problem>
+  **Exercise 1 (Gram-Schmidt by hand).** Apply the Gram-Schmidt process to the vectors
+  $v_1 = (1, 1, 0)^T$, $v_2 = (1, 0, 1)^T$, $v_3 = (0, 1, 1)^T$ in $\mathbb{R}^3$ with the standard
+  inner product. Show each step explicitly.
+</Problem>
+
+<Solution>
+  **Step 1.** $\tilde{e}_1 = v_1 = (1, 1, 0)^T$. $\|\tilde{e}_1\| = \sqrt{1+1+0} = \sqrt{2}$.
+  $$e_1 = \frac{1}{\sqrt{2}}(1, 1, 0)^T.$$
+  **Step 2.** Subtract the projection of $v_2$ onto $e_1$:
+  $$\langle v_2, e_1 \rangle = (1)(1/\sqrt{2}) + (0)(1/\sqrt{2}) + (1)(0) = \frac{1}{\sqrt{2}}.$$
+  $$\tilde{e}_2 = v_2 - \frac{1}{\sqrt{2}} e_1 = (1, 0, 1)^T - \frac{1}{\sqrt{2}} \cdot \frac{1}{\sqrt{2}}(1, 1, 0)^T = (1, 0, 1)^T - \frac{1}{2}(1, 1, 0)^T = \left(\frac{1}{2}, -\frac{1}{2}, 1\right)^T.$$
+  $\|\tilde{e}_2\| = \sqrt{1/4 + 1/4 + 1} = \sqrt{3/2}$.
+  $$e_2 = \frac{1}{\sqrt{3/2}}\left(\frac{1}{2}, -\frac{1}{2}, 1\right)^T = \frac{1}{\sqrt{6}}(1, -1, 2)^T.$$
+  **Step 3.** Subtract projections of $v_3$ onto $e_1$ and $e_2$:
+  $$\langle v_3, e_1 \rangle = (0)(1/\sqrt{2}) + (1)(1/\sqrt{2}) + (1)(0) = \frac{1}{\sqrt{2}}.$$
+  $$\langle v_3, e_2 \rangle = (0)(1/\sqrt{6}) + (1)(-1/\sqrt{6}) + (1)(2/\sqrt{6}) = \frac{1}{\sqrt{6}}.$$
+  $$\tilde{e}_3 = v_3 - \frac{1}{\sqrt{2}} e_1 - \frac{1}{\sqrt{6}} e_2 = (0, 1, 1)^T - \frac{1}{2}(1, 1, 0)^T - \frac{1}{6}(1, -1, 2)^T.$$
+  $$= \left(-\frac{1}{2} - \frac{1}{6}, \; 1 - \frac{1}{2} + \frac{1}{6}, \; 1 - \frac{1}{3}\right)^T = \left(-\frac{2}{3}, \frac{2}{3}, \frac{2}{3}\right)^T.$$
+  $\|\tilde{e}_3\| = \frac{2}{3}\sqrt{3}$.
+  $$e_3 = \frac{1}{\sqrt{3}}(-1, 1, 1)^T.$$
+  The orthonormal basis is $\left\{\frac{1}{\sqrt{2}}(1,1,0)^T, \; \frac{1}{\sqrt{6}}(1,-1,2)^T, \; \frac{1}{\sqrt{3}}(-1,1,1)^T\right\}$. $\square$
+</Solution>
+
+<MultipleChoice
+  question="In the least squares problem $Ax \approx b$, what does the normal equation $A^T A \hat{x} = A^T b$ express geometrically?"
+  options={[
+    "The residual $b - A\\hat{x}$ is in the column space of $A$",
+    "The residual $b - A\\hat{x}$ is orthogonal to the column space of $A$",
+    "The solution $\\hat{x}$ is orthogonal to the null space of $A$",
+    "The matrix $A^T A$ is the identity"
+  ]}
+  correctIndex={1}
+  explanation="The normal equation A^T(b - A x_hat) = 0 says that the residual b - A x_hat is orthogonal to every column of A, hence orthogonal to the column space of A. This is the orthogonal projection condition: A x_hat is the projection of b onto Col(A), and the residual is in Col(A)^perp."
+/>
+
+<NumericInput
+  question="Apply Gram-Schmidt to $v_1 = (3, 4)^T$ and $v_2 = (1, 0)^T$ in $\mathbb{R}^2$. What is $\langle v_2, e_1 \rangle$ where $e_1 = v_1 / \|v_1\|$? Enter the value as a decimal."
+  answer={0.6}
+  tolerance={0.01}
+  explanation="e_1 = (3,4)^T / 5 = (3/5, 4/5)^T. Then <v_2, e_1> = 1 * (3/5) + 0 * (4/5) = 3/5 = 0.6."
+/>
+
+<Problem>
+  **Exercise 2 (Projection theorem proof).** Prove that if $U$ is a subspace of a finite-dimensional
+  inner product space $V$ and $v \in V$, then the orthogonal projection $\hat{v} = \operatorname{proj}_U(v)$
+  minimizes $\|v - u\|$ over all $u \in U$.
+</Problem>
+
+<Solution>
+  *Proof.* Let $\hat{v} = \operatorname{proj}_U(v)$, so $\hat{v} \in U$ and $v - \hat{v} \in U^\perp$.
+  For any $u \in U$, write
+  $$v - u = (v - \hat{v}) + (\hat{v} - u).$$
+  Now $v - \hat{v} \in U^\perp$ and $\hat{v} - u \in U$, so these two vectors are orthogonal. By the
+  Pythagorean theorem:
+  $$\|v - u\|^2 = \|v - \hat{v}\|^2 + \|\hat{v} - u\|^2.$$
+  Since $\|\hat{v} - u\|^2 \geq 0$:
+  $$\|v - u\|^2 \geq \|v - \hat{v}\|^2$$
+  with equality iff $\hat{v} - u = 0$, i.e., $u = \hat{v}$.
+  Therefore $\hat{v}$ is the unique minimizer of $\|v - u\|$ over $u \in U$. $\blacksquare$
+</Solution>
+
+<Problem>
+  **Exercise 3 (Least squares application).** A set of data points is collected:
+  $(0, 2)$, $(1, 3)$, $(2, 7)$, $(3, 8)$.
+  (a) Set up the least squares problem to fit a line $y = c_0 + c_1 x$.
+  (b) Write the normal equations $A^T A \hat{x} = A^T b$ explicitly.
+  (c) Solve for $c_0$ and $c_1$.
+</Problem>
+
+<Solution>
+  **(a)** The design matrix and right-hand side are:
+  $$A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 1 & 2 \\ 1 & 3 \end{pmatrix}, \qquad b = \begin{pmatrix} 2 \\ 3 \\ 7 \\ 8 \end{pmatrix}, \qquad \hat{x} = \begin{pmatrix} c_0 \\ c_1 \end{pmatrix}.$$
+  **(b)** Compute:
+  $$A^T A = \begin{pmatrix} 4 & 6 \\ 6 & 14 \end{pmatrix}, \qquad A^T b = \begin{pmatrix} 20 \\ 41 \end{pmatrix}.$$
+  The normal equations are:
+  $$\begin{pmatrix} 4 & 6 \\ 6 & 14 \end{pmatrix} \begin{pmatrix} c_0 \\ c_1 \end{pmatrix} = \begin{pmatrix} 20 \\ 41 \end{pmatrix}.$$
+  **(c)** From the first equation: $4c_0 + 6c_1 = 20$. From the second: $6c_0 + 14c_1 = 41$.
+  Multiply the first by $3/2$: $6c_0 + 9c_1 = 30$. Subtract: $5c_1 = 11$, so $c_1 = 11/5 = 2.2$.
+  Then $c_0 = (20 - 6(2.2))/4 = (20 - 13.2)/4 = 6.8/4 = 1.7$.
+  The best-fit line is $y = 1.7 + 2.2x$. $\square$
+</Solution>
+
+<NumericInput
+  question="Using the least squares solution from Exercise 3, what is the predicted $y$-value at $x = 2$? Enter the value."
+  answer={6.1}
+  tolerance={0.1}
+  explanation="y = 1.7 + 2.2(2) = 1.7 + 4.4 = 6.1. Note that the actual data point at x=2 was y=7, so the residual is 7 - 6.1 = 0.9."
+/>
