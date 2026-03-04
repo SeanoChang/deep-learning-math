@@ -1,0 +1,174 @@
+---
+title: "Core Continuous Distributions and Structural Properties"
+description: "Exponential memoryless property, Normal distribution, and the change-of-variable formula"
+order: 9
+milestone: "M4"
+prerequisites: ["08-continuous-random-variables-densities"]
+---
+
+# Core Continuous Distributions and Structural Properties
+
+We now study the structural properties that make certain continuous distributions fundamental: the memoryless property of the Exponential, the ubiquity of the Normal, and the change-of-variable technique for computing distributions of transformed random variables.
+
+## Lesson Objectives (Max Rigor)
+
+- Use structural tools (memoryless property, change-of-variables) in proof form.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M4 -- Distribution library`
+- **Gate theorem:** `Memoryless property; Poisson as a limit`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Exponential Memoryless Property
+
+<Callout type="theorem">
+**Theorem 9.1 (Memoryless Property).** Let $X \sim \text{Exponential}(\lambda)$. For all $s, t > 0$:
+
+$$P(X > s + t \mid X > s) = P(X > t).$$
+
+*Proof.* Since $P(X > t) = e^{-\lambda t}$:
+
+$$P(X > s + t \mid X > s) = \frac{P(X > s + t)}{P(X > s)} = \frac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda t} = P(X > t). \quad \blacksquare$$
+</Callout>
+
+Given that a lightbulb has survived $s$ hours, the remaining lifetime distribution is the same as a fresh bulb. This is the continuous analog of the Geometric memoryless property.
+
+<Callout type="theorem">
+**Theorem 9.2 (Uniqueness of Continuous Memoryless Distribution).** The Exponential is the *only* continuous distribution on $[0, \infty)$ with the memoryless property.
+
+*Proof.* Suppose $X$ is a continuous non-negative random variable satisfying $P(X > s + t) = P(X > s)\,P(X > t)$ for all $s, t \geq 0$. Let $g(t) = P(X > t)$. Then $g$ satisfies the **Cauchy functional equation**:
+
+$$g(s + t) = g(s)\,g(t), \qquad g(0) = 1.$$
+
+Since $g$ is a survival function, it is right-continuous and non-increasing with $g(0) = 1$. Any measurable solution of the Cauchy functional equation satisfying these conditions has the form $g(t) = e^{-\lambda t}$ for some $\lambda > 0$.
+
+To see this: first, $g(n) = g(1)^n$ for $n \in \mathbb{N}$ by induction. Set $c = g(1) \in (0,1)$, so $c = e^{-\lambda}$ for $\lambda = -\ln c > 0$. For rationals $t = m/n$: $g(m/n)^n = g(m) = e^{-\lambda m}$, so $g(m/n) = e^{-\lambda m/n}$. By right-continuity of $g$ and density of $\mathbb{Q}$, $g(t) = e^{-\lambda t}$ for all $t \geq 0$.
+
+Therefore $P(X > t) = e^{-\lambda t}$, which is the survival function of $\text{Exponential}(\lambda)$. $\blacksquare$
+</Callout>
+
+## The Normal Distribution
+
+<Callout type="definition">
+**Definition 9.3 (Normal Distribution).** $X \sim N(\mu, \sigma^2)$ has PDF
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\frac{(x - \mu)^2}{2\sigma^2}\right), \qquad x \in \mathbb{R}.$$
+
+The **standard normal** $Z \sim N(0, 1)$ has PDF $\varphi(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 9.4 (Standardization).** If $X \sim N(\mu, \sigma^2)$, then $Z = \frac{X - \mu}{\sigma} \sim N(0,1)$.
+
+*Proof.* $P(Z \leq z) = P\!\left(\frac{X - \mu}{\sigma} \leq z\right) = P(X \leq \mu + \sigma z) = F_X(\mu + \sigma z)$. Differentiating: $f_Z(z) = \sigma\, f_X(\mu + \sigma z) = \sigma \cdot \frac{1}{\sigma\sqrt{2\pi}}e^{-z^2/2} = \varphi(z)$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 9.5 (Symmetry of Standard Normal).** If $Z \sim N(0,1)$, then $-Z \sim N(0,1)$, i.e., $\varphi$ is symmetric about $0$. Consequently, $E[Z] = 0$ and $E[Z^{2k+1}] = 0$ for all $k \geq 0$.
+
+*Proof.* $\varphi(-z) = \frac{1}{\sqrt{2\pi}}e^{-(-z)^2/2} = \varphi(z)$. So $f_{-Z}(z) = f_Z(-z) = \varphi(-z) = \varphi(z) = f_Z(z)$. The odd moments vanish because $z^{2k+1}\varphi(z)$ is an odd function integrated over a symmetric domain. $\blacksquare$
+</Callout>
+
+That $\int_{-\infty}^{\infty}\varphi(z)\,dz = 1$ is the famous **Gaussian integral**, typically proved via polar coordinates (computing $I^2 = \int\int e^{-(x^2+y^2)/2}\,dx\,dy$ in polar).
+
+## Change-of-Variable Formula
+
+<Callout type="theorem">
+**Theorem 9.6 (Change of Variables, Monotone Case).** Let $X$ be continuous with PDF $f_X$ and let $Y = g(X)$ where $g$ is strictly monotone and differentiable with differentiable inverse $g^{-1}$. Then $Y$ has PDF
+
+$$f_Y(y) = f_X\!\bigl(g^{-1}(y)\bigr) \cdot \left|\frac{d}{dy}g^{-1}(y)\right|.$$
+
+*Proof (increasing $g$).* If $g$ is strictly increasing:
+
+$$F_Y(y) = P(Y \leq y) = P(g(X) \leq y) = P(X \leq g^{-1}(y)) = F_X(g^{-1}(y)).$$
+
+Differentiating by the chain rule: $f_Y(y) = f_X(g^{-1}(y)) \cdot \frac{d}{dy}g^{-1}(y)$.
+
+If $g$ is strictly decreasing, the inequality reverses and we get a negative sign, which the absolute value absorbs. $\blacksquare$
+</Callout>
+
+**Example.** Let $X \sim \text{Exponential}(\lambda)$ and $Y = \sqrt{X}$. Then $g(x) = \sqrt{x}$, $g^{-1}(y) = y^2$, $\frac{d}{dy}g^{-1}(y) = 2y$. So $f_Y(y) = \lambda e^{-\lambda y^2} \cdot 2y = 2\lambda y\, e^{-\lambda y^2}$ for $y > 0$, which is a Rayleigh-type density.
+
+## Exponential Moments Revisited
+
+<Callout type="theorem">
+**Theorem 9.7.** If $X \sim \text{Exponential}(\lambda)$, then $E[X] = 1/\lambda$ and $\text{Var}(X) = 1/\lambda^2$.
+
+*Proof.* We use a clean approach via the survival function. For non-negative random variables:
+
+$$E[X] = \int_0^{\infty} P(X > t)\,dt = \int_0^{\infty} e^{-\lambda t}\,dt = \frac{1}{\lambda}.$$
+
+For $E[X^2]$, by LOTUS: $E[X^2] = \int_0^{\infty} t^2 \lambda e^{-\lambda t}\,dt$. Substituting $u = \lambda t$:
+
+$$E[X^2] = \frac{1}{\lambda^2}\int_0^{\infty} u^2 e^{-u}\,du = \frac{1}{\lambda^2}\,\Gamma(3) = \frac{2}{\lambda^2}.$$
+
+Therefore $\text{Var}(X) = \frac{2}{\lambda^2} - \frac{1}{\lambda^2} = \frac{1}{\lambda^2}$. $\blacksquare$
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 9.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Memoryless property; Poisson as a limit`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 9.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 9.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question={"If X ~ Exponential(3) and you know X > 2, what is the distribution of X - 2?"}
+  options={[
+    "Exponential(1)",
+    "Exponential(3)",
+    "Exponential(6)",
+    "Uniform(0, 2)"
+  ]}
+  correctIndex={1}
+  explanation={"By the memoryless property, the conditional distribution of X - s given X > s is Exponential with the same rate parameter. So X - 2 | X > 2 is Exponential(3)."}
+/>
+
+<NumericInput
+  question={"If Z ~ N(0,1), what is P(Z > 0)? (Use symmetry.)"}
+  answer={0.5}
+  tolerance={0.01}
+  hint={"The standard normal PDF is symmetric about 0, so exactly half the probability mass lies on each side."}
+/>
+
+<Problem>
+**Exercise 9.1.** Let $X \sim \text{Uniform}(0,1)$ and $Y = -\frac{1}{\lambda}\ln(X)$ for $\lambda > 0$. Use the change-of-variable formula to show that $Y \sim \text{Exponential}(\lambda)$.
+</Problem>
+
+<Solution>
+The function $g(x) = -\frac{1}{\lambda}\ln(x)$ is strictly decreasing on $(0,1)$. Its inverse is $g^{-1}(y) = e^{-\lambda y}$ and $\frac{d}{dy}g^{-1}(y) = -\lambda e^{-\lambda y}$.
+
+Since $X \sim \text{Uniform}(0,1)$, $f_X(x) = 1$ for $x \in (0,1)$. By the change-of-variable formula:
+
+$$f_Y(y) = f_X(e^{-\lambda y}) \cdot |\!-\lambda e^{-\lambda y}| = 1 \cdot \lambda e^{-\lambda y} = \lambda e^{-\lambda y}$$
+
+for $y > 0$ (since $x = e^{-\lambda y} \in (0,1)$ when $y > 0$). This is exactly the $\text{Exponential}(\lambda)$ PDF. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 9.2.** Prove that if $X \sim N(\mu, \sigma^2)$ then $E[X] = \mu$ and $\text{Var}(X) = \sigma^2$. (Hint: standardize to $Z = (X - \mu)/\sigma$ and use $E[Z] = 0$, $E[Z^2] = 1$.)
+</Problem>
+
+<Solution>
+Let $Z = (X - \mu)/\sigma$, so $X = \sigma Z + \mu$ with $Z \sim N(0,1)$.
+
+$E[Z] = \int_{-\infty}^{\infty} z \varphi(z)\,dz = 0$ by symmetry ($z\varphi(z)$ is an odd function).
+
+$E[Z^2] = \int_{-\infty}^{\infty} z^2 \frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz$. Integrating by parts with $u = z$, $dv = ze^{-z^2/2}dz$: $E[Z^2] = \left[-z e^{-z^2/2}\frac{1}{\sqrt{2\pi}}\right]_{-\infty}^{\infty} + \int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-z^2/2}\,dz = 0 + 1 = 1$.
+
+Now: $E[X] = E[\sigma Z + \mu] = \sigma E[Z] + \mu = \mu$. And $\text{Var}(X) = \text{Var}(\sigma Z + \mu) = \sigma^2 \text{Var}(Z) = \sigma^2 \cdot (E[Z^2] - (E[Z])^2) = \sigma^2 \cdot 1 = \sigma^2$. $\blacksquare$
+</Solution>

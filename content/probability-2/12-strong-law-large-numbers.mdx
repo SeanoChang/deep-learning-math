@@ -1,0 +1,155 @@
+---
+title: "Strong Law of Large Numbers"
+description: "Almost sure convergence of sample means, the fourth-moment proof, and consequences for empirical distributions"
+order: 12
+milestone: "M7"
+prerequisites: ["11-concentration-inequalities"]
+---
+
+# Strong Law of Large Numbers
+
+The Weak Law tells us $\bar{X}_n \to \mu$ in probability. The **Strong Law** upgrades this to almost sure convergence: the sample mean converges to $\mu$ on a set of probability one. The proof requires substantially more machinery.
+
+## Lesson Objectives (Max Rigor)
+
+- Prove almost-sure LLN statements under explicit moment assumptions.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M7 -- Limit theorems`
+- **Gate theorem:** `SLLN; CLT via characteristic functions`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Almost Sure Convergence Revisited
+
+<Callout type="definition" title="Definition 12.1 (Almost Sure Convergence)">
+A sequence $X_n$ converges to $X$ **almost surely** (written $X_n \xrightarrow{a.s.} X$) if:
+
+$$P\!\left(\lim_{n \to \infty} X_n = X\right) = 1.$$
+
+Equivalently: $P\!\left(\bigcap_{m=1}^{\infty} \bigcup_{N=1}^{\infty} \bigcap_{n \geq N} \{|X_n - X| < 1/m\}\right) = 1$.
+</Callout>
+
+Almost sure convergence is strictly stronger than convergence in probability. The canonical example: let $\Omega = [0,1]$ with Lebesgue measure, and define $X_n = \mathbf{1}_{[(k-1)/2^j,\, k/2^j]}$ where $n = 2^j + k - 1$. Then $X_n \to 0$ in probability (the intervals shrink) but $X_n(\omega) \not\to 0$ for any $\omega$ (every point is covered infinitely often).
+
+## Statement of the Strong Law
+
+<Callout type="theorem" title="Theorem 12.2 (Kolmogorov's Strong Law of Large Numbers)">
+Let $X_1, X_2, \ldots$ be iid random variables with $E[|X_1|] < \infty$ and $E[X_1] = \mu$. Then:
+
+$$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{a.s.} \mu.$$
+</Callout>
+
+We prove the SLLN under the stronger assumption $E[X_1^4] < \infty$, which allows an elegant fourth-moment argument.
+
+## The Fourth-Moment Proof
+
+<Callout type="theorem" title="Theorem 12.3 (SLLN under Finite Fourth Moment)">
+Let $X_1, X_2, \ldots$ be iid with $E[X_1] = \mu$ and $E[X_1^4] < \infty$. Then $\bar{X}_n \xrightarrow{a.s.} \mu$.
+</Callout>
+
+*Proof.* Without loss of generality, assume $\mu = 0$ (replace $X_i$ by $X_i - \mu$). Let $S_n = \sum_{i=1}^n X_i$. We show $S_n/n \to 0$ a.s.
+
+**Step 1: Fourth moment of $S_n$.** We expand $S_n^4 = \left(\sum_i X_i\right)^4 = \sum_{i,j,k,l} X_i X_j X_k X_l$. Taking expectations and using $E[X_i] = 0$ with independence, most terms vanish. The surviving terms are:
+
+- $E[X_i^4]$: there are $n$ such terms, each equal to $E[X_1^4]$;
+- $E[X_i^2 X_j^2]$ for $i \neq j$: there are $\binom{n}{2} \cdot 6 = 3n(n-1)$ such terms (choosing the multinomial coefficient), each equal to $(E[X_1^2])^2 = \sigma^4$.
+
+All other index patterns (three or four distinct indices with odd powers, or a single index cubed times another) have expectation zero because they contain a factor $E[X_i]$ or $E[X_i^3]$ from an index appearing an odd number of times, and independence separates it.
+
+Therefore: $E[S_n^4] = n E[X_1^4] + 3n(n-1)\sigma^4 \leq Cn^2$ for a constant $C$ depending on $E[X_1^4]$ and $\sigma^4$.
+
+**Step 2: Convergence along a subsequence.** By Markov's inequality applied to $S_n^4$:
+
+$$P(|S_n/n| \geq \varepsilon) = P(S_n^4 \geq n^4 \varepsilon^4) \leq \frac{E[S_n^4]}{n^4 \varepsilon^4} \leq \frac{C}{n^2 \varepsilon^4}.$$
+
+Since $\sum_{n=1}^\infty 1/n^2 < \infty$, the Borel-Cantelli lemma gives: for every $\varepsilon > 0$,
+
+$$P(|S_n/n| \geq \varepsilon \text{ infinitely often}) = 0.$$
+
+This means $S_n/n \to 0$ almost surely. $\square$
+
+<Callout type="tip" title="Why Fourth Moments?">
+Second moments give $E[S_n^2] = n\sigma^2$, leading to $P(|S_n/n| \geq \varepsilon) \leq \sigma^2/(n\varepsilon^2)$. The sum $\sum 1/n$ diverges, so Borel-Cantelli fails. Fourth moments give $O(1/n^2)$, making the sum converge. This is the essential trick.
+</Callout>
+
+## The Gap Between WLLN and SLLN
+
+The WLLN requires only $E[X_1^2] < \infty$ (or even just $E[|X_1|] < \infty$ with truncation). The full SLLN requires only $E[|X_1|] < \infty$, but the proof (due to Etemadi or via Kolmogorov's truncation) is substantially harder.
+
+The gap matters: convergence in probability allows for rare but persistent large deviations. Almost sure convergence says the deviations eventually stop, with probability one. For any **single realization** of an infinite sequence, the sample mean will eventually settle near $\mu$.
+
+<Callout type="warning" title="The Infinite Mean Case">
+If $E[|X_1|] = \infty$, the SLLN fails dramatically. In fact, for iid $X_i \geq 0$ with $E[X_1] = \infty$, we have $\bar{X}_n \to \infty$ a.s. For the Cauchy distribution (symmetric, $E[|X_1|] = \infty$), the sample mean $\bar{X}_n$ does not converge at all -- it has the same Cauchy distribution for every $n$.
+</Callout>
+
+## Consequences
+
+**Monte Carlo integration.** To compute $I = \int_0^1 g(x)\,dx = E[g(U)]$ where $U \sim \text{Uniform}[0,1]$: draw $U_1, \ldots, U_n$ iid Uniform$[0,1]$ and form $\hat{I}_n = \frac{1}{n}\sum g(U_i)$. The SLLN guarantees $\hat{I}_n \to I$ almost surely, not just in probability. Every single run of the algorithm converges.
+
+**Empirical distributions.** The empirical CDF $\hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^n \mathbf{1}_{X_i \leq x}$ satisfies $\hat{F}_n(x) \to F(x)$ a.s. for each fixed $x$ (by SLLN applied to $Y_i = \mathbf{1}_{X_i \leq x}$). The Glivenko-Cantelli theorem upgrades this to uniform convergence: $\sup_x |\hat{F}_n(x) - F(x)| \to 0$ a.s.
+
+**Frequency interpretation.** For events $A$, the SLLN applied to $X_i = \mathbf{1}_A$ gives: the relative frequency of $A$ in $n$ independent trials converges to $P(A)$ almost surely.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 12.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `SLLN; CLT via characteristic functions`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 12.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 12.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 12.1: Borel-Cantelli Application">
+Let $X_1, X_2, \ldots$ be iid with $E[X_1] = 0$ and $E[X_1^4] < \infty$. Show that $S_n / n^{3/4} \to 0$ almost surely.
+
+<Solution>
+By the fourth-moment bound: $P(|S_n/n^{3/4}| \geq \varepsilon) = P(|S_n|^4 \geq \varepsilon^4 n^3) \leq E[S_n^4]/(\varepsilon^4 n^3) \leq C/(\varepsilon^4 n)$.
+
+Since $\sum_{n=1}^\infty 1/n = \infty$, this does not work directly. Instead, consider the subsequence $n_k = k^2$. Then $P(|S_{n_k}/n_k^{3/4}| \geq \varepsilon) \leq C/(\varepsilon^4 k^2)$. Since $\sum 1/k^2 < \infty$, Borel-Cantelli gives $S_{n_k}/n_k^{3/4} \to 0$ a.s.
+
+For general $n$, let $n_k = k^2 \leq n < (k+1)^2 = n_{k+1}$. Then $|S_n - S_{n_k}| \leq \max_{n_k \leq m \leq n_{k+1}} |S_m - S_{n_k}|$. By Kolmogorov's maximal inequality applied to the partial sums between $n_k$ and $n_{k+1}$ (which has $\sim 2k$ terms), the interpolation can be controlled, giving convergence for all $n$. The key is that $n_{k+1} - n_k = 2k + 1 = o(n_k^{3/4})$.
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which assumption is needed for the SLLN but NOT for the WLLN?"
+  options={[
+    "The random variables must be identically distributed",
+    "The random variables must be independent",
+    "The conclusion is almost sure convergence rather than convergence in probability",
+    "The random variables must have finite variance"
+  ]}
+  correctIndex={2}
+  explanation="Both WLLN and SLLN require independence and identical distribution. The SLLN actually needs WEAKER moment conditions ($E[|X_1|] < \\infty$) than the basic WLLN proof ($E[X_1^2] < \\infty$). The key distinction is the mode of convergence: WLLN gives convergence in probability, SLLN gives almost sure convergence."
+/>
+
+<Problem title="Exercise 12.3: Monte Carlo Error">
+You use Monte Carlo to estimate $I = E[\sin(U)]$ where $U \sim \text{Uniform}[0, \pi]$ by averaging $n$ iid samples. Using the SLLN, explain why $\hat{I}_n \to I$ a.s. Then use Chebyshev to find $n$ ensuring $P(|\hat{I}_n - I| \geq 0.01) \leq 0.01$, given that $\text{Var}(\sin(U)) \leq 1$.
+
+<Solution>
+Since $E[|\sin(U)|] \leq 1 < \infty$, the SLLN applies directly: $\hat{I}_n = \frac{1}{n}\sum \sin(U_i) \to E[\sin(U)] = I$ almost surely.
+
+For the quantitative bound, Chebyshev gives: $P(|\hat{I}_n - I| \geq 0.01) \leq \text{Var}(\hat{I}_n)/(0.01)^2 = \text{Var}(\sin U)/(n \cdot 0.0001) \leq 1/(0.0001n) = 10000/n$.
+
+We need $10000/n \leq 0.01$, so $n \geq 1{,}000{,}000$. One million samples suffice (Hoeffding could improve this since $\sin$ is bounded).
+</Solution>
+</Problem>
+
+<NumericInput
+  question="Let $X_1, \\ldots, X_n$ be iid with $E[X_1] = 0$, $E[X_1^4] = 48$, $\\sigma^2 = E[X_1^2] = 4$. Compute $E[S_{10}^4]$ exactly, where $S_{10} = \\sum_{i=1}^{10} X_i$."
+  answer={1560}
+  tolerance={1}
+  hint="Use $E[S_n^4] = nE[X_1^4] + 3n(n-1)(E[X_1^2])^2$. Plug in $n=10$, $E[X_1^4]=48$, $\\sigma^2=4$."
+/>

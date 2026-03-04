@@ -55,12 +55,19 @@ export const TOPICS: Record<string, Omit<TopicInfo, "lessons">> = {
     icon: "Grid3X3",
     color: "text-violet-500",
   },
-  probability: {
-    id: "probability",
-    title: "Probability & Statistics",
-    description: "Distributions, Bayes' theorem, expectation, variance, MLE, and MAP",
+  "probability-1": {
+    id: "probability-1",
+    title: "Probability I",
+    description: "Kolmogorov axioms, random variables, expectation, variance, distributions, conditioning, inequalities, and the Law of Large Numbers — rigorous and proof-based",
     icon: "BarChart3",
     color: "text-green-500",
+  },
+  "probability-2": {
+    id: "probability-2",
+    title: "Probability II",
+    description: "Convergence modes, Borel–Cantelli, conditional expectation, martingales, random walks, Markov chains, concentration inequalities, and the CLT — rigorous and proof-based",
+    icon: "BarChart3",
+    color: "text-emerald-500",
   },
   optimization: {
     id: "optimization",

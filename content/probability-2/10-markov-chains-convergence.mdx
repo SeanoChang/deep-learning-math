@@ -1,0 +1,201 @@
+---
+title: "Markov Chains: Stationary Distributions and Convergence"
+description: "Stationary distributions, existence and uniqueness, detailed balance, convergence, and the ergodic theorem"
+order: 10
+milestone: "M5"
+prerequisites: ["09-markov-chains-structure"]
+---
+
+# Markov Chains: Stationary Distributions and Convergence
+
+The long-run behavior of a Markov chain is governed by its stationary distribution. Under irreducibility and aperiodicity, the chain "forgets" its initial state and converges to a unique equilibrium. This chapter develops the existence, uniqueness, and convergence theory, culminating in the ergodic theorem.
+
+## Lesson Objectives (Max Rigor)
+
+- Establish stationary/convergence behavior with irreducibility and aperiodicity hypotheses.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M5 -- Random processes`
+- **Gate theorem:** `Recurrence of SRW; finite-state Markov chain convergence`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Stationary Distributions
+
+<Callout type="definition" title="Definition 10.1 (Stationary Distribution)">
+A probability vector $\pi = (\pi_1, \ldots, \pi_N)$ (with $\pi_j \ge 0$ and $\sum_j \pi_j = 1$) is a **stationary distribution** for a transition matrix $P$ if
+
+$$\pi P = \pi, \qquad \text{i.e., } \pi_j = \sum_{i \in \mathcal{S}} \pi_i \, p_{ij} \quad \text{for all } j.$$
+</Callout>
+
+If $X_0 \sim \pi$ and $\pi$ is stationary, then $X_n \sim \pi$ for all $n$. The distribution is preserved under the dynamics.
+
+## Existence for Finite Irreducible Chains
+
+<Callout type="theorem" title="Theorem 10.2 (Existence)">
+Every finite, irreducible Markov chain has a stationary distribution with $\pi_j > 0$ for all $j$.
+
+*Proof.* Let $\mu$ be any initial distribution row vector, and define Cesaro averages
+
+$$\nu_n := \frac{1}{n}\sum_{k=0}^{n-1} \mu P^k.$$
+
+Each $\nu_n$ is a probability vector, so $(\nu_n)$ lies in the finite-dimensional probability simplex, which is compact. Therefore some subsequence $\nu_{n_m}$ converges to a probability vector $\pi$.
+
+Now compute
+
+$$\nu_n P - \nu_n = \frac{1}{n}\sum_{k=0}^{n-1}\mu P^{k+1} - \frac{1}{n}\sum_{k=0}^{n-1}\mu P^k = \frac{\mu P^n - \mu}{n}.$$
+
+Hence $\|\nu_n P - \nu_n\|_1 \le \frac{\|\mu P^n\|_1 + \|\mu\|_1}{n} = \frac{2}{n} \to 0$.
+Passing to the convergent subsequence and using continuity of matrix multiplication gives
+
+$$\pi P = \pi.$$
+
+So $\pi$ is stationary.
+
+It remains to show strict positivity. Let $S := \{i : \pi_i > 0\}$. Since $\pi$ is a probability vector, $S \neq \emptyset$. If $j \notin S$, then $\pi_j = 0$, and from
+
+$$0 = \pi_j = \sum_{i}\pi_i p_{ij}$$
+
+with nonnegative summands, we get $p_{ij}=0$ for every $i \in S$. So no state in $S$ can jump in one step to $S^c$. By induction, no path starting in $S$ can ever reach $S^c$.
+
+If $S^c$ were nonempty, this would contradict irreducibility (every state must be reachable from every other). Therefore $S^c=\emptyset$, i.e. $\pi_j>0$ for all $j$. $\blacksquare$
+</Callout>
+
+## Uniqueness
+
+<Callout type="theorem" title="Theorem 10.3 (Uniqueness)">
+A finite, irreducible Markov chain has a **unique** stationary distribution.
+
+*Proof.* Let $\pi$ and $\mu$ be two stationary distributions. Then for all $n$,
+
+$$\mu_j = \sum_i \mu_i \, p_{ij}^{(n)} = (\mu P^n)_j.$$
+
+Similarly $\pi_j = (\pi P^n)_j$. Thus
+
+$$|\mu_j - \pi_j| = \left|\sum_i (\mu_i - \pi_i) p_{ij}^{(n)}\right| \le \sum_i |\mu_i - \pi_i| \max_i p_{ij}^{(n)}.$$
+
+For the aperiodic case, $p_{ij}^{(n)} \to \pi_j > 0$ uniformly in $i$ (convergence theorem below), so taking $n \to \infty$ forces $\mu_j = \pi_j$.
+
+For general (possibly periodic) irreducible chains, consider the Cesaro average: $\frac{1}{n}\sum_{k=0}^{n-1} P^k \to \Pi$ where $\Pi$ has identical rows $\pi$. Then $\mu = \mu \cdot \frac{1}{n}\sum_{k=0}^{n-1}P^k \to \mu \Pi = \pi$, giving $\mu = \pi$. $\blacksquare$
+</Callout>
+
+## Detailed Balance and Reversibility
+
+<Callout type="definition" title="Definition 10.4 (Detailed Balance)">
+A distribution $\pi$ satisfies **detailed balance** with respect to $P$ if
+
+$$\pi_i \, p_{ij} = \pi_j \, p_{ji} \quad \text{for all } i, j \in \mathcal{S}.$$
+
+A chain satisfying detailed balance is called **reversible**.
+</Callout>
+
+<Callout type="theorem" title="Theorem 10.5 (Detailed Balance Implies Stationarity)">
+If $\pi$ satisfies detailed balance with $P$, then $\pi$ is a stationary distribution.
+
+*Proof.* Summing detailed balance over $i$:
+
+$$\sum_i \pi_i \, p_{ij} = \sum_i \pi_j \, p_{ji} = \pi_j \sum_i p_{ji} = \pi_j \cdot 1 = \pi_j.$$
+
+This is exactly $(\pi P)_j = \pi_j$. $\blacksquare$
+</Callout>
+
+<Callout type="warning" title="Stationarity Does Not Imply Reversibility">
+Consider the 3-state chain with $p_{12} = p_{23} = p_{31} = 1$ (deterministic cycle). The unique stationary distribution is $\pi = (1/3, 1/3, 1/3)$. However, $\pi_1 p_{12} = 1/3 \ne 0 = \pi_2 p_{21}$, so detailed balance fails. The chain is not reversible: the reversed chain cycles $1 \to 3 \to 2 \to 1$.
+</Callout>
+
+## The Convergence Theorem
+
+<Callout type="theorem" title="Theorem 10.6 (Convergence)">
+If $P$ is the transition matrix of a finite, irreducible, aperiodic Markov chain with stationary distribution $\pi$, then for all $i, j$,
+
+$$\lim_{n \to \infty} p_{ij}^{(n)} = \pi_j.$$
+</Callout>
+
+<Callout type="theorem" title="Theorem 10.7 (Proof for the 2x2 Case)">
+Consider $P = \begin{pmatrix} 1-\alpha & \alpha \\ \beta & 1-\beta \end{pmatrix}$ with $0 < \alpha, \beta < 1$.
+
+*Proof.* The eigenvalues are $\lambda_1 = 1$ and $\lambda_2 = 1 - \alpha - \beta$. Since $0 < \alpha, \beta < 1$ and $\alpha + \beta \le 2$, we have $|\lambda_2| < 1$. From Exercise 9.2,
+
+$$p_{ij}^{(n)} = \pi_j + c_{ij} (1 - \alpha - \beta)^n,$$
+
+where $\pi = \bigl(\frac{\beta}{\alpha+\beta}, \frac{\alpha}{\alpha+\beta}\bigr)$. As $n \to \infty$, $(1-\alpha-\beta)^n \to 0$, so $p_{ij}^{(n)} \to \pi_j$.
+
+The general finite-state proof uses the fact that all eigenvalues of $P$ other than 1 satisfy $|\lambda| < 1$ (consequence of irreducibility and aperiodicity via the Perron-Frobenius theorem). $\blacksquare$
+</Callout>
+
+## The Ergodic Theorem
+
+<Callout type="theorem" title="Theorem 10.8 (Ergodic Theorem for Markov Chains)">
+Let $(X_n)$ be an irreducible, positive recurrent Markov chain with stationary distribution $\pi$. For any bounded function $f : \mathcal{S} \to \mathbb{R}$,
+
+$$\frac{1}{n} \sum_{k=0}^{n-1} f(X_k) \xrightarrow{\text{a.s.}} \sum_{j \in \mathcal{S}} f(j)\, \pi_j \quad \text{as } n \to \infty.$$
+</Callout>
+
+In particular, taking $f = \mathbf{1}_{\{j\}}$, the fraction of time spent in state $j$ converges a.s. to $\pi_j$. This holds regardless of the initial distribution and does **not** require aperiodicity---even a periodic chain spends the right long-run fraction of time in each state.
+
+The proof for finite state spaces proceeds by a renewal argument. Partition the trajectory at successive visits to a fixed recurrent state $i$. The segments between returns are iid (by the strong Markov property), and the classical strong law of large numbers applies to these regeneration cycles.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 10.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Recurrence of SRW; finite-state Markov chain convergence`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 10.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 10.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 10.1: Finding a Stationary Distribution">
+Find the stationary distribution of the chain on $\{1, 2, 3\}$ with transition matrix
+
+$$P = \begin{pmatrix} 0 & 1/2 & 1/2 \\ 1/4 & 1/2 & 1/4 \\ 1/3 & 1/3 & 1/3 \end{pmatrix}.$$
+
+<Solution>
+We solve $\pi P = \pi$ with $\pi_1 + \pi_2 + \pi_3 = 1$. The equations:
+
+$$\pi_1 = \frac{1}{4}\pi_2 + \frac{1}{3}\pi_3, \quad \pi_2 = \frac{1}{2}\pi_1 + \frac{1}{2}\pi_2 + \frac{1}{3}\pi_3, \quad \pi_3 = \frac{1}{2}\pi_1 + \frac{1}{4}\pi_2 + \frac{1}{3}\pi_3.$$
+
+From the second equation: $\frac{1}{2}\pi_2 = \frac{1}{2}\pi_1 + \frac{1}{3}\pi_3$, so $\pi_2 = \pi_1 + \frac{2}{3}\pi_3$. From the first: $\pi_1 = \frac{1}{4}(\pi_1 + \frac{2}{3}\pi_3) + \frac{1}{3}\pi_3 = \frac{1}{4}\pi_1 + \frac{1}{2}\pi_3$, giving $\frac{3}{4}\pi_1 = \frac{1}{2}\pi_3$, so $\pi_3 = \frac{3}{2}\pi_1$. Then $\pi_2 = \pi_1 + \frac{2}{3}\pi_3 = \pi_1 + \pi_1 = 2\pi_1$. Normalizing: $\pi_1 + 2\pi_1 + \frac{3}{2}\pi_1 = 1$, so $\frac{9}{2}\pi_1 = 1$ and $\pi_1 = \frac{2}{9}$. Thus $\pi = \bigl(\frac{2}{9}, \frac{4}{9}, \frac{1}{3}\bigr)$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which of the following is sufficient for a finite Markov chain to have $p_{ij}^{(n)} \\to \\pi_j$ as $n \\to \\infty$?"
+  options={[
+    "Irreducibility alone",
+    "Aperiodicity alone",
+    "Irreducibility and aperiodicity",
+    "Detailed balance"
+  ]}
+  correctIndex={2}
+  explanation="The convergence theorem requires both irreducibility (so there is a unique stationary distribution) and aperiodicity (so $P^n$ converges, not just in Cesaro average)."
+/>
+
+<Problem title="Exercise 10.3: Detailed Balance for a Birth-Death Chain">
+A chain on $\{0, 1, 2, 3\}$ has $p_{i,i+1} = p$ and $p_{i+1,i} = q = 1-p$ for $i = 0,1,2$ (with reflection at boundaries: $p_{0,1} = 1$, $p_{3,2} = 1$). Find conditions on $p$ for detailed balance to hold and find $\pi$.
+
+<Solution>
+Detailed balance requires $\pi_i p_{i,i+1} = \pi_{i+1} p_{i+1,i}$. For interior states: $\pi_i p = \pi_{i+1} q$, giving $\pi_{i+1} = (p/q)\pi_i$. Let $r = p/q$. Then $\pi_i = r^i \pi_0$.
+
+At the boundaries: $p_{01} = 1$ and $p_{10} = q$. Detailed balance: $\pi_0 \cdot 1 = \pi_1 \cdot q$, so $\pi_1 = \pi_0 / q$. But the interior relation gives $\pi_1 = r\pi_0 = (p/q)\pi_0$. For consistency we need $1/q = p/q$, i.e., $p = 1$, which contradicts $0 < q < 1$.
+
+Thus detailed balance does not hold for general $p$ with reflecting boundaries. However, if we modify so $p_{00} = q, p_{01} = p$ and $p_{33} = p, p_{32} = q$, then $\pi_i = r^i \pi_0$ with $\pi_0 = (1-r)/(1-r^4)$ for $r \ne 1$ satisfies detailed balance. $\blacksquare$
+</Solution>
+</Problem>
+
+<NumericInput
+  question="For the 2-state chain with $\\alpha = 0.3$ and $\\beta = 0.7$, what is the stationary probability $\\pi_1$ (the long-run fraction of time in state 1)? Give your answer as a decimal."
+  answer={0.7}
+  tolerance={0.01}
+  hint="Use $\\pi_1 = \\beta / (\\alpha + \\beta)$."
+/>

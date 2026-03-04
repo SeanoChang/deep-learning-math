@@ -1,0 +1,206 @@
+---
+title: "Transforms and Sums of Independent Random Variables"
+description: "Moment generating functions, MGF factorization under independence, and applications to distribution additivity"
+order: 13
+milestone: "M6"
+prerequisites: ["12-inequalities-tail-control"]
+---
+
+# Transforms and Sums of Independent Random Variables
+
+Computing the distribution of $X + Y$ directly (via convolution) is often painful. The moment generating function converts convolution into multiplication, making sums of independent random variables tractable. This is the same idea as the Fourier transform in analysis, transplanted to probability.
+
+## Lesson Objectives (Max Rigor)
+
+- Use transform methods to prove distributional identities for sums of independent variables.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M6 -- Inequalities and limit laws`
+- **Gate theorem:** `WLLN via Chebyshev`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Moment Generating Function
+
+<Callout type="definition">
+**Definition 13.1.** The **moment generating function** (MGF) of a random variable $X$ is
+
+$$M_X(t) = E[e^{tX}]$$
+
+defined for all $t \in \mathbb{R}$ where the expectation is finite. The **domain** of $M_X$ is $\{t : M_X(t) < \infty\}$, which always contains $t = 0$ (where $M_X(0) = 1$).
+</Callout>
+
+For a discrete random variable: $M_X(t) = \sum_x e^{tx} P(X = x)$. For a continuous random variable: $M_X(t) = \int_{-\infty}^{\infty} e^{tx} f_X(x) \, dx$.
+
+**Example.** Let $X \sim \text{Bernoulli}(p)$. Then $M_X(t) = (1-p) + pe^t = 1 - p + pe^t$.
+
+**Example.** Let $X \sim \text{Exponential}(\lambda)$. Then for $t < \lambda$:
+
+$$M_X(t) = \int_0^\infty e^{tx} \lambda e^{-\lambda x} \, dx = \lambda \int_0^\infty e^{-((\lambda - t)x} \, dx = \frac{\lambda}{\lambda - t}.$$
+
+## Moments from the MGF
+
+<Callout type="theorem">
+**Theorem 13.2 (Moment extraction).** If $M_X(t)$ is finite in an open interval containing $0$, then all moments of $X$ exist and:
+
+$$E[X^n] = M_X^{(n)}(0) = \frac{d^n}{dt^n} M_X(t) \bigg|_{t=0}.$$
+</Callout>
+
+*Proof.* Formally, $M_X(t) = E[e^{tX}] = E\!\left[\sum_{n=0}^\infty \frac{(tX)^n}{n!}\right]$. When the MGF is finite in a neighborhood of $0$, we can interchange the sum and expectation (by dominated convergence or uniform convergence of power series):
+
+$$M_X(t) = \sum_{n=0}^\infty \frac{t^n}{n!} E[X^n].$$
+
+This is a power series in $t$ with coefficients $E[X^n]/n!$. Differentiating $n$ times and evaluating at $t = 0$ extracts the $n$-th coefficient:
+
+$$M_X^{(n)}(0) = E[X^n]. \quad \square$$
+
+**Example.** For $X \sim \text{Exponential}(\lambda)$: $M_X(t) = \lambda/(\lambda - t)$, so $M_X'(t) = \lambda/(\lambda - t)^2$ and $M_X'(0) = 1/\lambda = E[X]$. Similarly, $M_X''(0) = 2/\lambda^2 = E[X^2]$, giving $\text{Var}(X) = 2/\lambda^2 - 1/\lambda^2 = 1/\lambda^2$.
+
+## MGF Multiplicativity Under Independence
+
+<Callout type="theorem">
+**Theorem 13.3 (MGF factorization).** If $X$ and $Y$ are independent random variables, then:
+
+$$M_{X+Y}(t) = M_X(t) \cdot M_Y(t)$$
+
+for all $t$ where both MGFs are finite. More generally, if $X_1, \ldots, X_n$ are independent:
+
+$$M_{X_1 + \cdots + X_n}(t) = \prod_{i=1}^n M_{X_i}(t).$$
+</Callout>
+
+*Proof.* By definition, $M_{X+Y}(t) = E[e^{t(X+Y)}] = E[e^{tX} \cdot e^{tY}]$. Since $X$ and $Y$ are independent, $e^{tX}$ and $e^{tY}$ are independent (as functions of independent random variables), so:
+
+$$E[e^{tX} \cdot e^{tY}] = E[e^{tX}] \cdot E[e^{tY}] = M_X(t) \cdot M_Y(t).$$
+
+The general case follows by induction. $\square$
+
+<Callout type="warning">
+**Independence is essential.** If $X$ and $Y$ are not independent, $M_{X+Y}(t) \neq M_X(t) M_Y(t)$ in general. For example, if $Y = -X$, then $M_{X+Y}(t) = M_0(t) = 1$, but $M_X(t) M_Y(t) = M_X(t) M_X(-t) \neq 1$ unless $X = 0$ a.s.
+</Callout>
+
+## The MGF Uniqueness Theorem
+
+<Callout type="theorem">
+**Theorem 13.4 (Uniqueness).** If $M_X(t) = M_Y(t) < \infty$ for all $t$ in an open interval containing $0$, then $X$ and $Y$ have the same distribution.
+</Callout>
+
+We state this without proof (the proof uses the theory of Laplace transforms and analytic continuation). The uniqueness theorem is what makes MGFs a legitimate tool for **identifying distributions**: if we can show a sum has the MGF of a known distribution, we have proved the sum follows that distribution.
+
+## Application: Sum of Independent Normals
+
+<Callout type="theorem">
+**Theorem 13.5.** If $X \sim N(\mu_1, \sigma_1^2)$ and $Y \sim N(\mu_2, \sigma_2^2)$ are independent, then:
+
+$$X + Y \sim N(\mu_1 + \mu_2, \, \sigma_1^2 + \sigma_2^2).$$
+</Callout>
+
+*Proof.* The MGF of $Z \sim N(\mu, \sigma^2)$ is $M_Z(t) = \exp(\mu t + \sigma^2 t^2 / 2)$ (derived by completing the square in the integral $\int e^{tz} \cdot \frac{1}{\sqrt{2\pi}\sigma} e^{-(z-\mu)^2/(2\sigma^2)} dz$).
+
+By MGF factorization:
+
+$$M_{X+Y}(t) = M_X(t) \cdot M_Y(t) = \exp\!\left(\mu_1 t + \frac{\sigma_1^2 t^2}{2}\right) \cdot \exp\!\left(\mu_2 t + \frac{\sigma_2^2 t^2}{2}\right) = \exp\!\left((\mu_1 + \mu_2)t + \frac{(\sigma_1^2 + \sigma_2^2)t^2}{2}\right).$$
+
+This is the MGF of $N(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)$. By the uniqueness theorem, $X + Y \sim N(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2)$. $\square$
+
+## Application: Sum of Independent Poissons
+
+<Callout type="theorem">
+**Theorem 13.6.** If $X \sim \text{Poisson}(\lambda)$ and $Y \sim \text{Poisson}(\mu)$ are independent, then:
+
+$$X + Y \sim \text{Poisson}(\lambda + \mu).$$
+</Callout>
+
+*Proof.* The MGF of $\text{Poisson}(\lambda)$ is:
+
+$$M_X(t) = \sum_{k=0}^\infty e^{tk} \frac{\lambda^k e^{-\lambda}}{k!} = e^{-\lambda} \sum_{k=0}^\infty \frac{(\lambda e^t)^k}{k!} = e^{-\lambda} \cdot e^{\lambda e^t} = \exp(\lambda(e^t - 1)).$$
+
+By MGF factorization:
+
+$$M_{X+Y}(t) = \exp(\lambda(e^t - 1)) \cdot \exp(\mu(e^t - 1)) = \exp((\lambda + \mu)(e^t - 1)).$$
+
+This is the MGF of $\text{Poisson}(\lambda + \mu)$. By uniqueness, $X + Y \sim \text{Poisson}(\lambda + \mu)$. $\square$
+
+<Callout type="tip">
+**The MGF pattern.** Notice the strategy is always: (1) compute MGFs of individual variables, (2) multiply under independence, (3) recognize the product as a known MGF, (4) invoke uniqueness. This same method proves that sums of independent Gammas (with common rate) are Gamma, sums of independent Binomials (with common $p$) are Binomial, etc.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 13.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `WLLN via Chebyshev`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 13.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 13.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 13.1">
+Let $X_1, \ldots, X_n$ be i.i.d. $\text{Bernoulli}(p)$. Use MGFs to prove that $S_n = X_1 + \cdots + X_n \sim \text{Binomial}(n, p)$.
+</Problem>
+
+<Solution>
+The MGF of $\text{Bernoulli}(p)$ is $M_{X_i}(t) = 1 - p + pe^t$. By independence and MGF factorization:
+
+$$M_{S_n}(t) = \prod_{i=1}^n M_{X_i}(t) = (1 - p + pe^t)^n.$$
+
+We verify this is the MGF of $\text{Binomial}(n, p)$: if $S \sim \text{Bin}(n, p)$, then
+
+$$M_S(t) = \sum_{k=0}^n e^{tk} \binom{n}{k} p^k (1-p)^{n-k} = \sum_{k=0}^n \binom{n}{k} (pe^t)^k (1-p)^{n-k} = (pe^t + 1 - p)^n$$
+
+by the binomial theorem. Since $M_{S_n}(t) = (1 - p + pe^t)^n = M_S(t)$, the uniqueness theorem gives $S_n \sim \text{Binomial}(n, p)$. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Why does the MGF factorization theorem require independence?"}
+  options={[
+    "Because e^{tX} is only defined for independent X",
+    "Because E[UV] = E[U]E[V] requires independence (or at least uncorrelatedness of e^{tX} and e^{tY})",
+    "Because the MGF is only defined for independent random variables",
+    "Because the uniqueness theorem only applies to independent sums"
+  ]}
+  correctIndex={1}
+  explanation={"The key step in the proof is E[e^{tX} e^{tY}] = E[e^{tX}] E[e^{tY}]. This factorization of the expectation of a product requires that e^{tX} and e^{tY} are independent, which follows from X and Y being independent. Without independence, the joint expectation does not factor."}
+/>
+
+<NumericInput
+  question={"Let X ~ Poisson(3) and Y ~ Poisson(7) be independent. What is E[(X+Y)^2]? (Hint: X+Y ~ Poisson(10), and for Poisson(lambda), E[Z^2] = lambda + lambda^2.)"}
+  answer={110}
+  tolerance={0.1}
+  hint={"X + Y ~ Poisson(10). For Z ~ Poisson(lambda): E[Z] = lambda, Var(Z) = lambda, so E[Z^2] = Var(Z) + (E[Z])^2 = lambda + lambda^2 = 10 + 100 = 110."}
+/>
+
+<Problem title="Exercise 13.2">
+Derive the MGF of $N(\mu, \sigma^2)$ from scratch. That is, compute $M_X(t) = \int_{-\infty}^{\infty} e^{tx} \frac{1}{\sqrt{2\pi}\sigma} e^{-(x-\mu)^2/(2\sigma^2)} dx$ by completing the square and show that $M_X(t) = \exp(\mu t + \sigma^2 t^2/2)$.
+</Problem>
+
+<Solution>
+We compute:
+
+$$M_X(t) = \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}\sigma} \exp\!\left(tx - \frac{(x - \mu)^2}{2\sigma^2}\right) dx.$$
+
+Combine the exponent: $tx - \frac{(x-\mu)^2}{2\sigma^2} = -\frac{1}{2\sigma^2}\left[(x-\mu)^2 - 2\sigma^2 tx\right]$.
+
+Complete the square in $x$:
+
+$$(x - \mu)^2 - 2\sigma^2 tx = x^2 - 2(\mu + \sigma^2 t)x + \mu^2 = (x - (\mu + \sigma^2 t))^2 - (\mu + \sigma^2 t)^2 + \mu^2.$$
+
+Expanding $-(\mu + \sigma^2 t)^2 + \mu^2 = -2\mu\sigma^2 t - \sigma^4 t^2$. So the exponent becomes:
+
+$$-\frac{(x - (\mu + \sigma^2 t))^2}{2\sigma^2} + \mu t + \frac{\sigma^2 t^2}{2}.$$
+
+Therefore:
+
+$$M_X(t) = e^{\mu t + \sigma^2 t^2/2} \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}\sigma} e^{-(x - (\mu + \sigma^2 t))^2 / (2\sigma^2)} dx = e^{\mu t + \sigma^2 t^2/2} \cdot 1$$
+
+since the integrand is the PDF of $N(\mu + \sigma^2 t, \sigma^2)$, which integrates to $1$. $\square$
+</Solution>

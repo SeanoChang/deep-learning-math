@@ -1,0 +1,156 @@
+---
+title: "Why Probability Needs Axioms"
+description: "Sample spaces, events, Kolmogorov axioms, and foundational properties of probability measures"
+order: 1
+milestone: "M1"
+prerequisites: []
+---
+
+## Lesson Objectives (Max Rigor)
+
+- Derive foundational event identities from Kolmogorov axioms only.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M1 -- Event algebra`
+- **Gate theorem:** `Inclusion-exclusion for n sets`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Need for Formal Foundations
+
+Intuitive notions of probability — "likelihood," "chance," "odds" — break down under scrutiny. What does it mean for an event to have probability $1/3$? Without a rigorous framework, paradoxes and contradictions emerge. Kolmogorov's 1933 axiomatization resolved this by grounding probability in measure theory.
+
+We begin with the objects that probability acts on.
+
+<Callout type="definition" title="Sample Space and Events">
+A **sample space** $\Omega$ is a nonempty set of all possible outcomes of an experiment. An **event** is a subset $A \subseteq \Omega$. The collection of all events under consideration forms a **$\sigma$-algebra** $\mathcal{F} \subseteq 2^{\Omega}$, satisfying: (i) $\Omega \in \mathcal{F}$, (ii) $A \in \mathcal{F} \implies A^c \in \mathcal{F}$, and (iii) $A_1, A_2, \ldots \in \mathcal{F} \implies \bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$.
+</Callout>
+
+For finite or countable $\Omega$, we typically take $\mathcal{F} = 2^{\Omega}$ (all subsets). The $\sigma$-algebra becomes essential for uncountable spaces, where not every subset can be consistently assigned a probability.
+
+## The Kolmogorov Axioms
+
+<Callout type="definition" title="Probability Measure">
+A **probability measure** on $(\Omega, \mathcal{F})$ is a function $P: \mathcal{F} \to \mathbb{R}$ satisfying:
+
+1. **Nonnegativity.** $P(A) \geq 0$ for all $A \in \mathcal{F}$.
+2. **Normalization.** $P(\Omega) = 1$.
+3. **Countable additivity.** If $A_1, A_2, \ldots \in \mathcal{F}$ are pairwise disjoint, then $P\!\left(\bigcup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} P(A_i)$.
+
+The triple $(\Omega, \mathcal{F}, P)$ is called a **probability space**.
+</Callout>
+
+These three axioms are remarkably minimal, yet they generate the entire theory. Everything else — conditional probability, expectations, limit theorems — follows from these axioms and set theory alone.
+
+## Consequences of the Axioms
+
+We now derive the fundamental properties that follow from the axioms.
+
+<Callout type="theorem" title="Probability of the Empty Set">
+$P(\varnothing) = 0$.
+</Callout>
+
+**Proof.** Write $\Omega = \Omega \cup \varnothing \cup \varnothing \cup \cdots$. These sets are pairwise disjoint, so by countable additivity, $P(\Omega) = P(\Omega) + P(\varnothing) + P(\varnothing) + \cdots = P(\Omega) + \sum_{i=1}^{\infty} P(\varnothing)$. Since $P(\Omega) = 1 < \infty$, subtracting gives $\sum_{i=1}^{\infty} P(\varnothing) = 0$. Each term is nonneg by Axiom 1, so $P(\varnothing) = 0$. $\blacksquare$
+
+<Callout type="theorem" title="Complement Rule">
+For any event $A$, $P(A^c) = 1 - P(A)$.
+</Callout>
+
+**Proof.** Since $A$ and $A^c$ are disjoint and $A \cup A^c = \Omega$, countable additivity (applied to a finite union, padding with $\varnothing$) gives $P(\Omega) = P(A) + P(A^c)$. By normalization, $1 = P(A) + P(A^c)$, so $P(A^c) = 1 - P(A)$. $\blacksquare$
+
+<Callout type="theorem" title="Monotonicity">
+If $A \subseteq B$, then $P(A) \leq P(B)$.
+</Callout>
+
+**Proof.** Write $B = A \cup (B \setminus A)$, a disjoint union. By countable additivity, $P(B) = P(A) + P(B \setminus A)$. Since $P(B \setminus A) \geq 0$ by nonnegativity, we conclude $P(B) \geq P(A)$. $\blacksquare$
+
+<Callout type="theorem" title="Inclusion-Exclusion for Two Events">
+For any events $A, B$: $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+</Callout>
+
+**Proof.** Decompose $A \cup B$ into three disjoint parts: $A \setminus B$, $A \cap B$, and $B \setminus A$. By additivity:
+
+$$P(A \cup B) = P(A \setminus B) + P(A \cap B) + P(B \setminus A)$$
+
+Similarly, $P(A) = P(A \setminus B) + P(A \cap B)$ and $P(B) = P(B \setminus A) + P(A \cap B)$. Therefore $P(A) + P(B) = P(A \setminus B) + P(A \cap B) + P(B \setminus A) + P(A \cap B) = P(A \cup B) + P(A \cap B)$. Rearranging yields the result. $\blacksquare$
+
+## Continuity of Probability
+
+The countable additivity axiom has a powerful consequence that connects probability to limits of sequences of events.
+
+<Callout type="theorem" title="Continuity from Below">
+If $A_1 \subseteq A_2 \subseteq \cdots$ is an increasing sequence of events with $A = \bigcup_{i=1}^{\infty} A_i$, then $P(A) = \lim_{n \to \infty} P(A_n)$.
+</Callout>
+
+**Proof.** Define $B_1 = A_1$ and $B_n = A_n \setminus A_{n-1}$ for $n \geq 2$. The $B_n$ are pairwise disjoint and $\bigcup_{n=1}^{\infty} B_n = A$. By countable additivity, $P(A) = \sum_{n=1}^{\infty} P(B_n) = \lim_{N \to \infty} \sum_{n=1}^{N} P(B_n) = \lim_{N \to \infty} P(A_N)$, where the last equality follows because $\bigcup_{n=1}^{N} B_n = A_N$ is a disjoint union. $\blacksquare$
+
+<Callout type="tip" title="Why Countable Additivity?">
+Finite additivity alone is insufficient: it cannot prove continuity of probability, which is essential for handling limits. Countable additivity is the bridge between algebra and analysis in probability theory.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 1.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Inclusion-exclusion for n sets`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 1.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 1.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="Which of the following is NOT one of the Kolmogorov axioms?"
+  options={[
+    "$P(A) \\geq 0$ for all events $A$",
+    "$P(\\Omega) = 1$",
+    "$P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$",
+    "Countable additivity for disjoint events"
+  ]}
+  correctIndex={2}
+  explanation="Inclusion-exclusion is a consequence of the axioms, not an axiom itself. The three axioms are nonnegativity, normalization, and countable additivity."
+/>
+
+<NumericInput
+  question="Let $P(A) = 0.6$ and $P(B) = 0.5$ with $P(A \\cap B) = 0.2$. Compute $P(A^c \\cap B^c)$."
+  answer={0.1}
+  tolerance={0.001}
+  hint="Use inclusion-exclusion to find $P(A \\cup B)$, then apply the complement rule."
+/>
+
+<Problem title="Subadditivity">
+Prove the **union bound**: for any events $A_1, \ldots, A_n$,
+
+$$P\!\left(\bigcup_{i=1}^{n} A_i\right) \leq \sum_{i=1}^{n} P(A_i).$$
+
+<Solution>
+**Proof.** We proceed by induction on $n$. The base case $n = 1$ is trivial. For the inductive step, assume the bound holds for $n - 1$ events. By inclusion-exclusion for two events:
+
+$$P\!\left(\bigcup_{i=1}^{n} A_i\right) = P\!\left(\bigcup_{i=1}^{n-1} A_i\right) + P(A_n) - P\!\left(\left(\bigcup_{i=1}^{n-1} A_i\right) \cap A_n\right)$$
+
+Since $P\!\left(\left(\bigcup_{i=1}^{n-1} A_i\right) \cap A_n\right) \geq 0$ by nonnegativity, and by the inductive hypothesis $P\!\left(\bigcup_{i=1}^{n-1} A_i\right) \leq \sum_{i=1}^{n-1} P(A_i)$, we get:
+
+$$P\!\left(\bigcup_{i=1}^{n} A_i\right) \leq \sum_{i=1}^{n-1} P(A_i) + P(A_n) = \sum_{i=1}^{n} P(A_i). \quad \blacksquare$$
+</Solution>
+</Problem>
+
+<Problem title="Continuity from Above">
+Prove: if $A_1 \supseteq A_2 \supseteq \cdots$ with $A = \bigcap_{i=1}^{\infty} A_i$, then $P(A) = \lim_{n \to \infty} P(A_n)$.
+
+<Solution>
+**Proof.** Define $B_n = A_n^c$. Since $A_n$ is decreasing, $B_n$ is increasing. Moreover $\bigcup_{n=1}^{\infty} B_n = \left(\bigcap_{n=1}^{\infty} A_n\right)^c = A^c$. By continuity from below:
+
+$$P(A^c) = \lim_{n \to \infty} P(B_n) = \lim_{n \to \infty} P(A_n^c) = \lim_{n \to \infty} (1 - P(A_n)) = 1 - \lim_{n \to \infty} P(A_n)$$
+
+Since $P(A^c) = 1 - P(A)$, we obtain $P(A) = \lim_{n \to \infty} P(A_n)$. $\blacksquare$
+</Solution>
+</Problem>

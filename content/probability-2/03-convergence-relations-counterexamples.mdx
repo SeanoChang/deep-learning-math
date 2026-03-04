@@ -1,0 +1,192 @@
+---
+title: "Relations Among Convergence Modes and Counterexamples"
+description: "The full implication diagram, subsequence extraction, Slutsky's theorem, and counterexamples for every non-implication"
+order: 3
+milestone: "M1"
+prerequisites: ["02-modes-of-convergence"]
+---
+
+# Relations Among Convergence Modes and Counterexamples
+
+We now complete the implication diagram among the four modes of convergence. For every arrow that does exist, we give a proof; for every arrow that does not, we construct an explicit counterexample. Two key tools -- the subsequence criterion and Slutsky's theorem -- bridge the gaps.
+
+## Lesson Objectives (Max Rigor)
+
+- Complete implication/non-implication logic with explicit counterexamples.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M1 -- Convergence theory`
+- **Gate theorem:** `Full implication chain with counterexample suite`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Full Implication Diagram
+
+The complete picture of implications (with no additional hypotheses):
+
+$$\text{a.s.} \implies \text{in prob.} \implies \text{in dist.}$$
+$$L^p \implies L^q \quad (p \geq q \geq 1) \implies \text{in prob.} \implies \text{in dist.}$$
+
+No other arrows hold in general. In particular, the following all fail without additional hypotheses: in prob. $\not\Rightarrow$ a.s., in dist. $\not\Rightarrow$ in prob., in prob. $\not\Rightarrow$ $L^1$, a.s. $\not\Rightarrow$ $L^1$.
+
+### $L^2 \implies L^1$ via Cauchy--Schwarz
+
+<Callout type="theorem" title="$L^p$ Implies $L^q$ for $p \\geq q$">
+  If $X_n \xrightarrow{L^p} X$ and $p \geq q \geq 1$, then $X_n \xrightarrow{L^q} X$.
+</Callout>
+
+**Proof (case $p = 2$, $q = 1$).** By Jensen's inequality (or Cauchy--Schwarz applied to $|X_n - X| \cdot 1$):
+
+$$E[|X_n - X|] = E[|X_n - X| \cdot 1] \leq \left(E[|X_n - X|^2]\right)^{1/2} \cdot \left(E[1^2]\right)^{1/2} = \left(E[|X_n - X|^2]\right)^{1/2}.$$
+
+If $E[|X_n - X|^2] \to 0$, then $E[|X_n - X|] \to 0$. For general $p > q$, apply H\"older's inequality with exponents $p/q$ and $p/(p-q)$:
+
+$$E[|X_n - X|^q] \leq \left(E[|X_n - X|^p]\right)^{q/p} \cdot 1^{(p-q)/p} = \left(E[|X_n - X|^p]\right)^{q/p} \to 0. \quad \blacksquare$$
+
+## The Subsequence Criterion
+
+<Callout type="theorem" title="Subsequence Criterion">
+  $X_n \xrightarrow{P} X$ if and only if every subsequence $(X_{n_k})$ has a further subsequence $(X_{n_{k_j}})$ that converges almost surely to $X$.
+</Callout>
+
+**Proof.** ($\Leftarrow$) Suppose $X_n \not\xrightarrow{P} X$. Then there exist $\varepsilon, \delta > 0$ and a subsequence $(X_{n_k})$ with $P(|X_{n_k} - X| > \varepsilon) \geq \delta$ for all $k$. By hypothesis, $(X_{n_k})$ has a further subsequence converging a.s. to $X$. But a.s. convergence implies convergence in probability, so $P(|X_{n_{k_j}} - X| > \varepsilon) \to 0$, contradicting $P(|X_{n_{k_j}} - X| > \varepsilon) \geq \delta$.
+
+($\Rightarrow$) Suppose $X_n \xrightarrow{P} X$. Let $(X_{n_k})$ be any subsequence; it also converges in probability to $X$. We extract a fast sub-subsequence: choose $n_{k_1} < n_{k_2} < \cdots$ such that
+
+$$P(|X_{n_{k_j}} - X| > 2^{-j}) < 2^{-j}.$$
+
+This is possible since $P(|X_{n_k} - X| > 2^{-j}) \to 0$ for each fixed $j$. Since $\sum_j P(|X_{n_{k_j}} - X| > 2^{-j}) < \sum_j 2^{-j} = 1 < \infty$, the first Borel--Cantelli lemma gives $P(|X_{n_{k_j}} - X| > 2^{-j} \text{ i.o.}) = 0$. Thus for a.e. $\omega$, $|X_{n_{k_j}}(\omega) - X(\omega)| \leq 2^{-j}$ for all large $j$, giving $X_{n_{k_j}} \to X$ a.s. $\blacksquare$
+
+<Callout type="tip" title="Why the Subsequence Criterion Matters">
+  This theorem lets you transfer results known for a.s. convergence to convergence in probability. If a property is preserved under a.s. limits and closed under subsequences, it holds for limits in probability too.
+</Callout>
+
+## Slutsky's Theorem
+
+<Callout type="theorem" title="Slutsky's Theorem">
+  Suppose $X_n \xrightarrow{d} X$ and $Y_n \xrightarrow{P} c$ where $c$ is a constant. Then:
+  1. $X_n + Y_n \xrightarrow{d} X + c$,
+  2. $Y_n X_n \xrightarrow{d} cX$,
+  3. $X_n / Y_n \xrightarrow{d} X/c$ provided $c \neq 0$.
+</Callout>
+
+**Proof (part 1).** We show $F_{X_n + Y_n}(t) \to F_{X+c}(t)$ at continuity points $t$ of $F_{X+c}$. For any $\varepsilon > 0$:
+
+$$P(X_n + Y_n \leq t) \leq P(X_n \leq t - c + \varepsilon) + P(|Y_n - c| > \varepsilon).$$
+
+This holds because on the event $\{|Y_n - c| \leq \varepsilon\}$, we have $X_n + Y_n \leq t$ implies $X_n \leq t - Y_n \leq t - c + \varepsilon$. Similarly:
+
+$$P(X_n + Y_n \leq t) \geq P(X_n \leq t - c - \varepsilon) - P(|Y_n - c| > \varepsilon).$$
+
+Since $X_n \xrightarrow{d} X$ and $Y_n \xrightarrow{P} c$, taking $n \to \infty$:
+
+$$F_X(t - c - \varepsilon) \leq \liminf P(X_n + Y_n \leq t) \leq \limsup P(X_n + Y_n \leq t) \leq F_X(t - c + \varepsilon).$$
+
+Since $t$ is a continuity point of $F_{X+c}(t) = F_X(t-c)$, letting $\varepsilon \to 0$ gives convergence. $\blacksquare$
+
+## Continuous Mapping Theorem
+
+<Callout type="theorem" title="Continuous Mapping Theorem">
+  If $X_n \xrightarrow{d} X$ and $g : \mathbb{R} \to \mathbb{R}$ is continuous, then $g(X_n) \xrightarrow{d} g(X)$. The same holds with "in distribution" replaced by "in probability" or "almost surely."
+</Callout>
+
+This is stated without proof here; the proof uses the Portmanteau lemma. The key point is that continuous functions preserve all modes of convergence.
+
+## Counterexamples for Every Non-Implication
+
+### 1. In Probability $\not\Rightarrow$ Almost Sure: The Typewriter Sequence
+
+<Callout type="warning" title="Typewriter Sequence">
+  On $([0,1], \text{Leb})$, define indicators that sweep across $[0,1]$ repeatedly in shorter intervals:
+  $$X_1 = \mathbf{1}_{[0,1]},\; X_2 = \mathbf{1}_{[0,1/2]},\; X_3 = \mathbf{1}_{[1/2,1]},\; X_4 = \mathbf{1}_{[0,1/3]},\; X_5 = \mathbf{1}_{[1/3,2/3]},\; X_6 = \mathbf{1}_{[2/3,1]}, \ldots$$
+  The $n$-th "row" partitions $[0,1]$ into $n$ equal pieces and cycles through them.
+</Callout>
+
+**In probability:** The intervals have length $1/n \to 0$ (where $n$ is the row number), so $P(X_k = 1) \to 0$. Thus $X_k \xrightarrow{P} 0$.
+
+**Not a.s.:** For every $\omega \in [0,1]$, each row contains an interval covering $\omega$, so $X_k(\omega) = 1$ for infinitely many $k$. Similarly $X_k(\omega) = 0$ for infinitely many $k$. The sequence $(X_k(\omega))$ does not converge for any $\omega$.
+
+### 2. In Distribution $\not\Rightarrow$ In Probability
+
+Let $X \sim \text{Bernoulli}(1/2)$ and $X_n = 1 - X$ for all $n$. Then $X_n \sim \text{Bernoulli}(1/2)$ for all $n$, so $X_n \xrightarrow{d} X$ trivially (the CDFs are identical). But $|X_n - X| = |1 - 2X| = 1$ a.s., so $P(|X_n - X| > 1/2) = 1 \not\to 0$.
+
+### 3. In Probability $\not\Rightarrow$ $L^1$
+
+On $([0,1], \text{Leb})$, let $X_n = n \cdot \mathbf{1}_{[0,1/n]}$. Then $P(|X_n| > \varepsilon) = P(X_n = n) = 1/n \to 0$, so $X_n \xrightarrow{P} 0$. But $E[|X_n|] = n \cdot (1/n) = 1 \not\to 0$.
+
+### 4. $L^1 \not\Rightarrow$ a.s. (Even $L^1$ Does Not Imply a.s.)
+
+The typewriter sequence again: $P(X_k = 1) \to 0$, so $E[|X_k|] = P(X_k = 1) \to 0$, giving $X_k \to 0$ in $L^1$. But as shown above, $X_k(\omega) \not\to 0$ for any $\omega$.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 3.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Full implication chain with counterexample suite`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 3.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 3.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="In the typewriter sequence, which of the following is true?"
+  options={[
+    "$X_n \\to 0$ almost surely but not in $L^1$",
+    "$X_n \\to 0$ in probability and in $L^1$ but not almost surely",
+    "$X_n \\to 0$ in distribution but not in probability",
+    "$X_n \\to 0$ almost surely and in $L^1$"
+  ]}
+  correctIndex={1}
+  explanation="The typewriter sequence converges to 0 in probability (the supporting intervals shrink) and in $L^1$ (since $E[|X_n|] = P(X_n = 1) \\to 0$). However, for every $\\omega$, the sequence visits 1 infinitely often and 0 infinitely often, so it does not converge almost surely."
+/>
+
+<Problem title="Convergence in distribution does not see coupling">
+  Let $X \sim N(0,1)$ and define $Y = -X$.
+
+  (a) Show $Y \sim N(0,1)$, so $Y \xrightarrow{d} X$ trivially (constant sequence).
+
+  (b) Does $Y_n = -X$ converge to $X$ in probability? Compute $P(|Y - X| > \varepsilon)$.
+
+  (c) Explain why this does not contradict the fact that convergence in distribution is weaker than convergence in probability.
+</Problem>
+
+<Solution>
+  **(a)** If $X \sim N(0,1)$, then $Y = -X$ has the same distribution since $N(0,1)$ is symmetric about 0. So $F_Y = F_X$, meaning $Y \xrightarrow{d} X$ trivially.
+
+  **(b)** $|Y - X| = |-X - X| = 2|X|$. So $P(|Y - X| > \varepsilon) = P(|X| > \varepsilon/2) = 2(1 - \Phi(\varepsilon/2)) > 0$ for all $\varepsilon > 0$. This is a fixed positive number, not tending to 0. Hence $Y \not\xrightarrow{P} X$.
+
+  **(c)** Convergence in distribution depends only on marginal distributions, not on the joint distribution of $(X_n, X)$. Since $Y$ and $X$ have the same marginal distribution but are coupled as $Y = -X$, they are maximally far apart on the same probability space. The "in distribution" notion does not see this coupling, which is why it is strictly weaker. $\blacksquare$
+</Solution>
+
+<Problem title="Applying Slutsky">
+  Let $X_n \xrightarrow{d} N(0,1)$ and $\sigma_n \xrightarrow{P} \sigma > 0$. Show that $\sigma_n X_n \xrightarrow{d} N(0, \sigma^2)$.
+
+  Then give a concrete example: if $\bar{X}_n$ is the sample mean of i.i.d. $N(\mu, \sigma^2)$ and $S_n^2$ is the sample variance, show $\sqrt{n}(\bar{X}_n - \mu)/S_n \xrightarrow{d} N(0,1)$.
+</Problem>
+
+<Solution>
+  **Part 1.** Write $\sigma_n X_n = (\sigma_n - \sigma)X_n + \sigma X_n$. Since $\sigma_n - \sigma \xrightarrow{P} 0$ and $X_n \xrightarrow{d} N(0,1)$, Slutsky gives $(\sigma_n - \sigma)X_n \xrightarrow{P} 0$ (a sequence converging in probability to 0 times a tight sequence). Alternatively, apply Slutsky's product rule directly: $\sigma_n \xrightarrow{P} \sigma$ (constant) and $X_n \xrightarrow{d} N(0,1)$ gives $\sigma_n X_n \xrightarrow{d} \sigma \cdot N(0,1) = N(0, \sigma^2)$.
+
+  **Part 2.** By the CLT, $Z_n = \sqrt{n}(\bar{X}_n - \mu)/\sigma \xrightarrow{d} N(0,1)$. By the WLLN applied to $X_i^2$ (or directly), $S_n^2 \xrightarrow{P} \sigma^2$, so $S_n/\sigma \xrightarrow{P} 1$ by the continuous mapping theorem. Then:
+
+  $$\frac{\sqrt{n}(\bar{X}_n - \mu)}{S_n} = \frac{\sigma}{S_n} \cdot \underbrace{\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma}}_{Z_n \xrightarrow{d} N(0,1)}.$$
+
+  Since $\sigma/S_n \xrightarrow{P} 1$, Slutsky gives $\sqrt{n}(\bar{X}_n - \mu)/S_n \xrightarrow{d} N(0,1)$. $\blacksquare$
+</Solution>
+
+<NumericInput
+  question="In the typewriter sequence, the $k$-th indicator function has support on an interval of length $1/n$ where $n$ is the row number. The total number of indicators in the first $m$ rows is $1 + 2 + \\cdots + m = m(m+1)/2$. After how many total indicators (i.e., what is the smallest $k$) have we completed 10 full sweeps of $[0,1]$?"
+  answer={55}
+  tolerance={0}
+  hint="The first 10 rows use $1 + 2 + 3 + \\cdots + 10 = 10 \\cdot 11/2 = 55$ indicators total."
+/>

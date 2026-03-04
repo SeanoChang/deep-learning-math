@@ -1,0 +1,224 @@
+---
+title: "Law of Large Numbers and Central Limit Theorem"
+description: "The Weak Law of Large Numbers via Chebyshev, convergence in probability, and the Central Limit Theorem"
+order: 14
+milestone: "M6"
+prerequisites: ["13-transforms-sums-independent"]
+---
+
+# Law of Large Numbers and Central Limit Theorem
+
+We now reach the two most important theorems in probability theory. The Law of Large Numbers says that the sample mean converges to the population mean. The Central Limit Theorem says that the fluctuations around the mean are approximately Normal. Together, they explain why statistics works.
+
+## Lesson Objectives (Max Rigor)
+
+- Distinguish convergence modes and prove WLLN from moment bounds.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M6 -- Inequalities and limit laws`
+- **Gate theorem:** `WLLN via Chebyshev`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Sample Mean
+
+Let $X_1, X_2, \ldots$ be i.i.d. random variables with mean $\mu = E[X_i]$ and variance $\sigma^2 = \text{Var}(X_i) < \infty$. The **sample mean** is:
+
+$$\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i.$$
+
+<Callout type="theorem">
+**Proposition 14.1 (Mean and variance of $\bar{X}_n$).**
+
+$$E[\bar{X}_n] = \mu, \qquad \text{Var}(\bar{X}_n) = \frac{\sigma^2}{n}.$$
+</Callout>
+
+*Proof.* By linearity of expectation:
+
+$$E[\bar{X}_n] = \frac{1}{n} \sum_{i=1}^n E[X_i] = \frac{1}{n} \cdot n\mu = \mu.$$
+
+For the variance, since the $X_i$ are independent:
+
+$$\text{Var}(\bar{X}_n) = \text{Var}\!\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n^2} \sum_{i=1}^n \text{Var}(X_i) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}. \quad \square$$
+
+The variance shrinking as $1/n$ is the quantitative reason why averaging reduces noise.
+
+## Convergence in Probability
+
+<Callout type="definition">
+**Definition 14.2.** A sequence of random variables $Y_n$ **converges in probability** to a constant $c$ (written $Y_n \xrightarrow{P} c$) if for every $\varepsilon > 0$:
+
+$$\lim_{n \to \infty} P(|Y_n - c| \geq \varepsilon) = 0.$$
+</Callout>
+
+This is weaker than almost sure convergence (which we defer to Probability II) but sufficient for many applications. The definition says: no matter how small a tolerance $\varepsilon$ we choose, the probability of being outside that tolerance vanishes.
+
+## The Weak Law of Large Numbers
+
+<Callout type="theorem">
+**Theorem 14.3 (Weak Law of Large Numbers, WLLN).** Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_i] = \mu$ and $\text{Var}(X_i) = \sigma^2 < \infty$. Then:
+
+$$\bar{X}_n \xrightarrow{P} \mu.$$
+
+That is, for every $\varepsilon > 0$: $\lim_{n \to \infty} P(|\bar{X}_n - \mu| \geq \varepsilon) = 0$.
+</Callout>
+
+*Proof.* Apply Chebyshev's inequality to $\bar{X}_n$, which has mean $\mu$ and variance $\sigma^2/n$:
+
+$$P(|\bar{X}_n - \mu| \geq \varepsilon) \leq \frac{\text{Var}(\bar{X}_n)}{\varepsilon^2} = \frac{\sigma^2}{n\varepsilon^2}.$$
+
+As $n \to \infty$, the right side converges to $0$. Therefore $P(|\bar{X}_n - \mu| \geq \varepsilon) \to 0$ for every $\varepsilon > 0$, which is exactly $\bar{X}_n \xrightarrow{P} \mu$. $\square$
+
+<Callout type="tip">
+**Proof architecture.** The WLLN proof chains together three results:
+
+1. **Linearity** gives $E[\bar{X}_n] = \mu$.
+2. **Independence** gives $\text{Var}(\bar{X}_n) = \sigma^2/n$.
+3. **Chebyshev** converts the vanishing variance into vanishing tail probability.
+
+This is a beautiful example of how simple tools combine to yield a deep result.
+</Callout>
+
+<Callout type="info">
+**Remark.** The WLLN holds under weaker conditions. The hypothesis $\text{Var}(X_i) < \infty$ can be relaxed to just $E[|X_i|] < \infty$, but the proof then requires truncation arguments rather than Chebyshev. The Strong Law of Large Numbers (SLLN) strengthens the conclusion to almost sure convergence: $P(\bar{X}_n \to \mu) = 1$.
+</Callout>
+
+## Convergence in Distribution
+
+<Callout type="definition">
+**Definition 14.4.** A sequence of random variables $Y_n$ **converges in distribution** to $Y$ (written $Y_n \xrightarrow{d} Y$) if for every $x$ at which $F_Y$ is continuous:
+
+$$\lim_{n \to \infty} F_{Y_n}(x) = F_Y(x).$$
+</Callout>
+
+Convergence in distribution is weaker than convergence in probability. It says the CDFs converge pointwise (at continuity points), not that the random variables themselves are close. The CLT is a statement about convergence in distribution.
+
+## The Central Limit Theorem
+
+<Callout type="theorem">
+**Theorem 14.5 (Central Limit Theorem).** Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_i] = \mu$ and $0 < \text{Var}(X_i) = \sigma^2 < \infty$. Define the **standardized sample mean**:
+
+$$Z_n = \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} = \frac{\sum_{i=1}^n X_i - n\mu}{\sigma\sqrt{n}}.$$
+
+Then $Z_n \xrightarrow{d} N(0, 1)$. That is, for every $z \in \mathbb{R}$:
+
+$$\lim_{n \to \infty} P(Z_n \leq z) = \Phi(z) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^z e^{-t^2/2} \, dt.$$
+</Callout>
+
+The CLT is remarkable: regardless of the distribution of the $X_i$ (which could be discrete, skewed, heavy-tailed, anything), the standardized sum converges to a Normal distribution. The only requirements are finite mean and variance.
+
+## MGF Heuristic for the CLT
+
+We give a heuristic proof via moment generating functions, which illustrates why the $\sqrt{n}$ normalization is exactly right.
+
+*Heuristic proof.* Let $Y_i = (X_i - \mu)/\sigma$ be the standardized variables, so $E[Y_i] = 0$ and $\text{Var}(Y_i) = 1$. Then $Z_n = (Y_1 + \cdots + Y_n)/\sqrt{n}$ and:
+
+$$M_{Z_n}(t) = \left[M_{Y_1}\!\left(\frac{t}{\sqrt{n}}\right)\right]^n$$
+
+by independence and the scaling property. Now expand $M_{Y_1}(s)$ around $s = 0$:
+
+$$M_{Y_1}(s) = 1 + s \cdot E[Y_1] + \frac{s^2}{2} E[Y_1^2] + O(s^3) = 1 + \frac{s^2}{2} + O(s^3)$$
+
+since $E[Y_1] = 0$ and $E[Y_1^2] = 1$. Substituting $s = t/\sqrt{n}$:
+
+$$M_{Y_1}\!\left(\frac{t}{\sqrt{n}}\right) = 1 + \frac{t^2}{2n} + O(n^{-3/2}).$$
+
+Therefore:
+
+$$M_{Z_n}(t) = \left(1 + \frac{t^2}{2n} + O(n^{-3/2})\right)^n \to e^{t^2/2} \quad \text{as } n \to \infty$$
+
+using the fact that $(1 + a/n)^n \to e^a$. Since $e^{t^2/2}$ is the MGF of $N(0, 1)$, the MGF uniqueness theorem (extended to limits) gives $Z_n \xrightarrow{d} N(0, 1)$.
+
+<Callout type="warning">
+**Why this is a heuristic.** The argument above assumes: (i) the MGF of $Y_1$ exists in a neighborhood of $0$, and (ii) pointwise convergence of MGFs implies convergence in distribution. Condition (i) is not guaranteed by the CLT hypotheses (finite variance does not imply finite MGF). A rigorous proof uses characteristic functions $\varphi_X(t) = E[e^{itX}]$, which always exist. Condition (ii) is justified by L\'evy's continuity theorem.
+</Callout>
+
+<Callout type="info">
+**Why $\sqrt{n}$?** The normalization $Z_n = (\bar{X}_n - \mu)/(\sigma/\sqrt{n})$ is forced by the requirement that $\text{Var}(Z_n) = 1$. If we divided by $n$ instead of $\sqrt{n}$, the variance would go to $0$ and the limit would be degenerate. If we divided by $1$ (no normalization), the variance would go to $\infty$. The $\sqrt{n}$ is the unique scaling that produces a nondegenerate limit.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 14.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `WLLN via Chebyshev`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 14.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 14.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 14.1">
+Let $X_1, \ldots, X_n$ be i.i.d. $\text{Bernoulli}(1/2)$. Let $S_n = X_1 + \cdots + X_n$.
+
+(a) State what the WLLN says about $S_n/n$.
+
+(b) State what the CLT says about the standardized version of $S_n$.
+
+(c) Use the CLT to approximate $P(S_{100} \geq 55)$.
+</Problem>
+
+<Solution>
+**(a)** The WLLN says $S_n/n \xrightarrow{P} E[X_1] = 1/2$. In words: the fraction of heads in $n$ fair coin flips converges in probability to $1/2$.
+
+**(b)** We have $\mu = 1/2$, $\sigma^2 = 1/4$. The CLT says:
+
+$$\frac{S_n - n/2}{\sqrt{n/4}} = \frac{S_n - n/2}{\sqrt{n}/2} \xrightarrow{d} N(0, 1).$$
+
+**(c)** For $n = 100$:
+
+$$P(S_{100} \geq 55) = P\!\left(\frac{S_{100} - 50}{5} \geq \frac{55 - 50}{5}\right) = P(Z_{100} \geq 1).$$
+
+By the CLT, $Z_{100} \approx N(0,1)$, so $P(Z_{100} \geq 1) \approx 1 - \Phi(1) \approx 1 - 0.8413 = 0.1587$.
+
+(The exact value via the Binomial CDF is approximately $0.1841$; the Normal approximation is decent but not perfect for $n = 100$ this far from the center.) $\square$
+</Solution>
+
+<MultipleChoice
+  question={"The WLLN requires finite variance in the Chebyshev-based proof. Which tool in the proof directly uses the variance?"}
+  options={[
+    "Linearity of expectation",
+    "Independence of the X_i",
+    "Chebyshev's inequality",
+    "The definition of convergence in probability"
+  ]}
+  correctIndex={2}
+  explanation={"Chebyshev's inequality P(|Y - mu| >= eps) <= Var(Y)/eps^2 is the step that converts the vanishing variance Var(X_bar_n) = sigma^2/n into a vanishing probability. Without Chebyshev (or a substitute), we cannot bridge from variance to probability."}
+/>
+
+<NumericInput
+  question={"Let X_1, ..., X_36 be i.i.d. with mean 10 and variance 9. Using the CLT, approximate P(X_bar_36 > 10.75) as 1 - Phi(z) for some z. What is z?"}
+  answer={1.5}
+  tolerance={0.01}
+  hint={"Z = (X_bar - mu)/(sigma/sqrt(n)) = (10.75 - 10)/(3/6) = 0.75/0.5 = 1.5."}
+/>
+
+<Problem title="Exercise 14.2">
+Prove carefully that convergence in probability implies convergence in distribution. That is, if $Y_n \xrightarrow{P} c$ (a constant), then $Y_n \xrightarrow{d} c$ (meaning $F_{Y_n}(x) \to F_c(x) = \mathbf{1}_{x \geq c}$ at every $x \neq c$).
+</Problem>
+
+<Solution>
+Fix $x \neq c$. We consider two cases.
+
+**Case 1: $x > c$.** Let $\varepsilon = x - c > 0$. Then $\{Y_n \leq x\} \supseteq \{|Y_n - c| < \varepsilon\}$, so:
+
+$$F_{Y_n}(x) = P(Y_n \leq x) \geq P(|Y_n - c| < \varepsilon) = 1 - P(|Y_n - c| \geq \varepsilon) \to 1 - 0 = 1.$$
+
+Since $F_{Y_n}(x) \leq 1$ always, we get $F_{Y_n}(x) \to 1 = F_c(x)$.
+
+**Case 2: $x < c$.** Let $\varepsilon = c - x > 0$. Then $\{Y_n \leq x\} \subseteq \{|Y_n - c| \geq \varepsilon\}$ (if $Y_n \leq x = c - \varepsilon$, then $|Y_n - c| \geq \varepsilon$). So:
+
+$$F_{Y_n}(x) = P(Y_n \leq x) \leq P(|Y_n - c| \geq \varepsilon) \to 0.$$
+
+Since $F_{Y_n}(x) \geq 0$, we get $F_{Y_n}(x) \to 0 = F_c(x)$.
+
+In both cases, $F_{Y_n}(x) \to F_c(x)$ for $x \neq c$. At $x = c$, $F_c$ has a jump discontinuity, so the definition of convergence in distribution does not require convergence there. $\square$
+</Solution>

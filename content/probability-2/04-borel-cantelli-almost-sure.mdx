@@ -1,0 +1,192 @@
+---
+title: "Borel–Cantelli Lemmas and Almost Sure Behavior"
+description: "The limsup of events, first and second Borel--Cantelli lemmas, and applications to almost sure convergence"
+order: 4
+milestone: "M2"
+prerequisites: ["03-convergence-relations-counterexamples"]
+---
+
+# Borel–Cantelli Lemmas and Almost Sure Behavior
+
+The Borel–Cantelli lemmas are the primary tools for establishing (or ruling out) almost sure convergence. They convert questions about the long-run behavior of sequences of events into questions about the convergence or divergence of a series of probabilities.
+
+## Lesson Objectives (Max Rigor)
+
+- Control limsup events rigorously via Borel-Cantelli techniques.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M2 -- Almost sure behavior`
+- **Gate theorem:** `First and second Borel-Cantelli lemmas`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Limsup of Events
+
+<Callout type="definition" title="Limsup of Events (Infinitely Often)">
+  Given a sequence of events $(A_n)_{n \geq 1}$, the **limsup** is
+  $$\limsup_{n \to \infty} A_n = \bigcap_{n=1}^\infty \bigcup_{k=n}^\infty A_k = \{A_n \text{ i.o.}\},$$
+  read as "$A_n$ infinitely often." An outcome $\omega$ belongs to $\{A_n \text{ i.o.}\}$ if and only if $\omega \in A_n$ for infinitely many $n$.
+</Callout>
+
+**Unpacking the definition.** The event $B_n = \bigcup_{k=n}^\infty A_k$ is the event that at least one of $A_n, A_{n+1}, \ldots$ occurs. The sequence $(B_n)$ is decreasing: $B_1 \supseteq B_2 \supseteq \cdots$. Their intersection $\{A_n \text{ i.o.}\} = \bigcap B_n$ is the event that no matter how far along the sequence we go, some future $A_k$ still occurs.
+
+<Callout type="definition" title="Liminf of Events (Eventually)">
+  The **liminf** is
+  $$\liminf_{n \to \infty} A_n = \bigcup_{n=1}^\infty \bigcap_{k=n}^\infty A_k = \{A_n \text{ ev.}\},$$
+  read as "$A_n$ eventually." An outcome $\omega$ belongs to $\{A_n \text{ ev.}\}$ if $\omega \in A_n$ for all sufficiently large $n$.
+</Callout>
+
+Note: $\{A_n \text{ ev.}\} = \{A_n^c \text{ i.o.}\}^c$. If we think of $A_n$ as "good behavior at time $n$," then $\{A_n \text{ ev.}\}$ is the set of outcomes that are eventually always well-behaved.
+
+## First Borel–Cantelli Lemma
+
+<Callout type="theorem" title="First Borel--Cantelli Lemma (BC1)">
+  If $\sum_{n=1}^\infty P(A_n) < \infty$, then $P(A_n \text{ i.o.}) = 0$.
+</Callout>
+
+**Proof.** We have $\{A_n \text{ i.o.}\} = \bigcap_{n=1}^\infty B_n$ where $B_n = \bigcup_{k=n}^\infty A_k$. By subadditivity:
+
+$$P(B_n) = P\!\left(\bigcup_{k=n}^\infty A_k\right) \leq \sum_{k=n}^\infty P(A_k).$$
+
+Since $\sum P(A_k) < \infty$, the tail $\sum_{k=n}^\infty P(A_k) \to 0$ as $n \to \infty$. Since $B_n \downarrow \{A_n \text{ i.o.}\}$, continuity of probability from above gives:
+
+$$P(A_n \text{ i.o.}) = \lim_{n \to \infty} P(B_n) \leq \lim_{n \to \infty} \sum_{k=n}^\infty P(A_k) = 0. \quad \blacksquare$$
+
+<Callout type="tip" title="Intuition">
+  If the total "probability budget" $\sum P(A_n)$ is finite, then the events $A_n$ cannot keep occurring. Eventually, they stop (for almost every $\omega$). The first BC lemma requires no independence assumption.
+</Callout>
+
+## Second Borel–Cantelli Lemma
+
+<Callout type="theorem" title="Second Borel--Cantelli Lemma (BC2)">
+  If $(A_n)$ are **independent** and $\sum_{n=1}^\infty P(A_n) = \infty$, then $P(A_n \text{ i.o.}) = 1$.
+</Callout>
+
+**Proof.** It suffices to show $P(\{A_n \text{ i.o.}\}^c) = 0$, i.e., $P(\bigcup_{n=1}^\infty \bigcap_{k=n}^\infty A_k^c) = 0$. By subadditivity, it suffices to show $P(\bigcap_{k=n}^\infty A_k^c) = 0$ for each $n$. Fix $n$. For any $m \geq n$, by independence of $(A_n)$:
+
+$$P\!\left(\bigcap_{k=n}^m A_k^c\right) = \prod_{k=n}^m P(A_k^c) = \prod_{k=n}^m (1 - P(A_k)).$$
+
+Using the inequality $1 - x \leq e^{-x}$ for all $x \geq 0$:
+
+$$\prod_{k=n}^m (1 - P(A_k)) \leq \prod_{k=n}^m e^{-P(A_k)} = \exp\!\left(-\sum_{k=n}^m P(A_k)\right).$$
+
+Since $\sum P(A_k) = \infty$, the partial sums $\sum_{k=n}^m P(A_k) \to \infty$ as $m \to \infty$, so $\exp(-\sum_{k=n}^m P(A_k)) \to 0$. By continuity of probability from above:
+
+$$P\!\left(\bigcap_{k=n}^\infty A_k^c\right) = \lim_{m \to \infty} P\!\left(\bigcap_{k=n}^m A_k^c\right) = 0.$$
+
+This holds for every $n$, so $P(\{A_n \text{ i.o.}\}^c) \leq \sum_{n=1}^\infty P(\bigcap_{k=n}^\infty A_k^c) = 0$. $\blacksquare$
+
+<Callout type="warning" title="Independence Is Essential for BC2">
+  The second Borel--Cantelli lemma fails without independence. Let $A_n = A$ for all $n$, where $P(A) = 1/2$. Then $\sum P(A_n) = \infty$, but $\{A_n \text{ i.o.}\} = A$, so $P(A_n \text{ i.o.}) = 1/2 \neq 1$.
+</Callout>
+
+## Application: Upgrading In-Probability to Almost Sure
+
+<Callout type="theorem" title="Fast Convergence Implies a.s. Convergence">
+  If $X_n \xrightarrow{P} X$ and the convergence is "fast" in the sense that for some $\varepsilon > 0$,
+  $$\sum_{n=1}^\infty P(|X_n - X| > \varepsilon) < \infty,$$
+  then $X_n \xrightarrow{\text{a.s.}} X$.
+</Callout>
+
+**Proof.** Let $A_n = \{|X_n - X| > \varepsilon\}$. By hypothesis, $\sum P(A_n) < \infty$. By the first Borel--Cantelli lemma, $P(A_n \text{ i.o.}) = 0$. This means: for a.e. $\omega$, there exists $N(\omega)$ such that $|X_n(\omega) - X(\omega)| \leq \varepsilon$ for all $n \geq N(\omega)$.
+
+To get convergence for all $\varepsilon$: take $\varepsilon = 1/m$ for each $m \in \mathbb{N}$. If additionally $\sum_n P(|X_n - X| > 1/m) < \infty$ for every $m$, then for each $m$, a.e. $\omega$ eventually has $|X_n(\omega) - X(\omega)| \leq 1/m$. Taking the intersection over $m$ (a countable intersection of measure-one sets is measure one), $X_n \to X$ a.s. $\blacksquare$
+
+<Callout type="tip" title="Typical Application">
+  In the subsequence criterion proof (Lesson 3), we extracted a subsequence with $P(|X_{n_k} - X| > 2^{-k}) < 2^{-k}$. Since $\sum 2^{-k} < \infty$, the first BC lemma gives a.s. convergence of the subsequence. This is the standard technique: find a subsequence along which convergence is "fast enough" to sum.
+</Callout>
+
+## The Strong Law via Borel--Cantelli
+
+As a preview, the Borel--Cantelli framework is the key to proving the Strong Law of Large Numbers. Given i.i.d. $X_i$ with $E[X_i] = \mu$ and $E[X_i^4] < \infty$, one shows:
+
+$$\sum_{n=1}^\infty P\!\left(|\bar{X}_n - \mu| > \varepsilon\right) \leq \sum_{n=1}^\infty \frac{E[(\bar{X}_n - \mu)^4]}{\varepsilon^4} = \sum_{n=1}^\infty O(n^{-2}) < \infty.$$
+
+The fourth-moment bound gives the summability needed for BC1, which yields $\bar{X}_n \to \mu$ a.s. The full SLLN (under only $E[|X_i|] < \infty$) requires a more delicate truncation argument.
+
+## Counterexample: BC2 Fails Without Independence
+
+<Callout type="warning" title="Dependent Events with Divergent Sum">
+  Let $(\Omega, \mathcal{F}, P) = ([0,1], \mathcal{B}, \text{Leb})$ and define $A_n = [0, 1/2]$ for all $n$. Then:
+  - $P(A_n) = 1/2$ for all $n$, so $\sum P(A_n) = \infty$.
+  - $\{A_n \text{ i.o.}\} = [0, 1/2]$, so $P(A_n \text{ i.o.}) = 1/2$.
+
+  The conclusion of BC2 ($P = 1$) fails because the events are maximally dependent (identical).
+</Callout>
+
+A more subtle example: let $A_n = [0, 1/n]$. Then $\sum P(A_n) = \sum 1/n = \infty$, but $\{A_n \text{ i.o.}\} = \bigcap_{n} \bigcup_{k \geq n} [0, 1/k] = \{0\}$, which has measure 0. Here the events are not independent (they are nested), and BC2 fails dramatically.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 4.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `First and second Borel-Cantelli lemmas`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 4.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 4.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="Let $(A_n)$ be independent events with $P(A_n) = 1/n^2$. What is $P(A_n \\text{ i.o.})$?"
+  options={[
+    "0",
+    "1",
+    "$\\pi^2/6$",
+    "Cannot be determined"
+  ]}
+  correctIndex={0}
+  explanation="Since $\\sum P(A_n) = \\sum 1/n^2 = \\pi^2/6 < \\infty$, the first Borel--Cantelli lemma gives $P(A_n \\text{ i.o.}) = 0$. Independence is not needed for BC1; only summability matters."
+/>
+
+<Problem title="BC1 application to convergence">
+  Let $X_n$ be random variables with $P(|X_n| > n^{-1/3}) \leq 2/n^2$.
+
+  (a) Show that $X_n \to 0$ almost surely.
+
+  (b) Does $X_n \to 0$ in $L^1$? Give a proof or counterexample.
+</Problem>
+
+<Solution>
+  **(a)** For any $\varepsilon > 0$, choose $N$ large enough that $N^{-1/3} < \varepsilon$. For $n \geq N$:
+
+  $$P(|X_n| > \varepsilon) \leq P(|X_n| > n^{-1/3}) \leq \frac{2}{n^2}.$$
+
+  Since $\sum_{n=1}^\infty 2/n^2 < \infty$, BC1 gives $P(|X_n| > \varepsilon \text{ i.o.}) = 0$. Since this holds for every $\varepsilon > 0$ (take $\varepsilon = 1/m$ and intersect over $m$), we get $X_n \to 0$ a.s.
+
+  **(b)** Not necessarily. A.s. convergence does not imply $L^1$ convergence. For a counterexample: let $X_n = n \cdot \mathbf{1}_{B_n}$ where $B_n$ is an event with $P(B_n) = 1/n^3$. Then $P(|X_n| > n^{-1/3}) = P(B_n) = 1/n^3 \leq 2/n^2$ for large $n$, so part (a) applies and $X_n \to 0$ a.s. But $E[|X_n|] = n \cdot 1/n^3 = 1/n^2 \to 0$, so actually in this case $X_n \to 0$ in $L^1$. However, if we instead take $X_n = n^2 \cdot \mathbf{1}_{B_n}$ with $P(B_n) = 1/n^5$, then $P(|X_n| > n^{-1/3}) = 1/n^5 \leq 2/n^2$, so $X_n \to 0$ a.s. And $E[|X_n|] = n^2/n^5 = 1/n^3 \to 0$, still $L^1$. To actually break $L^1$: let $X_n = n^3 \cdot \mathbf{1}_{C_n}$ with $P(C_n) = 1/n^7$. Then $P(|X_n| > n^{-1/3}) \leq 1/n^7 \leq 2/n^2$, so a.s. convergence holds, and $E[|X_n|] = n^3/n^7 = 1/n^4 \to 0$. For a genuine counterexample, take $X_n = n^{5/2} \cdot \mathbf{1}_{D_n}$ with $P(D_n) = 2/n^2$ and the events chosen so $|X_n| > n^{-1/3}$ iff $D_n$ occurs. Then $E[|X_n|] = n^{5/2} \cdot 2/n^2 = 2n^{1/2} \to \infty$. So $L^1$ convergence fails while a.s. convergence holds. $\blacksquare$
+</Solution>
+
+<Problem title="Proving BC2 for a specific sequence">
+  Let $X_1, X_2, \ldots$ be independent with $X_n \sim \text{Bernoulli}(1/n)$. Define $S_n = \sum_{k=1}^n X_k$.
+
+  (a) Use the second Borel--Cantelli lemma to show $P(X_n = 1 \text{ i.o.}) = 1$.
+
+  (b) Conclude that $S_n \to \infty$ almost surely.
+
+  (c) Does $S_n/\log n$ converge to a limit almost surely? (State the result; no proof required.)
+</Problem>
+
+<Solution>
+  **(a)** Let $A_n = \{X_n = 1\}$. The events $(A_n)$ are independent (since the $X_n$ are independent) and $P(A_n) = 1/n$. Since $\sum 1/n = \infty$, BC2 gives $P(A_n \text{ i.o.}) = 1$.
+
+  **(b)** Since $X_n = 1$ infinitely often a.s., and $S_n$ increases by 1 each time $X_n = 1$, we have $S_n \to \infty$ a.s.
+
+  **(c)** Yes. Since $E[S_n] = \sum_{k=1}^n 1/k \sim \log n$ and $\operatorname{Var}(S_n) = \sum_{k=1}^n (1/k)(1 - 1/k) \sim \log n$, one can show $S_n / \log n \to 1$ a.s. by the Strong Law for triangular arrays (or by direct fourth-moment estimates and Borel--Cantelli). $\blacksquare$
+</Solution>
+
+<NumericInput
+  question="Let $A_n$ be independent events with $P(A_n) = 1/(n \\log^2 n)$ for $n \\geq 2$. Is $\\sum P(A_n)$ finite or infinite? If finite, give an approximate value to one decimal place. (The integral test gives $\\int_2^\\infty dx/(x \\log^2 x) = 1/\\log 2 \\approx 1.4$.)"
+  answer={1.4}
+  tolerance={0.2}
+  hint="By the integral test, $\\sum_{n=2}^\\infty 1/(n \\log^2 n)$ converges and is approximately $\\int_2^\\infty dx/(x \\log^2 x) = [-1/\\log x]_2^\\infty = 1/\\log 2 \\approx 1.443$. Since the sum is finite, BC1 gives $P(A_n \\text{ i.o.}) = 0$."
+/>

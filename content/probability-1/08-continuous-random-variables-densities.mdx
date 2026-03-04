@@ -1,0 +1,190 @@
+---
+title: "Continuous Random Variables and Densities"
+description: "Probability density functions, the CDF-PDF relationship, and expectation via integration"
+order: 8
+milestone: "M4"
+prerequisites: ["07-core-discrete-distributions"]
+---
+
+# Continuous Random Variables and Densities
+
+We now move from the discrete setting to the continuous one. The key conceptual shift: for a continuous random variable, the probability of any single point is zero. Probabilities are computed by integrating a *density function*, not by summing a mass function.
+
+## Lesson Objectives (Max Rigor)
+
+- Move between CDF/PDF/integral formulations with full endpoint and regularity control.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M4 -- Distribution library`
+- **Gate theorem:** `Memoryless property; Poisson as a limit`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Why P(X = x) = 0
+
+<Callout type="theorem">
+**Theorem 8.1.** If $X$ is a continuous random variable (i.e., its CDF $F$ is continuous), then $P(X = x) = 0$ for every $x \in \mathbb{R}$.
+
+*Proof.* For any $x$, $P(X = x) = P(X \leq x) - P(X < x) = F(x) - \lim_{t \to x^-} F(t)$. Since $F$ is continuous, this limit equals $F(x)$, so $P(X = x) = 0$. $\blacksquare$
+</Callout>
+
+This means $P(a \leq X \leq b) = P(a < X < b)$ for continuous random variables -- the endpoints do not matter.
+
+## Probability Density Functions
+
+<Callout type="definition">
+**Definition 8.2 (PDF).** A random variable $X$ is **continuous** with **probability density function** $f : \mathbb{R} \to [0, \infty)$ if for all $a \leq b$:
+
+$$P(a \leq X \leq b) = \int_a^b f(x)\,dx.$$
+
+A valid PDF must satisfy: (i) $f(x) \geq 0$ for all $x$, and (ii) $\int_{-\infty}^{\infty} f(x)\,dx = 1$.
+</Callout>
+
+<Callout type="warning">
+**Density is not probability.** The value $f(x)$ is *not* $P(X = x)$ (which is zero). Instead, $f(x)\,dx$ represents the infinitesimal probability that $X$ falls in a tiny interval of width $dx$ around $x$. It is possible for $f(x) > 1$ at some points.
+</Callout>
+
+## The CDF--PDF Relationship
+
+<Callout type="definition">
+**Definition 8.3 (CDF).** The **cumulative distribution function** of $X$ is $F(x) = P(X \leq x)$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 8.4 (CDF--PDF Correspondence).** If $X$ has PDF $f$ that is continuous at $x$, then the CDF $F(x) = \int_{-\infty}^x f(t)\,dt$ is differentiable at $x$ and
+
+$$F'(x) = f(x).$$
+
+*Proof.* By the Fundamental Theorem of Calculus: if $F(x) = \int_{-\infty}^x f(t)\,dt$ and $f$ is continuous at $x$, then $F'(x) = f(x)$. $\blacksquare$
+</Callout>
+
+This gives us two equivalent descriptions: specify the PDF and integrate to get the CDF, or specify the CDF and differentiate to recover the PDF.
+
+## Expectation and LOTUS
+
+<Callout type="definition">
+**Definition 8.5 (Expectation, Continuous Case).** If $X$ has PDF $f$, then
+
+$$E[X] = \int_{-\infty}^{\infty} x\, f(x)\,dx,$$
+
+provided the integral converges absolutely.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 8.6 (LOTUS -- Law of the Unconscious Statistician).** If $X$ has PDF $f$ and $g : \mathbb{R} \to \mathbb{R}$ is measurable, then
+
+$$E[g(X)] = \int_{-\infty}^{\infty} g(x)\, f(x)\,dx.$$
+</Callout>
+
+LOTUS is powerful: we compute $E[g(X)]$ directly from the density of $X$, without needing the distribution of $g(X)$.
+
+## The Uniform Distribution
+
+<Callout type="definition">
+**Definition 8.7.** $X \sim \text{Uniform}(a, b)$ has PDF $f(x) = \frac{1}{b-a}$ for $x \in [a, b]$ and $0$ otherwise.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 8.8 (Uniform Moments).**
+
+$$E[X] = \frac{a+b}{2}, \qquad \text{Var}(X) = \frac{(b-a)^2}{12}.$$
+
+*Proof.* $E[X] = \int_a^b \frac{x}{b-a}\,dx = \frac{1}{b-a}\cdot\frac{b^2 - a^2}{2} = \frac{a+b}{2}$.
+
+$E[X^2] = \int_a^b \frac{x^2}{b-a}\,dx = \frac{1}{b-a}\cdot\frac{b^3 - a^3}{3} = \frac{a^2 + ab + b^2}{3}$.
+
+$\text{Var}(X) = E[X^2] - (E[X])^2 = \frac{a^2 + ab + b^2}{3} - \frac{(a+b)^2}{4} = \frac{4(a^2 + ab + b^2) - 3(a^2 + 2ab + b^2)}{12} = \frac{a^2 - 2ab + b^2}{12} = \frac{(b-a)^2}{12}. \quad \blacksquare$
+</Callout>
+
+## The Exponential Distribution
+
+<Callout type="definition">
+**Definition 8.9.** $X \sim \text{Exponential}(\lambda)$ for $\lambda > 0$ has PDF $f(x) = \lambda e^{-\lambda x}$ for $x \geq 0$ and $0$ for $x < 0$.
+</Callout>
+
+*Verification.* $\int_0^{\infty} \lambda e^{-\lambda x}\,dx = \left[-e^{-\lambda x}\right]_0^{\infty} = 0 - (-1) = 1$. $\checkmark$
+
+The CDF is $F(x) = 1 - e^{-\lambda x}$ for $x \geq 0$.
+
+<Callout type="theorem">
+**Theorem 8.10 (Exponential Moments).**
+
+$$E[X] = \frac{1}{\lambda}, \qquad \text{Var}(X) = \frac{1}{\lambda^2}.$$
+
+*Proof.* Integration by parts with $u = x$, $dv = \lambda e^{-\lambda x}dx$:
+
+$$E[X] = \int_0^{\infty} x \lambda e^{-\lambda x}\,dx = \left[-x e^{-\lambda x}\right]_0^{\infty} + \int_0^{\infty} e^{-\lambda x}\,dx = 0 + \frac{1}{\lambda} = \frac{1}{\lambda}.$$
+
+Similarly, $E[X^2] = \int_0^{\infty} x^2 \lambda e^{-\lambda x}\,dx = \frac{2}{\lambda^2}$ (by applying integration by parts twice). So $\text{Var}(X) = \frac{2}{\lambda^2} - \frac{1}{\lambda^2} = \frac{1}{\lambda^2}$. $\blacksquare$
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 8.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Memoryless property; Poisson as a limit`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 8.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 8.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question={"If X has PDF f(x) = 3x^2 for x in [0,1] and 0 otherwise, what is P(X > 1/2)?"}
+  options={[
+    "1/2",
+    "3/4",
+    "7/8",
+    "1/8"
+  ]}
+  correctIndex={2}
+  explanation={"P(X > 1/2) = integral from 1/2 to 1 of 3x^2 dx = [x^3] from 1/2 to 1 = 1 - 1/8 = 7/8."}
+/>
+
+<NumericInput
+  question={"Let X ~ Uniform(0, 6). Compute Var(X)."}
+  answer={3}
+  tolerance={0.01}
+  hint={"Use the formula Var(X) = (b-a)^2/12 with a=0, b=6."}
+/>
+
+<Problem>
+**Exercise 8.1.** Let $X$ have PDF $f(x) = 2x$ for $x \in [0,1]$ and $0$ otherwise. Compute $E[X]$ and $\text{Var}(X)$.
+</Problem>
+
+<Solution>
+$E[X] = \int_0^1 x \cdot 2x\,dx = 2\int_0^1 x^2\,dx = 2 \cdot \frac{1}{3} = \frac{2}{3}$.
+
+$E[X^2] = \int_0^1 x^2 \cdot 2x\,dx = 2\int_0^1 x^3\,dx = 2 \cdot \frac{1}{4} = \frac{1}{2}$.
+
+$\text{Var}(X) = E[X^2] - (E[X])^2 = \frac{1}{2} - \frac{4}{9} = \frac{9 - 8}{18} = \frac{1}{18}$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 8.2.** Let $X \sim \text{Exponential}(\lambda)$. Using the CDF, derive $P(X > t) = e^{-\lambda t}$ and then compute $P(1 < X < 3)$ for $\lambda = 2$.
+</Problem>
+
+<Solution>
+$P(X > t) = 1 - F(t) = 1 - (1 - e^{-\lambda t}) = e^{-\lambda t}$.
+
+$P(1 < X < 3) = P(X > 1) - P(X > 3) = e^{-2} - e^{-6} \approx 0.1353 - 0.0025 = 0.1329$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 8.3.** Explain carefully why $f(x) > 1$ does not violate the definition of a PDF. Give a concrete example of a valid PDF with $\sup f > 1$.
+</Problem>
+
+<Solution>
+A PDF need only satisfy $f(x) \geq 0$ and $\int_{-\infty}^{\infty} f(x)\,dx = 1$. There is no requirement that $f(x) \leq 1$, because $f(x)$ is a *density*, not a probability. Only $\int_a^b f(x)\,dx$ (which is a probability) must lie in $[0,1]$.
+
+**Example:** $X \sim \text{Uniform}(0, 1/3)$ has PDF $f(x) = 3$ on $[0, 1/3]$. Here $f(x) = 3 > 1$ everywhere on the support, yet $\int_0^{1/3} 3\,dx = 1$. The function $f$ assigns high density to a narrow interval, which is perfectly valid. $\blacksquare$
+</Solution>

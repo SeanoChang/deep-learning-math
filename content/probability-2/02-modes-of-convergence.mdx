@@ -1,0 +1,220 @@
+---
+title: "Modes of Convergence"
+description: "Almost sure convergence, convergence in probability, in distribution, and L^p convergence — definitions and first implications"
+order: 2
+milestone: "M1"
+prerequisites: ["01-review-structure"]
+---
+
+# Modes of Convergence
+
+Random variables live in a richer world than real numbers. A sequence of reals either converges or it does not, but a sequence of random variables can converge in multiple distinct senses. Understanding these modes -- their definitions, quantifier structures, and logical relationships -- is the foundation of asymptotic probability theory.
+
+## Lesson Objectives (Max Rigor)
+
+- State convergence modes with exact quantifier order and prove first implications.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M1 -- Convergence theory`
+- **Gate theorem:** `Full implication chain with counterexample suite`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Almost Sure Convergence
+
+<Callout type="definition" title="Almost Sure Convergence">
+  A sequence $(X_n)$ **converges almost surely** (a.s.) to $X$ if
+  $$P\!\left(\omega \in \Omega : X_n(\omega) \to X(\omega)\right) = 1.$$
+  Equivalently, $P\!\left(\omega : \lim_{n\to\infty} X_n(\omega) = X(\omega)\right) = 1$.
+  Written: $X_n \xrightarrow{\text{a.s.}} X$.
+</Callout>
+
+**Quantifier structure.** Unraveling the limit, $X_n(\omega) \to X(\omega)$ means: for every $\varepsilon > 0$, there exists $N(\omega, \varepsilon)$ such that $|X_n(\omega) - X(\omega)| < \varepsilon$ for all $n \geq N$. The full statement is:
+
+$$P\!\left(\forall \varepsilon > 0,\; \exists N \in \mathbb{N},\; \forall n \geq N : |X_n - X| < \varepsilon\right) = 1.$$
+
+The set where convergence fails, $\{\omega : X_n(\omega) \not\to X(\omega)\}$, is a null set.
+
+<Callout type="tip" title="Equivalent Characterization">
+  $X_n \xrightarrow{\text{a.s.}} X$ if and only if for every $\varepsilon > 0$:
+  $$P\!\left(\sup_{k \geq n} |X_k - X| > \varepsilon\right) \to 0 \quad \text{as } n \to \infty.$$
+  This "tail sup" formulation is often easier to work with in proofs.
+</Callout>
+
+## Convergence in Probability
+
+<Callout type="definition" title="Convergence in Probability">
+  $(X_n)$ **converges in probability** to $X$ if for every $\varepsilon > 0$:
+  $$P(|X_n - X| > \varepsilon) \to 0 \quad \text{as } n \to \infty.$$
+  Written: $X_n \xrightarrow{P} X$.
+</Callout>
+
+**Quantifier structure:**
+
+$$\forall \varepsilon > 0,\; \forall \delta > 0,\; \exists N \in \mathbb{N},\; \forall n \geq N : P(|X_n - X| > \varepsilon) < \delta.$$
+
+Compare with a.s. convergence: in probability, we control the *probability* of a large deviation at each fixed time $n$. Almost sure convergence controls the *entire tail* of the sequence simultaneously, for almost every $\omega$.
+
+## Convergence in Distribution
+
+<Callout type="definition" title="Convergence in Distribution">
+  $(X_n)$ **converges in distribution** to $X$ if
+  $$F_{X_n}(x) \to F_X(x) \quad \text{as } n \to \infty$$
+  at every point $x$ where $F_X$ is continuous. Written: $X_n \xrightarrow{d} X$.
+</Callout>
+
+This is the weakest mode. It says only that the *CDFs* converge, not the random variables themselves. Indeed, $X_n \xrightarrow{d} X$ depends only on the distributions of $X_n$ and $X$; the random variables need not be defined on the same probability space.
+
+## $L^p$ Convergence
+
+<Callout type="definition" title="$L^p$ Convergence">
+  For $p \geq 1$, $(X_n)$ **converges in $L^p$** to $X$ if
+  $$E[|X_n - X|^p] \to 0 \quad \text{as } n \to \infty.$$
+  Written: $X_n \xrightarrow{L^p} X$. The case $p = 2$ is **mean-square convergence**.
+</Callout>
+
+$L^p$ convergence requires all random variables to live on the same probability space and to have finite $p$-th moments.
+
+## First Implications
+
+### Almost Sure Implies In Probability
+
+<Callout type="theorem" title="a.s. Convergence Implies Convergence in Probability">
+  If $X_n \xrightarrow{\text{a.s.}} X$, then $X_n \xrightarrow{P} X$.
+</Callout>
+
+**Proof.** For fixed $\varepsilon > 0$, define $A_n = \{|X_n - X| > \varepsilon\}$ and $B_n = \sup_{k \geq n}|X_k - X| > \varepsilon$. Then $A_n \subseteq B_n$ (the event at time $n$ is contained in the tail event), so $P(A_n) \leq P(B_n)$.
+
+Now $B_1 \supseteq B_2 \supseteq \cdots$ is a decreasing sequence of events with
+
+$$\bigcap_{n=1}^\infty B_n = \left\{\sup_{k \geq n}|X_k - X| > \varepsilon \text{ for all } n\right\} \subseteq \{X_n \not\to X\}.$$
+
+Since $X_n \xrightarrow{\text{a.s.}} X$, we have $P(\{X_n \not\to X\}) = 0$, so $P(\bigcap B_n) = 0$. By continuity of probability from above, $P(B_n) \to 0$. Since $P(A_n) \leq P(B_n)$, we conclude $P(|X_n - X| > \varepsilon) \to 0$. $\blacksquare$
+
+### In Probability Implies In Distribution
+
+<Callout type="theorem" title="Convergence in Probability Implies Convergence in Distribution">
+  If $X_n \xrightarrow{P} X$, then $X_n \xrightarrow{d} X$.
+</Callout>
+
+**Proof.** Let $x$ be a continuity point of $F_X$. For any $\varepsilon > 0$:
+
+$$F_{X_n}(x) = P(X_n \leq x) \leq P(X \leq x + \varepsilon) + P(|X_n - X| > \varepsilon) = F_X(x + \varepsilon) + P(|X_n - X| > \varepsilon).$$
+
+Similarly, $F_{X_n}(x) \geq F_X(x - \varepsilon) - P(|X_n - X| > \varepsilon)$. Taking $n \to \infty$:
+
+$$F_X(x - \varepsilon) \leq \liminf F_{X_n}(x) \leq \limsup F_{X_n}(x) \leq F_X(x + \varepsilon).$$
+
+Since $x$ is a continuity point of $F_X$, letting $\varepsilon \to 0$ gives $F_X(x) \leq \liminf F_{X_n}(x) \leq \limsup F_{X_n}(x) \leq F_X(x)$. $\blacksquare$
+
+### $L^p$ Implies In Probability (via Markov)
+
+<Callout type="theorem" title="$L^p$ Convergence Implies Convergence in Probability">
+  If $X_n \xrightarrow{L^p} X$ for some $p \geq 1$, then $X_n \xrightarrow{P} X$.
+</Callout>
+
+**Proof.** By Markov's inequality applied to the nonnegative random variable $|X_n - X|^p$:
+
+$$P(|X_n - X| > \varepsilon) = P(|X_n - X|^p > \varepsilon^p) \leq \frac{E[|X_n - X|^p]}{\varepsilon^p} \to 0. \quad \blacksquare$$
+
+## Counterexample: a.s. Does NOT Imply $L^1$
+
+<Callout type="warning" title="Almost Sure Convergence Does Not Imply $L^1$">
+  Almost sure convergence does not imply $L^1$ convergence, even for nonnegative random variables.
+</Callout>
+
+**Example.** Let $\Omega = [0,1]$ with Lebesgue measure. Define $X_n(\omega) = n \cdot \mathbf{1}_{[0, 1/n]}(\omega)$.
+
+- **Pointwise (a.s.) limit:** For any $\omega \in (0,1]$, once $n > 1/\omega$ we have $X_n(\omega) = 0$. At $\omega = 0$, $X_n(0) = n \to \infty$, but $\{0\}$ has measure zero. So $X_n \xrightarrow{\text{a.s.}} 0$.
+
+- **$L^1$ convergence fails:** $E[|X_n - 0|] = E[X_n] = n \cdot (1/n) = 1 \not\to 0$.
+
+The mass "escapes to infinity" -- $X_n$ concentrates on a shrinking set but with compensatingly large values. This is the prototypical failure mode: convergence of values without convergence of integrals.
+
+## Summary of Implications (So Far)
+
+$$L^p \implies \text{in probability} \implies \text{in distribution}$$
+$$\text{a.s.} \implies \text{in probability} \implies \text{in distribution}$$
+
+No other implications hold in general. The next lesson completes the picture with counterexamples for every missing arrow and tools for upgrading convergence.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 2.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Full implication chain with counterexample suite`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 2.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 2.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="Which mode of convergence does NOT require the random variables to be defined on the same probability space?"
+  options={[
+    "Almost sure convergence",
+    "$L^2$ convergence",
+    "Convergence in distribution",
+    "Convergence in probability"
+  ]}
+  correctIndex={2}
+  explanation="Convergence in distribution depends only on the CDFs $F_{X_n}$ and $F_X$, not on any joint coupling of the random variables. All other modes require $X_n$ and $X$ to be defined on a common probability space so that expressions like $|X_n(\\omega) - X(\\omega)|$ are meaningful."
+/>
+
+<Problem title="Quantifier precision">
+  Write the formal negation of each definition:
+
+  (a) $X_n \xrightarrow{\text{a.s.}} X$ (negation: $X_n$ does NOT converge a.s. to $X$).
+
+  (b) $X_n \xrightarrow{P} X$ (negation: $X_n$ does NOT converge in probability to $X$).
+
+  Use explicit quantifiers ($\forall$, $\exists$) and explain why the negation of a.s. convergence is strictly stronger than the negation of convergence in probability.
+</Problem>
+
+<Solution>
+  **(a)** $X_n \xrightarrow{\text{a.s.}} X$ means $P(\{\omega : \forall \varepsilon > 0,\, \exists N,\, \forall n \geq N,\, |X_n(\omega) - X(\omega)| < \varepsilon\}) = 1$. Its negation is:
+
+  $$P\!\left(\exists \varepsilon > 0,\; \forall N \in \mathbb{N},\; \exists n \geq N : |X_n - X| \geq \varepsilon\right) > 0.$$
+
+  That is, there is a set of positive probability on which $X_n(\omega)$ does not converge to $X(\omega)$.
+
+  **(b)** $X_n \xrightarrow{P} X$ means $\forall \varepsilon > 0,\, P(|X_n - X| > \varepsilon) \to 0$. Its negation is:
+
+  $$\exists \varepsilon > 0,\; \exists \delta > 0,\; \forall N \in \mathbb{N},\; \exists n \geq N : P(|X_n - X| > \varepsilon) \geq \delta.$$
+
+  The negation of a.s. convergence says the *bad set* (where sample paths fail to converge) has positive measure, but each individual $P(|X_n - X| > \varepsilon)$ could still go to zero -- the failures can be spread across different $\omega$ values at different times. The negation of convergence in probability requires the *probability of a deviation* to stay bounded away from zero along a subsequence, which is a stronger failure. This reflects the fact that a.s. convergence is stronger than convergence in probability. $\blacksquare$
+</Solution>
+
+<Problem title="Escaping mass in $L^p$">
+  On $(\Omega, \mathcal{F}, P) = ([0,1], \mathcal{B}_{[0,1]}, \text{Leb})$, define $X_n = n^{1/p} \cdot \mathbf{1}_{[0, 1/n]}$ for $p \geq 1$.
+
+  (a) Show $X_n \xrightarrow{\text{a.s.}} 0$.
+
+  (b) Compute $E[|X_n|^p]$ and determine whether $X_n \xrightarrow{L^p} 0$.
+
+  (c) For what values of $\alpha$ does $Y_n = n^\alpha \cdot \mathbf{1}_{[0,1/n]}$ satisfy $Y_n \xrightarrow{L^p} 0$?
+</Problem>
+
+<Solution>
+  **(a)** For any fixed $\omega \in (0,1]$, once $n > 1/\omega$ we have $\omega \notin [0, 1/n]$, so $X_n(\omega) = 0$ for all large $n$. At $\omega = 0$, $X_n(0) = n^{1/p} \to \infty$, but $P(\{0\}) = 0$. So $X_n \to 0$ a.s.
+
+  **(b)** $E[|X_n|^p] = (n^{1/p})^p \cdot P([0, 1/n]) = n \cdot (1/n) = 1$ for all $n$. Since $E[|X_n|^p] = 1 \not\to 0$, we have $X_n \not\xrightarrow{L^p} 0$.
+
+  **(c)** $E[|Y_n|^p] = n^{\alpha p} \cdot (1/n) = n^{\alpha p - 1}$. This converges to 0 if and only if $\alpha p - 1 < 0$, i.e., $\alpha < 1/p$. So $Y_n \xrightarrow{L^p} 0$ if and only if $\alpha < 1/p$. $\blacksquare$
+</Solution>
+
+<NumericInput
+  question="Let $X_n = n^2 \\cdot \\mathbf{1}_{[0, 1/n^3]}$ on $([0,1], \\text{Leb})$. What is $E[X_n]$? (This determines whether $X_n \\to 0$ in $L^1$.)"
+  answer={0}
+  tolerance={0.01}
+  hint="$E[X_n] = n^2 \\cdot (1/n^3) = 1/n \\to 0$. So yes, $X_n \\to 0$ in $L^1$ despite the spike height growing to infinity."
+/>

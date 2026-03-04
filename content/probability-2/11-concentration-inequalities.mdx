@@ -1,0 +1,171 @@
+---
+title: "Concentration Inequalities"
+description: "Chernoff bounds, sub-Gaussian random variables, Hoeffding's inequality, and exponential vs polynomial tail decay"
+order: 11
+milestone: "M6"
+prerequisites: ["10-markov-chains-convergence"]
+---
+
+# Concentration Inequalities
+
+Markov and Chebyshev give polynomial tail decay: $P(|X - \mu| \geq t) \leq \sigma^2/t^2$. When we exploit the **moment generating function**, we unlock exponentially decaying bounds that are vastly sharper for large deviations.
+
+## Lesson Objectives (Max Rigor)
+
+- Derive exponential-tail concentration bounds from transform methods.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M6 -- Concentration`
+- **Gate theorem:** `Chernoff bound`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Chernoff Bound Method
+
+The key idea is deceptively simple: for any $\theta > 0$, the event $\{X \geq t\}$ equals $\{e^{\theta X} \geq e^{\theta t}\}$, and we apply Markov to the nonneg RV $e^{\theta X}$.
+
+<Callout type="theorem" title="Theorem 11.1 (Chernoff Bound)">
+Let $X$ be a random variable whose MGF $M_X(\theta) = E[e^{\theta X}]$ exists in a neighborhood of $0$. Then for any $t \in \mathbb{R}$:
+
+$$P(X \geq t) \leq \inf_{\theta > 0} e^{-\theta t} M_X(\theta).$$
+</Callout>
+
+*Proof.* Fix $\theta > 0$. Since $x \mapsto e^{\theta x}$ is strictly increasing, $\{X \geq t\} = \{e^{\theta X} \geq e^{\theta t}\}$. By Markov's inequality applied to the nonnegative random variable $e^{\theta X}$:
+
+$$P(X \geq t) = P(e^{\theta X} \geq e^{\theta t}) \leq \frac{E[e^{\theta X}]}{e^{\theta t}} = e^{-\theta t} M_X(\theta).$$
+
+Since this holds for every $\theta > 0$, taking the infimum over $\theta > 0$ yields the result. $\square$
+
+<Callout type="tip" title="Why This Works So Well">
+The exponential function amplifies large deviations. While Markov on $X$ gives $P(X \geq t) \leq E[X]/t$ (polynomial in $1/t$), Markov on $e^{\theta X}$ gives exponential decay in $t$ whenever the MGF is finite.
+</Callout>
+
+## Sub-Gaussian Random Variables
+
+The class of sub-Gaussian random variables captures precisely those distributions whose tails decay at least as fast as a Gaussian.
+
+<Callout type="definition" title="Definition 11.2 (Sub-Gaussian)">
+A centered random variable $X$ (with $E[X] = 0$) is **sub-Gaussian with parameter $\sigma$** if for all $\theta \in \mathbb{R}$:
+
+$$E[e^{\theta X}] \leq e^{\sigma^2 \theta^2 / 2}.$$
+</Callout>
+
+Any bounded centered random variable is sub-Gaussian. The Gaussian $N(0, \sigma^2)$ is sub-Gaussian with parameter $\sigma$ (the bound is tight). If $X$ is sub-Gaussian with parameter $\sigma$, the Chernoff method immediately gives:
+
+$$P(X \geq t) \leq \inf_{\theta > 0} e^{-\theta t + \sigma^2 \theta^2 / 2}.$$
+
+Minimizing over $\theta$: set $d/d\theta(-\theta t + \sigma^2\theta^2/2) = -t + \sigma^2\theta = 0$, so $\theta^* = t/\sigma^2$, yielding:
+
+$$P(X \geq t) \leq e^{-t^2/(2\sigma^2)}.$$
+
+This is the hallmark **Gaussian tail bound**.
+
+## Hoeffding's Lemma and Inequality
+
+<Callout type="theorem" title="Lemma 11.3 (Hoeffding's Lemma)">
+Let $X$ be a random variable with $E[X] = 0$ and $a \leq X \leq b$ almost surely. Then for all $\theta \in \mathbb{R}$:
+
+$$E[e^{\theta X}] \leq \exp\!\left(\frac{\theta^2(b-a)^2}{8}\right).$$
+
+That is, $X$ is sub-Gaussian with parameter $(b-a)/2$.
+</Callout>
+
+*Proof.* Since $a \leq X \leq b$, we can write $X = \alpha b + (1-\alpha)a$ where $\alpha = (X - a)/(b - a) \in [0,1]$. By convexity of $e^{\theta x}$:
+
+$$e^{\theta X} \leq \frac{X - a}{b - a} e^{\theta b} + \frac{b - X}{b - a} e^{\theta a}.$$
+
+Taking expectations and using $E[X] = 0$:
+
+$$E[e^{\theta X}] \leq \frac{-a}{b-a} e^{\theta b} + \frac{b}{b-a} e^{\theta a}.$$
+
+Let $u = \theta(b-a)$, $p = -a/(b-a)$. Then the right side equals $e^{-pu}(1 - p + pe^u)$. Define $\varphi(u) = -pu + \ln(1 - p + pe^u)$. We have $\varphi(0) = 0$, $\varphi'(0) = 0$, and $\varphi''(u) \leq 1/4$ for all $u$ (since the variance of a Bernoulli$(p)$ is maximized at $p = 1/2$). By Taylor's theorem with remainder: $\varphi(u) \leq u^2/8$. Exponentiating gives the result. $\square$
+
+<Callout type="theorem" title="Theorem 11.4 (Hoeffding's Inequality)">
+Let $X_1, \ldots, X_n$ be independent random variables with $a_i \leq X_i \leq b_i$ a.s. Let $S_n = \sum_{i=1}^n X_i$. Then for any $t > 0$:
+
+$$P(S_n - E[S_n] \geq t) \leq \exp\!\left(-\frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}\right).$$
+</Callout>
+
+*Proof.* Let $Y_i = X_i - E[X_i]$, so $E[Y_i] = 0$ and $Y_i \in [a_i - E[X_i],\, b_i - E[X_i]]$, an interval of length $b_i - a_i$. By the Chernoff method, for $\theta > 0$:
+
+$$P(S_n - E[S_n] \geq t) = P\!\left(\sum_i Y_i \geq t\right) \leq e^{-\theta t}\, E\!\left[e^{\theta \sum_i Y_i}\right].$$
+
+By independence, $E[e^{\theta \sum Y_i}] = \prod_i E[e^{\theta Y_i}]$. Applying Hoeffding's Lemma to each factor:
+
+$$\prod_{i=1}^n E[e^{\theta Y_i}] \leq \prod_{i=1}^n \exp\!\left(\frac{\theta^2(b_i - a_i)^2}{8}\right) = \exp\!\left(\frac{\theta^2}{8}\sum_{i=1}^n(b_i-a_i)^2\right).$$
+
+Combining: $P(S_n - E[S_n] \geq t) \leq \exp\!\bigl(-\theta t + \frac{\theta^2}{8}\sum(b_i - a_i)^2\bigr)$. Optimizing over $\theta$ gives $\theta^* = 4t / \sum(b_i - a_i)^2$, and substituting yields the result. $\square$
+
+## Exponential vs Polynomial Tail Decay
+
+For $X_1, \ldots, X_n$ iid with mean $\mu$, $X_i \in [a, b]$, consider $\bar{X}_n = S_n/n$:
+
+| Inequality | Bound on $P(\bar{X}_n - \mu \geq \varepsilon)$ | Decay in $n$ |
+|---|---|---|
+| Chebyshev | $\sigma^2 / (n\varepsilon^2)$ | $O(1/n)$ |
+| Hoeffding | $\exp(-2n\varepsilon^2/(b-a)^2)$ | $O(e^{-cn})$ |
+
+For $n = 100$, $\varepsilon = 0.1$, $(b-a) = 1$: Chebyshev gives $\leq 0.25/1 = 0.25$ (using $\sigma^2 \leq 1/4$), while Hoeffding gives $\leq e^{-2} \approx 0.135$. For $n = 1000$: Chebyshev gives $\leq 0.025$, Hoeffding gives $\leq e^{-20} \approx 2 \times 10^{-9}$. The exponential bound becomes astronomically tighter.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 11.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Chernoff bound`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 11.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 11.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 11.1: Chernoff for Poisson">
+Let $X \sim \text{Poisson}(\lambda)$. Using the MGF $M_X(\theta) = e^{\lambda(e^\theta - 1)}$, derive the Chernoff bound $P(X \geq t) \leq e^{-\lambda} (e\lambda/t)^t$ for $t > \lambda$.
+
+<Solution>
+By the Chernoff method: $P(X \geq t) \leq e^{-\theta t} M_X(\theta) = e^{-\theta t + \lambda(e^\theta - 1)}$. Let $f(\theta) = -\theta t + \lambda(e^\theta - 1)$. Setting $f'(\theta) = -t + \lambda e^\theta = 0$ gives $\theta^* = \ln(t/\lambda)$ (valid since $t > \lambda$ ensures $\theta^* > 0$). Substituting:
+
+$$f(\theta^*) = -t\ln(t/\lambda) + \lambda(t/\lambda - 1) = -t\ln(t/\lambda) + t - \lambda = t(1 - \ln(t/\lambda)) - \lambda.$$
+
+Exponentiating: $P(X \geq t) \leq e^{t - \lambda} \cdot (t/\lambda)^{-t} = e^{-\lambda} \cdot e^t \cdot (\lambda/t)^t = e^{-\lambda}(e\lambda/t)^t$.
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which of the following random variables is NOT sub-Gaussian?"
+  options={[
+    "A standard normal $N(0,1)$",
+    "A uniform random variable on $[-1, 1]$",
+    "A Cauchy random variable",
+    "A Rademacher random variable ($\\pm 1$ with equal probability)"
+  ]}
+  correctIndex={2}
+  explanation="The Cauchy distribution has no finite moments (not even a mean), so its MGF does not exist in any neighborhood of 0. Sub-Gaussianity requires finite MGF, which the Cauchy violates. The other three are all bounded or Gaussian, hence sub-Gaussian."
+/>
+
+<Problem title="Exercise 11.3: Hoeffding for Polling">
+A poll samples $n$ voters independently, each responding $X_i \in \{0, 1\}$ with $P(X_i = 1) = p$. Using Hoeffding's inequality, find the minimum $n$ such that $P(|\bar{X}_n - p| \geq 0.03) \leq 0.05$.
+
+<Solution>
+By Hoeffding (two-sided version, using a union bound or applying the one-sided bound to $\pm$):
+
+$$P(|\bar{X}_n - p| \geq 0.03) \leq 2\exp\!\left(-\frac{2n(0.03)^2}{1^2}\right) = 2e^{-0.0018n}.$$
+
+We need $2e^{-0.0018n} \leq 0.05$, so $e^{-0.0018n} \leq 0.025$, giving $n \geq \ln(40)/0.0018 \approx 3.689/0.0018 \approx 2050$. We need $n \geq 2050$ voters. Note this bound is universal in $p$ -- it does not depend on the unknown true proportion.
+</Solution>
+</Problem>
+
+<NumericInput
+  question="Let $X_1, \\ldots, X_{100}$ be iid Uniform$[0,1]$. Using Hoeffding's inequality, compute the upper bound on $P(\\bar{X}_{100} \\geq 0.6)$. Give your answer rounded to 4 decimal places."
+  answer={0.1353}
+  tolerance={0.001}
+  hint="Here $E[\\bar{X}] = 0.5$, $b - a = 1$, $t = n \\cdot 0.1 = 10$. Apply Hoeffding with $\\sum (b_i - a_i)^2 = 100$."
+/>

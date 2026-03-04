@@ -1,0 +1,172 @@
+---
+title: "Review Through Structure: What Probability I Built"
+description: "Revisiting random variables, expectation as integration, the layer-cake formula, and previewing the semester's generalization program"
+order: 1
+milestone: "M1"
+prerequisites: []
+---
+
+# Review Through Structure: What Probability I Built
+
+Probability II is not a continuation of computational recipes. It is a shift from *computing* probabilities and expectations to *understanding the structural architecture* underneath them. In this opening lesson we revisit four views from a first course, recast expectation as integration, prove the layer-cake formula, stress-test the Weak Law of Large Numbers, and preview the convergence questions that drive this entire course.
+
+## Lesson Objectives (Max Rigor)
+
+- Recast Probability I results in measure-theoretic language and identify their limits.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M1 -- Convergence theory`
+- **Gate theorem:** `Full implication chain with counterexample suite`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Four Views from Probability I
+
+A first course implicitly works at four levels of abstraction:
+
+1. **Sample-space view.** A probability space $(\Omega, \mathcal{F}, P)$ assigns measures to events.
+2. **Random-variable view.** A random variable $X : \Omega \to \mathbb{R}$ is a measurable function; its distribution $\mu_X = P \circ X^{-1}$ captures everything needed for computations involving $X$ alone.
+3. **Computational view.** Expectation, variance, MGFs, and characteristic functions are tools for extracting numbers from distributions.
+4. **Structural view.** Theorems like the Law of Large Numbers and the Central Limit Theorem describe the *behavior of sequences* of random variables, not individual ones.
+
+This course lives at level 4. To get there rigorously we need to sharpen level 3.
+
+## Expectation as Integration
+
+<Callout type="definition" title="Expectation (Lebesgue Integral)">
+  Let $X$ be a random variable on $(\Omega, \mathcal{F}, P)$. The **expectation** of $X$ is the Lebesgue integral
+  $$E[X] = \int_\Omega X \, dP,$$
+  whenever this integral is well-defined (i.e., $E[|X|] < \infty$).
+</Callout>
+
+For nonneg simple functions $X = \sum_{i=1}^n a_i \mathbf{1}_{A_i}$, this reduces to $E[X] = \sum a_i P(A_i)$. The general definition extends by monotone limits of simple functions. All the properties you know -- linearity, monotonicity, $E[X] \geq 0$ when $X \geq 0$ -- are consequences of the corresponding properties of the Lebesgue integral.
+
+<Callout type="tip" title="Why Lebesgue?">
+  The Riemann integral cannot handle limits of functions well enough for probability. The Lebesgue integral, built on measure theory, gives us the Monotone Convergence Theorem and Dominated Convergence Theorem -- the engines behind almost every limit theorem in this course.
+</Callout>
+
+## The Layer-Cake Formula
+
+<Callout type="theorem" title="Layer-Cake Representation">
+  Let $X \geq 0$ be a nonnegative random variable. Then
+  $$E[X] = \int_0^\infty P(X > t) \, dt.$$
+</Callout>
+
+**Proof.** Write $X(\omega) = \int_0^\infty \mathbf{1}_{\{X(\omega) > t\}} \, dt$ (this holds for any nonneg real number: $a = \int_0^\infty \mathbf{1}_{(0,a)}(t)\,dt$). Now integrate both sides over $\Omega$ with respect to $P$:
+
+$$E[X] = \int_\Omega \int_0^\infty \mathbf{1}_{\{X(\omega) > t\}} \, dt \, dP(\omega).$$
+
+By Tonelli's theorem (Fubini for nonnegative functions), we may exchange the order of integration:
+
+$$E[X] = \int_0^\infty \int_\Omega \mathbf{1}_{\{X(\omega) > t\}} \, dP(\omega) \, dt = \int_0^\infty P(X > t) \, dt. \quad \blacksquare$$
+
+<Callout type="tip" title="Utility">
+  The layer-cake formula converts an expectation (integral w.r.t. $P$) into an ordinary Lebesgue integral on $[0,\infty)$. This is indispensable for bounding expectations via tail probabilities, and vice versa.
+</Callout>
+
+## The Weak Law Revisited: Identifying Weaknesses
+
+<Callout type="theorem" title="Weak Law of Large Numbers (Chebyshev proof)">
+  Let $X_1, X_2, \ldots$ be i.i.d. with $E[X_i] = \mu$ and $\operatorname{Var}(X_i) = \sigma^2 < \infty$. Then for every $\varepsilon > 0$,
+  $$P\!\left(\left|\frac{1}{n}\sum_{i=1}^n X_i - \mu\right| > \varepsilon\right) \to 0 \quad \text{as } n \to \infty.$$
+</Callout>
+
+**Proof.** Let $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$. Then $E[\bar{X}_n] = \mu$ and $\operatorname{Var}(\bar{X}_n) = \sigma^2/n$. By Chebyshev's inequality:
+
+$$P(|\bar{X}_n - \mu| > \varepsilon) \leq \frac{\operatorname{Var}(\bar{X}_n)}{\varepsilon^2} = \frac{\sigma^2}{n\varepsilon^2} \to 0. \quad \blacksquare$$
+
+<Callout type="warning" title="Weaknesses of the WLLN">
+  This proof has three significant limitations:
+  1. **Finite variance required.** What if $\operatorname{Var}(X_i) = \infty$ (e.g., Cauchy-like tails)?
+  2. **Convergence in probability only.** We showed $P(|\bar{X}_n - \mu| > \varepsilon) \to 0$. Does $\bar{X}_n \to \mu$ hold in a stronger sense -- say, for almost every $\omega$?
+  3. **Rate of convergence.** The bound $\sigma^2/(n\varepsilon^2)$ may be far from sharp.
+  The Strong Law of Large Numbers (a later topic) will address weakness 2, and it requires only $E[|X_i|] < \infty$.
+</Callout>
+
+## Preview: What Does $X_n \to X$ Mean?
+
+The WLLN says $\bar{X}_n \to \mu$ "in probability." But there are other notions of convergence for random variables:
+
+| Mode | Definition | Strength |
+|---|---|---|
+| Almost sure | $P(\omega : X_n(\omega) \to X(\omega)) = 1$ | Strongest (pointwise a.e.) |
+| In probability | $P(\lvert X_n - X\rvert > \varepsilon) \to 0$ for all $\varepsilon > 0$ | |
+| $L^p$ | $E[\lvert X_n - X\rvert^p] \to 0$ | Depends on $p$ |
+| In distribution | $F_{X_n}(x) \to F_X(x)$ at continuity points of $F_X$ | Weakest |
+
+Understanding the relationships among these modes -- which implies which, when counterexamples exist, and how to upgrade one to another -- is the central theme of the next several lessons.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 1.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Full implication chain with counterexample suite`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 1.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 1.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="The layer-cake formula $E[X] = \\int_0^\\infty P(X > t)\\,dt$ is valid under which condition?"
+  options={[
+    "$X$ is integrable (i.e., $E[|X|] < \\infty$)",
+    "$X$ is nonnegative (the integral may be $+\\infty$)",
+    "$X$ has a density function",
+    "$X$ is bounded"
+  ]}
+  correctIndex={1}
+  explanation="The layer-cake formula holds for any nonnegative random variable. The integral on the right may equal $+\\infty$ if $E[X] = \\infty$, but the identity is still valid. No density or boundedness is required. For general $X$, one applies the formula separately to $X^+$ and $X^-$."
+/>
+
+<Problem title="Layer-cake for moments">
+  Use the layer-cake formula to prove that for $X \geq 0$ and $p > 0$,
+  $$E[X^p] = \int_0^\infty p\,t^{p-1}\,P(X > t)\,dt.$$
+  *Hint:* Apply the layer-cake formula to the nonnegative random variable $X^p$ and perform a substitution.
+</Problem>
+
+<Solution>
+  Apply the layer-cake formula to $Y = X^p \geq 0$:
+
+  $$E[X^p] = E[Y] = \int_0^\infty P(Y > s)\,ds = \int_0^\infty P(X^p > s)\,ds.$$
+
+  Substitute $s = t^p$, so $ds = p\,t^{p-1}\,dt$. When $s = 0$, $t = 0$; when $s \to \infty$, $t \to \infty$. Also $P(X^p > t^p) = P(X > t)$ since $X \geq 0$ and $x \mapsto x^p$ is increasing on $[0,\infty)$. Therefore:
+
+  $$E[X^p] = \int_0^\infty P(X > t)\,p\,t^{p-1}\,dt. \quad \blacksquare$$
+</Solution>
+
+<NumericInput
+  question="Let $X \\sim \\text{Exp}(1)$, so $P(X > t) = e^{-t}$ for $t \\geq 0$. Using the layer-cake formula, $E[X] = \\int_0^\\infty e^{-t}\\,dt$. What is $E[X]$?"
+  answer={1}
+  tolerance={0}
+  hint="This is the standard integral $\\int_0^\\infty e^{-t}\\,dt = [-e^{-t}]_0^\\infty = 0 - (-1) = 1$."
+/>
+
+<Problem title="Chebyshev is not sharp">
+  Let $X_1, \ldots, X_n$ be i.i.d. $\text{Bernoulli}(1/2)$ and $\bar{X}_n = \frac{1}{n}\sum X_i$.
+
+  (a) Use Chebyshev's inequality to bound $P(|\bar{X}_n - 1/2| > 0.1)$ for $n = 100$.
+
+  (b) Use the Central Limit Theorem to approximate the same probability. Compare.
+
+  (c) Explain why the Chebyshev bound is conservative and identify the source of the looseness.
+</Problem>
+
+<Solution>
+  **(a)** We have $\mu = 1/2$ and $\sigma^2 = 1/4$. By Chebyshev:
+
+  $$P(|\bar{X}_n - 1/2| > 0.1) \leq \frac{1/4}{100 \cdot (0.1)^2} = \frac{0.25}{1} = 0.25.$$
+
+  **(b)** By the CLT, $\sqrt{n}(\bar{X}_n - 1/2)/\sigma \approx N(0,1)$, so $\sqrt{100}(\bar{X}_n - 1/2)/(1/2) = 2(\bar{X}_n - 1/2) \cdot 10$. We need $P(|\bar{X}_n - 1/2| > 0.1) = P(|Z| > 0.1\sqrt{100}/(1/2)) = P(|Z| > 2) \approx 0.0456$.
+
+  **(c)** Chebyshev gives $0.25$; the CLT gives approximately $0.046$. Chebyshev is conservative because it uses only the second moment (variance) and applies to all distributions with that variance. It does not exploit the specific shape of the distribution. The CLT approximation is much tighter because it uses the full distributional information encoded in the normal approximation. $\blacksquare$
+</Solution>

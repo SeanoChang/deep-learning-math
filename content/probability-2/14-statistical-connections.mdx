@@ -1,0 +1,178 @@
+---
+title: "Statistical Connections and Transition Concepts"
+description: "Estimators as random variables, consistency, asymptotic normality, the delta method, and measure-theoretic preview"
+order: 14
+milestone: "M8"
+prerequisites: ["13-clt-characteristic-functions"]
+---
+
+# Statistical Connections and Transition Concepts
+
+The limit theorems of probability are not endpoints -- they are the **foundations of statistical inference**. Every confidence interval, hypothesis test, and asymptotic result in statistics rests on the WLLN, SLLN, or CLT.
+
+## Lesson Objectives (Max Rigor)
+
+- Connect asymptotic probability results to estimator-level statistical guarantees.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M8 -- Synthesis`
+- **Gate theorem:** `Full cross-block proof reconstruction`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Estimators as Random Variables
+
+<Callout type="definition" title="Definition 14.1 (Estimator)">
+Given iid observations $X_1, \ldots, X_n$ from a distribution $F_\theta$, an **estimator** of a parameter $\theta$ is any measurable function $\hat{\theta}_n = g(X_1, \ldots, X_n)$.
+
+An estimator is a random variable -- its value depends on the random sample.
+</Callout>
+
+<Callout type="definition" title="Definition 14.2 (Bias, Variance, MSE)">
+The **bias** of $\hat{\theta}_n$ is $\text{Bias}(\hat{\theta}_n) = E[\hat{\theta}_n] - \theta$. The estimator is **unbiased** if $\text{Bias} = 0$. The **mean squared error** decomposes as:
+
+$$\text{MSE}(\hat{\theta}_n) = E[(\hat{\theta}_n - \theta)^2] = \text{Var}(\hat{\theta}_n) + [\text{Bias}(\hat{\theta}_n)]^2.$$
+</Callout>
+
+*Proof of decomposition.* Let $b = E[\hat{\theta}_n] - \theta$. Then:
+
+$$E[(\hat{\theta}_n - \theta)^2] = E[(\hat{\theta}_n - E[\hat{\theta}_n] + b)^2] = \text{Var}(\hat{\theta}_n) + 2b\,E[\hat{\theta}_n - E[\hat{\theta}_n]] + b^2 = \text{Var}(\hat{\theta}_n) + b^2,$$
+
+since the cross term vanishes ($E[\hat{\theta}_n - E[\hat{\theta}_n]] = 0$). $\square$
+
+## Consistency via WLLN
+
+<Callout type="definition" title="Definition 14.3 (Consistency)">
+An estimator $\hat{\theta}_n$ is **consistent** for $\theta$ if $\hat{\theta}_n \xrightarrow{P} \theta$ as $n \to \infty$.
+</Callout>
+
+<Callout type="theorem" title="Proposition 14.4 (Sample Mean is Consistent and Unbiased)">
+Let $X_1, \ldots, X_n$ be iid with $E[X_1] = \mu$ and $\text{Var}(X_1) = \sigma^2 < \infty$. Then $\bar{X}_n$ is unbiased for $\mu$ and consistent.
+</Callout>
+
+*Proof.* Unbiasedness: $E[\bar{X}_n] = \frac{1}{n}\sum E[X_i] = \mu$. Consistency: this is exactly the WLLN -- $\bar{X}_n \xrightarrow{P} \mu$. Alternatively, $\text{Var}(\bar{X}_n) = \sigma^2/n \to 0$ and the bias is zero, so $\text{MSE} \to 0$, which implies convergence in probability by Chebyshev. $\square$
+
+## Unbiasedness of the Sample Variance
+
+<Callout type="theorem" title="Proposition 14.5">
+Let $X_1, \ldots, X_n$ be iid with $E[X_1] = \mu$ and $\text{Var}(X_1) = \sigma^2 < \infty$. The sample variance $S_n^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X}_n)^2$ is unbiased for $\sigma^2$.
+</Callout>
+
+*Proof.* Expand the sum:
+
+$$\sum_{i=1}^n (X_i - \bar{X}_n)^2 = \sum_{i=1}^n X_i^2 - n\bar{X}_n^2.$$
+
+Taking expectations: $E\!\left[\sum X_i^2\right] = n E[X_1^2] = n(\sigma^2 + \mu^2)$. For $\bar{X}_n^2$: $E[\bar{X}_n^2] = \text{Var}(\bar{X}_n) + (E[\bar{X}_n])^2 = \sigma^2/n + \mu^2$. Therefore:
+
+$$E\!\left[\sum (X_i - \bar{X}_n)^2\right] = n(\sigma^2 + \mu^2) - n(\sigma^2/n + \mu^2) = n\sigma^2 - \sigma^2 = (n-1)\sigma^2.$$
+
+Dividing by $n - 1$: $E[S_n^2] = \sigma^2$. $\square$
+
+<Callout type="tip" title="Why $n-1$?">
+The factor $n-1$ (Bessel's correction) compensates for the fact that $\bar{X}_n$ is closer to each $X_i$ than $\mu$ is, on average. Using $n$ instead of $n-1$ introduces a downward bias of $\sigma^2/n$.
+</Callout>
+
+## Asymptotic Normality and the CLT
+
+<Callout type="definition" title="Definition 14.6 (Asymptotic Normality)">
+An estimator $\hat{\theta}_n$ is **asymptotically normal** if:
+
+$$\sqrt{n}(\hat{\theta}_n - \theta) \xrightarrow{d} N(0, v^2)$$
+
+for some $v^2 > 0$ called the **asymptotic variance**.
+</Callout>
+
+The CLT immediately gives: $\bar{X}_n$ is asymptotically normal with asymptotic variance $\sigma^2$, since $\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} N(0, \sigma^2)$.
+
+## The Delta Method
+
+<Callout type="theorem" title="Theorem 14.7 (Delta Method)">
+If $\sqrt{n}(\hat{\theta}_n - \theta) \xrightarrow{d} N(0, \sigma^2)$ and $g$ is differentiable at $\theta$ with $g'(\theta) \neq 0$, then:
+
+$$\sqrt{n}(g(\hat{\theta}_n) - g(\theta)) \xrightarrow{d} N(0, [g'(\theta)]^2 \sigma^2).$$
+</Callout>
+
+*Proof.* By Taylor expansion: $g(\hat{\theta}_n) = g(\theta) + g'(\theta)(\hat{\theta}_n - \theta) + R_n$ where $R_n = o(|\hat{\theta}_n - \theta|)$. Multiplying by $\sqrt{n}$:
+
+$$\sqrt{n}(g(\hat{\theta}_n) - g(\theta)) = g'(\theta)\sqrt{n}(\hat{\theta}_n - \theta) + \sqrt{n}R_n.$$
+
+Since $\hat{\theta}_n \xrightarrow{P} \theta$ (consistency follows from asymptotic normality), $\sqrt{n}R_n = \sqrt{n} \cdot o(|\hat{\theta}_n - \theta|) = o(\sqrt{n}|\hat{\theta}_n - \theta|)$. But $\sqrt{n}|\hat{\theta}_n - \theta| = O_P(1)$ (it converges in distribution), so $\sqrt{n}R_n \xrightarrow{P} 0$.
+
+By Slutsky's theorem: $\sqrt{n}(g(\hat{\theta}_n) - g(\theta)) \xrightarrow{d} g'(\theta) \cdot N(0, \sigma^2) = N(0, [g'(\theta)]^2\sigma^2)$. $\square$
+
+## Confidence Intervals from the CLT
+
+The CLT gives approximate normality: $\bar{X}_n \approx N(\mu, \sigma^2/n)$ for large $n$. This yields the standard confidence interval:
+
+$$P\!\left(\left|\frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}}\right| \leq z_{\alpha/2}\right) \approx 1 - \alpha,$$
+
+so the interval $\bar{X}_n \pm z_{\alpha/2}\sigma/\sqrt{n}$ has approximate coverage $1 - \alpha$. In practice, $\sigma$ is replaced by $S_n$, justified by Slutsky's theorem (since $S_n \xrightarrow{P} \sigma$).
+
+## Preview: Measure-Theoretic Probability
+
+The tools we have developed rest on informal notions of "probability" and "expectation." Measure theory makes these precise.
+
+**$\sigma$-algebras.** A probability space $(\Omega, \mathcal{F}, P)$ requires a $\sigma$-algebra $\mathcal{F}$ of events (closed under complement and countable unions). This resolves paradoxes: not all subsets of $[0,1]$ can be assigned probabilities consistently (Vitali sets).
+
+**Lebesgue integral.** The expectation $E[X] = \int_\Omega X\,dP$ is defined as a Lebesgue integral, unifying discrete sums and continuous integrals. The dominated and monotone convergence theorems provide the interchange-of-limit tools we have been using implicitly.
+
+**Radon-Nikodym derivative.** If $Q$ is absolutely continuous with respect to $P$ ($Q \ll P$), then $dQ/dP$ exists -- this is the density. Conditional expectation $E[X|\mathcal{G}]$ is defined as a Radon-Nikodym derivative, making it a random variable (measurable with respect to $\mathcal{G}$) rather than a number.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 14.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Full cross-block proof reconstruction`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 14.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 14.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 14.1: Delta Method Application">
+Let $X_1, \ldots, X_n$ be iid Exponential$(\lambda)$ with $E[X_i] = 1/\lambda$, $\text{Var}(X_i) = 1/\lambda^2$. Use the delta method to find the asymptotic distribution of $g(\bar{X}_n) = 1/\bar{X}_n$ as an estimator of $\lambda$.
+
+<Solution>
+By the CLT: $\sqrt{n}(\bar{X}_n - 1/\lambda) \xrightarrow{d} N(0, 1/\lambda^2)$. Let $g(x) = 1/x$, so $g'(x) = -1/x^2$ and $g'(1/\lambda) = -\lambda^2$. By the delta method:
+
+$$\sqrt{n}(1/\bar{X}_n - \lambda) \xrightarrow{d} N(0, \lambda^4 \cdot 1/\lambda^2) = N(0, \lambda^2).$$
+
+So $1/\bar{X}_n$ is asymptotically normal with asymptotic variance $\lambda^2$. The approximate $95\%$ CI for $\lambda$ is $1/\bar{X}_n \pm 1.96 \cdot \lambda/\sqrt{n}$, where $\lambda$ is replaced by $1/\bar{X}_n$ in practice.
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="An estimator $\\hat{\\theta}_n$ has bias $1/n$ and variance $2/n$. As $n \\to \\infty$, which of the following is true?"
+  options={[
+    "The MSE converges to $0$, so $\\hat{\\theta}_n$ is consistent",
+    "The MSE converges to $0$, but consistency requires additional conditions",
+    "The MSE does not converge to $0$ because the bias is nonzero",
+    "Consistency cannot be determined from bias and variance alone"
+  ]}
+  correctIndex={0}
+  explanation="$\\text{MSE} = \\text{Var} + \\text{Bias}^2 = 2/n + 1/n^2 \\to 0$. Since $\\text{MSE}(\\hat{\\theta}_n) = E[(\\hat{\\theta}_n - \\theta)^2] \\to 0$, convergence in $L^2$ implies convergence in probability, so $\\hat{\\theta}_n$ is consistent."
+/>
+
+<Problem title="Exercise 14.3: Confidence Interval Width">
+For iid $X_i$ with unknown mean $\mu$ and known $\sigma = 2$, how large must $n$ be so that a 95% confidence interval $\bar{X}_n \pm z_{0.025}\sigma/\sqrt{n}$ has width at most $0.5$?
+
+<Solution>
+The width is $2 \cdot z_{0.025}\sigma/\sqrt{n} = 2 \cdot 1.96 \cdot 2/\sqrt{n} = 7.84/\sqrt{n}$. We need $7.84/\sqrt{n} \leq 0.5$, so $\sqrt{n} \geq 15.68$, giving $n \geq 245.86$. Therefore $n \geq 246$.
+</Solution>
+</Problem>
+
+<NumericInput
+  question="Let $X_1, \\ldots, X_{25}$ be iid with $\\mu = 10$, $\\sigma^2 = 9$. Using the CLT approximation, compute $P(\\bar{X}_{25} > 11)$. Use $\\Phi(1.67) \\approx 0.9525$. Round to 4 decimal places."
+  answer={0.0475}
+  tolerance={0.005}
+  hint="Standardize: $P(\\bar{X} > 11) = P(Z > (11-10)/(3/5)) = P(Z > 5/3) \\approx P(Z > 1.67) = 1 - \\Phi(1.67)$."
+/>

@@ -1,0 +1,176 @@
+---
+title: "Expectation as Weighted Summation"
+description: "Expected value, linearity of expectation, indicator random variables, and LOTUS"
+order: 5
+milestone: "M3"
+prerequisites: ["04-random-variables-as-functions"]
+---
+
+## Lesson Objectives (Max Rigor)
+
+- Prove LOTUS and linearity directly from definitions, including indicator decompositions.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M3 -- Random variables and expectation`
+- **Gate theorem:** `Linearity of expectation; variance identity`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Definition of Expected Value
+
+The expected value of a discrete random variable is its probability-weighted average.
+
+<Callout type="definition" title="Expected Value">
+If $X$ is a discrete random variable taking values in a countable set $\mathcal{X}$, its **expected value** (or **expectation**, or **mean**) is:
+
+$$E[X] = \sum_{x \in \mathcal{X}} x \cdot P(X = x)$$
+
+provided the sum converges absolutely: $\sum_{x} |x| \cdot P(X = x) < \infty$.
+</Callout>
+
+The absolute convergence requirement is essential. Without it, rearranging terms could yield different values (by the Riemann rearrangement theorem). If the sum does not converge absolutely, we say $E[X]$ **does not exist**.
+
+**Example.** Let $X$ be the outcome of a fair six-sided die. Then:
+
+$$E[X] = \sum_{k=1}^{6} k \cdot \frac{1}{6} = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3.5$$
+
+Note that $E[X] = 3.5$ is not a value $X$ can take — expectation is a property of the distribution, not an outcome.
+
+## LOTUS: The Law of the Unconscious Statistician
+
+If we want $E[g(X)]$ for some function $g$, do we need the distribution of $Y = g(X)$? No.
+
+<Callout type="theorem" title="Law of the Unconscious Statistician (LOTUS)">
+If $X$ is a discrete RV and $g: \mathbb{R} \to \mathbb{R}$, then:
+
+$$E[g(X)] = \sum_{x} g(x) \cdot P(X = x)$$
+
+provided the sum converges absolutely.
+</Callout>
+
+**Proof.** Let $Y = g(X)$. By definition, $E[Y] = \sum_y y \cdot P(Y = y)$. For each value $y$, the event $\{Y = y\} = \{g(X) = y\}$ is the union over all $x$ with $g(x) = y$. Thus $P(Y = y) = \sum_{x: g(x)=y} P(X = x)$. Substituting:
+
+$$E[Y] = \sum_y y \sum_{x: g(x) = y} P(X = x) = \sum_y \sum_{x: g(x) = y} g(x) \cdot P(X = x) = \sum_x g(x) \cdot P(X = x)$$
+
+The last equality holds because every $x$ appears in exactly one group (corresponding to $y = g(x)$), so we are simply regrouping the sum. $\blacksquare$
+
+<Callout type="warning" title="Jensen's Inequality Warning">
+In general, $E[g(X)] \neq g(E[X])$. For example, let $X$ take values $-1$ and $1$ each with probability $1/2$, and let $g(x) = x^2$. Then $E[g(X)] = E[X^2] = 1$, but $g(E[X]) = (E[X])^2 = 0^2 = 0$. Equality holds only when $g$ is affine (linear).
+</Callout>
+
+## Linearity of Expectation
+
+The most powerful property of expectation requires **no independence assumption**.
+
+<Callout type="theorem" title="Linearity of Expectation">
+For any discrete random variables $X_1, \ldots, X_n$ (on the same probability space) and constants $a_1, \ldots, a_n, b$:
+
+$$E\!\left[\sum_{i=1}^{n} a_i X_i + b\right] = \sum_{i=1}^{n} a_i \, E[X_i] + b$$
+
+provided each expectation exists.
+</Callout>
+
+**Proof.** It suffices to show $E[X + Y] = E[X] + E[Y]$ (the general case follows by induction, and constants are handled by LOTUS). We work directly from the definition, summing over the joint distribution:
+
+$$E[X + Y] = \sum_{\omega \in \Omega} (X(\omega) + Y(\omega)) \cdot P(\{\omega\}) = \sum_{\omega} X(\omega) P(\{\omega\}) + \sum_{\omega} Y(\omega) P(\{\omega\}) = E[X] + E[Y]$$
+
+This proof uses only the fact that expectation is a sum — it never invokes independence. The random variables $X$ and $Y$ can be arbitrarily dependent. $\blacksquare$
+
+<Callout type="tip" title="Strategy: Break into Simple Pieces">
+Linearity of expectation lets us decompose a complicated random variable into a sum of simple ones and compute expectations term by term — even when the summands are dependent. This is one of the most useful techniques in probability.
+</Callout>
+
+## Indicator Random Variables
+
+<Callout type="definition" title="Indicator Random Variable">
+The **indicator** of an event $A$ is the random variable:
+
+$$\mathbf{1}_A(\omega) = \begin{cases} 1 & \text{if } \omega \in A \\ 0 & \text{if } \omega \notin A \end{cases}$$
+
+Its expectation is $E[\mathbf{1}_A] = 1 \cdot P(A) + 0 \cdot P(A^c) = P(A)$.
+</Callout>
+
+This identity — $E[\mathbf{1}_A] = P(A)$ — bridges expectation and probability. Combined with linearity, it yields the **indicator decomposition method**: express a counting random variable as a sum of indicators and apply linearity.
+
+**Example: The Hat-Check Problem (Fixed Points).** A group of $n$ people each place their hat in a pile. The hats are returned uniformly at random (each permutation equally likely). Let $X$ = number of people who receive their own hat. What is $E[X]$?
+
+Define $X_i = \mathbf{1}\{\text{person } i \text{ gets their own hat}\}$. Then $X = X_1 + X_2 + \cdots + X_n$. By symmetry, $P(X_i = 1) = 1/n$ for each $i$ (person $i$'s hat is equally likely to go to any of the $n$ positions). By linearity:
+
+$$E[X] = \sum_{i=1}^{n} E[X_i] = \sum_{i=1}^{n} \frac{1}{n} = 1$$
+
+The expected number of fixed points in a random permutation is exactly $1$, regardless of $n$. Note that the $X_i$ are **not** independent — yet linearity applies without modification.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 5.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Linearity of expectation; variance identity`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 5.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 5.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="Let $X$ take values $0, 1, 2$ with $P(X=0) = 0.3$, $P(X=1) = 0.5$, $P(X=2) = 0.2$. What is $E[X^2]$?"
+  options={[
+    "$0.9$",
+    "$1.3$",
+    "$0.49$",
+    "$0.7$"
+  ]}
+  correctIndex={0}
+  explanation="By LOTUS: $E[X^2] = 0^2(0.3) + 1^2(0.5) + 2^2(0.2) = 0 + 0.5 + 0.8 = 0.9$. Note this differs from $(E[X])^2 = 0.7^2 = 0.49$."
+/>
+
+<NumericInput
+  question="In a class of 30 students, each independently has probability $0.6$ of passing a test. What is the expected number who pass?"
+  answer={18}
+  tolerance={0.01}
+  hint="Let $X_i$ be the indicator for student $i$ passing. Use linearity: $E[X] = \\sum E[X_i]$."
+/>
+
+<Problem title="Expected Number of Distinct Values">
+Roll a fair six-sided die $n$ times. Let $Y$ be the number of distinct faces that appear. Use indicator random variables to find $E[Y]$.
+
+<Solution>
+For each face $k \in \{1, 2, 3, 4, 5, 6\}$, let $Y_k = \mathbf{1}\{\text{face } k \text{ appears at least once}\}$. Then $Y = Y_1 + Y_2 + \cdots + Y_6$.
+
+The probability that face $k$ never appears in $n$ rolls is $(5/6)^n$. Therefore:
+
+$$E[Y_k] = P(\text{face } k \text{ appears}) = 1 - \left(\frac{5}{6}\right)^n$$
+
+By linearity of expectation:
+
+$$E[Y] = \sum_{k=1}^{6} E[Y_k] = 6\left(1 - \left(\frac{5}{6}\right)^n\right)$$
+
+For example, with $n = 10$ rolls: $E[Y] = 6(1 - (5/6)^{10}) \approx 6(1 - 0.1615) \approx 5.03$. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Expected Inversions in a Random Permutation">
+A random permutation $\sigma$ of $\{1, 2, \ldots, n\}$ is chosen uniformly. An **inversion** is a pair $(i, j)$ with $i < j$ but $\sigma(i) > \sigma(j)$. Let $Z$ be the total number of inversions. Find $E[Z]$.
+
+<Solution>
+For each pair $(i, j)$ with $1 \leq i < j \leq n$, define the indicator:
+
+$$Z_{ij} = \mathbf{1}\{\sigma(i) > \sigma(j)\}$$
+
+Then $Z = \sum_{1 \leq i < j \leq n} Z_{ij}$. By symmetry of the uniform distribution over permutations, the relative order of $\sigma(i)$ and $\sigma(j)$ is equally likely to be either way. Therefore $P(\sigma(i) > \sigma(j)) = 1/2$, so $E[Z_{ij}] = 1/2$.
+
+The number of pairs $(i, j)$ with $i < j$ is $\binom{n}{2}$. By linearity of expectation:
+
+$$E[Z] = \sum_{i < j} E[Z_{ij}] = \binom{n}{2} \cdot \frac{1}{2} = \frac{n(n-1)}{4}$$
+
+The $Z_{ij}$ are pairwise dependent (e.g., many inversions involving element $i$ make others more likely), but linearity of expectation does not require independence. $\blacksquare$
+</Solution>
+</Problem>

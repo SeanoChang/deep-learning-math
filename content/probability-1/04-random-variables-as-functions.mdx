@@ -1,0 +1,173 @@
+---
+title: "Random Variables as Functions"
+description: "Random variables as maps from sample spaces, CDFs, PMFs, and induced distributions"
+order: 4
+milestone: "M3"
+prerequisites: ["03-conditional-probability-independence"]
+---
+
+## Lesson Objectives (Max Rigor)
+
+- Treat random variables strictly as measurable maps and distributions as pushforwards.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M3 -- Random variables and expectation`
+- **Gate theorem:** `Linearity of expectation; variance identity`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## What Is a Random Variable?
+
+Despite the name, a random variable is not a variable and is not random — it is a **function**.
+
+<Callout type="definition" title="Random Variable">
+Given a probability space $(\Omega, \mathcal{F}, P)$, a **random variable** is a function $X: \Omega \to \mathbb{R}$ such that for every $x \in \mathbb{R}$, the set $\{\omega \in \Omega : X(\omega) \leq x\}$ belongs to $\mathcal{F}$.
+
+This measurability condition ensures that $P(X \leq x)$ is well-defined for every $x$.
+</Callout>
+
+The notation $\{X \leq x\}$ is shorthand for $\{\omega \in \Omega : X(\omega) \leq x\} = X^{-1}((-\infty, x])$. Similarly, $\{X = k\} = \{\omega : X(\omega) = k\}$ and $\{a < X \leq b\} = \{\omega : a < X(\omega) \leq b\}$. These are all events — subsets of $\Omega$ — and thus have well-defined probabilities.
+
+**Example.** Roll two dice. Let $\Omega = \{(i, j) : 1 \leq i, j \leq 6\}$ with uniform probability. Define $X(\omega) = i + j$, the sum. Then $\{X = 7\} = \{(1,6), (2,5), (3,4), (4,3), (5,2), (6,1)\}$ and $P(X = 7) = 6/36 = 1/6$.
+
+## The Induced Distribution
+
+A random variable $X$ transfers the probability measure $P$ on $\Omega$ to a probability measure on $\mathbb{R}$.
+
+<Callout type="definition" title="Induced Distribution">
+The **distribution** (or **law**) of $X$ is the probability measure $\mu_X$ on $\mathbb{R}$ defined by:
+
+$$\mu_X(B) = P(X \in B) = P(\{\omega : X(\omega) \in B\})$$
+
+for all (Borel) sets $B \subseteq \mathbb{R}$. Two random variables with the same distribution are called **identically distributed**, written $X \stackrel{d}{=} Y$.
+</Callout>
+
+The induced distribution captures everything probabilistically relevant about $X$. Two random variables on entirely different sample spaces can have the same distribution.
+
+## The Cumulative Distribution Function
+
+<Callout type="definition" title="CDF">
+The **cumulative distribution function** (CDF) of a random variable $X$ is:
+
+$$F_X(x) = P(X \leq x), \quad x \in \mathbb{R}$$
+</Callout>
+
+The CDF completely determines the distribution of $X$. It satisfies three fundamental properties.
+
+<Callout type="theorem" title="Properties of the CDF">
+For any random variable $X$, the CDF $F = F_X$ satisfies:
+
+1. **Nondecreasing:** If $a \leq b$, then $F(a) \leq F(b)$.
+2. **Right-continuous:** $\lim_{x \to a^+} F(x) = F(a)$ for all $a$.
+3. **Limits at infinity:** $\lim_{x \to -\infty} F(x) = 0$ and $\lim_{x \to +\infty} F(x) = 1$.
+
+Conversely, any function satisfying these three properties is the CDF of some random variable.
+</Callout>
+
+**Proof of (1).** If $a \leq b$, then $\{X \leq a\} \subseteq \{X \leq b\}$. By monotonicity of $P$, $F(a) = P(X \leq a) \leq P(X \leq b) = F(b)$. $\blacksquare$
+
+**Proof of (3).** Define $A_n = \{X \leq n\}$. Then $A_1 \subseteq A_2 \subseteq \cdots$ and $\bigcup_n A_n = \Omega$ (since $X$ is real-valued). By continuity of probability from below, $\lim_{n \to \infty} F(n) = \lim_{n \to \infty} P(A_n) = P(\Omega) = 1$. For the other limit, define $B_n = \{X \leq -n\}$. Then $B_1 \supseteq B_2 \supseteq \cdots$ and $\bigcap_n B_n = \varnothing$. By continuity from above, $\lim_{n \to \infty} F(-n) = 0$. $\blacksquare$
+
+**Proof of (2).** Let $x_n \downarrow a$ (decreasing to $a$). Then $\{X \leq x_n\} \downarrow \{X \leq a\}$, meaning $\bigcap_n \{X \leq x_n\} = \{X \leq a\}$. By continuity from above, $F(x_n) \to F(a)$. $\blacksquare$
+
+## Discrete Random Variables and PMFs
+
+<Callout type="definition" title="PMF">
+A random variable $X$ is **discrete** if it takes values in a countable set $\{x_1, x_2, \ldots\}$. Its **probability mass function** (PMF) is:
+
+$$p_X(x) = P(X = x)$$
+
+The PMF satisfies $p_X(x) \geq 0$ for all $x$ and $\sum_x p_X(x) = 1$.
+</Callout>
+
+For a discrete random variable, the CDF is a step function with jumps at the values $x_i$:
+
+$$F_X(x) = \sum_{x_i \leq x} p_X(x_i)$$
+
+The jump at $x_i$ has size $p_X(x_i)$. Between jumps, the CDF is constant (flat).
+
+<Callout type="theorem" title="Point Probability from the CDF">
+For any random variable $X$:
+
+$$P(X = a) = F_X(a) - \lim_{x \to a^-} F_X(x) = F_X(a) - F_X(a^-)$$
+
+That is, $P(X = a)$ equals the jump in the CDF at $a$. If $F$ is continuous at $a$, then $P(X = a) = 0$.
+</Callout>
+
+**Proof.** Define $A_n = \{a - 1/n < X \leq a\}$. Then $\{X = a\} = \bigcap_{n=1}^{\infty} A_n^*$ where $A_n^* = \{X \leq a\} \setminus \{X \leq a - 1/n\}$. More directly: let $B_n = \{X \leq a - 1/n\}$. Then $B_n \uparrow \{X < a\}$, so $P(X < a) = \lim_n F(a - 1/n) = F(a^-)$. Since $\{X = a\} = \{X \leq a\} \setminus \{X < a\}$, we get $P(X = a) = F(a) - F(a^-)$. $\blacksquare$
+
+<Callout type="tip" title="Interval Probabilities from the CDF">
+For any $a < b$: $P(a < X \leq b) = F(b) - F(a)$. Note the asymmetry: the left endpoint is excluded, the right is included. This matches the right-continuity of $F$.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 4.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Linearity of expectation; variance identity`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 4.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 4.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="A random variable $X$ has CDF $F(x) = 0$ for $x < 1$, $F(x) = 0.4$ for $1 \\leq x < 3$, $F(x) = 0.8$ for $3 \\leq x < 5$, and $F(x) = 1$ for $x \\geq 5$. What is $P(X = 3)$?"
+  options={[
+    "$0$",
+    "$0.4$",
+    "$0.8$",
+    "$0.2$"
+  ]}
+  correctIndex={1}
+  explanation="$P(X=3) = F(3) - F(3^-) = 0.8 - 0.4 = 0.4$. The jump in the CDF at $x=3$ equals the point mass."
+/>
+
+<NumericInput
+  question="A discrete RV $X$ has PMF $P(X=1) = 0.2$, $P(X=2) = 0.3$, $P(X=3) = 0.5$. Compute $P(1 < X \\leq 3)$."
+  answer={0.8}
+  tolerance={0.001}
+  hint="$P(1 < X \\leq 3) = F(3) - F(1) = 1.0 - 0.2 = 0.8$, or directly $P(X=2) + P(X=3)$."
+/>
+
+<Problem title="CDF Determines the Distribution">
+Prove that if $X$ and $Y$ are random variables with $F_X(x) = F_Y(x)$ for all $x \in \mathbb{R}$, then $P(X \in (a, b]) = P(Y \in (a, b])$ for all $a < b$.
+
+<Solution>
+**Proof.** For any $a < b$:
+
+$$P(X \in (a, b]) = P(X \leq b) - P(X \leq a) = F_X(b) - F_X(a)$$
+
+Similarly, $P(Y \in (a, b]) = F_Y(b) - F_Y(a)$. Since $F_X = F_Y$ pointwise, these are equal.
+
+This extends to all Borel sets by a standard measure-theoretic argument: the intervals $(a, b]$ generate the Borel $\sigma$-algebra, and two measures that agree on a $\pi$-system generating a $\sigma$-algebra must agree on the entire $\sigma$-algebra (by the $\pi$-$\lambda$ theorem). $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Constructing a Random Variable">
+Let $\Omega = \{a, b, c, d\}$ with $P(\{a\}) = 0.1$, $P(\{b\}) = 0.2$, $P(\{c\}) = 0.3$, $P(\{d\}) = 0.4$. Define $X(a) = 1$, $X(b) = 1$, $X(c) = 2$, $X(d) = 3$. Find the PMF and CDF of $X$, and compute $P(1 \leq X < 3)$.
+
+<Solution>
+**PMF:**
+- $P(X = 1) = P(\{a, b\}) = 0.1 + 0.2 = 0.3$
+- $P(X = 2) = P(\{c\}) = 0.3$
+- $P(X = 3) = P(\{d\}) = 0.4$
+
+**CDF:**
+
+$$F_X(x) = \begin{cases} 0 & x < 1 \\ 0.3 & 1 \leq x < 2 \\ 0.6 & 2 \leq x < 3 \\ 1 & x \geq 3 \end{cases}$$
+
+**Computation:** $P(1 \leq X < 3) = P(X = 1) + P(X = 2) = 0.3 + 0.3 = 0.6$.
+
+Alternatively, $P(1 \leq X < 3) = F(3^-) - F(1^-) = 0.6 - 0 = 0.6$. $\blacksquare$
+</Solution>
+</Problem>

@@ -1,0 +1,163 @@
+---
+title: "Simple Random Walk"
+description: "Symmetric random walk, martingale properties, gambler's ruin, recurrence, and the reflection principle"
+order: 7
+milestone: "M5"
+prerequisites: ["06-discrete-time-martingales"]
+---
+
+# Simple Random Walk
+
+The simple random walk is the most fundamental discrete stochastic process. Despite its elementary definition, it exhibits deep and beautiful behavior---martingale structure, recurrence in low dimensions, and exact hitting probabilities via the reflection principle.
+
+## Lesson Objectives (Max Rigor)
+
+- Combine martingale, combinatorial, and asymptotic tools on random walk path events.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M5 -- Random processes`
+- **Gate theorem:** `Recurrence of SRW; finite-state Markov chain convergence`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Definition and Basic Properties
+
+<Callout type="definition" title="Definition 7.1 (Simple Random Walk)">
+Let $X_1, X_2, \ldots$ be iid with $P(X_i = +1) = P(X_i = -1) = 1/2$. The **simple symmetric random walk** is
+
+$$S_n = X_1 + X_2 + \cdots + X_n, \quad S_0 = 0.$$
+</Callout>
+
+By symmetry, $E[X_i] = 0$ and $\text{Var}(X_i) = 1$, so $E[S_n] = 0$ and $\text{Var}(S_n) = n$.
+
+## Martingale Properties
+
+<Callout type="theorem" title="Theorem 7.2 ($S_n$ Is a Martingale)">
+The simple random walk $(S_n)$ is a martingale with respect to $\mathcal{F}_n = \sigma(X_1, \ldots, X_n)$.
+
+*Proof.* Adaptedness and integrability are immediate. For the martingale property, since $X_{n+1}$ is independent of $\mathcal{F}_n$:
+
+$$E[S_{n+1} \mid \mathcal{F}_n] = E[S_n + X_{n+1} \mid \mathcal{F}_n] = S_n + E[X_{n+1}] = S_n + 0 = S_n. \quad \blacksquare$$
+</Callout>
+
+<Callout type="theorem" title="Theorem 7.3 ($S_n^2 - n$ Is a Martingale)">
+The process $M_n = S_n^2 - n$ is a martingale.
+
+*Proof.* We compute $E[S_{n+1}^2 \mid \mathcal{F}_n]$. Since $S_{n+1} = S_n + X_{n+1}$,
+
+$$E[S_{n+1}^2 \mid \mathcal{F}_n] = E[S_n^2 + 2S_n X_{n+1} + X_{n+1}^2 \mid \mathcal{F}_n] = S_n^2 + 2S_n \cdot 0 + 1 = S_n^2 + 1.$$
+
+Therefore $E[M_{n+1} \mid \mathcal{F}_n] = E[S_{n+1}^2 - (n+1) \mid \mathcal{F}_n] = (S_n^2 + 1) - (n+1) = S_n^2 - n = M_n$. $\blacksquare$
+</Callout>
+
+## Gambler's Ruin via the Optional Stopping Theorem
+
+A gambler starts with $\$a$ and plays a fair coin-flip game, winning or losing $\$1$ each round, until going broke or reaching $\$b$ (where $0 < a < b$). We model this as $S_0 = a$ and $\tau = \inf\{n : S_n = 0 \text{ or } S_n = b\}$.
+
+<Callout type="theorem" title="Theorem 7.4 (Gambler's Ruin)">
+For the symmetric random walk starting at $a$ with absorbing barriers at $0$ and $b$:
+
+$$P(S_\tau = b) = \frac{a}{b}, \qquad P(S_\tau = 0) = 1 - \frac{a}{b}.$$
+
+The expected duration is $E[\tau] = a(b - a)$.
+
+*Proof.* The stopping time $\tau$ is a.s. finite (provable by coupling or Borel-Cantelli). Although $\tau$ is unbounded, one can verify the conditions for OST hold here (or apply OST to $\tau \wedge N$ and pass to the limit via DCT).
+
+**Ruin probability.** Since $E[S_\tau] = E[S_0] = a$ by OST and $S_\tau \in \{0, b\}$,
+
+$$b \cdot P(S_\tau = b) + 0 \cdot P(S_\tau = 0) = a \implies P(S_\tau = b) = \frac{a}{b}.$$
+
+**Expected duration.** Apply OST to the martingale $M_n = S_n^2 - n$. Then $E[S_\tau^2 - \tau] = E[M_0] = a^2$, so
+
+$$E[\tau] = E[S_\tau^2] - a^2 = b^2 \cdot \frac{a}{b} + 0 \cdot \left(1 - \frac{a}{b}\right) - a^2 = ab - a^2 = a(b - a). \quad \blacksquare$$
+</Callout>
+
+## Recurrence of the Symmetric Walk
+
+<Callout type="theorem" title="Theorem 7.5 (Recurrence)">
+The symmetric simple random walk on $\mathbb{Z}$ is **recurrent**: $P(S_n = 0 \text{ i.o.}) = 1$.
+
+*Proof.* We use the second Borel-Cantelli lemma (for non-independent events, we use the stronger form or a direct computation). Instead, we show $\sum_{n=0}^\infty P(S_{2n} = 0) = \infty$.
+
+By combinatorics, $P(S_{2n} = 0) = \binom{2n}{n} 2^{-2n}$. By Stirling's approximation, $\binom{2n}{n} \sim \frac{4^n}{\sqrt{\pi n}}$, so
+
+$$P(S_{2n} = 0) \sim \frac{1}{\sqrt{\pi n}}.$$
+
+Since $\sum_{n=1}^\infty n^{-1/2} = \infty$, the walk returns to zero infinitely often. Formally, let $R = \sum_{n=0}^\infty \mathbf{1}_{S_n = 0}$. Then $E[R] = \sum_{n=0}^\infty P(S_n = 0) = \infty$. If $p = P(\text{return to } 0 \mid S_0 = 0) < 1$, then $R$ is geometric with parameter $1 - p$ and $E[R] = 1/(1-p) < \infty$, a contradiction. So $p = 1$. $\blacksquare$
+</Callout>
+
+## The Reflection Principle
+
+<Callout type="theorem" title="Theorem 7.6 (Reflection Principle)">
+For $a > 0$ and the walk starting at $S_0 = 0$,
+
+$$P\Bigl(\max_{0 \le k \le n} S_k \ge a\Bigr) \le 2\, P(S_n \ge a).$$
+
+Moreover, for $a > 0$ with $a \equiv n \pmod{2}$,
+
+$$P\Bigl(\max_{0 \le k \le n} S_k \ge a\Bigr) = 2\,P(S_n \ge a) - P(S_n = a).$$
+
+*Proof.* Let $T_a = \inf\{k \ge 0 : S_k = a\}$. Condition on $T_a \le n$:
+
+$$P(S_n \ge a) = P(S_n \ge a, T_a \le n) = P(S_n \ge a \mid T_a \le n)\, P(T_a \le n).$$
+
+Given $T_a \le n$, reflect the path after time $T_a$. By the strong Markov property, the post-$T_a$ walk is an independent symmetric random walk starting at $a$. By symmetry, $P(S_n \ge a \mid T_a \le n) = P(S_n \le a \mid T_a \le n)$, so
+
+$$P(S_n \ge a \mid T_a \le n) = \frac{1}{2}\bigl[1 - P(S_n = a \mid T_a \le n)\bigr] + P(S_n = a \mid T_a \le n) \cdot 1.$$
+
+More directly: $P(S_n \ge a \mid T_a \le n) \ge 1/2$ by symmetry of the reflected walk, so $P(T_a \le n) \le 2\,P(S_n \ge a)$. The exact identity follows by noting the reflected paths give a bijection. $\blacksquare$
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 7.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Recurrence of SRW; finite-state Markov chain convergence`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 7.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 7.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 7.1: Exponential Martingale">
+Let $(S_n)$ be the simple symmetric random walk. Fix $\theta \in \mathbb{R}$ and define $M_n = e^{\theta S_n} / (\cosh \theta)^n$. Show that $(M_n)$ is a martingale.
+
+<Solution>
+We compute:
+
+$$E[M_{n+1} \mid \mathcal{F}_n] = \frac{e^{\theta S_n}}{(\cosh\theta)^n} \cdot \frac{E[e^{\theta X_{n+1}}]}{(\cosh\theta)}.$$
+
+Since $E[e^{\theta X_{n+1}}] = \frac{1}{2}(e^\theta + e^{-\theta}) = \cosh\theta$, we get $E[M_{n+1} \mid \mathcal{F}_n] = \frac{e^{\theta S_n}}{(\cosh\theta)^n} = M_n$. $\blacksquare$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="In the gambler's ruin problem with $a = 3$ and $b = 10$, what is the expected duration $E[\\tau]$?"
+  options={["21", "30", "7", "13"]}
+  correctIndex={0}
+  explanation="By Theorem 7.4, $E[\\tau] = a(b - a) = 3 \\cdot 7 = 21$."
+/>
+
+<NumericInput
+  question="A gambler starts with $4 and stops upon reaching $0 or $12. What is the probability of ruin (reaching $0)? Give your answer as a decimal."
+  answer={0.6667}
+  tolerance={0.01}
+  hint="Use the gambler's ruin formula: $P(\\text{ruin}) = 1 - a/b$."
+/>
+
+<Problem title="Exercise 7.4: Wald's Identity via OST">
+Let $X_1, X_2, \ldots$ be iid with $E[X_i] = \mu$ and let $\tau$ be a stopping time with $E[\tau] < \infty$. Use OST on an appropriate martingale to show $E[S_\tau] = \mu \, E[\tau]$.
+
+<Solution>
+Define $M_n = S_n - n\mu$. Then $E[M_{n+1} \mid \mathcal{F}_n] = S_n + \mu - (n+1)\mu = S_n - n\mu = M_n$, so $(M_n)$ is a martingale. Since $E[\tau] < \infty$ and the increments $X_i - \mu$ are iid with mean zero, the conditions for OST (or its $L^1$-bounded version) apply. Thus $E[M_\tau] = E[M_0] = 0$, giving $E[S_\tau - \tau\mu] = 0$, so $E[S_\tau] = \mu\, E[\tau]$. $\blacksquare$
+</Solution>
+</Problem>

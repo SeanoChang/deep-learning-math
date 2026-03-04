@@ -1,0 +1,153 @@
+---
+title: "Discrete-Time Martingales"
+description: "Filtrations, martingale definition, submartingales, Doob's martingale, and the Optional Stopping Theorem"
+order: 6
+milestone: "M4"
+prerequisites: ["05-conditional-expectation-structure"]
+---
+
+# Discrete-Time Martingales
+
+Martingales formalize the notion of a "fair game"---a stochastic process whose future expected value, given all current information, equals its present value. They are among the most powerful tools in modern probability, providing the backbone for optimal stopping, convergence theorems, and mathematical finance.
+
+## Lesson Objectives (Max Rigor)
+
+- Prove martingale properties with filtration-level measurability and stopping-time control.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M4 -- Martingales`
+- **Gate theorem:** `Optional stopping theorem under valid hypotheses`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Filtrations and Adapted Processes
+
+<Callout type="definition" title="Definition 6.1 (Filtration)">
+A **filtration** on a probability space $(\Omega, \mathcal{F}, P)$ is an increasing sequence of sub-$\sigma$-algebras
+
+$$\mathcal{F}_0 \subseteq \mathcal{F}_1 \subseteq \mathcal{F}_2 \subseteq \cdots \subseteq \mathcal{F}.$$
+
+A stochastic process $(X_n)_{n \ge 0}$ is **adapted** to $(\mathcal{F}_n)$ if $X_n$ is $\mathcal{F}_n$-measurable for every $n \ge 0$.
+</Callout>
+
+Intuitively, $\mathcal{F}_n$ represents the information available at time $n$. The inclusion $\mathcal{F}_n \subseteq \mathcal{F}_{n+1}$ encodes the fact that information is never forgotten. The **natural filtration** $\mathcal{F}_n = \sigma(X_0, X_1, \ldots, X_n)$ is the minimal filtration to which $(X_n)$ is adapted.
+
+## Martingale, Submartingale, Supermartingale
+
+<Callout type="definition" title="Definition 6.2 (Martingale)">
+An adapted, integrable process $(M_n)_{n \ge 0}$ is a **martingale** with respect to $(\mathcal{F}_n)$ if
+
+$$E[M_{n+1} \mid \mathcal{F}_n] = M_n \quad \text{a.s., for all } n \ge 0.$$
+
+It is a **submartingale** if $E[M_{n+1} \mid \mathcal{F}_n] \ge M_n$ and a **supermartingale** if $E[M_{n+1} \mid \mathcal{F}_n] \le M_n$.
+</Callout>
+
+**Example.** Let $X_1, X_2, \ldots$ be iid with $E[X_i] = 0$ and set $S_n = X_1 + \cdots + X_n$, $S_0 = 0$. Then $E[S_{n+1} \mid \mathcal{F}_n] = S_n + E[X_{n+1} \mid \mathcal{F}_n] = S_n + E[X_{n+1}] = S_n$ by independence, so $(S_n)$ is a martingale.
+
+**Example (Doob's Martingale).** Let $Z \in L^1$ and define $M_n = E[Z \mid \mathcal{F}_n]$. By the tower property, $E[M_{n+1} \mid \mathcal{F}_n] = E\bigl[E[Z \mid \mathcal{F}_{n+1}] \mid \mathcal{F}_n\bigr] = E[Z \mid \mathcal{F}_n] = M_n$. So $(M_n)$ is always a martingale.
+
+## Constant Expectation Property
+
+<Callout type="theorem" title="Theorem 6.3 (Constant Mean)">
+If $(M_n)$ is a martingale, then $E[M_n] = E[M_0]$ for all $n \ge 0$.
+
+*Proof.* By induction. The base case $n = 0$ is trivial. Suppose $E[M_n] = E[M_0]$. By the tower property,
+
+$$E[M_{n+1}] = E\bigl[E[M_{n+1} \mid \mathcal{F}_n]\bigr] = E[M_n] = E[M_0]. \quad \blacksquare$$
+</Callout>
+
+This is the probabilistic content of "fair game": you can never systematically gain or lose in expectation.
+
+## Submartingales from Convex Functions
+
+<Callout type="theorem" title="Theorem 6.4 (Conditional Jensen)">
+Let $(M_n)$ be a martingale and $\varphi : \mathbb{R} \to \mathbb{R}$ be convex with $E[|\varphi(M_n)|] < \infty$ for all $n$. Then $(\varphi(M_n))$ is a submartingale.
+
+*Proof.* By the conditional Jensen inequality,
+
+$$E[\varphi(M_{n+1}) \mid \mathcal{F}_n] \ge \varphi\bigl(E[M_{n+1} \mid \mathcal{F}_n]\bigr) = \varphi(M_n).$$
+
+The equality uses the martingale property. Since $\varphi(M_n)$ is $\mathcal{F}_n$-measurable and integrable, $(\varphi(M_n))$ is a submartingale. $\blacksquare$
+</Callout>
+
+Taking $\varphi(x) = x^2$ gives the useful fact that if $(M_n)$ is a martingale with finite second moments, then $(M_n^2)$ is a submartingale.
+
+## The Optional Stopping Theorem
+
+A random variable $\tau : \Omega \to \{0, 1, 2, \ldots\} \cup \{+\infty\}$ is a **stopping time** with respect to $(\mathcal{F}_n)$ if $\{\tau \le n\} \in \mathcal{F}_n$ for all $n$. This means the decision to stop at time $n$ depends only on information available at time $n$.
+
+<Callout type="theorem" title="Theorem 6.5 (Optional Stopping, Bounded Case)">
+Let $(M_n)$ be a martingale and $\tau$ a stopping time with $\tau \le N$ a.s. for some constant $N$. Then $E[M_\tau] = E[M_0]$.
+
+*Proof.* Write
+
+$$M_\tau = M_0 + \sum_{k=0}^{N-1} (M_{k+1} - M_k) \mathbf{1}_{\tau > k}.$$
+
+Note that $\{\tau > k\} = \Omega \setminus \{\tau \le k\} \in \mathcal{F}_k$. Taking expectations,
+
+$$E[M_\tau] = E[M_0] + \sum_{k=0}^{N-1} E\bigl[(M_{k+1} - M_k) \mathbf{1}_{\tau > k}\bigr].$$
+
+For each summand, since $\mathbf{1}_{\tau > k}$ is $\mathcal{F}_k$-measurable,
+
+$$E\bigl[(M_{k+1} - M_k) \mathbf{1}_{\tau > k}\bigr] = E\bigl[\mathbf{1}_{\tau > k}\, E[M_{k+1} - M_k \mid \mathcal{F}_k]\bigr] = E[\mathbf{1}_{\tau > k} \cdot 0] = 0.$$
+
+Therefore $E[M_\tau] = E[M_0]$. $\blacksquare$
+</Callout>
+
+<Callout type="warning" title="Boundedness Is Essential">
+Without boundedness, OST can fail. Let $(S_n)$ be a simple symmetric random walk and $\tau = \inf\{n : S_n = 1\}$. Then $\tau < \infty$ a.s. (by recurrence) and $E[S_\tau] = 1 \ne 0 = E[S_0]$. Here $\tau$ is a.s. finite but not bounded, and $E[\tau] = \infty$.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 6.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Optional stopping theorem under valid hypotheses`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 6.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 6.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 6.1: Product Martingale">
+Let $X_1, X_2, \ldots$ be iid with $E[X_i] = 1$ and $X_i > 0$ a.s. Define $M_n = \prod_{k=1}^n X_k$. Prove that $(M_n)$ is a martingale with respect to its natural filtration.
+
+<Solution>
+We verify the three conditions. (1) **Adaptedness**: $M_n = X_1 \cdots X_n$ is $\sigma(X_1, \ldots, X_n)$-measurable. (2) **Integrability**: $E[|M_n|] = E[M_n] = \prod_{k=1}^n E[X_k] = 1 < \infty$ by independence and positivity. (3) **Martingale property**: By independence of $X_{n+1}$ from $\mathcal{F}_n$,
+
+$$E[M_{n+1} \mid \mathcal{F}_n] = E[M_n X_{n+1} \mid \mathcal{F}_n] = M_n \, E[X_{n+1}] = M_n \cdot 1 = M_n. \quad \blacksquare$$
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Let $(M_n)$ be a martingale and $\\varphi(x) = |x|$. What can we conclude about $(\\varphi(M_n))$?"
+  options={[
+    "It is a martingale",
+    "It is a submartingale",
+    "It is a supermartingale",
+    "Nothing without further assumptions"
+  ]}
+  correctIndex={1}
+  explanation="Since $|\\cdot|$ is convex, Theorem 6.4 (conditional Jensen) implies $(|M_n|)$ is a submartingale."
+/>
+
+<Problem title="Exercise 6.3: Tower Property and Constant Mean">
+Use the tower property to prove: if $(M_n)$ is a martingale and $0 \le m \le n$, then $E[M_n \mid \mathcal{F}_m] = M_m$ a.s.
+
+<Solution>
+We prove by induction on $k = n - m$. Base case $k = 0$ is trivial. Suppose the result holds for $k$; we show it for $k + 1$. By the tower property and the martingale property,
+
+$$E[M_{m+k+1} \mid \mathcal{F}_m] = E\bigl[E[M_{m+k+1} \mid \mathcal{F}_{m+k}] \mid \mathcal{F}_m\bigr] = E[M_{m+k} \mid \mathcal{F}_m] = M_m,$$
+
+where the last equality uses the induction hypothesis. $\blacksquare$
+</Solution>
+</Problem>

@@ -1,0 +1,150 @@
+---
+title: "Poisson Processes"
+description: "Counting processes, equivalent definitions, superposition, thinning, and conditional uniformity"
+order: 8
+milestone: "M5"
+prerequisites: ["07-simple-random-walk"]
+---
+
+# Poisson Processes
+
+The Poisson process is the canonical model for random events occurring in continuous time---arrivals at a queue, decay of radioactive atoms, or clicks on a website. Its elegance lies in having multiple equivalent characterizations, each illuminating a different facet of the process.
+
+## Lesson Objectives (Max Rigor)
+
+- Move between equivalent Poisson-process characterizations and structural operations.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M5 -- Random processes`
+- **Gate theorem:** `Recurrence of SRW; finite-state Markov chain convergence`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Counting Processes and the Poisson Process
+
+<Callout type="definition" title="Definition 8.1 (Counting Process)">
+A **counting process** $(N(t))_{t \ge 0}$ is a stochastic process with $N(0) = 0$, taking values in $\{0, 1, 2, \ldots\}$, with right-continuous, non-decreasing sample paths. The increment $N(t) - N(s)$ counts events in the interval $(s, t]$.
+</Callout>
+
+<Callout type="definition" title="Definition 8.2 (Poisson Process, Definition I)">
+A counting process $(N(t))_{t \ge 0}$ is a **Poisson process** with rate $\lambda > 0$ if:
+
+1. It has **independent increments**: for $0 \le t_0 < t_1 < \cdots < t_k$, the random variables $N(t_1) - N(t_0), \, N(t_2) - N(t_1), \ldots, N(t_k) - N(t_{k-1})$ are independent.
+2. For all $s, t \ge 0$: $N(t+s) - N(s) \sim \text{Poisson}(\lambda t)$.
+</Callout>
+
+From this definition, $E[N(t)] = \lambda t$ and $\text{Var}(N(t)) = \lambda t$.
+
+## Equivalent Characterizations
+
+<Callout type="definition" title="Definition 8.3 (Definition II: Exponential Interarrivals)">
+Let $T_1, T_2, \ldots$ be iid $\text{Exp}(\lambda)$ random variables. Set $S_n = T_1 + \cdots + T_n$ (the $n$-th arrival time) and $N(t) = \max\{n \ge 0 : S_n \le t\}$. Then $(N(t))$ is a Poisson process with rate $\lambda$.
+</Callout>
+
+<Callout type="theorem" title="Theorem 8.4 (Equivalence of Definitions I and II)">
+Definitions I and II produce the same process in distribution.
+
+*Proof (II $\Rightarrow$ I).* We show $N(t) \sim \text{Poisson}(\lambda t)$ and the process has independent increments.
+
+**Poisson marginals.** $N(t) \ge n$ iff $S_n \le t$. Since $S_n = T_1 + \cdots + T_n$ where $T_i \sim \text{Exp}(\lambda)$ iid, $S_n \sim \text{Gamma}(n, \lambda)$. By direct computation,
+
+$$P(N(t) = n) = P(S_n \le t) - P(S_{n+1} \le t) = \frac{(\lambda t)^n}{n!} e^{-\lambda t}.$$
+
+This uses the identity $P(S_n \le t) = \sum_{k=n}^{\infty} \frac{(\lambda t)^k}{k!} e^{-\lambda t}$.
+
+**Independent increments.** The memoryless property of the exponential distribution implies that the residual interarrival time at any point $s$ is again $\text{Exp}(\lambda)$, independent of $N(s)$. Therefore the post-$s$ counting process is independent of $(N(u))_{u \le s}$ and has the same law. This gives independent and stationary increments. $\blacksquare$
+</Callout>
+
+## Superposition
+
+<Callout type="theorem" title="Theorem 8.5 (Superposition)">
+If $N_1(t)$ and $N_2(t)$ are independent Poisson processes with rates $\lambda_1$ and $\lambda_2$, then $N(t) = N_1(t) + N_2(t)$ is a Poisson process with rate $\lambda_1 + \lambda_2$.
+
+*Proof.* We verify Definition I. **Independent increments:** For disjoint intervals, the increments of $N_1$ and $N_2$ are each independent, and the two processes are independent of each other, so the increments of $N$ are independent. **Poisson marginals:** For any interval of length $t$,
+
+$$N(t) = N_1(t) + N_2(t) \sim \text{Poisson}(\lambda_1 t) + \text{Poisson}(\lambda_2 t) = \text{Poisson}((\lambda_1 + \lambda_2)t),$$
+
+using the well-known fact that the sum of independent Poisson random variables is Poisson. $\blacksquare$
+</Callout>
+
+## Thinning
+
+<Callout type="theorem" title="Theorem 8.6 (Thinning)">
+Let $N(t)$ be a Poisson process with rate $\lambda$. Independently mark each event as type 1 with probability $p$ and type 2 with probability $1-p$. Let $N_1(t)$ and $N_2(t)$ count type 1 and type 2 events. Then $N_1(t)$ and $N_2(t)$ are independent Poisson processes with rates $\lambda p$ and $\lambda(1-p)$.
+
+*Proof.* Fix $t > 0$. Condition on $N(t) = n$. Each of the $n$ events is independently type 1 with probability $p$, so $N_1(t) \mid N(t) = n \sim \text{Binomial}(n, p)$. Then
+
+$$P(N_1(t) = k) = \sum_{n=k}^{\infty} \binom{n}{k} p^k (1-p)^{n-k} \frac{(\lambda t)^n}{n!} e^{-\lambda t} = \frac{(\lambda p t)^k}{k!} e^{-\lambda p t},$$
+
+after rearranging the sum (substitute $m = n - k$ and recognize the Taylor series for $e^{\lambda(1-p)t}$). So $N_1(t) \sim \text{Poisson}(\lambda p t)$. A similar argument shows the joint distribution factors, giving independence. The independent increments property follows from the independent increments of $N(t)$ and the independent marking. $\blacksquare$
+</Callout>
+
+## Conditional Uniformity
+
+<Callout type="theorem" title="Theorem 8.7 (Order Statistics Property)">
+Given $N(t) = n$, the $n$ arrival times $(S_1, \ldots, S_n)$ have the same joint distribution as the order statistics of $n$ iid $\text{Uniform}(0, t)$ random variables.
+
+*Proof.* Let $0 < s_1 < s_2 < \cdots < s_n < t$. The joint density of $(S_1, \ldots, S_n)$ given $N(t) = n$ is computed via the interarrival times $T_k = S_k - S_{k-1}$ (with $S_0 = 0$). The joint density of $(T_1, \ldots, T_n)$ given $T_1 + \cdots + T_n < t$ and no arrival in $(S_n, t]$ is:
+
+$$f(t_1, \ldots, t_n \mid N(t) = n) = \frac{\lambda^n e^{-\lambda(t_1 + \cdots + t_n)} \cdot \lambda e^{-\lambda(t - s_n)} / \lambda}{P(N(t) = n) / e^{-\lambda t} \cdot \lambda^n} = \frac{n!}{t^n},$$
+
+for $s_1 < \cdots < s_n$, $s_n < t$. This is exactly the density of the order statistics of $n$ iid $\text{Uniform}(0, t)$ random variables. $\blacksquare$
+</Callout>
+
+This result is extraordinarily useful: given the number of events in $[0,t]$, the event times are "as random as possible."
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 8.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Recurrence of SRW; finite-state Markov chain convergence`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 8.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 8.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="Emails arrive as a Poisson process at rate 5/hour. Phone calls arrive independently at rate 3/hour. What is the rate of the combined process?"
+  options={["2/hour", "5/hour", "8/hour", "15/hour"]}
+  correctIndex={2}
+  explanation="By the superposition theorem, independent Poisson processes combine to give a Poisson process with rate $5 + 3 = 8$/hour."
+/>
+
+<NumericInput
+  question="In a Poisson process with rate $\\lambda = 4$ per minute, what is $\\text{Var}(N(3))$? (Here $N(3)$ counts events in $[0,3]$.)"
+  answer={12}
+  tolerance={0.01}
+  hint="For a Poisson process, $\\text{Var}(N(t)) = \\lambda t$."
+/>
+
+<Problem title="Exercise 8.3: Thinning Application">
+Customers arrive at a store as a Poisson process with rate 20/hour. Each customer independently buys something with probability 0.3. Show that the buying customers form a Poisson process and find the probability that exactly 4 customers buy something in a 30-minute window.
+
+<Solution>
+By the thinning theorem, the buying customers form a Poisson process with rate $\lambda p = 20 \times 0.3 = 6$ per hour. In a 30-minute window, the expected number of buyers is $6 \times 0.5 = 3$. Thus
+
+$$P(\text{4 buyers in 30 min}) = \frac{3^4}{4!} e^{-3} = \frac{81}{24} e^{-3} = \frac{27}{8} e^{-3} \approx 0.168. \quad \blacksquare$$
+</Solution>
+</Problem>
+
+<Problem title="Exercise 8.4: Memoryless Interarrivals">
+Prove that if $N(t)$ is a Poisson process (Definition I) and $T_1$ is the first arrival time, then $T_1 \sim \text{Exp}(\lambda)$.
+
+<Solution>
+For $t > 0$,
+
+$$P(T_1 > t) = P(N(t) = 0) = \frac{(\lambda t)^0}{0!} e^{-\lambda t} = e^{-\lambda t}.$$
+
+This is exactly the survival function of an $\text{Exp}(\lambda)$ distribution, so $T_1 \sim \text{Exp}(\lambda)$. $\blacksquare$
+</Solution>
+</Problem>

@@ -1,0 +1,182 @@
+---
+title: "Core Discrete Distributions"
+description: "Bernoulli, Binomial, Geometric, Poisson distributions -- derived from first principles with full proofs"
+order: 7
+milestone: "M4"
+prerequisites: ["06-variance-covariance-second-order"]
+---
+
+# Core Discrete Distributions
+
+We now derive the most important discrete distributions from first principles. Each arises naturally from a simple probabilistic model, and we compute expectations and variances directly from definitions.
+
+## Lesson Objectives (Max Rigor)
+
+- Derive canonical discrete laws from models, including Poisson rare-event limits.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M4 -- Distribution library`
+- **Gate theorem:** `Memoryless property; Poisson as a limit`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Bernoulli and Binomial
+
+<Callout type="definition">
+**Definition 7.1 (Bernoulli Distribution).** A random variable $X$ has the **Bernoulli distribution** with parameter $p \in [0,1]$, written $X \sim \text{Bernoulli}(p)$, if $P(X = 1) = p$ and $P(X = 0) = 1 - p$. Then
+
+$$E[X] = p, \qquad \text{Var}(X) = p(1-p).$$
+</Callout>
+
+*Proof of moments.* $E[X] = 0 \cdot (1-p) + 1 \cdot p = p$. $E[X^2] = 0^2(1-p) + 1^2 p = p$. So $\text{Var}(X) = p - p^2 = p(1-p)$. $\blacksquare$
+
+<Callout type="definition">
+**Definition 7.2 (Binomial Distribution).** If $X_1, \ldots, X_n$ are independent $\text{Bernoulli}(p)$ random variables, then $S_n = \sum_{i=1}^n X_i \sim \text{Binomial}(n, p)$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 7.3 (Binomial PMF, Mean, Variance).**
+
+$$P(S_n = k) = \binom{n}{k} p^k (1-p)^{n-k}, \qquad k = 0, 1, \ldots, n.$$
+
+$$E[S_n] = np, \qquad \text{Var}(S_n) = np(1-p).$$
+
+*Proof of PMF.* $S_n = k$ requires exactly $k$ successes among $n$ independent trials. There are $\binom{n}{k}$ ways to choose which $k$ trials succeed. Each such configuration has probability $p^k(1-p)^{n-k}$ by independence.
+
+*Proof of moments.* By linearity, $E[S_n] = \sum_{i=1}^n E[X_i] = np$. Since $X_1, \ldots, X_n$ are independent (hence uncorrelated), $\text{Var}(S_n) = \sum_{i=1}^n \text{Var}(X_i) = np(1-p)$. $\blacksquare$
+</Callout>
+
+<Callout type="tip">
+Computing the binomial mean and variance by summing $k \cdot \binom{n}{k}p^k(1-p)^{n-k}$ directly is possible but painful. The decomposition $S_n = \sum X_i$ makes it effortless -- this is the power of linearity of expectation.
+</Callout>
+
+## Geometric Distribution
+
+<Callout type="definition">
+**Definition 7.4 (Geometric Distribution).** Let $X$ be the number of independent $\text{Bernoulli}(p)$ trials until the first success. Then $X \sim \text{Geometric}(p)$ with PMF
+
+$$P(X = k) = (1-p)^{k-1}p, \qquad k = 1, 2, 3, \ldots$$
+</Callout>
+
+*Verification.* $\sum_{k=1}^{\infty} (1-p)^{k-1}p = p \sum_{j=0}^{\infty}(1-p)^j = p \cdot \frac{1}{1-(1-p)} = 1$. $\checkmark$
+
+<Callout type="theorem">
+**Theorem 7.5.** If $X \sim \text{Geometric}(p)$, then $E[X] = 1/p$ and $\text{Var}(X) = (1-p)/p^2$.
+
+*Proof of $E[X]$.* $E[X] = \sum_{k=1}^{\infty} k(1-p)^{k-1}p = p \sum_{k=1}^{\infty} k q^{k-1}$ where $q = 1-p$. Since $\sum_{k=1}^{\infty} k q^{k-1} = \frac{d}{dq}\sum_{k=0}^{\infty} q^k = \frac{1}{(1-q)^2} = \frac{1}{p^2}$, we get $E[X] = p/p^2 = 1/p$.
+
+*Proof of $\text{Var}(X)$.* Similarly, $E[X^2] = E[X(X-1)] + E[X]$. One computes $E[X(X-1)] = 2q/p^2$ via the second derivative of the geometric series. Then $E[X^2] = 2q/p^2 + 1/p$ and $\text{Var}(X) = E[X^2] - (1/p)^2 = (1-p)/p^2$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 7.6 (Memoryless Property).** For $X \sim \text{Geometric}(p)$ and integers $s, t \geq 1$:
+
+$$P(X > s + t \mid X > s) = P(X > t).$$
+
+*Proof.* $P(X > n) = (1-p)^n$ (probability of $n$ consecutive failures). So
+
+$$P(X > s + t \mid X > s) = \frac{P(X > s + t)}{P(X > s)} = \frac{(1-p)^{s+t}}{(1-p)^s} = (1-p)^t = P(X > t). \quad \blacksquare$$
+</Callout>
+
+## Poisson Distribution
+
+<Callout type="definition">
+**Definition 7.7 (Poisson Distribution).** $X \sim \text{Poisson}(\lambda)$ for $\lambda > 0$ if
+
+$$P(X = k) = \frac{e^{-\lambda}\lambda^k}{k!}, \qquad k = 0, 1, 2, \ldots$$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 7.8 (Poisson probabilities sum to 1).**
+
+$$\sum_{k=0}^{\infty} \frac{e^{-\lambda}\lambda^k}{k!} = e^{-\lambda} \sum_{k=0}^{\infty} \frac{\lambda^k}{k!} = e^{-\lambda} \cdot e^{\lambda} = 1,$$
+
+by the Taylor series $e^x = \sum_{k=0}^{\infty} x^k / k!$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 7.9 (Poisson as Binomial Limit).** If $X_n \sim \text{Binomial}(n, \lambda/n)$ for fixed $\lambda > 0$, then for each $k \geq 0$:
+
+$$\lim_{n \to \infty} P(X_n = k) = \frac{e^{-\lambda}\lambda^k}{k!}.$$
+
+*Proof.* Set $p_n = \lambda/n$. Then
+
+$$P(X_n = k) = \binom{n}{k}\left(\frac{\lambda}{n}\right)^k\left(1 - \frac{\lambda}{n}\right)^{n-k}.$$
+
+Write $\binom{n}{k} = \frac{n(n-1)\cdots(n-k+1)}{k!}$. So
+
+$$P(X_n = k) = \frac{n(n-1)\cdots(n-k+1)}{n^k} \cdot \frac{\lambda^k}{k!} \cdot \left(1-\frac{\lambda}{n}\right)^n \cdot \left(1-\frac{\lambda}{n}\right)^{-k}.$$
+
+As $n \to \infty$: the first factor $\to 1$ (each $\frac{n-j}{n} \to 1$ for fixed $j < k$), the third factor $\to e^{-\lambda}$ by the limit definition of $e^x$, and the fourth factor $\to 1$. Therefore $P(X_n = k) \to e^{-\lambda}\lambda^k/k!$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 7.10 (Poisson Moments).** If $X \sim \text{Poisson}(\lambda)$, then $E[X] = \lambda$ and $\text{Var}(X) = \lambda$.
+
+*Proof.* $E[X] = \sum_{k=0}^{\infty} k \frac{e^{-\lambda}\lambda^k}{k!} = e^{-\lambda}\sum_{k=1}^{\infty}\frac{\lambda^k}{(k-1)!} = e^{-\lambda}\lambda \sum_{j=0}^{\infty}\frac{\lambda^j}{j!} = e^{-\lambda}\lambda e^{\lambda} = \lambda$.
+
+For $\text{Var}(X)$: compute $E[X(X-1)] = \sum_{k=2}^{\infty}\frac{k(k-1)\lambda^k e^{-\lambda}}{k!} = \lambda^2 e^{-\lambda}\sum_{j=0}^{\infty}\frac{\lambda^j}{j!} = \lambda^2$. Then $E[X^2] = \lambda^2 + \lambda$ and $\text{Var}(X) = \lambda^2 + \lambda - \lambda^2 = \lambda$. $\blacksquare$
+</Callout>
+
+The remarkable property $E[X] = \text{Var}(X) = \lambda$ is a signature of the Poisson distribution.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 7.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Memoryless property; Poisson as a limit`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 7.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 7.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question={"Which property uniquely characterizes the Geometric distribution among discrete distributions on {1, 2, 3, ...}?"}
+  options={[
+    "It has the smallest variance among all distributions with the same mean",
+    "Its PMF is a decreasing function of k",
+    "The memoryless property: P(X > s+t | X > s) = P(X > t)",
+    "Its mean equals its variance"
+  ]}
+  correctIndex={2}
+  explanation={"The memoryless property characterizes the Geometric distribution: it is the only discrete distribution on the positive integers satisfying P(X > s+t | X > s) = P(X > t). The Poisson has mean = variance, not the Geometric."}
+/>
+
+<NumericInput
+  question={"If X ~ Poisson(4), compute P(X = 0). Give your answer to 4 decimal places."}
+  answer={0.0183}
+  tolerance={0.001}
+  hint={"P(X = 0) = e^{-4} * 4^0 / 0! = e^{-4}."}
+/>
+
+<Problem>
+**Exercise 7.1.** Show directly from the PMF (without using the $S_n = \sum X_i$ decomposition) that $\sum_{k=0}^n \binom{n}{k}p^k(1-p)^{n-k} = 1$. What algebraic identity does this rely on?
+</Problem>
+
+<Solution>
+By the binomial theorem, $(a + b)^n = \sum_{k=0}^n \binom{n}{k}a^k b^{n-k}$. Setting $a = p$ and $b = 1-p$:
+
+$$\sum_{k=0}^n \binom{n}{k}p^k(1-p)^{n-k} = (p + 1 - p)^n = 1^n = 1. \quad \blacksquare$$
+</Solution>
+
+<Problem>
+**Exercise 7.2.** Prove that the Geometric distribution is the *only* distribution on $\{1, 2, 3, \ldots\}$ with the memoryless property. (Hint: Let $f(n) = P(X > n)$. Show $f(s+t) = f(s)f(t)$ and $f(1) = 1 - p$.)
+</Problem>
+
+<Solution>
+Suppose $X$ takes values in $\{1, 2, \ldots\}$ and satisfies $P(X > s + t \mid X > s) = P(X > t)$ for all $s, t \geq 0$. Let $f(n) = P(X > n)$. Then the memoryless property gives $f(s+t) = f(s)f(t)$ for all $s, t \in \mathbb{N}_0$.
+
+Set $q = f(1) = P(X > 1) = 1 - P(X = 1)$. By induction: $f(n) = f(1)^n = q^n$.
+
+Since $P(X = k) = f(k-1) - f(k) = q^{k-1} - q^k = q^{k-1}(1-q)$ for $k \geq 1$, setting $p = 1-q$ gives the Geometric$(p)$ PMF. So the Geometric is the unique memoryless distribution on $\{1,2,\ldots\}$. $\blacksquare$
+</Solution>

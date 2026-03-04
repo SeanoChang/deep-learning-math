@@ -5,9 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 
-export default function ProbabilityPage() {
-  const topic = TOPICS["probability"];
-  const lessons = getTopicLessons("probability");
+export default function ProbabilityTwoPage() {
+  const topic = TOPICS["probability-2"];
+  const lessons = getTopicLessons("probability-2");
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -18,7 +18,7 @@ export default function ProbabilityPage() {
 
       <div className="flex flex-col gap-3">
         {lessons.map((lesson, i) => (
-          <Link key={lesson.slug} href={`/probability/${lesson.slug}`}>
+          <Link key={lesson.slug} href={`/probability-2/${lesson.slug}`}>
             <Card className="hover:shadow-md transition-shadow group cursor-pointer">
               <CardHeader className="flex-row items-center justify-between py-4">
                 <div className="flex items-center gap-4">

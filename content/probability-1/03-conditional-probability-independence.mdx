@@ -1,0 +1,176 @@
+---
+title: "Conditional Probability and Independence"
+description: "Conditional probability, Bayes' theorem, law of total probability, and pairwise vs mutual independence"
+order: 3
+milestone: "M2"
+prerequisites: ["02-counting-finite-probability"]
+---
+
+## Lesson Objectives (Max Rigor)
+
+- Prove Bayes and chain-rule identities and separate pairwise from mutual independence.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M2 -- Conditioning and independence`
+- **Gate theorem:** `Bayes theorem; pairwise independence does not imply mutual independence`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Conditional Probability
+
+Knowing that some event $B$ has occurred changes the likelihood of other events. Conditional probability formalizes this update.
+
+<Callout type="definition" title="Conditional Probability">
+For events $A, B$ with $P(B) > 0$, the **conditional probability** of $A$ given $B$ is:
+
+$$P(A \mid B) = \frac{P(A \cap B)}{P(B)}$$
+</Callout>
+
+Geometrically, conditioning on $B$ restricts the sample space from $\Omega$ to $B$ and renormalizes. One can verify that $P(\cdot \mid B)$ is itself a valid probability measure on $(\Omega, \mathcal{F})$: it satisfies nonnegativity, $P(B \mid B) = 1$ (normalization within $B$), and countable additivity.
+
+<Callout type="theorem" title="Multiplication Rule">
+For any events $A_1, \ldots, A_n$ with $P(A_1 \cap \cdots \cap A_{n-1}) > 0$:
+
+$$P(A_1 \cap A_2 \cap \cdots \cap A_n) = P(A_1)\, P(A_2 \mid A_1)\, P(A_3 \mid A_1 \cap A_2) \cdots P(A_n \mid A_1 \cap \cdots \cap A_{n-1})$$
+</Callout>
+
+This follows by telescoping the definition: each conditional probability introduces $P(A_1 \cap \cdots \cap A_k)$ in the numerator, which cancels with the denominator of the next term.
+
+## Law of Total Probability and Bayes' Theorem
+
+<Callout type="definition" title="Partition">
+Events $B_1, B_2, \ldots, B_n$ form a **partition** of $\Omega$ if they are pairwise disjoint and $\bigcup_{i=1}^n B_i = \Omega$, with $P(B_i) > 0$ for each $i$.
+</Callout>
+
+<Callout type="theorem" title="Law of Total Probability">
+If $B_1, \ldots, B_n$ partition $\Omega$, then for any event $A$:
+
+$$P(A) = \sum_{i=1}^{n} P(A \mid B_i)\, P(B_i)$$
+</Callout>
+
+**Proof.** Since the $B_i$ partition $\Omega$, we have $A = A \cap \Omega = A \cap \left(\bigcup_i B_i\right) = \bigcup_i (A \cap B_i)$. The sets $A \cap B_i$ are pairwise disjoint, so by countable additivity, $P(A) = \sum_i P(A \cap B_i) = \sum_i P(A \mid B_i) P(B_i)$. $\blacksquare$
+
+<Callout type="theorem" title="Bayes' Theorem">
+If $B_1, \ldots, B_n$ partition $\Omega$ and $P(A) > 0$, then:
+
+$$P(B_j \mid A) = \frac{P(A \mid B_j)\, P(B_j)}{\sum_{i=1}^{n} P(A \mid B_i)\, P(B_i)}$$
+</Callout>
+
+**Proof.** By the definition of conditional probability, $P(B_j \mid A) = P(A \cap B_j) / P(A)$. The numerator equals $P(A \mid B_j) P(B_j)$ by the multiplication rule. The denominator equals $\sum_i P(A \mid B_i) P(B_i)$ by the law of total probability. $\blacksquare$
+
+<Callout type="tip" title="Bayesian Interpretation">
+The terms $P(B_j)$ are **prior** probabilities (before observing $A$). The likelihoods $P(A \mid B_j)$ measure how well each hypothesis $B_j$ explains the data $A$. The result $P(B_j \mid A)$ is the **posterior** — our updated belief after observing $A$.
+</Callout>
+
+## Independence
+
+<Callout type="definition" title="Independence of Two Events">
+Events $A$ and $B$ are **independent**, written $A \perp B$, if:
+
+$$P(A \cap B) = P(A) \cdot P(B)$$
+
+Equivalently, when $P(B) > 0$: $A \perp B$ iff $P(A \mid B) = P(A)$ — knowing $B$ occurred does not change the probability of $A$.
+</Callout>
+
+<Callout type="warning" title="Independence vs Disjointness">
+Independent and disjoint are very different. If $A$ and $B$ are disjoint with $P(A), P(B) > 0$, then $P(A \cap B) = 0 \neq P(A)P(B)$, so they are **dependent**. Disjointness means the events cannot co-occur; independence means they do not influence each other.
+</Callout>
+
+<Callout type="theorem" title="Independence and Complements">
+If $A \perp B$, then $A \perp B^c$.
+</Callout>
+
+**Proof.** We need to show $P(A \cap B^c) = P(A) P(B^c)$. Since $A = (A \cap B) \cup (A \cap B^c)$ is a disjoint union:
+
+$$P(A \cap B^c) = P(A) - P(A \cap B) = P(A) - P(A)P(B) = P(A)(1 - P(B)) = P(A)P(B^c) \quad \blacksquare$$
+
+## Pairwise vs Mutual Independence
+
+<Callout type="definition" title="Mutual Independence">
+Events $A_1, \ldots, A_n$ are **mutually independent** if for every subset $S \subseteq \{1, \ldots, n\}$:
+
+$$P\!\left(\bigcap_{i \in S} A_i\right) = \prod_{i \in S} P(A_i)$$
+
+This requires $2^n - n - 1$ conditions (all subsets of size $\geq 2$). **Pairwise independence** only requires the $\binom{n}{2}$ conditions for pairs.
+</Callout>
+
+Pairwise independence does not imply mutual independence, as the following classic example shows.
+
+**Counterexample.** Toss two fair coins. Define: $A$ = "first coin heads," $B$ = "second coin heads," $C$ = "both coins show the same face." Then $P(A) = P(B) = P(C) = 1/2$. One checks $P(A \cap B) = 1/4 = P(A)P(B)$, $P(A \cap C) = 1/4 = P(A)P(C)$, $P(B \cap C) = 1/4 = P(B)P(C)$. So the events are pairwise independent. But $P(A \cap B \cap C) = P(\text{HH}) = 1/4 \neq 1/8 = P(A)P(B)P(C)$. The three events are **not** mutually independent.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 3.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Bayes theorem; pairwise independence does not imply mutual independence`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 3.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 3.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="A test for a disease has sensitivity $P(+|D) = 0.95$ and specificity $P(-|D^c) = 0.90$. If the disease prevalence is $P(D) = 0.01$, what is $P(D|+)$?"
+  options={[
+    "Approximately $0.95$",
+    "Approximately $0.087$",
+    "Approximately $0.50$",
+    "Approximately $0.01$"
+  ]}
+  correctIndex={1}
+  explanation="By Bayes' theorem: $P(D|+) = \\frac{0.95 \\cdot 0.01}{0.95 \\cdot 0.01 + 0.10 \\cdot 0.99} = \\frac{0.0095}{0.1085} \\approx 0.0876$. Despite the good test, the low prevalence means most positives are false positives."
+/>
+
+<NumericInput
+  question="Events $A$ and $B$ satisfy $P(A) = 0.4$, $P(B) = 0.5$, and $P(A \\mid B) = 0.6$. Compute $P(B \\mid A)$."
+  answer={0.75}
+  tolerance={0.001}
+  hint="First find $P(A \\cap B)$ from $P(A \\mid B) \\cdot P(B)$, then apply Bayes' rule."
+/>
+
+<Problem title="Conditional Version of Bayes' Theorem">
+Let $A, B, C$ be events with $P(B \cap C) > 0$ and $P(B^c \cap C) > 0$. Prove:
+
+$$P(B \mid A \cap C) = \frac{P(A \mid B \cap C)\, P(B \mid C)}{P(A \mid B \cap C)\, P(B \mid C) + P(A \mid B^c \cap C)\, P(B^c \mid C)}$$
+
+<Solution>
+**Proof.** All probabilities are conditioned on $C$. Since $P(\cdot \mid C)$ is a valid probability measure, and $B, B^c$ partition $\Omega$ within this measure, we can apply Bayes' theorem directly to $P(\cdot \mid C)$:
+
+$$P(B \mid A \cap C) = \frac{P(A \cap B \mid C)}{P(A \mid C)}$$
+
+For the numerator: $P(A \cap B \mid C) = P(A \mid B \cap C) \cdot P(B \mid C)$ by the multiplication rule applied to $P(\cdot \mid C)$.
+
+For the denominator, apply the law of total probability within $P(\cdot \mid C)$:
+
+$$P(A \mid C) = P(A \mid B \cap C)\, P(B \mid C) + P(A \mid B^c \cap C)\, P(B^c \mid C)$$
+
+Combining yields the desired formula. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Independence Preserved Under Complements (Full)">
+Prove: if $A$, $B$, $C$ are mutually independent, then $A^c$, $B$, $C$ are also mutually independent.
+
+<Solution>
+**Proof.** We must verify three conditions: (1) pairwise independence of all three pairs, and (2) the triple product condition.
+
+**Pair $A^c, B$:** $P(A^c \cap B) = P(B) - P(A \cap B) = P(B) - P(A)P(B) = P(B)(1 - P(A)) = P(A^c)P(B)$.
+
+**Pair $A^c, C$:** By the same argument, $P(A^c \cap C) = P(A^c)P(C)$.
+
+**Pair $B, C$:** Already given by mutual independence of $A, B, C$.
+
+**Triple:** $P(A^c \cap B \cap C) = P(B \cap C) - P(A \cap B \cap C) = P(B)P(C) - P(A)P(B)P(C) = P(B)P(C)(1 - P(A)) = P(A^c)P(B)P(C)$.
+
+All four conditions hold, so $A^c, B, C$ are mutually independent. $\blacksquare$
+</Solution>
+</Problem>

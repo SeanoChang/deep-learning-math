@@ -1,0 +1,188 @@
+---
+title: "Counting and Finite Probability Models"
+description: "Permutations, combinations, binomial identities, inclusion-exclusion, and the birthday problem"
+order: 2
+milestone: "M1"
+prerequisites: ["01-why-probability-needs-axioms"]
+---
+
+## Lesson Objectives (Max Rigor)
+
+- Execute double-counting and inclusion-exclusion proofs without overcounting errors.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M1 -- Event algebra`
+- **Gate theorem:** `Inclusion-exclusion for n sets`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Finite Uniform Probability
+
+When $\Omega$ is finite and all outcomes are equally likely, the probability measure takes a particularly clean form.
+
+<Callout type="definition" title="Uniform Probability on a Finite Space">
+If $|\Omega| = N < \infty$ and each outcome has equal probability, then for any event $A \subseteq \Omega$:
+
+$$P(A) = \frac{|A|}{|\Omega|}$$
+
+This reduces probability to **counting**: enumerate the favorable outcomes and divide by the total.
+</Callout>
+
+This model applies to fair dice, well-shuffled cards, and random selections. The challenge shifts entirely to combinatorics — counting $|A|$ and $|\Omega|$.
+
+## Fundamental Counting Principles
+
+<Callout type="theorem" title="Multiplication Principle">
+If an experiment consists of $k$ sequential stages with $n_1, n_2, \ldots, n_k$ choices at each stage respectively, then the total number of outcomes is $n_1 \cdot n_2 \cdots n_k$.
+</Callout>
+
+<Callout type="definition" title="Permutations and Combinations">
+The number of **permutations** of $k$ objects chosen from $n$ (order matters) is:
+
+$$P(n,k) = \frac{n!}{(n-k)!} = n(n-1)\cdots(n-k+1)$$
+
+The number of **combinations** of $k$ objects chosen from $n$ (order irrelevant) is:
+
+$$\binom{n}{k} = \frac{n!}{k!(n-k)!}$$
+
+We define $\binom{n}{k} = 0$ for $k < 0$ or $k > n$.
+</Callout>
+
+The key relationship is $P(n,k) = k! \cdot \binom{n}{k}$: every unordered selection corresponds to exactly $k!$ ordered arrangements.
+
+## Binomial Identities
+
+Binomial coefficients satisfy elegant identities. We prove two using combinatorial arguments — proofs that work by counting the same set in two ways.
+
+<Callout type="theorem" title="Pascal's Identity">
+For $1 \leq k \leq n$: $\displaystyle\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.
+</Callout>
+
+**Proof (combinatorial).** Consider choosing $k$ elements from $\{1, 2, \ldots, n\}$. Partition the $\binom{n}{k}$ subsets by whether they contain the element $n$. Subsets containing $n$: we must choose the remaining $k - 1$ elements from $\{1, \ldots, n-1\}$, giving $\binom{n-1}{k-1}$ choices. Subsets not containing $n$: we choose all $k$ elements from $\{1, \ldots, n-1\}$, giving $\binom{n-1}{k}$ choices. Since these cases are disjoint and exhaustive, $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$. $\blacksquare$
+
+<Callout type="theorem" title="Vandermonde's Identity">
+$\displaystyle\binom{m+n}{r} = \sum_{k=0}^{r} \binom{m}{k}\binom{n}{r-k}$.
+</Callout>
+
+**Proof (combinatorial).** We choose $r$ elements from a set of $m + n$ objects, partitioned into a group of $m$ "red" objects and $n$ "blue" objects. Any selection of $r$ objects takes exactly $k$ red objects and $r - k$ blue objects for some $0 \leq k \leq r$. The number of ways to do this is $\binom{m}{k}\binom{n}{r-k}$. Summing over all valid $k$ counts every selection exactly once. $\blacksquare$
+
+<Callout type="tip" title="Combinatorial Proofs">
+A combinatorial proof answers a counting question in two ways. The left side and right side count the same set, so they must be equal. This technique avoids algebraic manipulation entirely and often provides deeper insight.
+</Callout>
+
+## General Inclusion-Exclusion
+
+The two-set formula from the previous lesson generalizes to any finite collection.
+
+<Callout type="theorem" title="Inclusion-Exclusion Principle">
+For events $A_1, A_2, \ldots, A_n$:
+
+$$P\!\left(\bigcup_{i=1}^{n} A_i\right) = \sum_{k=1}^{n} (-1)^{k+1} \sum_{|S|=k} P\!\left(\bigcap_{i \in S} A_i\right)$$
+
+where the inner sum ranges over all subsets $S \subseteq \{1, \ldots, n\}$ of size $k$.
+</Callout>
+
+The formula alternates between adding and subtracting intersection terms of increasing order. For three events:
+
+$$P(A \cup B \cup C) = P(A) + P(B) + P(C) - P(A \cap B) - P(A \cap C) - P(B \cap C) + P(A \cap B \cap C)$$
+
+## The Birthday Problem
+
+<Callout type="definition" title="Birthday Problem">
+In a room of $n$ people, what is the probability that at least two share a birthday? Assume 365 equally likely birthdays and independent births.
+</Callout>
+
+Let $A$ be the event "at least one shared birthday." We compute $P(A^c)$ — the probability all birthdays are distinct. The total number of birthday assignments is $365^n$. The number of assignments with all distinct birthdays is $P(365, n) = 365 \cdot 364 \cdots (365 - n + 1)$. Thus:
+
+$$P(A^c) = \frac{365 \cdot 364 \cdots (365 - n + 1)}{365^n} = \prod_{i=0}^{n-1}\left(1 - \frac{i}{365}\right)$$
+
+So $P(A) = 1 - P(A^c)$. Computing numerically: $P(A) \approx 0.507$ at $n = 23$. With just 23 people, a shared birthday is more likely than not — a result that surprises most people.
+
+Using the approximation $1 - x \approx e^{-x}$ for small $x$:
+
+$$P(A^c) \approx \prod_{i=0}^{n-1} e^{-i/365} = e^{-n(n-1)/730}$$
+
+Setting this to $1/2$ and solving: $n \approx \sqrt{730 \ln 2} \approx 22.5$, confirming $n = 23$.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 2.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Inclusion-exclusion for n sets`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 2.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 2.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="A committee of 5 is chosen from 8 men and 6 women. What is the probability it contains exactly 3 women?"
+  options={[
+    "$\\frac{\\binom{6}{3}\\binom{8}{2}}{\\binom{14}{5}}$",
+    "$\\frac{\\binom{6}{3}\\binom{8}{3}}{\\binom{14}{5}}$",
+    "$\\frac{6^3 \\cdot 8^2}{14^5}$",
+    "$\\frac{3}{5}$"
+  ]}
+  correctIndex={0}
+  explanation="Choose 3 women from 6 and 2 men from 8, divided by the total ways to choose 5 from 14."
+/>
+
+<NumericInput
+  question="In a room of 30 people, what is the probability that at least two share a birthday? Round to three decimal places. (Use 365 days.)"
+  answer={0.706}
+  tolerance={0.002}
+  hint="Compute $1 - \\prod_{i=0}^{29}(1 - i/365)$ or use the exponential approximation."
+/>
+
+<Problem title="Derangements via Inclusion-Exclusion">
+A **derangement** is a permutation $\sigma$ of $\{1, \ldots, n\}$ with no fixed points ($\sigma(i) \neq i$ for all $i$). Let $D_n$ denote the number of derangements. Using inclusion-exclusion, prove:
+
+$$D_n = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!}$$
+
+<Solution>
+**Proof.** Let $A_i$ be the set of permutations that fix $i$ (i.e., $\sigma(i) = i$). Then the derangements are the permutations in none of the $A_i$, so $D_n = n! - \left|\bigcup_{i=1}^n A_i\right|$.
+
+For any subset $S \subseteq \{1, \ldots, n\}$ with $|S| = k$, the number of permutations fixing every element of $S$ is $(n - k)!$, since the remaining $n - k$ elements can be permuted freely. The number of such subsets is $\binom{n}{k}$.
+
+By inclusion-exclusion:
+
+$$\left|\bigcup_{i=1}^n A_i\right| = \sum_{k=1}^{n} (-1)^{k+1} \binom{n}{k}(n-k)!$$
+
+Therefore:
+
+$$D_n = n! - \sum_{k=1}^{n} (-1)^{k+1} \binom{n}{k}(n-k)! = \sum_{k=0}^{n} (-1)^k \binom{n}{k}(n-k)! = \sum_{k=0}^{n} (-1)^k \frac{n!}{k!} = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!}$$
+
+Note that $D_n / n! \to e^{-1}$ as $n \to \infty$, so approximately $1/e \approx 36.8\%$ of all permutations are derangements. $\blacksquare$
+</Solution>
+</Problem>
+
+<Problem title="Binomial Theorem">
+Prove the binomial theorem: for any $x, y$ and nonneg integer $n$,
+
+$$(x + y)^n = \sum_{k=0}^{n} \binom{n}{k} x^k y^{n-k}$$
+
+<Solution>
+**Proof.** We use induction on $n$. The base case $n = 0$ gives $1 = \binom{0}{0} x^0 y^0 = 1$. For the inductive step, assume the identity holds for $n - 1$:
+
+$$(x+y)^n = (x+y)(x+y)^{n-1} = (x+y)\sum_{k=0}^{n-1}\binom{n-1}{k}x^k y^{n-1-k}$$
+
+Distributing:
+
+$$= \sum_{k=0}^{n-1}\binom{n-1}{k}x^{k+1}y^{n-1-k} + \sum_{k=0}^{n-1}\binom{n-1}{k}x^k y^{n-k}$$
+
+Re-indexing the first sum with $j = k + 1$:
+
+$$= \sum_{j=1}^{n}\binom{n-1}{j-1}x^j y^{n-j} + \sum_{k=0}^{n-1}\binom{n-1}{k}x^k y^{n-k}$$
+
+Combining the terms where $1 \leq k \leq n-1$ using Pascal's identity, and handling the boundary terms $k = 0$ and $k = n$ separately, yields $\sum_{k=0}^{n}\binom{n}{k}x^k y^{n-k}$. $\blacksquare$
+</Solution>
+</Problem>

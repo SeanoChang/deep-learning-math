@@ -1,0 +1,178 @@
+---
+title: "Variance, Covariance, and Second-Order Structure"
+description: "Variance, standard deviation, covariance, correlation, and the Cauchy-Schwarz inequality in probability"
+order: 6
+milestone: "M3"
+prerequisites: ["05-expectation-weighted-summation"]
+---
+
+# Variance, Covariance, and Second-Order Structure
+
+Expectation captures the "center" of a distribution, but tells us nothing about spread. Two random variables can share the same mean yet behave very differently. Variance and covariance provide the second-order structure that quantifies dispersion and linear dependence.
+
+## Lesson Objectives (Max Rigor)
+
+- Control second moments rigorously using variance/covariance identities and Cauchy-Schwarz.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M3 -- Random variables and expectation`
+- **Gate theorem:** `Linearity of expectation; variance identity`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Variance and Standard Deviation
+
+<Callout type="definition">
+**Definition 6.1 (Variance).** Let $X$ be a random variable with $E[X^2] < \infty$. The **variance** of $X$ is
+
+$$\text{Var}(X) = E\bigl[(X - E[X])^2\bigr].$$
+
+The **standard deviation** is $\text{SD}(X) = \sqrt{\text{Var}(X)}$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 6.2 (Computational Identity).** $\text{Var}(X) = E[X^2] - (E[X])^2$.
+
+*Proof.* Let $\mu = E[X]$. Expanding the square:
+
+$$\text{Var}(X) = E[(X - \mu)^2] = E[X^2 - 2\mu X + \mu^2] = E[X^2] - 2\mu E[X] + \mu^2 = E[X^2] - 2\mu^2 + \mu^2 = E[X^2] - \mu^2. \quad \blacksquare$$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 6.3 (Affine Transformation).** For constants $a, b \in \mathbb{R}$,
+
+$$\text{Var}(aX + b) = a^2 \,\text{Var}(X).$$
+
+*Proof.* Let $\mu = E[X]$, so $E[aX + b] = a\mu + b$. Then
+
+$$\text{Var}(aX + b) = E\bigl[(aX + b - a\mu - b)^2\bigr] = E\bigl[a^2(X - \mu)^2\bigr] = a^2 E[(X - \mu)^2] = a^2\,\text{Var}(X). \quad \blacksquare$$
+</Callout>
+
+Note that adding a constant shifts the distribution without changing its spread, so $b$ disappears. Scaling by $a$ scales the standard deviation by $|a|$.
+
+## Covariance and Its Properties
+
+<Callout type="definition">
+**Definition 6.4 (Covariance).** For random variables $X, Y$ with finite second moments,
+
+$$\text{Cov}(X, Y) = E\bigl[(X - E[X])(Y - E[Y])\bigr] = E[XY] - E[X]\,E[Y].$$
+</Callout>
+
+The second equality follows by expanding and using linearity, exactly as in Theorem 6.2.
+
+<Callout type="theorem">
+**Theorem 6.5 (Bilinearity of Covariance).** For random variables $X_1, X_2, Y$ and constants $a, b$:
+
+$$\text{Cov}(aX_1 + bX_2,\, Y) = a\,\text{Cov}(X_1, Y) + b\,\text{Cov}(X_2, Y).$$
+
+*Proof.* Let $\mu_1 = E[X_1]$, $\mu_2 = E[X_2]$, $\nu = E[Y]$. Then $E[aX_1 + bX_2] = a\mu_1 + b\mu_2$ and
+
+$$\text{Cov}(aX_1 + bX_2, Y) = E\bigl[(aX_1 + bX_2 - a\mu_1 - b\mu_2)(Y - \nu)\bigr]$$
+
+$$= E\bigl[a(X_1 - \mu_1)(Y - \nu) + b(X_2 - \mu_2)(Y - \nu)\bigr] = a\,\text{Cov}(X_1, Y) + b\,\text{Cov}(X_2, Y)$$
+
+by linearity of expectation. The same holds in the second argument by symmetry, since $\text{Cov}(X,Y) = \text{Cov}(Y,X)$. $\blacksquare$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 6.6 (Variance of Sums).** For any random variables $X_1, \ldots, X_n$ with finite second moments,
+
+$$\text{Var}\!\left(\sum_{i=1}^n X_i\right) = \sum_{i=1}^n \text{Var}(X_i) + 2\sum_{i < j} \text{Cov}(X_i, X_j).$$
+
+*Proof.* Apply bilinearity: $\text{Var}\bigl(\sum X_i\bigr) = \text{Cov}\bigl(\sum_i X_i, \sum_j X_j\bigr) = \sum_i \sum_j \text{Cov}(X_i, X_j)$. Separate the diagonal terms $\text{Cov}(X_i, X_i) = \text{Var}(X_i)$ from the off-diagonal terms and use symmetry. $\blacksquare$
+</Callout>
+
+If $X_1, \ldots, X_n$ are **pairwise uncorrelated** (i.e., $\text{Cov}(X_i, X_j) = 0$ for $i \neq j$), then $\text{Var}\bigl(\sum X_i\bigr) = \sum \text{Var}(X_i)$.
+
+## Correlation and Cauchy--Schwarz
+
+<Callout type="definition">
+**Definition 6.7 (Correlation Coefficient).** For $X, Y$ with $\text{Var}(X), \text{Var}(Y) > 0$,
+
+$$\text{Corr}(X, Y) = \frac{\text{Cov}(X, Y)}{\text{SD}(X)\,\text{SD}(Y)}.$$
+</Callout>
+
+<Callout type="theorem">
+**Theorem 6.8 (Cauchy--Schwarz in Probability).** For any random variables $X, Y$ with finite second moments,
+
+$$\bigl|\text{Cov}(X, Y)\bigr| \leq \text{SD}(X)\,\text{SD}(Y).$$
+
+Equivalently, $|\text{Corr}(X, Y)| \leq 1$, with equality if and only if $Y = aX + b$ a.s. for some constants $a, b$.
+
+*Proof.* We may assume $\text{Var}(X) > 0$ (otherwise $X$ is constant a.s. and both sides are zero). For any $t \in \mathbb{R}$, define $Z = (X - \mu_X) + t(Y - \mu_Y)$. Then
+
+$$0 \leq E[Z^2] = \text{Var}(X) + 2t\,\text{Cov}(X,Y) + t^2\,\text{Var}(Y).$$
+
+This is a nonneg quadratic in $t$, so its discriminant is $\leq 0$:
+
+$$4\,\text{Cov}(X,Y)^2 - 4\,\text{Var}(X)\,\text{Var}(Y) \leq 0,$$
+
+which gives $\text{Cov}(X,Y)^2 \leq \text{Var}(X)\,\text{Var}(Y)$. Equality holds iff the quadratic has a root, i.e., $E[Z^2] = 0$ for some $t$, meaning $Z = 0$ a.s. $\blacksquare$
+</Callout>
+
+## Uncorrelated Does Not Imply Independent
+
+<Callout type="warning">
+**Counterexample 6.9.** Let $X \sim \text{Uniform}\{-1, 0, 1\}$ and $Y = X^2$. Then $E[XY] = E[X^3] = 0$ (by symmetry) and $E[X] = 0$, so $\text{Cov}(X, Y) = 0$. Yet $X$ and $Y$ are clearly dependent: knowing $X = 0$ tells us $Y = 0$ with certainty.
+</Callout>
+
+Uncorrelatedness means there is no *linear* relationship. Independence is a much stronger condition requiring that *all* functions of $X$ and $Y$ be uncorrelated.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 6.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Linearity of expectation; variance identity`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 6.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 6.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question={"Let X have mean 3 and variance 4. What is Var(2X - 5)?"}
+  options={[
+    "3",
+    "8",
+    "16",
+    "11"
+  ]}
+  correctIndex={2}
+  explanation={"By Theorem 6.3, Var(aX + b) = a^2 Var(X). So Var(2X - 5) = 4 * 4 = 16. The constant -5 does not affect variance."}
+/>
+
+<NumericInput
+  question={"If X and Y are independent with Var(X) = 9 and Var(Y) = 16, what is SD(X + Y)?"}
+  answer={5}
+  tolerance={0.01}
+  hint={"Independence implies Cov(X,Y) = 0, so Var(X+Y) = Var(X) + Var(Y). Then take the square root."}
+/>
+
+<Problem>
+**Exercise 6.1.** Let $X$ be a random variable with $E[X] = 2$ and $E[X^2] = 8$. Compute $\text{Var}(3X + 1)$.
+</Problem>
+
+<Solution>
+First, $\text{Var}(X) = E[X^2] - (E[X])^2 = 8 - 4 = 4$. By Theorem 6.3, $\text{Var}(3X + 1) = 9 \cdot \text{Var}(X) = 9 \cdot 4 = 36$. $\blacksquare$
+</Solution>
+
+<Problem>
+**Exercise 6.2.** Prove that $\text{Var}(X) = 0$ if and only if $X = E[X]$ with probability 1. (Hint: $E[Z^2] = 0$ and $Z^2 \geq 0$ imply $Z = 0$ a.s.)
+</Problem>
+
+<Solution>
+Let $\mu = E[X]$ and $Z = X - \mu$. Then $\text{Var}(X) = E[Z^2]$. Since $Z^2 \geq 0$, we have $E[Z^2] \geq 0$ always.
+
+$(\Rightarrow)$ If $\text{Var}(X) = 0$, then $E[Z^2] = 0$. Since $Z^2 \geq 0$ and its expectation is zero, we must have $Z^2 = 0$ almost surely (if $P(Z^2 > 0) > 0$, then $E[Z^2] > 0$, a contradiction). So $Z = 0$ a.s., i.e., $X = \mu$ a.s.
+
+$(\Leftarrow)$ If $X = \mu$ a.s., then $Z = 0$ a.s., so $E[Z^2] = 0$. $\blacksquare$
+</Solution>

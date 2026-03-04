@@ -1,0 +1,197 @@
+---
+title: "Central Limit Theorem via Characteristic Functions"
+description: "Characteristic functions, their properties, and the rigorous proof of the Central Limit Theorem"
+order: 13
+milestone: "M7"
+prerequisites: ["12-strong-law-large-numbers"]
+---
+
+# Central Limit Theorem via Characteristic Functions
+
+The Central Limit Theorem is arguably the most important result in probability. To prove it rigorously, we develop **characteristic functions** -- the Fourier-analytic tool that replaces moment generating functions with a universally-defined transform.
+
+## Lesson Objectives (Max Rigor)
+
+- Run full CLT proofs through characteristic-function expansions and tight remainder bounds.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M7 -- Limit theorems`
+- **Gate theorem:** `SLLN; CLT via characteristic functions`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Characteristic Functions
+
+<Callout type="definition" title="Definition 13.1 (Characteristic Function)">
+The **characteristic function** of a random variable $X$ is the function $\varphi_X : \mathbb{R} \to \mathbb{C}$ defined by:
+
+$$\varphi_X(t) = E[e^{itX}] = E[\cos(tX)] + i\,E[\sin(tX)].$$
+</Callout>
+
+Unlike the MGF, the characteristic function always exists (since $|e^{itX}| = 1$, the expectation is always finite).
+
+<Callout type="theorem" title="Theorem 13.2 (Basic Properties)">
+Let $X, Y$ be random variables. Then:
+
+1. $|\varphi_X(t)| \leq 1$ for all $t$, and $\varphi_X(0) = 1$.
+2. $\varphi_X$ is uniformly continuous on $\mathbb{R}$.
+3. $\varphi_{aX+b}(t) = e^{ibt}\,\varphi_X(at)$.
+4. If $X, Y$ are independent, then $\varphi_{X+Y}(t) = \varphi_X(t) \cdot \varphi_Y(t)$.
+</Callout>
+
+*Proof of (4).* If $X, Y$ are independent, then $e^{itX}$ and $e^{itY}$ are independent (as measurable functions of independent RVs). Therefore:
+
+$$\varphi_{X+Y}(t) = E[e^{it(X+Y)}] = E[e^{itX} \cdot e^{itY}] = E[e^{itX}]\cdot E[e^{itY}] = \varphi_X(t)\cdot\varphi_Y(t).$$
+
+The factoring of the expectation uses the fundamental property: for independent random variables $U, V$, $E[UV] = E[U]E[V]$ whenever both expectations exist. $\square$
+
+## Moments from Characteristic Functions
+
+<Callout type="theorem" title="Theorem 13.3 (Differentiation Formula)">
+If $E[|X|^k] < \infty$, then $\varphi_X$ is $k$-times differentiable and:
+
+$$\varphi_X^{(k)}(0) = i^k E[X^k].$$
+</Callout>
+
+*Proof.* For $k = 1$: consider the difference quotient $\frac{\varphi_X(t+h) - \varphi_X(t)}{h} = E\!\left[e^{itX} \cdot \frac{e^{ihX} - 1}{h}\right]$. As $h \to 0$, the integrand converges to $e^{itX} \cdot iX$ pointwise. Moreover, $|e^{itX}(e^{ihX} - 1)/h| = |(e^{ihX} - 1)/h| \leq |X|$ (since $|e^{iu} - 1| \leq |u|$ for all $u$). By the dominated convergence theorem (using $E[|X|] < \infty$):
+
+$$\varphi_X'(t) = E[iX e^{itX}].$$
+
+At $t = 0$: $\varphi_X'(0) = iE[X]$. The general case follows by induction, with $|X|^k$ as the dominating function. $\square$
+
+This gives us: $E[X] = \varphi_X'(0)/i$ and $E[X^2] = -\varphi_X''(0)$.
+
+## The Uniqueness Theorem
+
+<Callout type="theorem" title="Theorem 13.4 (Uniqueness)">
+The characteristic function uniquely determines the distribution: if $\varphi_X(t) = \varphi_Y(t)$ for all $t \in \mathbb{R}$, then $X$ and $Y$ have the same distribution.
+</Callout>
+
+We state this without proof (it follows from the Fourier inversion theorem). This is essential: it means convergence of characteristic functions can establish convergence in distribution.
+
+<Callout type="theorem" title="Theorem 13.5 (Levy's Continuity Theorem)">
+$X_n \xrightarrow{d} X$ if and only if $\varphi_{X_n}(t) \to \varphi_X(t)$ for every $t \in \mathbb{R}$.
+</Callout>
+
+## The CF of $N(0,1)$
+
+Before proving the CLT, we verify the target.
+
+<Callout type="theorem" title="Proposition 13.6">
+If $Z \sim N(0,1)$, then $\varphi_Z(t) = e^{-t^2/2}$.
+</Callout>
+
+*Proof.* We compute directly:
+
+$$\varphi_Z(t) = \int_{-\infty}^{\infty} e^{itx} \cdot \frac{1}{\sqrt{2\pi}} e^{-x^2/2}\,dx = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} e^{-(x^2 - 2itx)/2}\,dx.$$
+
+Complete the square: $x^2 - 2itx = (x - it)^2 + t^2$. So:
+
+$$\varphi_Z(t) = \frac{e^{-t^2/2}}{\sqrt{2\pi}} \int_{-\infty}^{\infty} e^{-(x-it)^2/2}\,dx = e^{-t^2/2},$$
+
+where the integral equals $\sqrt{2\pi}$ by contour integration (shifting the contour in the complex plane by $it$ does not change the value of the Gaussian integral). $\square$
+
+## Proof of the Central Limit Theorem
+
+<Callout type="theorem" title="Theorem 13.7 (Central Limit Theorem)">
+Let $X_1, X_2, \ldots$ be iid with $E[X_1] = \mu$ and $\text{Var}(X_1) = \sigma^2 \in (0, \infty)$. Then:
+
+$$\frac{S_n - n\mu}{\sigma\sqrt{n}} = \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1).$$
+</Callout>
+
+*Proof.* Without loss of generality, assume $\mu = 0$ and $\sigma = 1$ (replace $X_i$ by $(X_i - \mu)/\sigma$). Let $Z_n = S_n/\sqrt{n}$. We show $\varphi_{Z_n}(t) \to e^{-t^2/2}$ and invoke Levy's theorem.
+
+**Step 1: CF of $Z_n$.** Since $Z_n = \frac{1}{\sqrt{n}}\sum_{i=1}^n X_i$ and the $X_i$ are iid:
+
+$$\varphi_{Z_n}(t) = \left[\varphi_{X_1}\!\left(\frac{t}{\sqrt{n}}\right)\right]^n,$$
+
+using the scaling property and independence.
+
+**Step 2: Taylor expansion.** Since $E[X_1] = 0$ and $E[X_1^2] = 1 < \infty$, Theorem 13.3 gives $\varphi'(0) = 0$ and $\varphi''(0) = i^2 E[X_1^2] = -1$. By Taylor's theorem:
+
+$$\varphi_{X_1}(s) = \varphi(0) + \varphi'(0)s + \frac{\varphi''(0)}{2}s^2 + o(s^2) = 1 - \frac{s^2}{2} + o(s^2)$$
+
+as $s \to 0$.
+
+**Step 3: Take the $n$-th power.** Substituting $s = t/\sqrt{n}$:
+
+$$\varphi_{Z_n}(t) = \left[1 - \frac{t^2}{2n} + o\!\left(\frac{1}{n}\right)\right]^n.$$
+
+**Step 4: Limit.** By the fundamental limit $(1 + a_n/n)^n \to e^a$ when $a_n \to a$, we get:
+
+$$\varphi_{Z_n}(t) \to e^{-t^2/2} = \varphi_Z(t),$$
+
+which is the characteristic function of $N(0,1)$.
+
+By Levy's continuity theorem, $Z_n \xrightarrow{d} N(0,1)$. $\square$
+
+<Callout type="tip" title="The Power of this Proof">
+This proof uses no assumption beyond finite variance. It works for any distribution -- discrete, continuous, or mixed. The universality of the CLT is a direct consequence of the Taylor expansion killing all distributional details beyond the first two moments.
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 13.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `SLLN; CLT via characteristic functions`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 13.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 13.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 13.1: CF of Poisson">
+Compute the characteristic function of $X \sim \text{Poisson}(\lambda)$ directly from the definition, and verify that $\varphi'(0)/i = \lambda = E[X]$.
+
+<Solution>
+$$\varphi_X(t) = E[e^{itX}] = \sum_{k=0}^\infty e^{itk} \frac{\lambda^k e^{-\lambda}}{k!} = e^{-\lambda} \sum_{k=0}^\infty \frac{(\lambda e^{it})^k}{k!} = e^{-\lambda} \cdot e^{\lambda e^{it}} = e^{\lambda(e^{it} - 1)}.$$
+
+Differentiating: $\varphi'(t) = i\lambda e^{it} \cdot e^{\lambda(e^{it}-1)}$. At $t = 0$: $\varphi'(0) = i\lambda \cdot 1 = i\lambda$. So $\varphi'(0)/i = \lambda = E[X]$, confirming Theorem 13.3.
+</Solution>
+</Problem>
+
+<MultipleChoice
+  question="Which property of characteristic functions does NOT have a direct analogue for moment generating functions?"
+  options={[
+    "Factorization under independence: $\\varphi_{X+Y} = \\varphi_X \\cdot \\varphi_Y$",
+    "Universal existence: $\\varphi_X(t)$ is defined for all $t \\in \\mathbb{R}$ and all random variables $X$",
+    "Moments via differentiation at the origin",
+    "The scaling property $\\varphi_{aX}(t) = \\varphi_X(at)$"
+  ]}
+  correctIndex={1}
+  explanation="The MGF $M_X(\\theta) = E[e^{\\theta X}]$ may be infinite for some or all $\\theta \\neq 0$ (e.g., for the Cauchy or lognormal distribution). The CF always exists because $|e^{itX}| = 1$, so the expectation is always finite. Properties (a), (c), (d) all have MGF analogues when the MGF exists."
+/>
+
+<Problem title="Exercise 13.3: CLT for Bernoulli">
+Let $X_1, \ldots, X_n$ be iid Bernoulli$(1/2)$. Write down $\varphi_{X_1}(t)$, compute $\varphi_{Z_n}(t)$ where $Z_n = (S_n - n/2)/(\sqrt{n}/2)$, and verify that $\varphi_{Z_n}(t) \to e^{-t^2/2}$.
+
+<Solution>
+$\varphi_{X_1}(t) = \frac{1}{2}(1 + e^{it})$. Here $\mu = 1/2$, $\sigma^2 = 1/4$, $\sigma = 1/2$.
+
+$Z_n = 2(S_n - n/2)/\sqrt{n} = (2S_n - n)/\sqrt{n}$. Using scaling and translation:
+
+$$\varphi_{Z_n}(t) = e^{-int/\sqrt{n}} \left[\varphi_{X_1}(2t/\sqrt{n})\right]^n = e^{-int/\sqrt{n}} \left[\frac{1 + e^{2it/\sqrt{n}}}{2}\right]^n.$$
+
+Let $s = t/\sqrt{n}$. Then $\frac{1 + e^{2is}}{2} = \frac{1 + 1 + 2is - 2s^2 + \ldots}{2} = 1 + is - s^2 + \ldots$, and $e^{-ins} = e^{-int/\sqrt{n}}$. After combining and simplifying:
+
+$$\varphi_{Z_n}(t) = \left[\cos(t/\sqrt{n})\right]^n \to e^{-t^2/2}$$
+
+using $\ln\cos(t/\sqrt{n}) = -t^2/(2n) + O(n^{-2})$, so $n\ln\cos(t/\sqrt{n}) \to -t^2/2$.
+</Solution>
+</Problem>
+
+<NumericInput
+  question="If $X \\sim N(3, 4)$ (mean 3, variance 4), compute $|\\varphi_X(1)|$. Round to 4 decimal places."
+  answer={0.1353}
+  tolerance={0.001}
+  hint="Use $\\varphi_X(t) = e^{i\\mu t - \\sigma^2 t^2/2}$, so $|\\varphi_X(t)| = e^{-\\sigma^2 t^2/2}$. Here $\\sigma^2 = 4$, $t = 1$."
+/>

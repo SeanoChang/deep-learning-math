@@ -1,0 +1,175 @@
+---
+title: "Finite-State Markov Chains: Structure"
+description: "The Markov property, transition matrices, communication classes, periodicity, and recurrence"
+order: 9
+milestone: "M5"
+prerequisites: ["08-poisson-processes"]
+---
+
+# Finite-State Markov Chains: Structure
+
+Markov chains are stochastic processes with a short memory: given the present state, the future is independent of the past. This memoryless property, far from being restrictive, makes the theory both tractable and widely applicable---from genetics and queueing to PageRank and MCMC.
+
+## Lesson Objectives (Max Rigor)
+
+- Analyze communication, periodicity, and recurrence through matrix and probabilistic criteria.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M5 -- Random processes`
+- **Gate theorem:** `Recurrence of SRW; finite-state Markov chain convergence`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## The Markov Property
+
+<Callout type="definition" title="Definition 9.1 (Markov Chain)">
+A discrete-time stochastic process $(X_n)_{n \ge 0}$ on a finite state space $\mathcal{S} = \{1, 2, \ldots, N\}$ is a **(time-homogeneous) Markov chain** if for all $n \ge 0$ and all states $i_0, \ldots, i_{n+1} \in \mathcal{S}$,
+
+$$P(X_{n+1} = i_{n+1} \mid X_0 = i_0, \ldots, X_n = i_n) = P(X_{n+1} = i_{n+1} \mid X_n = i_n).$$
+
+The **transition probability** $p_{ij} = P(X_{n+1} = j \mid X_n = i)$ is independent of $n$.
+</Callout>
+
+<Callout type="definition" title="Definition 9.2 (Transition Matrix)">
+The **transition matrix** $P = (p_{ij})_{i,j \in \mathcal{S}}$ is an $N \times N$ matrix with $p_{ij} \ge 0$ and $\sum_{j \in \mathcal{S}} p_{ij} = 1$ for each $i$. Such a matrix is called **stochastic**.
+</Callout>
+
+## $n$-Step Transitions and Chapman-Kolmogorov
+
+<Callout type="theorem" title="Theorem 9.3 (Chapman-Kolmogorov Equations)">
+The $n$-step transition probability $p_{ij}^{(n)} = P(X_n = j \mid X_0 = i)$ satisfies $p_{ij}^{(n)} = (P^n)_{ij}$. More generally, for $m, n \ge 0$,
+
+$$p_{ij}^{(m+n)} = \sum_{k \in \mathcal{S}} p_{ik}^{(m)}\, p_{kj}^{(n)}.$$
+
+*Proof.* By the law of total probability and the Markov property,
+
+$$P(X_{m+n} = j \mid X_0 = i) = \sum_{k \in \mathcal{S}} P(X_{m+n} = j \mid X_m = k) \, P(X_m = k \mid X_0 = i) = \sum_k p_{kj}^{(n)} \, p_{ik}^{(m)}.$$
+
+This is precisely the $(i,j)$ entry of $P^m \cdot P^n = P^{m+n}$. $\blacksquare$
+</Callout>
+
+## Communication Classes
+
+<Callout type="definition" title="Definition 9.4 (Communication)">
+State $i$ **leads to** state $j$ (written $i \to j$) if $p_{ij}^{(n)} > 0$ for some $n \ge 1$. States $i$ and $j$ **communicate** (written $i \leftrightarrow j$) if $i \to j$ and $j \to i$. Communication is an equivalence relation, and the equivalence classes are called **communication classes**. The chain is **irreducible** if there is a single communication class.
+</Callout>
+
+## Periodicity
+
+<Callout type="definition" title="Definition 9.5 (Period)">
+The **period** of state $i$ is $d(i) = \gcd\{n \ge 1 : p_{ii}^{(n)} > 0\}$. A state is **aperiodic** if $d(i) = 1$.
+</Callout>
+
+<Callout type="theorem" title="Theorem 9.6 (Communicating States Share Period)">
+If $i \leftrightarrow j$, then $d(i) = d(j)$.
+
+*Proof.* Since $i \leftrightarrow j$, there exist $r, s \ge 1$ with $p_{ij}^{(r)} > 0$ and $p_{ji}^{(s)} > 0$. Then $p_{ii}^{(r+s)} \ge p_{ij}^{(r)} p_{ji}^{(s)} > 0$, so $d(i)$ divides $r + s$.
+
+For any $n$ with $p_{jj}^{(n)} > 0$, we have $p_{ii}^{(r+n+s)} \ge p_{ij}^{(r)} p_{jj}^{(n)} p_{ji}^{(s)} > 0$, so $d(i)$ divides $r + n + s$. Since $d(i)$ divides both $r + s$ and $r + n + s$, it divides $n$. As this holds for all such $n$, $d(i) \le d(j)$. By symmetry, $d(j) \le d(i)$, so $d(i) = d(j)$. $\blacksquare$
+</Callout>
+
+Hence we can speak of the period of a communication class. An irreducible chain is called **aperiodic** if its (unique) class has period 1.
+
+## Recurrence and Transience
+
+<Callout type="definition" title="Definition 9.7 (Recurrence)">
+Let $\rho_{ii} = P(\text{return to } i \mid X_0 = i)$. State $i$ is **recurrent** if $\rho_{ii} = 1$ and **transient** if $\rho_{ii} < 1$.
+</Callout>
+
+<Callout type="theorem" title="Theorem 9.8 (Recurrence Criterion)">
+State $i$ is recurrent if and only if $\sum_{n=0}^{\infty} p_{ii}^{(n)} = \infty$.
+
+*Proof.* Start from $X_0=i$ and define the number of visits
+
+$$R_i := \sum_{n=0}^{\infty} \mathbf{1}_{\{X_n=i\}}.$$
+
+By monotone convergence,
+
+$$E_i[R_i] = \sum_{n=0}^{\infty} P_i(X_n=i) = \sum_{n=0}^{\infty} p_{ii}^{(n)}.$$
+
+Let $f_{ii} := P_i(\tau_i^+ < \infty)$, where $\tau_i^+ = \inf\{n \ge 1 : X_n=i\}$. The state is recurrent iff $f_{ii}=1$.
+
+Let $M:=R_i-1$ be the number of returns to $i$ after time $0$. By the strong Markov property at successive return times, after each return the process restarts from $i$, so
+
+$$P_i(M \ge k) = f_{ii}^k, \qquad k \ge 0.$$
+
+Hence, if $f_{ii}<1$, then $M$ is geometric on $\{0,1,2,\ldots\}$ with mean $f_{ii}/(1-f_{ii})$, so
+
+$$E_i[R_i] = 1 + E_i[M] = \frac{1}{1-f_{ii}} < \infty.$$
+
+If $f_{ii}=1$, then $P_i(M \ge k)=1$ for all $k$, so $M=\infty$ a.s., hence $R_i=\infty$ a.s. and therefore $E_i[R_i]=\infty$.
+
+Combining with $E_i[R_i] = \sum_{n=0}^{\infty} p_{ii}^{(n)}$ proves:
+
+$$f_{ii}=1 \iff \sum_{n=0}^{\infty} p_{ii}^{(n)}=\infty.$$
+
+So $i$ is recurrent iff the series diverges. $\blacksquare$
+</Callout>
+
+<Callout type="theorem" title="Theorem 9.9 (Finite Irreducible Implies Recurrent)">
+Every state in a finite, irreducible Markov chain is recurrent.
+
+*Proof.* Suppose some state $i$ is transient. Then $p_{ii}^{(n)} \to 0$ as $n \to \infty$. Since $i$ communicates with every state $j$, fix $r$ with $p_{ij}^{(r)} > 0$. Then
+
+$$p_{jj}^{(n)} \ge p_{ji}^{(s)} \, p_{ii}^{(n - r - s)} \, p_{ij}^{(r)}$$
+
+for large $n$, so $p_{jj}^{(n)} \to 0$ for every $j$. But $\sum_{j \in \mathcal{S}} p_{ij}^{(n)} = 1$ for all $n$. If each $p_{ij}^{(n)} \to 0$, then for the finite sum $\sum_j p_{ij}^{(n)} \to 0$, contradicting $\sum_j p_{ij}^{(n)} = 1$. Therefore no state can be transient. $\blacksquare$
+</Callout>
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 9.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `Recurrence of SRW; finite-state Markov chain convergence`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 9.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 9.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<MultipleChoice
+  question="A Markov chain on $\\{1,2,3\\}$ has $p_{12} = 1$, $p_{23} = 1$, $p_{31} = 1$. What is the period of this chain?"
+  options={["1", "2", "3", "The chain is not irreducible"]}
+  correctIndex={2}
+  explanation="The chain cycles $1 \\to 2 \\to 3 \\to 1$ with period 3, since the shortest return to any state takes exactly 3 steps."
+/>
+
+<Problem title="Exercise 9.2: Two-State Chain">
+Consider the two-state chain on $\{0,1\}$ with transition matrix $P = \begin{pmatrix} 1-\alpha & \alpha \\ \beta & 1-\beta \end{pmatrix}$ where $0 < \alpha, \beta < 1$. (a) Show the chain is irreducible and aperiodic. (b) Compute $P^n$ using diagonalization.
+
+<Solution>
+**(a)** Since $p_{01} = \alpha > 0$ and $p_{10} = \beta > 0$, both states communicate. Since $p_{00} = 1 - \alpha > 0$, state 0 has $\gcd$ including 1, so $d(0) = 1$. Thus the chain is irreducible and aperiodic.
+
+**(b)** The eigenvalues satisfy $\det(P - \lambda I) = 0$: $(\lambda - 1)(\lambda - (1 - \alpha - \beta)) = 0$, giving $\lambda_1 = 1$ and $\lambda_2 = 1 - \alpha - \beta$. By diagonalization,
+
+$$P^n = \frac{1}{\alpha + \beta} \begin{pmatrix} \beta + \alpha(1-\alpha-\beta)^n & \alpha - \alpha(1-\alpha-\beta)^n \\ \beta - \beta(1-\alpha-\beta)^n & \alpha + \beta(1-\alpha-\beta)^n \end{pmatrix}. \quad \blacksquare$$
+</Solution>
+</Problem>
+
+<NumericInput
+  question="A Markov chain on $\\{1,2,3\\}$ has transition matrix with $p_{12}=0.5$, $p_{13}=0.5$, $p_{21}=1$, $p_{31}=1$. What is $p_{11}^{(3)}$ (the 3-step return probability)?"
+  answer={1}
+  tolerance={0.01}
+  hint="Compute $P^3$ or trace all paths of length 3 from state 1 back to state 1."
+/>
+
+<Problem title="Exercise 9.4: Recurrence Is a Class Property">
+Prove that if $i$ is recurrent and $i \leftrightarrow j$, then $j$ is recurrent.
+
+<Solution>
+Since $i \leftrightarrow j$, there exist $r, s$ with $p_{ij}^{(r)} > 0$ and $p_{ji}^{(s)} > 0$. For any $n$,
+
+$$p_{jj}^{(r+n+s)} \ge p_{ji}^{(s)} \, p_{ii}^{(n)} \, p_{ij}^{(r)}.$$
+
+Summing over $n$: $\sum_n p_{jj}^{(r+n+s)} \ge p_{ji}^{(s)} p_{ij}^{(r)} \sum_n p_{ii}^{(n)} = \infty$, since $i$ is recurrent. Therefore $\sum_n p_{jj}^{(n)} = \infty$, so $j$ is recurrent by Theorem 9.8. $\blacksquare$
+</Solution>
+</Problem>

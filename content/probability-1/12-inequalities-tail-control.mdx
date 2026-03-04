@@ -1,0 +1,220 @@
+---
+title: "Inequalities and Tail Control"
+description: "Markov's inequality, Chebyshev's inequality, Jensen's inequality, and their applications to tail bounds"
+order: 12
+milestone: "M6"
+prerequisites: ["11-conditional-expectation"]
+---
+
+# Inequalities and Tail Control
+
+Exact distributions are often hard to compute. Probability inequalities give us **upper bounds on tail probabilities** -- the chance that a random variable is far from its mean -- using only moments. These bounds are the engine behind the limit theorems to come.
+
+## Lesson Objectives (Max Rigor)
+
+- Apply Markov/Chebyshev/Jensen to obtain non-asymptotic tail bounds rigorously.
+- Write at least one proof from first principles with no theorem-black-box steps.
+- Identify one hypothesis that is essential and justify with a counterexample or failure mode.
+- Solve one synthesis problem that uses this lesson together with its prerequisite lesson.
+
+## Milestone Checkpoint
+
+- **Milestone:** `M6 -- Inequalities and limit laws`
+- **Gate theorem:** `WLLN via Chebyshev`
+- **Rigor bar:** Quantifiers, measurability/integrability assumptions, and dependency chains must be explicit.
+## Markov's Inequality
+
+<Callout type="theorem">
+**Theorem 12.1 (Markov's Inequality).** Let $X$ be a nonnegative random variable with $E[X] < \infty$. Then for any $a > 0$:
+
+$$P(X \geq a) \leq \frac{E[X]}{a}.$$
+</Callout>
+
+*Proof.* Since $X \geq 0$, we have $X \geq a \cdot \mathbf{1}_{X \geq a}$ pointwise (on $\{X \geq a\}$, $X \geq a$; on $\{X < a\}$, $a \cdot 0 = 0 \leq X$). Taking expectations of both sides (which preserves the inequality since expectation is monotone):
+
+$$E[X] \geq E[a \cdot \mathbf{1}_{X \geq a}] = a \cdot P(X \geq a).$$
+
+Dividing by $a > 0$ yields $P(X \geq a) \leq E[X]/a$. $\square$
+
+<Callout type="info">
+**Remark.** Markov's inequality uses only $E[X]$. It is sharp: the random variable $P(X = a) = E[X]/a$, $P(X = 0) = 1 - E[X]/a$ achieves equality for any valid choice of $a$ and $E[X]$.
+</Callout>
+
+**Sharpness example.** Let $X$ take value $10$ with probability $0.1$ and $0$ with probability $0.9$. Then $E[X] = 1$. Markov gives $P(X \geq 10) \leq 1/10$. The true probability is exactly $0.1$, so equality holds.
+
+## Chebyshev's Inequality
+
+<Callout type="theorem">
+**Theorem 12.2 (Chebyshev's Inequality).** Let $X$ have finite mean $\mu$ and finite variance $\sigma^2$. Then for any $k > 0$:
+
+$$P(|X - \mu| \geq k) \leq \frac{\sigma^2}{k^2}.$$
+
+Equivalently, $P(|X - \mu| \geq k\sigma) \leq 1/k^2$.
+</Callout>
+
+*Proof.* Apply Markov's inequality to the nonnegative random variable $(X - \mu)^2$ with threshold $k^2$:
+
+$$P(|X - \mu| \geq k) = P((X - \mu)^2 \geq k^2) \leq \frac{E[(X - \mu)^2]}{k^2} = \frac{\sigma^2}{k^2}. \quad \square$$
+
+<Callout type="tip">
+**Chebyshev is a corollary of Markov.** This illustrates a powerful technique: apply Markov to a transformed variable. Applying Markov to $|X - \mu|^p$ with threshold $k^p$ gives $P(|X - \mu| \geq k) \leq E[|X - \mu|^p] / k^p$. Higher moments yield tighter bounds.
+</Callout>
+
+**Sharpness example.** Let $X$ take values $\mu - k$, $\mu$, and $\mu + k$ with probabilities $1/(2k^2)$, $1 - 1/k^2$, and $1/(2k^2)$ respectively (for $k \geq 1$). Then $E[X] = \mu$, $\text{Var}(X) = \sigma^2 = 1$, and $P(|X - \mu| \geq k) = 1/k^2$, achieving Chebyshev equality.
+
+## The Union Bound
+
+<Callout type="theorem">
+**Theorem 12.3 (Union Bound / Boole's Inequality).** For any countable collection of events $A_1, A_2, \ldots$:
+
+$$P\!\left(\bigcup_{i=1}^n A_i\right) \leq \sum_{i=1}^n P(A_i).$$
+
+This extends to countable unions: $P\!\left(\bigcup_{i=1}^\infty A_i\right) \leq \sum_{i=1}^\infty P(A_i)$.
+</Callout>
+
+*Proof.* Define $B_1 = A_1$ and $B_n = A_n \setminus \bigcup_{i=1}^{n-1} A_i$ for $n \geq 2$. The $B_i$ are disjoint with $\bigcup B_i = \bigcup A_i$, and $B_i \subseteq A_i$ so $P(B_i) \leq P(A_i)$. By countable additivity:
+
+$$P\!\left(\bigcup A_i\right) = P\!\left(\bigcup B_i\right) = \sum P(B_i) \leq \sum P(A_i). \quad \square$$
+
+The union bound is crude but universally applicable. It is the starting point for many arguments in combinatorics and theoretical computer science.
+
+## Jensen's Inequality
+
+<Callout type="definition">
+**Definition 12.4.** A function $\varphi : \mathbb{R} \to \mathbb{R}$ is **convex** if for all $x, y \in \mathbb{R}$ and $\lambda \in [0, 1]$:
+
+$$\varphi(\lambda x + (1 - \lambda) y) \leq \lambda \varphi(x) + (1 - \lambda) \varphi(y).$$
+
+Equivalently (for differentiable $\varphi$): $\varphi$ lies above every tangent line, i.e., $\varphi(x) \geq \varphi(a) + \varphi'(a)(x - a)$ for all $x, a$.
+</Callout>
+
+<Callout type="theorem">
+**Theorem 12.5 (Jensen's Inequality).** If $\varphi$ is convex and $E[|X|] < \infty$, then:
+
+$$\varphi(E[X]) \leq E[\varphi(X)].$$
+</Callout>
+
+*Proof.* Let $\mu = E[X]$. Since $\varphi$ is convex, there exists a supporting line at $\mu$: a constant $c$ such that $\varphi(x) \geq \varphi(\mu) + c(x - \mu)$ for all $x$. (For differentiable $\varphi$, take $c = \varphi'(\mu)$; in general, the existence of a supporting hyperplane is a fundamental property of convex functions.)
+
+Substituting $x = X$ (a random variable) and taking expectations:
+
+$$E[\varphi(X)] \geq E[\varphi(\mu) + c(X - \mu)] = \varphi(\mu) + c \cdot E[X - \mu] = \varphi(\mu) + c \cdot 0 = \varphi(\mu) = \varphi(E[X]). \quad \square$$
+
+<Callout type="info">
+**Important corollaries of Jensen.**
+
+- $\varphi(x) = x^2$ (convex): $E[X^2] \geq (E[X])^2$, i.e., $\text{Var}(X) \geq 0$.
+- $\varphi(x) = |x|^p$ for $p \geq 1$ (convex): $E[|X|^p] \geq |E[X]|^p$.
+- $\varphi(x) = e^x$ (convex): $E[e^X] \geq e^{E[X]}$.
+- $\varphi(x) = -\log x$ (convex on $x > 0$): $E[-\log X] \geq -\log E[X]$, i.e., $\log E[X] \geq E[\log X]$.
+
+If $\varphi$ is **concave**, the inequality reverses: $\varphi(E[X]) \geq E[\varphi(X)]$.
+</Callout>
+
+## Combining Inequalities: Tail Bounds in Practice
+
+These inequalities form a hierarchy of increasing strength and increasing requirements:
+
+| Inequality | Requires | Bound on $P(X \geq a)$ |
+|---|---|---|
+| Markov | $E[X]$, $X \geq 0$ | $E[X]/a$ |
+| Chebyshev | $E[X]$, $\text{Var}(X)$ | $\text{Var}(X)/(a - \mu)^2$ |
+| Chernoff (via MGF) | $M_X(t)$ exists | $\inf_t e^{-ta} M_X(t)$ |
+
+The Chernoff bound (to be developed with MGFs in the next lesson) gives exponentially decaying tail bounds and is the workhorse of modern probability.
+
+## Honors Challenge Set (No Solutions)
+
+<Problem title="Honors Challenge 12.A: Gate Theorem Reconstruction">
+Reprove the milestone gate result for this block from definitions only: `WLLN via Chebyshev`.
+Your write-up must explicitly state where each hypothesis is used.
+</Problem>
+
+<Problem title="Honors Challenge 12.B: Hypothesis Stress Test">
+Select one theorem from this lesson, remove or weaken one assumption, and determine whether the conclusion survives.
+Provide either a corrected theorem or a complete counterexample.
+</Problem>
+
+<Problem title="Honors Challenge 12.C: Synthesis Problem">
+Construct and solve a problem that requires this lesson and the immediate prerequisite together.
+Your solution should include a proof skeleton before full details.
+</Problem>
+## Exercises
+
+<Problem title="Exercise 12.1">
+Let $X \sim \text{Exponential}(\lambda)$ with $E[X] = 1/\lambda$ and $\text{Var}(X) = 1/\lambda^2$. For $a > 1/\lambda$, compare the Markov bound, Chebyshev bound, and exact tail probability $P(X \geq a)$.
+</Problem>
+
+<Solution>
+**Exact:** $P(X \geq a) = e^{-\lambda a}$.
+
+**Markov:** $P(X \geq a) \leq E[X]/a = 1/(\lambda a)$.
+
+**Chebyshev:** $P(X \geq a) = P(X - 1/\lambda \geq a - 1/\lambda) \leq P(|X - 1/\lambda| \geq a - 1/\lambda) \leq \text{Var}(X)/(a - 1/\lambda)^2 = 1/(\lambda(a - 1/\lambda))^2 = 1/(\lambda a - 1)^2$.
+
+**Numerical comparison** with $\lambda = 1$, $a = 3$:
+- Exact: $e^{-3} \approx 0.0498$.
+- Markov: $1/3 \approx 0.3333$.
+- Chebyshev: $1/(3-1)^2 = 0.25$.
+
+The exact probability is far smaller than either bound, illustrating that Markov and Chebyshev are general-purpose but loose. Exponential tails decay much faster than the polynomial bounds these inequalities provide. $\square$
+</Solution>
+
+<MultipleChoice
+  question={"Jensen's inequality with the convex function phi(x) = x^2 directly implies which fundamental fact?"}
+  options={[
+    "E[X] = 0 for symmetric distributions",
+    "Var(X) >= 0 for all random variables",
+    "P(X >= a) <= E[X]/a for nonneg X",
+    "E[X^2] <= (E[X])^2 always"
+  ]}
+  correctIndex={1}
+  explanation={"Jensen with phi(x) = x^2 gives E[X^2] >= (E[X])^2, which means Var(X) = E[X^2] - (E[X])^2 >= 0. This is the non-negativity of variance. Option (d) reverses the inequality."}
+/>
+
+<NumericInput
+  question={"A random variable X has E[X] = 10 and Var(X) = 4. Using Chebyshev's inequality, find an upper bound on P(|X - 10| >= 5). Give your answer as a decimal."}
+  answer={0.16}
+  tolerance={0.01}
+  hint={"Chebyshev: P(|X - mu| >= k) <= sigma^2/k^2 = 4/25 = 0.16."}
+/>
+
+<Problem title="Exercise 12.2">
+Prove Jensen's inequality implies the AM-GM inequality: for positive reals $a_1, \ldots, a_n$,
+
+$$\frac{a_1 + \cdots + a_n}{n} \geq (a_1 \cdots a_n)^{1/n}.$$
+</Problem>
+
+<Solution>
+Let $X$ be a discrete uniform random variable on $\{a_1, \ldots, a_n\}$, so $P(X = a_i) = 1/n$. Since $\varphi(x) = -\log x$ is convex on $(0, \infty)$, Jensen gives:
+
+$$-\log(E[X]) \leq E[-\log X].$$
+
+Computing each side:
+- $E[X] = (a_1 + \cdots + a_n)/n$.
+- $E[-\log X] = -\frac{1}{n}\sum_{i=1}^n \log a_i = -\log(a_1 \cdots a_n)^{1/n}$.
+
+So $-\log\!\left(\frac{a_1 + \cdots + a_n}{n}\right) \leq -\log(a_1 \cdots a_n)^{1/n}$. Since $-\log$ is decreasing, this gives:
+
+$$\frac{a_1 + \cdots + a_n}{n} \geq (a_1 \cdots a_n)^{1/n}. \quad \square$$
+</Solution>
+
+<Problem title="Exercise 12.3">
+Let $X_1, \ldots, X_n$ be i.i.d. with mean $\mu$ and variance $\sigma^2$. Using only Chebyshev's inequality, prove that for any $\varepsilon > 0$:
+
+$$P\!\left(\left|\frac{1}{n}\sum_{i=1}^n X_i - \mu\right| \geq \varepsilon\right) \leq \frac{\sigma^2}{n\varepsilon^2}.$$
+
+This is the key estimate behind the Weak Law of Large Numbers.
+</Problem>
+
+<Solution>
+Let $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$. By linearity: $E[\bar{X}_n] = \mu$.
+
+By independence, $\text{Var}(\bar{X}_n) = \frac{1}{n^2}\sum_{i=1}^n \text{Var}(X_i) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}$.
+
+Applying Chebyshev to $\bar{X}_n$ with mean $\mu$ and variance $\sigma^2/n$:
+
+$$P(|\bar{X}_n - \mu| \geq \varepsilon) \leq \frac{\text{Var}(\bar{X}_n)}{\varepsilon^2} = \frac{\sigma^2}{n\varepsilon^2}.$$
+
+As $n \to \infty$, the right side tends to $0$, so $\bar{X}_n \to \mu$ in probability. $\square$
+</Solution>

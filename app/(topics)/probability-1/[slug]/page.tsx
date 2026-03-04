@@ -29,13 +29,13 @@ const mdxComponents = {
 };
 
 export async function generateStaticParams() {
-  const lessons = getTopicLessons("probability");
+  const lessons = getTopicLessons("probability-1");
   return lessons.map((l) => ({ slug: l.slug }));
 }
 
-export default async function ProbabilityLessonPage({ params }: PageProps) {
+export default async function ProbabilityOneLessonPage({ params }: PageProps) {
   const { slug } = await params;
-  const lesson = getLessonContent("probability", slug);
+  const lesson = getLessonContent("probability-1", slug);
 
   if (!lesson) {
     notFound();
@@ -52,14 +52,14 @@ export default async function ProbabilityLessonPage({ params }: PageProps) {
     },
   });
 
-  const adjacent = getAdjacentLessons("probability", slug);
+  const adjacent = getAdjacentLessons("probability-1", slug);
 
   return (
     <div className="flex gap-10">
       <article className="prose flex-1 min-w-0">
         <Breadcrumb
           items={[
-            { label: "Probability & Statistics", href: "/probability" },
+            { label: "Probability I", href: "/probability-1" },
             { label: lesson.meta.title },
           ]}
         />
@@ -68,7 +68,7 @@ export default async function ProbabilityLessonPage({ params }: PageProps) {
           <p className="text-lg text-muted-foreground -mt-2">{lesson.meta.description}</p>
         )}
         {content}
-        <LessonNav topicId="probability" prev={adjacent.prev} next={adjacent.next} />
+        <LessonNav topicId="probability-1" prev={adjacent.prev} next={adjacent.next} />
       </article>
       <TableOfContents />
     </div>
