@@ -1,0 +1,181 @@
+---
+title: "Limits & Continuity"
+description: "The foundation of calculus — understanding limits and their role in deep learning"
+order: 1
+---
+
+## Why Limits Matter for Deep Learning
+
+Before we can talk about derivatives, gradients, or optimization — the core tools of training neural networks — we need limits. Every derivative is defined as a limit. Every gradient descent step relies on the assumption that functions behave predictably as we take infinitesimally small steps.
+
+<Callout type="tip" title="The Big Picture">
+Limits formalize the idea of "approaching." When we compute a gradient, we're asking: what happens to the loss as we nudge a weight by an infinitesimal amount? That's a limit.
+</Callout>
+
+## Definition of a Limit
+
+<Callout type="definition" title="Limit">
+We say that $\lim_{x \to a} f(x) = L$ if for every $\varepsilon > 0$, there exists a $\delta > 0$ such that:
+
+$$
+0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon
+$$
+</Callout>
+
+In plain English: $f(x)$ gets arbitrarily close to $L$ as $x$ gets close to $a$ (but doesn't equal $a$).
+
+### Intuition
+
+Think of it as a game:
+1. Someone challenges you with an $\varepsilon$-tolerance around $L$
+2. You must find a $\delta$-neighborhood around $a$ where all function values stay within $\varepsilon$ of $L$
+3. If you can always win this game, the limit exists
+
+## Limit Laws
+
+For limits $\lim_{x \to a} f(x) = L$ and $\lim_{x \to a} g(x) = M$:
+
+$$
+\lim_{x \to a} [f(x) + g(x)] = L + M
+$$
+
+$$
+\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M
+$$
+
+$$
+\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M} \quad \text{if } M \neq 0
+$$
+
+$$
+\lim_{x \to a} [cf(x)] = cL \quad \text{for any constant } c
+$$
+
+These laws let us break complex limits into simpler pieces — exactly what we'll do when differentiating composite functions later.
+
+## Continuity
+
+<Callout type="definition" title="Continuous Function">
+A function $f$ is **continuous at $a$** if:
+
+$$
+\lim_{x \to a} f(x) = f(a)
+$$
+
+This requires three things: (1) $f(a)$ exists, (2) the limit exists, (3) they're equal.
+</Callout>
+
+### Why Continuity Matters in ML
+
+Most activation functions in neural networks are continuous (or piecewise continuous):
+
+- **ReLU**: $f(x) = \max(0, x)$ — continuous everywhere, but not differentiable at $x = 0$
+- **Sigmoid**: $\sigma(x) = \frac{1}{1 + e^{-x}}$ — smooth and continuous everywhere
+- **Tanh**: $\tanh(x)$ — smooth and continuous everywhere
+
+<FunctionPlot
+  fn="1 / (1 + Math.exp(-x))"
+  title="Sigmoid Function: σ(x) = 1/(1 + e^(-x))"
+  domain={[-6, 6]}
+  range={[-0.5, 1.5]}
+/>
+
+The **Intermediate Value Theorem** (a consequence of continuity) guarantees that a continuous loss function takes on every value between any two points — which is partly why continuous optimization works.
+
+## Important Limits
+
+Several limits appear repeatedly in calculus and ML:
+
+$$
+\lim_{x \to 0} \frac{\sin x}{x} = 1
+$$
+
+$$
+\lim_{x \to 0} \frac{e^x - 1}{x} = 1
+$$
+
+$$
+\lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = e
+$$
+
+The last one defines Euler's number $e \approx 2.718$, which appears everywhere in ML: exponentials, softmax, cross-entropy loss.
+
+## Squeeze Theorem
+
+<Callout type="theorem" title="Squeeze Theorem">
+If $g(x) \leq f(x) \leq h(x)$ near $a$, and $\lim_{x \to a} g(x) = \lim_{x \to a} h(x) = L$, then:
+
+$$
+\lim_{x \to a} f(x) = L
+$$
+</Callout>
+
+This is surprisingly useful in ML theory — for example, proving that certain loss bounds converge.
+
+## Exercises
+
+<MultipleChoice
+  question="What does lim(x→2) x² equal?"
+  options={["2", "4", "8", "The limit does not exist"]}
+  correctIndex={1}
+  explanation="Since f(x) = x² is continuous everywhere, we can directly substitute: f(2) = 2² = 4."
+/>
+
+<NumericInput
+  question="Evaluate: lim(x→0) (e^(3x) - 1) / x"
+  answer={3}
+  tolerance={0.01}
+  hint="Use the fact that lim(x→0) (e^x - 1)/x = 1 and substitute u = 3x."
+/>
+
+<Problem title="Prove: lim(x→3) (2x + 1) = 7 using the ε-δ definition">
+  Use the $\varepsilon$-$\delta$ definition to prove that $\lim_{x \to 3} (2x + 1) = 7$.
+
+  **Hint:** Start by working backwards — assume $|f(x) - 7| < \varepsilon$ and find what $\delta$ you need.
+
+  <Solution>
+    **Proof.** Let $\varepsilon > 0$ be given. Choose $\delta = \varepsilon / 2$.
+
+    If $0 < |x - 3| < \delta$, then:
+
+    $$|f(x) - 7| = |(2x + 1) - 7| = |2x - 6| = 2|x - 3| < 2\delta = 2 \cdot \frac{\varepsilon}{2} = \varepsilon$$
+
+    Therefore $\lim_{x \to 3}(2x + 1) = 7$. $\blacksquare$
+  </Solution>
+</Problem>
+
+## Code Playground
+
+Try computing some limits numerically:
+
+<PythonPlayground
+  title="Numerical Limits"
+  defaultCode={`import numpy as np
+
+# Numerically verify lim(x->0) sin(x)/x = 1
+xs = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+for x in xs:
+    print(f"x = {x:.5f}, sin(x)/x = {np.sin(x)/x:.10f}")
+
+print()
+
+# Verify lim(n->inf) (1 + 1/n)^n = e
+ns = [10, 100, 1000, 10000, 100000]
+for n in ns:
+    val = (1 + 1/n)**n
+    print(f"n = {n:>6d}, (1+1/n)^n = {val:.10f}")
+
+print(f"\\nActual e = {np.e:.10f}")
+`}
+/>
+
+## Connection to Deep Learning
+
+Limits are the theoretical bedrock of:
+
+1. **Derivatives** — defined as $\lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$
+2. **Gradient descent** — assumes smooth (continuous + differentiable) loss landscapes
+3. **Convergence guarantees** — SGD convergence proofs use limits of sequences
+4. **Softmax stability** — understanding $\lim_{x \to \infty} e^x$ helps prevent numerical overflow
+
+In the next lesson, we'll use limits to define derivatives — the core operation of backpropagation.
